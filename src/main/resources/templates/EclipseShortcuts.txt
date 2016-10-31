@@ -1,0 +1,15 @@
+﻿Lower case: CTRL+SHIFT+Y 
+Upper case: CTRL+SHIFT+X
+Pārvietot rindu uz augšu, leju: Alt + bultiņas (augšu vai leju)
+Kopēt rindu uz augšu, leju: Ctrl + Alt + bultiņas (augšu vai leju)
+Pārsaukt metodi, klasi vai atribūtu: Alt + Shift + R
+Kompilēt: F11
+Komentārs ar double slash: Ctrl + /
+Garais komentārs: Ctrl + Shift + /
+Garais komentārs (noņemt komentāru): Ctrl + Shift + \
+Run in debugging mode: Shift + Alt  + D --> T           
+Run Shift + Alt + X --> J     
+Sakārtot izkārtojumu smuki: Ctrl + Shift + F
+Meklēt tekstu failā: Ctrl + H
+Izvadīt tekstu komandrindā: sysout
+//------------------------------------------------------------------------------------------------------------------------

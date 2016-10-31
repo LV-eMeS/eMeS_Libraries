@@ -1,0 +1,27 @@
+﻿Toggle case: Ctrl + Shift + U
+Move line up or down: Ctrl + Shift + arrow keys (up or down)
+Copy line: Ctrl + D
+Rename method, class or attribute: Shift + F6
+Single line comment: Ctrl + /
+Long comment: Ctrl + Shift + /
+Run in debugging mode: Right click and choose option
+Compile: F10
+Run main class or test_resources from place where cursor stands: Ctrl + Shift + F10
+Auto format tabulations: Ctrl + Alt + L
+Look for text: Ctrl + Shift + F
+Hide window or toolbox: Shift + Esc
+Print to standard output: sout
+Print method to standard output: soutm
+Print variable to standard output: soutv
+Bookmark: Ctrl + Shift + 0-9
+Go to bookmark: Ctrl + 0-9
+Recent files: Ctrl + E
+Toggle breakpoint: Ctrl + F8
+Add imports or ask IDEA to suggest, how to correct some error: Alt + ENTER
+Show JavaDoc documentation: Ctrl + Q
+Generate Getters/Setters and much more: Alt + Insert
+Implementations of an abstract method: Ctrl + Alt + B
+Generate main method: psvm
+Find usages: Alt + F7
+https://www.jetbrains.com/help/idea/2016.2/keyboard-shortcuts-you-cannot-miss.html
+//------------------------------------------------------------------------------------------------------------------------

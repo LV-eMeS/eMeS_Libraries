@@ -1,0 +1,2 @@
+"remove_text_till_here-log4j.xml" file should be renamed to "log4j.xml" in order to use logging configurations.
+File still should be located in resources folder to use logger.

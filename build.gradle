@@ -1,0 +1,42 @@
+ext {
+    projectVersion = "v1.1.1"
+}
+
+repositories {
+//    jcenter()
+    mavenCentral()
+    mavenLocal()
+    flatDir {
+        dirs 'lib'
+    }
+    maven { url "https://jitpack.io" }
+}
+
+apply plugin: 'idea'
+apply plugin: 'java'
+
+dependencies {
+    //This project itself
+//    compile "com.github.eMeS-Libraries:eMeS_Libraries:${projectVersion}"
+//    compile "com.github.eMeS-Libraries:eMeS_Libraries:master-SNAPSHOT"
+    compile "com.github.eMeS-Libraries:eMeS_Libraries:+"
+
+    //Other dependencies - libraries
+    compile "commons-io:commons-io:+"
+    compile "commons-codec:commons-codec:+"
+    compile "org.apache.commons:commons-compress:1.9"
+    compile group: 'log4j', name: 'log4j', version: '1.2.17'
+    compile "mysql:mysql-connector-java:5.1.5"
+    //Local libraries
+    compile name: 'Native access Core (jna-4.2.2)'
+    compile name: 'Native access for keyboard actions (jna-platform-4.2.2)'
+    compile name: 'Oracle JDBC (ojdbc6)'
+
+    //For tests:
+    testCompile "junit:junit:4.12"
+}
+
+jar {
+    baseName = "eMeS_Libraries"
+    version =  "${projectVersion}"
+}
