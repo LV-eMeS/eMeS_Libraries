@@ -2,7 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/eMeS_Libraries.iml" filepath="$PROJECT_DIR$/.idea/eMeS_Libraries.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/eMeS_Libraries.iml" filepath="$PROJECT_DIR$/.idea/modules/eMeS_Libraries.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/eMeS_Libraries_main.iml" filepath="$PROJECT_DIR$/.idea/modules/eMeS_Libraries_main.iml" group="eMeS_Libraries" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/eMeS_Libraries_test.iml" filepath="$PROJECT_DIR$/.idea/modules/eMeS_Libraries_test.iml" group="eMeS_Libraries" />
     </modules>
   </component>
 </project>

@@ -19,7 +19,7 @@ dependencies {
     //This project itself
 //    compile "com.github.eMeS-Libraries:eMeS_Libraries:${projectVersion}"
 //    compile "com.github.eMeS-Libraries:eMeS_Libraries:master-SNAPSHOT"
-    compile "com.github.eMeS-Libraries:eMeS_Libraries:+"
+//    compile "com.github.eMeS-Libraries:eMeS_Libraries:+"
 
     //Other dependencies - libraries
     compile "commons-io:commons-io:+"
