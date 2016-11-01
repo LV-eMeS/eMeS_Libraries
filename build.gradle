@@ -1,25 +1,26 @@
 ext {
-    projectVersion = "v1.1.1"
+    projectVersion = "v1.2.0"
 }
 
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'idea'
+
+group = 'com.github.eMeS-Libraries'
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
 repositories {
-//    jcenter()
-    mavenCentral()
-    mavenLocal()
+    jcenter()
     flatDir {
         dirs 'lib'
     }
     maven { url "https://jitpack.io" }
 }
 
-apply plugin: 'idea'
-apply plugin: 'java'
-
 dependencies {
     //This project itself
 //    compile "com.github.eMeS-Libraries:eMeS_Libraries:${projectVersion}"
-//    compile "com.github.eMeS-Libraries:eMeS_Libraries:master-SNAPSHOT"
-//    compile "com.github.eMeS-Libraries:eMeS_Libraries:+"
 
     //Other dependencies - libraries
     compile "commons-io:commons-io:+"
@@ -37,7 +38,23 @@ dependencies {
     testCompile "junit:junit:4.12"
 }
 
-jar {
-    baseName = "eMeS_Libraries"
-    version =  "${projectVersion}"
+//All the dealing with encoding
+compileJava.options.encoding = 'UTF-8'
+tasks.withType(JavaCompile) {options.encoding = 'UTF-8'}
+tasks.withType(Javadoc) {options.encoding = 'UTF-8'}
+test {systemProperty "file.encoding", "utf-8"}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
 }
