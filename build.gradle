@@ -7,7 +7,7 @@ repositories {
     mavenCentral()
     mavenLocal()
     flatDir {
-        dirs 'lib'
+        dirs 'libs'
     }
     maven { url "https://jitpack.io" }
 }
