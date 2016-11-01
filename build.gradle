@@ -18,6 +18,27 @@ repositories {
     maven { url "https://jitpack.io" }
 }
 
+//All the dealing with encoding
+compileJava.options.encoding = 'UTF-8'
+tasks.withType(JavaCompile) {options.encoding = 'UTF-8'}
+tasks.withType(Javadoc) {options.encoding = 'UTF-8'}
+test {systemProperty "file.encoding", "utf-8"}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+//task javadocJar(type: Jar, dependsOn: javadoc) {
+//    classifier = 'javadoc'
+//    from javadoc.destinationDir
+//}
+
+artifacts {
+    archives sourcesJar
+//    archives javadocJar
+}
+
 dependencies {
     //This project itself
 //    compile "com.github.eMeS-Libraries:eMeS_Libraries:${projectVersion}"
@@ -36,25 +57,4 @@ dependencies {
     //For tests:
     compile "junit:junit:4.12"
     testCompile "junit:junit:4.12"
-}
-
-//All the dealing with encoding
-compileJava.options.encoding = 'UTF-8'
-tasks.withType(JavaCompile) {options.encoding = 'UTF-8'}
-tasks.withType(Javadoc) {options.encoding = 'UTF-8'}
-test {systemProperty "file.encoding", "utf-8"}
-
-task sourcesJar(type: Jar, dependsOn: classes) {
-    classifier = 'sources'
-    from sourceSets.main.allSource
-}
-
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
-    from javadoc.destinationDir
-}
-
-artifacts {
-    archives sourcesJar
-    archives javadocJar
 }
