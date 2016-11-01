@@ -33,6 +33,7 @@ dependencies {
     compile name: 'Oracle JDBC (ojdbc6)'
 
     //For tests:
+    compile "junit:junit:4.12"
     testCompile "junit:junit:4.12"
 }
 
