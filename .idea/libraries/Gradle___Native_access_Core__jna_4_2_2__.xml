@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="Gradle: :Native access Core (jna-4.2.2):">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/lib/Native access Core (jna-4.2.2).jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>
