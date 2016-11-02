@@ -1,6 +1,6 @@
-ext {
-    projectVersion = "v1.2.0"
-}
+//ext {
+//    projectVersion = "v1.2.0"
+//}
 
 apply plugin: 'java'
 apply plugin: 'maven'
@@ -46,7 +46,7 @@ dependencies {
     compile "org.apache.commons:commons-compress:1.9"
     compile "log4j:log4j:1.2.17"
     compile "mysql:mysql-connector-java:5.1.5"
-    compile "net.java.dev.jna:jna:4.2.2"
+//    compile "net.java.dev.jna:jna:4.2.2"
     compile "net.java.dev.jna:jna-platform:4.2.2"
 //    compile "com.oracle:ojdbc6:11.2.0.3"
 
