@@ -16,9 +16,9 @@ public class MSStringToolsTest {
 	@Test
 	public void test01PrimitiveFunctions() {	
 		//test constants
-		System.out.println("My test message"+MS_StringTools.cLineBrake+"is in new line");		
-		System.out.println("My test message"+MS_StringTools.cTabSpace+"is delimited with tab");
-		System.out.println("cDiactriticChCount is: "+MS_StringTools.cDiactriticChCount);	
+		System.out.println("My test message"+MS_StringTools.C_LINE_BRAKE +"is in new line");
+		System.out.println("My test message"+MS_StringTools.C_TAB_SPACE +"is delimited with tab");
+		System.out.println("C_DIACTRITIC_CHAR_COUNT is: "+MS_StringTools.C_DIACTRITIC_CHAR_COUNT);
 		
 		//test genRandomString
 		MS_StringTools.SetForCodeGenParams.addAll(Collections.synchronizedSet(EnumSet.allOf(TSymbolTypeForGenerator.class)));
@@ -86,9 +86,9 @@ public class MSStringToolsTest {
 		assertEquals("a", MS_StringTools.getSubstring("a", 0, 2));
 		assertEquals("", MS_StringTools.getSubstring("a", 0, 0));
 		assertEquals("", MS_StringTools.getSubstring("a", 1, 1));
-		assertEquals(MS_StringTools.cTabSpace, MS_StringTools.getTabSpace(1));
-		assertEquals(MS_StringTools.cTabSpace + MS_StringTools.cTabSpace, MS_StringTools.getTabSpace(2));
-		assertEquals(MS_StringTools.cTabSpace + MS_StringTools.cTabSpace + MS_StringTools.cTabSpace, MS_StringTools.getTabSpace(3));
+		assertEquals(MS_StringTools.C_TAB_SPACE, MS_StringTools.getTabSpace(1));
+		assertEquals(MS_StringTools.C_TAB_SPACE + MS_StringTools.C_TAB_SPACE, MS_StringTools.getTabSpace(2));
+		assertEquals(MS_StringTools.C_TAB_SPACE + MS_StringTools.C_TAB_SPACE + MS_StringTools.C_TAB_SPACE, MS_StringTools.getTabSpace(3));
 		assertEquals("", MS_StringTools.getTabSpace(-33));
 		assertEquals("", MS_StringTools.getTabSpace(0));
 		//Apsveicami! Viss ir notestēts! Viss darbojas ^_^

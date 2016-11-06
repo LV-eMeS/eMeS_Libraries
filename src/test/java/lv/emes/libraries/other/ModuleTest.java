@@ -5,7 +5,7 @@ import lv.emes.libraries.tools.MS_Tools;
 
 public class ModuleTest {
 	public static void main(String[] args) {
-		System.out.println("cDiactriticChCount is: "+MS_StringTools.cDiactriticChCount);
+		System.out.println("C_DIACTRITIC_CHAR_COUNT is: "+MS_StringTools.C_DIACTRITIC_CHAR_COUNT);
 		System.out.println(MS_Tools.getSystemUserName); 
 		
 		IStringConverterTest sConverter = s -> Integer.parseInt(s); //pārrakstām abstrakto metodi

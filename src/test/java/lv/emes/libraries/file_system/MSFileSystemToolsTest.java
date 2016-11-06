@@ -1,6 +1,7 @@
 package lv.emes.libraries.file_system;
 
 import lv.emes.libraries.tools.MS_StringTools;
+import lv.emes.libraries.tools.lists.MS_StringList;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
@@ -23,6 +24,7 @@ public class MSFileSystemToolsTest {
     public static String tmpFilePath = getTmpDirectory() + tmpFileName;
     public static String tmpDirName = "eMeS_Testing_File_System_Tools/";
     public static String tmpDirPath = getTmpDirectory() + tmpDirName;
+    public static String childDirectory = "child directory";
     public static Boolean tmpFileStillExists = false;
 
     @BeforeClass
@@ -79,7 +81,6 @@ public class MSFileSystemToolsTest {
 
     @Test
     public void test06DirectoryCreating() throws IOException {
-        String childDirectory = "child directory";
         assertTrue(directoryExists(getTmpDirectory()));
         assertTrue(directoryExists(new File(getTmpDirectory())));
 
@@ -119,5 +120,33 @@ public class MSFileSystemToolsTest {
         assertEquals("C:/", directoryUpPath);
         directoryUpPath = directoryUp(directoryUpPath);
         assertEquals("", directoryUpPath);
+    }
+
+    @Test
+    public void test09DirectoryFileList() {
+        assertTrue("Directory doesn't exist", directoryExists(tmpDirPath));
+        String file1 = tmpDirPath + "file1";
+        String file2 = tmpDirPath + "file2";
+        String file3 = tmpDirPath + "file3";
+        MS_TextFile.createEmptyFile(file1);
+        MS_TextFile.createEmptyFile(file2);
+        MS_TextFile.createEmptyFile(file3);
+
+        MS_StringList test = getDirectoryFileList(tmpDirPath);
+        assertEquals(3, test.count());
+        assertEquals(file1, test.get(0));
+        assertEquals(file2, test.get(1));
+        assertEquals(file3, test.get(2));
+
+        test.clear();
+        test = getDirectoryFileList_Shortnames(tmpDirPath);
+        assertEquals(3, test.count());
+        assertEquals(getShortFilename(file1), test.get(0));
+        assertEquals(getShortFilename(file2), test.get(1));
+        assertEquals(getShortFilename(file3), test.get(2));
+
+        test = getDirectoryFileList_Directories(tmpDirPath);
+        assertEquals(1, test.count());
+        assertEquals(childDirectory, test.get(0));
     }
 }

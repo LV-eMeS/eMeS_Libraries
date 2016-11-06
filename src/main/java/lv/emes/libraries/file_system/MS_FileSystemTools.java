@@ -58,13 +58,6 @@ import java.util.List;
  */
 public class MS_FileSystemTools {
     public static final String CURRENT_DIRECTORY = "./";
-    /**
-     * Path starting from root directory of project to source (mostly "src") folder.
-     * <p>It's used together with method <b>getPathToPackage</b> as a prefix (first parameter).
-     *
-     * @see MS_FileSystemTools#getPathToPackage
-     */
-    public static String SOURCE_FOLDER = "src/main/Java/";
 
     /**
      * Opens link in default web browser or runs an application in OS. Do not use spaces in links!
@@ -381,7 +374,37 @@ public class MS_FileSystemTools {
 
     public static MS_StringList getDirectoryFileList(String pathToDir) {
         MS_StringList res = new MS_StringList();
+        File dir = new File(pathToDir);
+        File[] filesList = dir.listFiles();
+        for (File file : filesList) {
+            if (file.isFile()) {
+                res.add(replaceBackslash(file.getAbsolutePath()));
+            }
+        }
+        return res;
+    }
 
+    public static MS_StringList getDirectoryFileList_Shortnames(String pathToDir) {
+        MS_StringList res = new MS_StringList();
+        File dir = new File(pathToDir);
+        File[] filesList = dir.listFiles();
+        for (File file : filesList) {
+            if (file.isFile()) {
+                res.add(replaceBackslash(file.getName()));
+            }
+        }
+        return res;
+    }
+
+    public static MS_StringList getDirectoryFileList_Directories(String pathToDir) {
+        MS_StringList res = new MS_StringList();
+        File dir = new File(pathToDir);
+        File[] filesList = dir.listFiles();
+        for (File file : filesList) {
+            if (file.isDirectory()) {
+                res.add(replaceBackslash(file.getName()));
+            }
+        }
         return res;
     }
 

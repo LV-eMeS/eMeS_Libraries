@@ -36,18 +36,20 @@ import static lv.emes.libraries.tools.MS_Tools.inRange;
  */
 public final class MS_StringTools {
     //konstantes
-    public static final int cDiactriticChCount = 13 * 2;
-    public static final int cPunctuationCount = 8;
-    public static final char[] cDiactriticChars = {'ē', 'ŗ', 'ū', 'ī', 'ō', 'ā', 'š', 'ģ', 'ķ', 'ļ', 'ž', 'č', 'ņ',
+    public static final int C_DIACTRITIC_CHAR_COUNT = 13 * 2;
+    public static final int C_PUNCTUATION_COUNT = 8;
+    public static final char[] C_DIACTRITIC_CHARS = {'ē', 'ŗ', 'ū', 'ī', 'ō', 'ā', 'š', 'ģ', 'ķ', 'ļ', 'ž', 'č', 'ņ',
             'Ē', 'Ŗ', 'Ū', 'Ī', 'Ō', 'Ā', 'Š', 'Ģ', 'Ķ', 'Ļ', 'Ž', 'Č', 'Ņ'};
-    public static final char[] cNonDiactriticChars = {'e', 'r', 'u', 'i', 'o', 'a', 's', 'g', 'k', 'l', 'z', 'c', 'n',
+    public static final char[] C_NON_DIACTRITIC_CHARS = {'e', 'r', 'u', 'i', 'o', 'a', 's', 'g', 'k', 'l', 'z', 'c', 'n',
             'E', 'R', 'U', 'I', 'O', 'A', 'S', 'G', 'K', 'L', 'Z', 'C', 'N'};
-    public static final String cLineBrake = "\n";
-    public static final String cTabSpace = "  ";
-    public static final char[] cPunctuationChars = {'.', ',', '!', '?', ';', ':', '/', '\\'};
-    public static final String CNUMBERS = "0123456789";
-    public static final String CSMALL_LETTERS = "abcdefghijklmnopqrstuvwxyz";
-    public static final String CBIG_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    public static final String C_CARRIAGE_RETURN = "\r"; //chr 13 - carriage return (Mac style)
+    public static final String C_LINE_FEED = "\n"; //chr 10 - line feed (Unix style)
+    public static final String C_LINE_BRAKE = C_CARRIAGE_RETURN + C_LINE_FEED; //Windows style line breaks
+    public static final String C_TAB_SPACE = "  ";
+    public static final char[] C_PUNCTUATION_CHARS = {'.', ',', '!', '?', ';', ':', '/', '\\'};
+    public static final String C_NUMBERS = "0123456789";
+    public static final String C_SMALL_LETTERS = "abcdefghijklmnopqrstuvwxyz";
+    public static final String C_BIG_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
     //mazie tipi
     public static enum TNotificationLang {
@@ -387,9 +389,9 @@ public final class MS_StringTools {
 
         char[] resAsArray = aText.toCharArray();
         for (int i = 0; i < aText.length(); i++) {
-            for (int j = 0; j < cDiactriticChCount; j++) {
-                if (aText.charAt(i) == cDiactriticChars[j]) {
-                    resAsArray[i] = cNonDiactriticChars[j];
+            for (int j = 0; j < C_DIACTRITIC_CHAR_COUNT; j++) {
+                if (aText.charAt(i) == C_DIACTRITIC_CHARS[j]) {
+                    resAsArray[i] = C_NON_DIACTRITIC_CHARS[j];
                 } //if ends here
             }
         } //outer for ends here
@@ -408,7 +410,7 @@ public final class MS_StringTools {
     }
 
     /**
-     * Removes any commas, dots etc. Punctuation symbols declared in <b>cPunctuationChars</b>.
+     * Removes any commas, dots etc. Punctuation symbols declared in <b>C_PUNCTUATION_CHARS</b>.
      *
      * @param aText input text with punctuation.
      * @return output text without punctuation.
@@ -422,8 +424,8 @@ public final class MS_StringTools {
             int j = 0;
             char iThSymbol = aText.charAt(i);
 
-            while (j < cPunctuationCount) {
-                if (iThSymbol == cPunctuationChars[j]) {
+            while (j < C_PUNCTUATION_COUNT) {
+                if (iThSymbol == C_PUNCTUATION_CHARS[j]) {
                     allowToAddSymbolToRes = false;
                     break;
                 }
@@ -528,7 +530,7 @@ public final class MS_StringTools {
     public static String getTabSpace(int countOfTabs) {
         StringBuilder res = new StringBuilder();
         for (int i = 1; i <= countOfTabs; i++)
-            res.append(cTabSpace);
+            res.append(C_TAB_SPACE);
         return res.toString();
     }
 }
