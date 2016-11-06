@@ -379,8 +379,13 @@ public class MS_FileSystemTools {
         return directoryBranch.toString();
     }
 
+    public static MS_StringList getDirectoryFileList(String pathToDir) {
+        MS_StringList res = new MS_StringList();
+
+        return res;
+    }
+
     //TODO: rewrite as static methods
-//	  function GetDirectoryFileList(aPathToDir:string; aFullPath:Boolean=False):TeMeS_Row;
 //	  procedure ForceForegroundNoActivate(hWnd : THandle);
 //	  function ForceForegroundWindow(hwnd: THandle): Boolean;
 }

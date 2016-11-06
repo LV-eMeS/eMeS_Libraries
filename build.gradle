@@ -6,7 +6,7 @@ apply plugin: 'java'
 apply plugin: 'maven'
 apply plugin: 'idea'
 
-group = 'com.github.eMeS-Libraries'
+group = 'com.github.LV-eMeS'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
@@ -39,7 +39,7 @@ artifacts {
 
 dependencies {
     //This project itself
-//    compile "com.github.eMeS-Libraries:eMeS_Libraries:${projectVersion}"
+//    compile "com.github.LV-eMeS:eMeS_Libraries:" + projectVersion
     //Other dependencies - libraries
     compile "commons-io:commons-io:+"
     compile "commons-codec:commons-codec:+"
