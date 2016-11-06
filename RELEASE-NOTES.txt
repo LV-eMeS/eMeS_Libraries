@@ -1,5 +1,5 @@
 eMeS libraries
-Version 1.2.0
+Version 1.2.1
 Release Notes
 
 INTRODUCTION:
@@ -12,6 +12,10 @@ PREREQUISITE:
 * Libraries from External sources.
 
 Changes in versions:
+==============================================================================
+eMeS libraries Version 1.3.0
+==============================================================================
+* getDirectoryFileList in MS_FileSystemTools;
 ==============================================================================
 eMeS libraries Version 1.2.0
 ==============================================================================
