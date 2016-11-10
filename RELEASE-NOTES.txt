@@ -15,7 +15,8 @@ Changes in versions:
 ==============================================================================
 eMeS libraries Version 1.3.0
 ==============================================================================
-* getDirectoryFileList in MS_FileSystemTools;
+* At some point finished XML file parsing tools;
+* Methods starting with getDirectoryFileList in MS_FileSystemTools;
 ==============================================================================
 eMeS libraries Version 1.2.0
 ==============================================================================
