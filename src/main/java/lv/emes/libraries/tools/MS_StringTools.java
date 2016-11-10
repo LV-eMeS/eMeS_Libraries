@@ -45,7 +45,7 @@ public final class MS_StringTools {
     public static final String C_CARRIAGE_RETURN = "\r"; //chr 13 - carriage return (Mac style)
     public static final String C_LINE_FEED = "\n"; //chr 10 - line feed (Unix style)
     public static final String C_LINE_BRAKE = C_CARRIAGE_RETURN + C_LINE_FEED; //Windows style line breaks
-    public static final String C_TAB_SPACE = "  ";
+    public static final String C_TAB_SPACE = "\t";
     public static final char[] C_PUNCTUATION_CHARS = {'.', ',', '!', '?', ';', ':', '/', '\\'};
     public static final String C_NUMBERS = "0123456789";
     public static final String C_SMALL_LETTERS = "abcdefghijklmnopqrstuvwxyz";

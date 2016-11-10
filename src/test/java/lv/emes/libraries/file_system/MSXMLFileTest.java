@@ -1,8 +1,8 @@
 package lv.emes.libraries.file_system;
 
+import lv.emes.libraries.file_system.xml.MS_XMLElementNode;
+import lv.emes.libraries.file_system.xml.MS_XMLElementNodeList;
 import lv.emes.libraries.file_system.xml.MS_XMLFile;
-import lv.emes.libraries.file_system.xml.MS_XMLNode;
-import lv.emes.libraries.file_system.xml.MS_XMLNodeList;
 import lv.emes.libraries.tools.lists.MS_StringList;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -23,52 +23,48 @@ import static org.junit.Assert.assertTrue;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MSXMLFileTest {
-    public static final String PATH_TO_XML_FILE = getTmpDirectory() + "MSXMLFileTest.xml";
-    public static final String PATH_TO_XML_FILE2 = getTmpDirectory() + "MSXMLFileTest2.xml";
-    public static final String PATH_TO_XML_FILE3 = getTmpDirectory() + "MSXMLFileTest3.xml";
-    public static MS_StringList FOOD_NAME_LIST = null;
-
-    @AfterClass
-    public static void finalizeTestConditions() {
-        deleteFile(PATH_TO_XML_FILE);
-        deleteFile(PATH_TO_XML_FILE2);
-        deleteFile(PATH_TO_XML_FILE3);
-    }
+    private static final String PATH_TO_XML_FILE = getTmpDirectory() + "MSXMLFileTest.xml";
+    private static final String PATH_TO_XML_FILE2 = getTmpDirectory() + "MSXMLFileTest2.xml";
+    private static final String PATH_TO_XML_FILE3 = getTmpDirectory() + "MSXMLFileTest3.xml";
+    private static MS_StringList FOOD_NAME_LIST = null;
+    private static MS_XMLFile file1;
+    private static MS_XMLFile file2;
+    private static MS_XMLFile file3;
 
     @Test
     public void test01ParseSimpleXMLFile() throws ParserConfigurationException, SAXException, IOException {
-        MS_XMLFile file = new MS_XMLFile(PATH_TO_XML_FILE);
+        MS_XMLFile file = file1;
         assertEquals("breakfast_menu", file.getRootElementName());
         //everything starting from first <food> tag and ending with very last </food> tag
         //<breakfast_menu><food>...</food><food>...</food></breakfast_menu>
-        MS_XMLNodeList allFoods = file.getNodesByTagName("food");
+        MS_XMLElementNodeList allFoods = file.getNodesByTagName("food");
         assertEquals(5, allFoods.count());
         assertEquals("food", allFoods.getTag());
         for (int i = 0; i < allFoods.count(); i++) {
             //everything that begins with <food> and ends with </food> in
             //<food>...</food>
-            MS_XMLNode aCurrentFood = allFoods.get(i);
+            MS_XMLElementNode aCurrentFood = allFoods.get(i);
             assertEquals("food", aCurrentFood.getTagName());
-            assertEquals(FOOD_NAME_LIST.get(i), aCurrentFood.getChildNode("name").getValue());
-            assertEquals("name", aCurrentFood.getChildNode("name").getTagName());
-            assertEquals(1, aCurrentFood.getChildNodes("name").count());
-            assertEquals(FOOD_NAME_LIST.get(i), aCurrentFood.getChildNodes("name").get(0).getValue());
+            assertEquals(FOOD_NAME_LIST.get(i), aCurrentFood.getFirstChild("name").getValue());
+            assertEquals("name", aCurrentFood.getFirstChild("name").getTagName());
+            assertEquals(1, aCurrentFood.getChildList("name").count());
+            assertEquals(FOOD_NAME_LIST.get(i), aCurrentFood.getChildList("name").get(0).getValue());
         }
 
         //just testing iterating
         allFoods.doWithEveryItem((node, ind) -> {
             assertEquals("food", node.getTagName()); //like assertEquals("food", aCurrentFood.getTagName());
-            assertEquals("name", node.getChildNode("name").getTagName()); //like assertEquals("name", aCurrentFood.getChildNode("name").getTagName());
-            assertEquals(1, node.getChildNodes("name").count());
-            assertEquals(FOOD_NAME_LIST.get(ind), node.getChildNode("name").getValue());
+            assertEquals("name", node.getFirstChild("name").getTagName()); //like assertEquals("name", aCurrentFood.getFirstChild("name").getTagName());
+            assertEquals(1, node.getChildList("name").count());
+            assertEquals(FOOD_NAME_LIST.get(ind), node.getFirstChild("name").getValue());
         });
 
-        assertEquals("Light Belgian waffles covered with strawberries and whipped cream", allFoods.get(1).getChildNode("description").getValue());
-        assertEquals("600", allFoods.get(3).getChildNode("calories").getValue());
-        assertEquals("950", allFoods.get(4).getChildNode("calories").getValue());
+        assertEquals("Light Belgian waffles covered with strawberries and whipped cream", allFoods.get(1).getFirstChild("description").getValue());
+        assertEquals("600", allFoods.get(3).getFirstChild("calories").getValue());
+        assertEquals("950", allFoods.get(4).getFirstChild("calories").getValue());
         try {
-            allFoods.get(5).getChildNode("calories").getValue();
-        } catch (MS_XMLNodeList.NodeNotFoundException ex) {
+            allFoods.get(5).getFirstChild("calories").getValue();
+        } catch (MS_XMLElementNodeList.NodeNotFoundException ex) {
             assertTrue(true);
         }
     }
@@ -81,12 +77,12 @@ public class MSXMLFileTest {
         assertEquals("UTF-8", doc.getInputEncoding());
         doc.setXmlVersion("1.1");
         assertEquals("1.1", doc.getXmlVersion());
-        assertEquals("file:/" + PATH_TO_XML_FILE, doc.getDocumentURI());
+        assertEquals("file:/" + PATH_TO_XML_FILE, doc.getBaseURI());
     }
 
     @Test
     public void test03WrongParsing() throws ParserConfigurationException, SAXException, IOException {
-        MS_XMLFile file = new MS_XMLFile(PATH_TO_XML_FILE);
+        MS_XMLFile file = file1;
         boolean exceptionCaught = false;
         try {
             file.getNodesByTagName("princesses");
@@ -95,60 +91,65 @@ public class MSXMLFileTest {
         }
         assertTrue(exceptionCaught);
 
-        MS_XMLNodeList prices = file.getNodesByTagName("price");
-        assertEquals(null, prices.get(2).getChildElement("child"));
-        assertEquals(null, prices.get(2).getChildNode("child"));
+        MS_XMLElementNodeList prices = file.getNodesByTagName("price");
+//        assertEquals(null, prices.get(2).getChildElement("child"));
+        assertEquals(null, prices.get(2).getFirstChild("child"));
     }
 
     @Test
     public void test04ParseAndEditElements() throws ParserConfigurationException, SAXException, IOException {
-        MS_XMLFile file = new MS_XMLFile(PATH_TO_XML_FILE);
-        MS_XMLNodeList allFoods = file.getNodesByTagName("food");
+        MS_XMLFile file = file1;
+        MS_XMLElementNodeList allFoods = file.getNodesByTagName("food");
         allFoods.doWithEveryItem((item, ind) -> {
-            MS_XMLNode nameOfFood = item.getChildNode("name");
+            MS_XMLElementNode nameOfFood = item.getFirstChild("name");
             nameOfFood.toElement().setTextContent(FOOD_NAME_LIST.get(allFoods.count() + ind));
             assertEquals(FOOD_NAME_LIST.get(allFoods.count() + ind), nameOfFood.getValue());
         });
 
         //now to check for a new values
-        assertEquals(FOOD_NAME_LIST.get(7), allFoods.get(2).getChildNode("name").getValue());
-        assertEquals(FOOD_NAME_LIST.get(9), allFoods.get(4).getChildNode("name").getValue());
-        //TODO add support to nodes instead of elements. currently node cannot be created if it's a Node not an Element
-        //TODO look for: assertTrue(element.getNodeType() == Node.ELEMENT_NODE);
-        file.getRootNode().getChildNodes().doWithEveryItem((node, index) -> {
-            System.out.println(node);
+        allFoods.doWithEveryItem((node, index) -> {
+//            System.out.println(node);
+            assertEquals(FOOD_NAME_LIST.get(index + 5), node.getFirstChild("name").getValue());
         });
     }
 
     @Test
     public void test05ParseComplicatedXMLFile() throws IOException, ParserConfigurationException, SAXException {
-        MS_XMLFile file = new MS_XMLFile(MS_BinaryTools.readFile(PATH_TO_XML_FILE2));
+        MS_XMLFile file = file2;
 //        System.out.println(file.toString());
         assertEquals("Students", file.getRootElementName());
-        MS_XMLNodeList allTheStudents = file.getNodesByTagName("Student");
-        MS_XMLNode studentMaris = allTheStudents.get(0);
-        MS_XMLNode studentJanis = allTheStudents.get(1);
-        assertEquals("Māris", studentMaris.getChildNode("name").getValue());
-        assertEquals("Jānis", studentJanis.getChildNode("name").getValue());
+        MS_XMLElementNodeList allTheStudents = file.getNodesByTagName("Student");
+        MS_XMLElementNode studentMaris = allTheStudents.get(0);
+        MS_XMLElementNode studentJanis = allTheStudents.get(1);
+        assertEquals("Māris", studentMaris.getFirstChild("name").getValue());
+        assertEquals("Jānis", studentJanis.getFirstChild("name").getValue());
 
-        MS_XMLNode university = studentMaris.getChildNode("university");
+        MS_XMLElementNode university = studentMaris.getFirstChild("university");
         assertEquals("RTU", university.getAttribute("name"));
         assertEquals("university", university.getTagName());
-        assertEquals("DITF", university.getChildNode("faculty").getValue());
+        assertEquals("DITF", university.getFirstChild("faculty").getValue());
 
         //Janis has no university in records because there is only 1 university registered
         assertEquals(1, file.getNodesByTagName("university").size());
-        assertEquals(null, studentJanis.getChildNode("university"));
+        assertEquals(null, studentJanis.getFirstChild("university"));
     }
 
     @Test
     public void test06ParseXMLFileWithOnly1Tag() throws IOException, ParserConfigurationException, SAXException {
-        MS_XMLFile file = new MS_XMLFile(MS_BinaryTools.readFile(PATH_TO_XML_FILE3));
-        assertEquals("", file.getNodesByTagName(file.getRootElementName()).get(0). getValue());
+        assertEquals("", file3.getNodesByTagName(file3.getRootElementName()).get(0).getValue());
+    }
+
+    @Test
+    public void test07NodeIsNotAnElement() throws IOException, ParserConfigurationException, SAXException {
+        MS_XMLElementNode textNode = file1.getRootNode().getAllChildNodes().get(0);
+        assertEquals(MS_XMLElementNode.TEXT_NODE_NAME, textNode.getTagName());
+        assertEquals(0, textNode.getAllChildNodes().length());
+        assertEquals(null, textNode.getFirstChild(""));
+        assertEquals(null, textNode.getChildList(""));
     }
 
     @BeforeClass
-    public static void initTestPreConditions() {
+    public static void initTestPreConditions() throws IOException, ParserConfigurationException, SAXException {
         //create an XML file:
         //view-source:http://www.w3schools.com/xml/simple.xml
         MS_TextFile xmlFile = new MS_TextFile(PATH_TO_XML_FILE);
@@ -223,5 +224,16 @@ public class MSXMLFileTest {
         xmlFile.writeln("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
         xmlFile.writeln("<Universities></Universities>");
         xmlFile.close();
+
+        file1 = new MS_XMLFile(MS_BinaryTools.readFile(PATH_TO_XML_FILE));
+        file2 = new MS_XMLFile(MS_BinaryTools.readFile(PATH_TO_XML_FILE2));
+        file3 = new MS_XMLFile(MS_BinaryTools.readFile(PATH_TO_XML_FILE3));
+    }
+
+    @AfterClass
+    public static void finalizeTestConditions() {
+        deleteFile(PATH_TO_XML_FILE);
+        deleteFile(PATH_TO_XML_FILE2);
+        deleteFile(PATH_TO_XML_FILE3);
     }
 }

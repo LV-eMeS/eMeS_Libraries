@@ -7,7 +7,7 @@ import static org.junit.Assert.assertTrue;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class TestKlasesSagatave {
-//	public static Variable variable = null;
+//	private static Variable variable = null;
 
     @BeforeClass
     //Before even start testing do some preparations!

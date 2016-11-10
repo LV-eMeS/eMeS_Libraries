@@ -16,7 +16,7 @@ import java.io.*;
  *
  * @author eMeS
  * @version 0.4.
- * @see MS_XMLNode
+ * @see MS_XMLElementNode
  */
 //https://www.tutorialspoint.com/java_xml/java_dom_modify_document.htm
 public class MS_XMLFile {
@@ -98,7 +98,7 @@ public class MS_XMLFile {
      *
      * @return root element of XML node.
      */
-    public MS_XMLNode getRootNode() {
+    public MS_XMLElementNode getRootNode() {
         return this.getNodesByTagName(getRootElementName()).get(0);
     }
 
@@ -109,10 +109,10 @@ public class MS_XMLFile {
      * @return list of nodes (element collections).
      * @throws NodesNotFoundException if no node with such tag found in this document.
      */
-    public MS_XMLNodeList getNodesByTagName(String aTag) {
+    public MS_XMLElementNodeList getNodesByTagName(String aTag) {
         NodeList res = doc.getElementsByTagName(aTag);
         if (res.getLength() == 0)
             throw new NodesNotFoundException(aTag);
-        return new MS_XMLNodeList(res, aTag);
+        return new MS_XMLElementNodeList(res, aTag);
     }
 }

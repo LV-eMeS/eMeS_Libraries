@@ -17,7 +17,7 @@ public class MSStringToolsTest {
 	public void test01PrimitiveFunctions() {	
 		//test constants
 		System.out.println("My test message"+MS_StringTools.C_LINE_BRAKE +"is in new line");
-		System.out.println("My test message"+MS_StringTools.C_TAB_SPACE +"is delimited with tab");
+		System.out.println(C_TAB_SPACE + "My test message begins with tab");
 		System.out.println("C_DIACTRITIC_CHAR_COUNT is: "+MS_StringTools.C_DIACTRITIC_CHAR_COUNT);
 		
 		//test genRandomString
@@ -88,7 +88,7 @@ public class MSStringToolsTest {
 		assertEquals("", MS_StringTools.getSubstring("a", 1, 1));
 		assertEquals(MS_StringTools.C_TAB_SPACE, MS_StringTools.getTabSpace(1));
 		assertEquals(MS_StringTools.C_TAB_SPACE + MS_StringTools.C_TAB_SPACE, MS_StringTools.getTabSpace(2));
-		assertEquals(MS_StringTools.C_TAB_SPACE + MS_StringTools.C_TAB_SPACE + MS_StringTools.C_TAB_SPACE, MS_StringTools.getTabSpace(3));
+		assertEquals(MS_StringTools.C_TAB_SPACE + MS_StringTools.C_TAB_SPACE + MS_StringTools.C_TAB_SPACE, getTabSpace(3));
 		assertEquals("", MS_StringTools.getTabSpace(-33));
 		assertEquals("", MS_StringTools.getTabSpace(0));
 		//Apsveicami! Viss ir notestēts! Viss darbojas ^_^
