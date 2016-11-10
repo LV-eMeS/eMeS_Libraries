@@ -1,4 +1,4 @@
-package lv.emes.libraries.file_system.xml;
+package lv.emes.libraries.tools.xml;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;

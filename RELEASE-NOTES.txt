@@ -1,5 +1,5 @@
 eMeS libraries
-Version 1.2.1
+Version 1.2.2
 Release Notes
 
 INTRODUCTION:
@@ -16,7 +16,11 @@ Changes in versions:
 eMeS libraries Version 1.3.0
 ==============================================================================
 * At some point finished XML file parsing tools;
+* XML package moved to tools package;
+* XML Export to JSON.
 * Methods starting with getDirectoryFileList in MS_FileSystemTools;
+* Method showBackgroundApplicationWindow in MS_FileSystemTools to force program window
+  to move to foreground (OS function);
 ==============================================================================
 eMeS libraries Version 1.2.0
 ==============================================================================

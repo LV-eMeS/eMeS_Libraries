@@ -44,4 +44,16 @@ public final class MS_Tools {
 	public static boolean inRange(int aNumber, int aRangeMin, int aRangeMax) {
 		return Math.min(aRangeMin, aRangeMax) <= aNumber && Math.max(aRangeMin, aRangeMax) >= aNumber;
 	}
+
+	/**
+	 * Simply prints object to console output using object's <b>toString</b> method.
+	 * Before <b>toString</b> method a text <code>"-----DEBUG: "+<b>text</b>+" -----"</code> will be printed to easy find this debug text in console window.
+	 *
+	 * @param obj an object with <b>toString</b> method implemented.
+	 */
+	public static void debugObjectConsoleOutput(Object obj, String text) {
+		System.out.println("-----DEBUG: " + text + " -----");
+		System.out.println(obj);
+		System.out.println("-----DEBUG-----");
+	}
 }

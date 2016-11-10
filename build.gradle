@@ -48,6 +48,7 @@ dependencies {
     compile "mysql:mysql-connector-java:5.1.5"
     compile "net.java.dev.jna:jna:4.2.2"
     compile "net.java.dev.jna:jna-platform:4.2.2"
+    compile "org.json:json:20160810"
 //    compile "com.oracle:ojdbc6:11.2.0.3"
 
     //For tests:

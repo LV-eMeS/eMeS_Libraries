@@ -1,7 +1,9 @@
-package lv.emes.libraries.file_system.xml;
+package lv.emes.libraries.tools.xml;
 
 import lv.emes.libraries.file_system.MS_BinaryTools;
 import lv.emes.libraries.file_system.MS_TextFile;
+import org.json.JSONObject;
+import org.json.XML;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
@@ -9,7 +11,9 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Handles existing XML file parsing and editing.
@@ -21,6 +25,7 @@ import java.io.*;
 //https://www.tutorialspoint.com/java_xml/java_dom_modify_document.htm
 public class MS_XMLFile {
     private static final String MESSAGE_FOR_NODES_NOT_FOUND_EXCEPTION = "Cannot find nodes by tag name \"%s\" in this document";
+    private static final String XML_HEADER = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
 
     public static class NodesNotFoundException extends RuntimeException {
         public NodesNotFoundException(String tag) {
@@ -42,6 +47,10 @@ public class MS_XMLFile {
             return MS_TextFile.getFileTextAsString(xmlFilename, "\n");
         else
             return MS_TextFile.getStreamTextAsString(MS_BinaryTools.bytesToIntput(xmlInputAsByteArray));
+    }
+
+    public JSONObject toJSON() {
+        return XML.toJSONObject(toString());
     }
 
     /**

@@ -408,7 +408,21 @@ public class MS_FileSystemTools {
         return res;
     }
 
-    //TODO: rewrite as static methods
-//	  procedure ForceForegroundNoActivate(hWnd : THandle);
-//	  function ForceForegroundWindow(hwnd: THandle): Boolean;
+    /**
+     * Forces application window to move to foreground.
+     * This method uses an OS function.
+     * @param appName name of application that can be found in task manager.
+     */
+    public void showBackgroundApplicationWindow(String appName) {
+        //TODO implementation
+    }
+
+    /**
+     * Forces application window to move to foreground without activating and setting focus to it.
+     * This method uses an OS function.
+     * @param appName name of application that can be found in task manager.
+     */
+    public void showBackgroundApplicationWindowNoActivate(String appName) {
+        //TODO implementation
+    }
 }

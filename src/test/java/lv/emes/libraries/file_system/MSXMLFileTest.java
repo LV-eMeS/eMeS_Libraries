@@ -1,9 +1,11 @@
 package lv.emes.libraries.file_system;
 
-import lv.emes.libraries.file_system.xml.MS_XMLElementNode;
-import lv.emes.libraries.file_system.xml.MS_XMLElementNodeList;
-import lv.emes.libraries.file_system.xml.MS_XMLFile;
 import lv.emes.libraries.tools.lists.MS_StringList;
+import lv.emes.libraries.tools.xml.MS_XMLElementNode;
+import lv.emes.libraries.tools.xml.MS_XMLElementNodeList;
+import lv.emes.libraries.tools.xml.MS_XMLFile;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
@@ -146,6 +148,19 @@ public class MSXMLFileTest {
         assertEquals(0, textNode.getAllChildNodes().length());
         assertEquals(null, textNode.getFirstChild(""));
         assertEquals(null, textNode.getChildList(""));
+    }
+
+    @Test
+    public void test08ExportToJSON() {
+        JSONObject jsonObject = file1.toJSON();
+        assertEquals("breakfast_menu", jsonObject.names().get(0));
+        jsonObject = jsonObject.getJSONObject("breakfast_menu");
+        assertEquals("food", jsonObject.names().get(0));
+        JSONArray jsonArray = jsonObject.getJSONArray("food");
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject json = jsonArray.getJSONObject(i);
+            assertEquals(FOOD_NAME_LIST.get(i), json.get("name"));
+        }
     }
 
     @BeforeClass
