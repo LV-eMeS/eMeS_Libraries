@@ -6,27 +6,27 @@ import java.sql.*;
  * Describes main functions of JDBC database.
  *
  * @author eMeS
- * @version 1.1.
+ * @version 1.2.
  */
 public interface MS_IJDBCDatabase {
     /**
      * Connects to DB using public connection variables.
      *
-     * @throws SQLException           if couldn't connect to DB.
      * @throws ClassNotFoundException if JDBC driver not found.
+     * @throws SQLException if connection fails due to wrong connection parameters or unreachable server.
      */
     public void connect() throws ClassNotFoundException, SQLException;
 
     /**
      * Connects to given DB.
      *
-     * @param hostname "localhost", "http://emesserver.ddns.net", "128.156.244.123", etc.
+     * @param hostname "localhost", "http://hostname.com", "128.156.244.123", etc.
      * @param dbName   if not used, leave null or "", if used - database name.
      * @param port     number of port to DB connection.
      * @param userName DB user name.
      * @param password DB password.
      * @throws ClassNotFoundException if JDBC driver failed to load.
-     * @throws SQLException           if connecting to given DB failed.
+     * @throws SQLException if connection fails due to wrong connection parameters or unreachable server.
      */
     void connect(String hostname, String dbName, int port, String userName, String password) throws ClassNotFoundException, SQLException;
 

@@ -15,7 +15,7 @@ public class MSMySQLDatabaseTest {
 
     @BeforeClass
     //Before even start testing do some preparations!
-    public static void initTestPreConditions() throws Exception {
+    public static void initTestPreConditions() throws SQLException, ClassNotFoundException {
         db.hostname = "emesserver.ddns.net";
         db.dbName = "test";
         db.userName = "test_user";

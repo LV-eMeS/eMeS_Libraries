@@ -27,6 +27,11 @@ task sourcesJar(type: Jar, dependsOn: classes) {
     from sourceSets.main.allSource
 }
 
+task TestsJar(type: Jar, dependsOn: classes) {
+    classifier = 'test'
+    from sourceSets.test.allSource
+}
+
 //task javadocJar(type: Jar, dependsOn: javadoc) {
 //    classifier = 'javadoc'
 //    from javadoc.destinationDir
@@ -34,6 +39,7 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 
 artifacts {
     archives sourcesJar
+    archives TestsJar
 //    archives javadocJar
 }
 

@@ -1,17 +1,11 @@
 package lv.emes.libraries.communication.db;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import org.apache.commons.compress.utils.IOUtils;
+
+import java.io.*;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
-import org.apache.commons.compress.utils.IOUtils;
 
 /** 
  * Implements most common DB connection use cases. <p>
@@ -23,7 +17,7 @@ import org.apache.commons.compress.utils.IOUtils;
  * -commitStatement
  * -setBLOB
  * -getBLOB
- * @version 1.3.
+ * @version 1.4.
  * @author eMeS
  */
 public abstract class MS_JDBCDatabase implements MS_IJDBCDatabase {
@@ -49,15 +43,14 @@ public abstract class MS_JDBCDatabase implements MS_IJDBCDatabase {
 	protected Connection conn;
 	
 	@Override
-	public void connect() throws ClassNotFoundException {
+	public void connect() throws ClassNotFoundException, SQLException {
 		connect(hostname, dbName, port, userName, password);	
 	}
 	@Override
-	public void connect(String hostname, String dbName, int port, String userName, String password) throws ClassNotFoundException {
+	public void connect(String hostname, String dbName, int port, String userName, String password) throws ClassNotFoundException, SQLException {
 		if (dbName == null) 
 			dbName = "";
-		if (! dbName.equals("")) //ja definēts celsh lidz DB, tad tas sekos aiz hostname
-			dbName = "/" + dbName; 
+
 		this.hostname = hostname;
 		this.dbName = dbName;
 		this.port = port;
