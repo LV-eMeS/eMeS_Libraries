@@ -1,5 +1,5 @@
 eMeS libraries
-Version 1.2.2
+Version 1.2.3
 Release Notes
 
 INTRODUCTION:
@@ -21,6 +21,7 @@ eMeS libraries Version 1.3.0
 * Methods starting with getDirectoryFileList in MS_FileSystemTools;
 * Method showBackgroundApplicationWindow in MS_FileSystemTools to force program window
   to move to foreground (OS function);
+* MS_ProbabilityEvent tested.
 ==============================================================================
 eMeS libraries Version 1.2.0
 ==============================================================================

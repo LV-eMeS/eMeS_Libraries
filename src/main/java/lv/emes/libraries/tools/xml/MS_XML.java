@@ -23,7 +23,7 @@ import java.io.InputStream;
  * @see MS_XMLElementNode
  */
 //https://www.tutorialspoint.com/java_xml/java_dom_modify_document.htm
-public class MS_XMLFile {
+public class MS_XML {
     private static final String MESSAGE_FOR_NODES_NOT_FOUND_EXCEPTION = "Cannot find nodes by tag name \"%s\" in this document";
     private static final String XML_HEADER = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
 
@@ -54,14 +54,14 @@ public class MS_XMLFile {
     }
 
     /**
-     * Links MS_XMLFile to a file with name <b>aFileName</b>.
+     * Links MS_XML to a file with name <b>aFileName</b>.
      *
      * @param aFileName name of existing XML file.
      * @throws IOException if an I/O Exception occurs while reading file.
      * @throws ParserConfigurationException if a DocumentBuilder cannot be created which satisfies the configuration requested.
      * @throws SAXException if any parse errors occur.
      */
-    public MS_XMLFile(String aFileName) throws IOException, ParserConfigurationException, SAXException {
+    public MS_XML(String aFileName) throws IOException, ParserConfigurationException, SAXException {
         createdFromLocalFile = true;
         xmlFilename = aFileName;
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -71,15 +71,19 @@ public class MS_XMLFile {
     }
 
     /**
-     * Links MS_XMLFile to a stream of file.
+     * Links MS_XML to a stream of file. Stream can also be resource; in that case it is recommended to load stream in such way:<p>
+     *     <code>MS_XML xml = new MS_XML(MS_FileSystemTools.getResourceInputStream("resource_file.xml"));</code>
      *
      * @param stream a stream of existing XML file to link with.
      * @throws IOException if an I/O Exception occurs while reading stream.
      * @throws ParserConfigurationException if a DocumentBuilder cannot be created which satisfies the configuration requested.
      * @throws SAXException if any parse errors occur.
+     * @throws NullPointerException if given stream is null.
      */
-    public MS_XMLFile(InputStream stream) throws IOException, ParserConfigurationException, SAXException {
+    public MS_XML(InputStream stream) throws IOException, ParserConfigurationException, SAXException {
         //clone input stream for later use
+        if (stream==null)
+            throw new NullPointerException("Stream is null");
         xmlInputAsByteArray = MS_BinaryTools.inputToBytes(stream);
         stream = MS_BinaryTools.bytesToIntput(xmlInputAsByteArray);
         createdFromLocalFile = false;

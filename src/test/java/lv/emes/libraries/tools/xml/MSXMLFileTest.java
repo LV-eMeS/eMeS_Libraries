@@ -1,9 +1,8 @@
-package lv.emes.libraries.file_system;
+package lv.emes.libraries.tools.xml;
 
+import lv.emes.libraries.file_system.MS_BinaryTools;
+import lv.emes.libraries.file_system.MS_TextFile;
 import lv.emes.libraries.tools.lists.MS_StringList;
-import lv.emes.libraries.tools.xml.MS_XMLElementNode;
-import lv.emes.libraries.tools.xml.MS_XMLElementNodeList;
-import lv.emes.libraries.tools.xml.MS_XMLFile;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.AfterClass;
@@ -29,13 +28,13 @@ public class MSXMLFileTest {
     private static final String PATH_TO_XML_FILE2 = getTmpDirectory() + "MSXMLFileTest2.xml";
     private static final String PATH_TO_XML_FILE3 = getTmpDirectory() + "MSXMLFileTest3.xml";
     private static MS_StringList FOOD_NAME_LIST = null;
-    private static MS_XMLFile file1;
-    private static MS_XMLFile file2;
-    private static MS_XMLFile file3;
+    private static MS_XML file1;
+    private static MS_XML file2;
+    private static MS_XML file3;
 
     @Test
     public void test01ParseSimpleXMLFile() throws ParserConfigurationException, SAXException, IOException {
-        MS_XMLFile file = file1;
+        MS_XML file = file1;
         assertEquals("breakfast_menu", file.getRootElementName());
         //everything starting from first <food> tag and ending with very last </food> tag
         //<breakfast_menu><food>...</food><food>...</food></breakfast_menu>
@@ -73,7 +72,7 @@ public class MSXMLFileTest {
 
     @Test
     public void test02DocumentObject() throws ParserConfigurationException, SAXException, IOException {
-        MS_XMLFile file = new MS_XMLFile(PATH_TO_XML_FILE);
+        MS_XML file = new MS_XML(PATH_TO_XML_FILE);
         Document doc = file.getDocument();
         assertEquals("1.0", doc.getXmlVersion());
         assertEquals("UTF-8", doc.getInputEncoding());
@@ -84,11 +83,11 @@ public class MSXMLFileTest {
 
     @Test
     public void test03WrongParsing() throws ParserConfigurationException, SAXException, IOException {
-        MS_XMLFile file = file1;
+        MS_XML file = file1;
         boolean exceptionCaught = false;
         try {
             file.getNodesByTagName("princesses");
-        } catch (MS_XMLFile.NodesNotFoundException e) {
+        } catch (MS_XML.NodesNotFoundException e) {
             exceptionCaught = true;
         }
         assertTrue(exceptionCaught);
@@ -100,7 +99,7 @@ public class MSXMLFileTest {
 
     @Test
     public void test04ParseAndEditElements() throws ParserConfigurationException, SAXException, IOException {
-        MS_XMLFile file = file1;
+        MS_XML file = file1;
         MS_XMLElementNodeList allFoods = file.getNodesByTagName("food");
         allFoods.doWithEveryItem((item, ind) -> {
             MS_XMLElementNode nameOfFood = item.getFirstChild("name");
@@ -117,7 +116,7 @@ public class MSXMLFileTest {
 
     @Test
     public void test05ParseComplicatedXMLFile() throws IOException, ParserConfigurationException, SAXException {
-        MS_XMLFile file = file2;
+        MS_XML file = file2;
 //        System.out.println(file.toString());
         assertEquals("Students", file.getRootElementName());
         MS_XMLElementNodeList allTheStudents = file.getNodesByTagName("Student");
@@ -240,9 +239,9 @@ public class MSXMLFileTest {
         xmlFile.writeln("<Universities></Universities>");
         xmlFile.close();
 
-        file1 = new MS_XMLFile(MS_BinaryTools.readFile(PATH_TO_XML_FILE));
-        file2 = new MS_XMLFile(MS_BinaryTools.readFile(PATH_TO_XML_FILE2));
-        file3 = new MS_XMLFile(MS_BinaryTools.readFile(PATH_TO_XML_FILE3));
+        file1 = new MS_XML(MS_BinaryTools.readFile(PATH_TO_XML_FILE));
+        file2 = new MS_XML(MS_BinaryTools.readFile(PATH_TO_XML_FILE2));
+        file3 = new MS_XML(MS_BinaryTools.readFile(PATH_TO_XML_FILE3));
     }
 
     @AfterClass
