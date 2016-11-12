@@ -16,9 +16,9 @@ Copyright [2016] [Maris Salenieks]
         limitations under the License.
  */
 
-import org.apache.commons.io.FileUtils;
 import lv.emes.libraries.tools.MS_StringTools;
 import lv.emes.libraries.tools.lists.MS_StringList;
+import org.apache.commons.io.FileUtils;
 
 import java.awt.*;
 import java.io.File;
@@ -284,7 +284,7 @@ public class MS_FileSystemTools {
     public static String getFileExtensionWithDot(String aFilename) {
         String inversedFilename = MS_StringTools.getInversedText(aFilename);
         int positionOfDot = MS_StringTools.pos(inversedFilename, ".");
-        String res = MS_StringTools.substring(inversedFilename, 0, positionOfDot+1);
+        String res = MS_StringTools.substring(inversedFilename, 0, positionOfDot + 1);
         res = MS_StringTools.getInversedText(res);
         return res;
     }
@@ -362,6 +362,7 @@ public class MS_FileSystemTools {
     /**
      * Returns 1 level upper parent directory of passed directory.
      * If passed directory was already a root directory then returns empty string.
+     *
      * @param pathToDir current directory path.
      * @return path of directory 1 level up.
      */
@@ -406,23 +407,5 @@ public class MS_FileSystemTools {
             }
         }
         return res;
-    }
-
-    /**
-     * Forces application window to move to foreground.
-     * This method uses an OS function.
-     * @param appName name of application that can be found in task manager.
-     */
-    public void showBackgroundApplicationWindow(String appName) {
-        //TODO implementation
-    }
-
-    /**
-     * Forces application window to move to foreground without activating and setting focus to it.
-     * This method uses an OS function.
-     * @param appName name of application that can be found in task manager.
-     */
-    public void showBackgroundApplicationWindowNoActivate(String appName) {
-        //TODO implementation
     }
 }

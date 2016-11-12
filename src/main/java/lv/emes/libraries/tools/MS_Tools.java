@@ -56,4 +56,26 @@ public final class MS_Tools {
 		System.out.println(obj);
 		System.out.println("-----DEBUG-----");
 	}
+
+	/**
+	 * Delays application activity for some time.
+	 * Method is using Thread.sleep().
+	 * @param miliseconds amount of miliseconds that will delay application.
+	 */
+	public static void sleep(long miliseconds) {
+		try {
+			Thread.sleep(miliseconds);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Delays application activity for some time.
+	 * Method is using Thread.sleep().
+	 * @param miliseconds amount of miliseconds that will delay application.
+	 */
+	public static void pause(long miliseconds) {
+		sleep(miliseconds);
+	}
 }

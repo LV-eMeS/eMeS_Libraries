@@ -13,10 +13,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import static lv.emes.libraries.file_system.MS_FileSystemTools.*;
-import static lv.emes.libraries.file_system.MS_FileSystemTools.getTmpDirectory;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MSFileSystemToolsTest {
