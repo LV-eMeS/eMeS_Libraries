@@ -14,10 +14,11 @@ import static lv.emes.libraries.tools.MS_Tools.inRange;
  * <b>secondDelimiter</b> helps in cases when a symbol equal to <b>delimiter</b> is already used in big string.
  * <br><u>Note</u>: those delimiters shouldn't be changed unless they are often used in text which operated with this list.
  * <br><u>Note</u>: class is in it's final implementation state. If there is need for overriding this, use <b>MS_List</b> instead!
- * @version 2.0.
+ * @version 2.1.
  * @see MS_List
  */
-public final class MS_StringList implements IListActions<String> { 
+public final class MS_StringList implements IListActions<String> {
+	boolean flagForLoopBreaking;
 	public static final char cDefaultDelimiter = '#';
 	public static final char cSecondDefaultDelim = chr(9835);
 	/**
@@ -127,7 +128,17 @@ public final class MS_StringList implements IListActions<String> {
 		else
 			return fList.get(aIndex);
 	}
-	
+
+	@Override
+	public void setBreakDoWithEveryItem(boolean value) {
+		flagForLoopBreaking = value;
+	}
+
+	@Override
+	public boolean getBreakDoWithEveryItem() {
+		return flagForLoopBreaking;
+	}
+
 	public int getAsInteger(int aIndex) {
 		try {
 			return Integer.parseInt(get(aIndex));
@@ -276,9 +287,9 @@ public final class MS_StringList implements IListActions<String> {
 	 * @param aString text that is properly delimited with <b>aDelimiter</b>.
 	 */
 	public void fromString(String aString, char aDelimiter) {		
-		this.delimiter = aDelimiter;	
-		if (aString == null) return; //neko nedarit, ja string nav vertibas
+		this.delimiter = aDelimiter;
 		clear(); //iztuksot sarakstu
+		if (aString == null) return; //neko nedarit, ja string nav vertibas
 		int aStringLen = aString.length();
 		if (aStringLen == 0) return;
 		String el = ""; //teksts, ko saglabasim ka konkreto saraksta elementu

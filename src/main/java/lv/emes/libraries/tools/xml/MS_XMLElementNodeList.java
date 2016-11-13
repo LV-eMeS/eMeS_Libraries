@@ -13,10 +13,11 @@ import org.w3c.dom.NodeList;
  * <p>Setters and getters:
  *
  * @author eMeS
- * @version 1.0.
+ * @version 1.1.
  * @see MS_XMLElementNode
  */
 public class MS_XMLElementNodeList implements IBaseListWithItems<MS_XMLElementNode> {
+    boolean flagForLoopBreaking;
     private static final String MESSAGE_FOR_NODE_NOT_FOUND_EXCEPTION = "Node with index (%d) didn't found in list";
 
     public static class NodeNotFoundException extends RuntimeException {
@@ -68,5 +69,15 @@ public class MS_XMLElementNodeList implements IBaseListWithItems<MS_XMLElementNo
     @Override
     public MS_XMLElementNode get(int aIndex) {
         return getNode(aIndex);
+    }
+
+    @Override
+    public void setBreakDoWithEveryItem(boolean value) {
+        flagForLoopBreaking = value;
+    }
+
+    @Override
+    public boolean getBreakDoWithEveryItem() {
+        return flagForLoopBreaking;
     }
 }

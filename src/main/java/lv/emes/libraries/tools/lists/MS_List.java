@@ -5,10 +5,11 @@ import java.util.ArrayList;
 import static lv.emes.libraries.tools.MS_Tools.inRange;
 /** 
  * Purpose of this class is to make lists of different objects. It's possible to perambulate list using methods from interface <b>IPerambulateListActions</b>.
- * @version 1.1.
+ * @version 1.2.
  * @see IPerambulateListActions
  */
 public class MS_List<T> extends ArrayList<T> implements IPerambulateListActions<T> {
+	boolean flagForLoopBreaking;
 	/**
 	 * Makes it possible to set index for the current element.
 	 */
@@ -34,6 +35,16 @@ public class MS_List<T> extends ArrayList<T> implements IPerambulateListActions<
 	@Override
 	public int count() {
 		return this.size();
+	}
+
+	@Override
+	public void setBreakDoWithEveryItem(boolean value) {
+		flagForLoopBreaking = value;
+	}
+
+	@Override
+	public boolean getBreakDoWithEveryItem() {
+		return flagForLoopBreaking;
 	}
 
 	@Override
