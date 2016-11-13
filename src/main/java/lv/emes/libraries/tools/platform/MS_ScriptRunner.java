@@ -89,7 +89,7 @@ public class MS_ScriptRunner {
     private MS_StringList fCommandList;
     private boolean paused = false;
     private long delay = 0;
-    private boolean primaryCommandReading = false;
+    private boolean primaryCommandReading = true;
     private int secondaryCmd = 0;
     private String pathToLoggerFile = "";
 
@@ -106,7 +106,7 @@ public class MS_ScriptRunner {
 //        shiftState := [];
 //        TextMode := false;
 //        AppMode := false;
-//        if eMeSIsCapsLockToogled then
+//        TODO if eMeSIsCapsLockToogled then
 //        eMeSPressKey('CAPS'); //caps lock mums pilnībā nav vajadzīgs
 
         fCommandList.doWithEveryItem((cmd, index) -> {
@@ -130,7 +130,7 @@ public class MS_ScriptRunner {
                     }
                 }
             } catch (Exception e) {
-                if (! pathToLoggerFile.equals("")) {
+                if (!pathToLoggerFile.equals("")) {
                     //TODO catch errors and write them into logger file
                     //after this loop continues executing next commands
                 }
@@ -166,22 +166,22 @@ public class MS_ScriptRunner {
                 secondaryCmd = CMD_SEC_SET_DELAY_INTERVAL;
                 break;
             case CMD_NR_MOUSE_LEFT:
-
+                MS_KeyStrokeExecutor.getInstance().mouseLeftClick();
                 break;
             case CMD_NR_MOUSE_RIGHT:
-
+                MS_KeyStrokeExecutor.getInstance().mouseRightClick();
                 break;
             case CMD_NR_MOUSE_LEFT_DOWN:
-
+                MS_KeyStrokeExecutor.getInstance().mouseLeftDown();
                 break;
             case CMD_NR_MOUSE_RIGHT_DOWN:
-
+                MS_KeyStrokeExecutor.getInstance().mouseRightDown();
                 break;
             case CMD_NR_MOUSE_LEFT_UP:
-
+                MS_KeyStrokeExecutor.getInstance().mouseLeftUp();
                 break;
             case CMD_NR_MOUSE_RIGHT_UP:
-
+                MS_KeyStrokeExecutor.getInstance().mouseRightUp();
                 break;
             case CMD_NR_MOUSE_SET_COORDINATES:
                 primaryCommandReading = false; //read mouse X;Y

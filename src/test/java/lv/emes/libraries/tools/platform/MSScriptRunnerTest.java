@@ -1,9 +1,8 @@
 package lv.emes.libraries.tools.platform;
 
-import org.junit.*;
+import org.junit.FixMethodOrder;
+import org.junit.Test;
 import org.junit.runners.MethodSorters;
-
-import static org.junit.Assert.assertTrue;
 
 /**
  * @author eMeS
@@ -15,7 +14,8 @@ public class MSScriptRunnerTest {
 
     @Test
     public void test01NameOfTest() {
-        MS_ScriptRunner.runScript("test#omm#;ammm;#di#100d0#a#b#c#pause#50#yo!#1#2#3#4");
-        assertTrue(true);
+//        MS_ScriptRunner.runScript("test#omm#;ammm;#di#100d0#a#b#c#pause#50#yo!#1#2#3#4");
+        //TODO check one more time
+        MS_ScriptRunner.runScript("di#5000#ml#mr#mld#pause#mlu");
     }
 }
