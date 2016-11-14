@@ -1,7 +1,12 @@
 package lv.emes.libraries.tools;
 
+import java.awt.event.KeyEvent;
 import java.util.HashMap;
 import java.util.Map;
+
+import static java.awt.event.KeyEvent.VK_BACK_SLASH;
+import static java.awt.event.KeyEvent.VK_CLOSE_BRACKET;
+import static java.awt.event.KeyEvent.VK_EQUALS;
 
 /**
  * Holds mapping for system keystroke codes to be translated from String to int type.
@@ -144,8 +149,8 @@ public class MS_KeyCodeDictionary {
             keyCodeDict.put("NUM_LOCK", 144);
             keyCodeDict.put("NUMLOCK", 144);
             //in the same manner fill printable char codes
-            keyCodeDict.put("|", 220);
-            keyCodeDict.put("\\", 220);
+            keyCodeDict.put("|", VK_BACK_SLASH);
+            keyCodeDict.put("\\", VK_BACK_SLASH);
             keyCodeDict.put("`", 192);
             keyCodeDict.put("~", 192);
             keyCodeDict.put("!", 49);
@@ -160,14 +165,14 @@ public class MS_KeyCodeDictionary {
             keyCodeDict.put(")", 48);
             keyCodeDict.put("-", 189);
             keyCodeDict.put("_", 189);
-            keyCodeDict.put("+", 187);
-            keyCodeDict.put("=", 187);
-            keyCodeDict.put("[", 219);
-            keyCodeDict.put("{", 219);
-            keyCodeDict.put("]", 221);
-            keyCodeDict.put("}", 221);
-            keyCodeDict.put(":", 186);
-            keyCodeDict.put(";", 186);
+            keyCodeDict.put("+", VK_EQUALS);
+            keyCodeDict.put("=", VK_EQUALS);
+            keyCodeDict.put("[", KeyEvent.VK_OPEN_BRACKET);
+            keyCodeDict.put("{", KeyEvent.VK_OPEN_BRACKET);
+            keyCodeDict.put("]", VK_CLOSE_BRACKET);
+            keyCodeDict.put("}", VK_CLOSE_BRACKET);
+            keyCodeDict.put(":", KeyEvent.VK_SEMICOLON);
+            keyCodeDict.put(";", KeyEvent.VK_SEMICOLON);
             keyCodeDict.put("\"", 222);
             keyCodeDict.put("'", 222);
             keyCodeDict.put(",", 188);

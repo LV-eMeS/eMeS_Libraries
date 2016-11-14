@@ -5,7 +5,7 @@ import java.util.Random;
 
 /** 
  * Module is designed to combine different common programming actions.
- * @version 1.4.
+ * @version 1.5.
  */
 public final class MS_Tools {
 	/**
@@ -77,5 +77,14 @@ public final class MS_Tools {
 	 */
 	public static void pause(long miliseconds) {
 		sleep(miliseconds);
+	}
+
+	/**
+	 * Simply returns opposite value of given boolean variable <b>bool</b>.
+	 * @param bool a boolean which we have to inverse.
+	 * @return boolean with opposite value of passed boolean.
+	 */
+	public static Boolean inverseBoolean(Boolean bool) {
+		return ! bool;
 	}
 }

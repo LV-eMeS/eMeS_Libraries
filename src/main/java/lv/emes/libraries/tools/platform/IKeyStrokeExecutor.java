@@ -20,7 +20,7 @@ import java.awt.Point;
  * -mouseSetCoords
  * -mouseMove
  * -mouseWheel
- * @version 1.0.
+ * @version 1.1.
  * @author eMeS
  */
 public interface IKeyStrokeExecutor {
@@ -81,11 +81,16 @@ public interface IKeyStrokeExecutor {
 	 * Release mouse right click.
 	 */
 	public void mouseRightUp();
-	
+
 	/**
 	 * Do mouse right click and release it immediately.
 	 */
 	public void mouseRightClick();
+
+	/**
+	 * Do mouse wheel click and release it immediately.
+	 */
+	public void mouseWheelClick();
 	
 	/**
 	 * Sets mouse pointer to a specific coordinates on the screen (be aware of user's screen resolution!).

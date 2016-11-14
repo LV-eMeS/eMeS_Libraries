@@ -105,6 +105,7 @@ public class MS_KeyStrokeExecutor implements IKeyStrokeExecutor {
 	@Override
 	public void mouseLeftDown() {
 		robot.mousePress(InputEvent.BUTTON1_MASK);
+//		robot.delay(1000);
 	}
 
 	@Override
@@ -120,18 +121,25 @@ public class MS_KeyStrokeExecutor implements IKeyStrokeExecutor {
 
 	@Override
 	public void mouseRightDown() {
-		robot.mousePress(InputEvent.BUTTON2_MASK);
+		robot.mousePress(InputEvent.BUTTON3_MASK);
+//		robot.delay(1000);
 	}
 
 	@Override
 	public void mouseRightUp() {
-		robot.mouseRelease(InputEvent.BUTTON2_MASK);
+		robot.mouseRelease(InputEvent.BUTTON3_MASK);
 	}
 
 	@Override
 	public void mouseRightClick() {
 		mouseRightDown();
 		mouseRightUp();
+	}
+
+	@Override
+	public void mouseWheelClick() {
+		robot.mousePress(InputEvent.BUTTON2_MASK);
+		robot.mouseRelease(InputEvent.BUTTON2_MASK);
 	}
 
 	@Override

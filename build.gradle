@@ -1,5 +1,5 @@
 ext {
-    projectVersion = "v1.2.1"
+    projectVersion = "v1.2.3"
 }
 
 apply plugin: 'java'
@@ -60,4 +60,20 @@ dependencies {
     //For tests:
     compile "junit:junit:4.12"
     testCompile "junit:junit:4.12"
+}
+
+//----------------------------------------------------------------------------------------------------------------------
+//Things to create runnable JARs
+apply plugin: 'gradle-one-jar'
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.github.rholder:gradle-one-jar:1.0.4'
+    }
+}
+task jarExecutableLibraries(type: OneJar) {
+    mainClass = 'lv.emes.libraries.examples.MSScriptRunnerExample'
+    archiveName = "eMeS_Libraries-"+projectVersion+".jar"
 }
