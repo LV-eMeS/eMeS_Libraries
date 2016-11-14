@@ -125,7 +125,7 @@ public class MSKeyCodeDictionaryTest {
         assertEquals(48, MS_KeyCodeDictionary.textToKeyCode("0"));
 
         assertEquals(32, MS_KeyCodeDictionary.textToKeyCode(" "));
-        assertEquals(220, MS_KeyCodeDictionary.textToKeyCode("|"));
+        assertEquals(220, MS_KeyCodeDictionary.textToKeyCode("|")); //todo CORRECT THIS ONE!
         assertEquals(220, MS_KeyCodeDictionary.textToKeyCode("\\"));
         assertEquals(192, MS_KeyCodeDictionary.textToKeyCode("~"));
         assertEquals(192, MS_KeyCodeDictionary.textToKeyCode("`"));

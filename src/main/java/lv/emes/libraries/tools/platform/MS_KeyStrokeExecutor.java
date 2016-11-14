@@ -5,6 +5,7 @@ import com.sun.jna.platform.KeyboardUtils;
 import java.awt.*;
 import java.awt.event.InputEvent;
 
+import static java.awt.event.KeyEvent.VK_CAPS_LOCK;
 import static lv.emes.libraries.tools.MS_KeyCodeDictionary.textToKeyCode;
 
 /** 
@@ -99,7 +100,7 @@ public class MS_KeyStrokeExecutor implements IKeyStrokeExecutor {
 	@Override
 	public boolean isCapsLockToggled() {
 		//todo System.out.println(Platform.getOSType());
-		return KeyboardUtils.isPressed(20);
+		return KeyboardUtils.isPressed(VK_CAPS_LOCK);
 	}
 
 	@Override

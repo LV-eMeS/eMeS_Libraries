@@ -1,6 +1,7 @@
 package lv.emes.libraries.tools.platform;
 
 import lv.emes.libraries.file_system.MS_FileSystemTools;
+import lv.emes.libraries.tools.MS_KeyCodeDictionary;
 import lv.emes.libraries.tools.MS_Tools;
 import lv.emes.libraries.tools.lists.MS_StringList;
 import lv.emes.libraries.tools.platform.windows.ApplicationWindow;
@@ -271,7 +272,14 @@ public class MS_ScriptRunner {
             case CMD_SEC_EXECUTE_TEXT:
                 MS_KeyStrokeExecutor exec = getInstance();
                 for (int i = 0; i < commandText.length(); i++) {
-                    exec.keyPress(Character.toString(commandText.charAt(i)));
+                    char singleCharOfText = commandText.charAt(i);
+                    boolean doShiftPress = MS_KeyCodeDictionary.needToPushShiftToWriteChar(singleCharOfText);
+                    if (doShiftPress)
+                        getInstance().keyDown("SHIFT");
+                    String key = Character.toString(singleCharOfText);
+                    exec.keyPress(key);
+                    if (doShiftPress)
+                        getInstance().keyUp("SHIFT");
                 }
                 break;
             case CMD_SEC_RUN_APPLICATION:

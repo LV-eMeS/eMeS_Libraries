@@ -1,12 +1,9 @@
 package lv.emes.libraries.tools;
 
-import java.awt.event.KeyEvent;
 import java.util.HashMap;
 import java.util.Map;
 
-import static java.awt.event.KeyEvent.VK_BACK_SLASH;
-import static java.awt.event.KeyEvent.VK_CLOSE_BRACKET;
-import static java.awt.event.KeyEvent.VK_EQUALS;
+import static java.awt.event.KeyEvent.*;
 
 /**
  * Holds mapping for system keystroke codes to be translated from String to int type.
@@ -79,45 +76,45 @@ public class MS_KeyCodeDictionary {
         if (keyCodeDict == null) { //if mappings not initialized then fill both char and string mappers
             keyCodeDict = new HashMap<>();
 
-            keyCodeDict.put("CTRL", 17);
-            keyCodeDict.put("CONTROL", 17);
-            keyCodeDict.put("ALT", 18);
-            keyCodeDict.put("SHIFT", 16);
+            keyCodeDict.put("CTRL", VK_CONTROL);
+            keyCodeDict.put("CONTROL", VK_CONTROL);
+            keyCodeDict.put("ALT", VK_ALT);
+            keyCodeDict.put("SHIFT", VK_SHIFT);
 
-            keyCodeDict.put("DEL", 46);
-            keyCodeDict.put("DELETE", 46);
+            keyCodeDict.put("DEL", VK_DELETE);
+            keyCodeDict.put("DELETE", VK_DELETE);
 
-            keyCodeDict.put("INS", 45);
-            keyCodeDict.put("INSERT", 45);
+            keyCodeDict.put("INS", VK_INSERT);
+            keyCodeDict.put("INSERT", VK_INSERT);
 
-            keyCodeDict.put("HOME", 36);
-            keyCodeDict.put("END", 35);
-            keyCodeDict.put("PGUP", 33);
-            keyCodeDict.put("PG_UP", 33);
-            keyCodeDict.put("PAGE_UP", 33);
-            keyCodeDict.put("PAGEUP", 33);
-            keyCodeDict.put("PGDOWN", 34);
-            keyCodeDict.put("PG_DOWN", 34);
-            keyCodeDict.put("PAGE_DOWN", 34);
-            keyCodeDict.put("PAGEDOWN", 34);
+            keyCodeDict.put("HOME", VK_HOME);
+            keyCodeDict.put("END", VK_END);
+            keyCodeDict.put("PGUP", VK_PAGE_UP);
+            keyCodeDict.put("PG_UP", VK_PAGE_UP);
+            keyCodeDict.put("PAGE_UP", VK_PAGE_UP);
+            keyCodeDict.put("PAGEUP", VK_PAGE_UP);
+            keyCodeDict.put("PGDOWN", VK_PAGE_DOWN);
+            keyCodeDict.put("PG_DOWN", VK_PAGE_DOWN);
+            keyCodeDict.put("PAGE_DOWN", VK_PAGE_DOWN);
+            keyCodeDict.put("PAGEDOWN", VK_PAGE_DOWN);
 
             keyCodeDict.put("SPACE", 32);
 
-            keyCodeDict.put("ESC", 27);
-            keyCodeDict.put("ESCAPE", 27);
+            keyCodeDict.put("ESC", VK_ESCAPE);
+            keyCodeDict.put("ESCAPE", VK_ESCAPE);
 
-            keyCodeDict.put("ENT", 13);
-            keyCodeDict.put("ENTER", 13);
+            keyCodeDict.put("ENT", VK_ENTER);
+            keyCodeDict.put("ENTER", VK_ENTER);
 
-            keyCodeDict.put("BACK", 8);
-            keyCodeDict.put("BCK", 8);
-            keyCodeDict.put("BACKSPACE", 8);
-            keyCodeDict.put("BCKS", 8);
+            keyCodeDict.put("BACK", VK_BACK_SPACE);
+            keyCodeDict.put("BCK", VK_BACK_SPACE);
+            keyCodeDict.put("BACKSPACE", VK_BACK_SPACE);
+            keyCodeDict.put("BCKS", VK_BACK_SPACE);
 
-            keyCodeDict.put("TAB", 9);
-            keyCodeDict.put("CAPS", 20);
-            keyCodeDict.put("CAPSLOCK", 20);
-            keyCodeDict.put("CAPS_LOCK", 20);
+            keyCodeDict.put("TAB", VK_TAB);
+            keyCodeDict.put("CAPS", VK_CAPS_LOCK);
+            keyCodeDict.put("CAPSLOCK", VK_CAPS_LOCK);
+            keyCodeDict.put("CAPS_LOCK", VK_CAPS_LOCK);
 
             keyCodeDict.put("F1", 112);
             keyCodeDict.put("F2", 113);
@@ -132,14 +129,14 @@ public class MS_KeyCodeDictionary {
             keyCodeDict.put("F11", 122);
             keyCodeDict.put("F12", 123);
 
-            keyCodeDict.put("MENU", 93);
-            keyCodeDict.put("RIGHT_MCLICK", 93);
+            keyCodeDict.put("MENU", VK_CONTEXT_MENU);
+            keyCodeDict.put("RIGHT_MCLICK", VK_CONTEXT_MENU);
 
-            keyCodeDict.put("WIN", 91); //91 un 92 are Windows buttons, so doesn't matter, which one will be used here
-            keyCodeDict.put("WINDOWS", 91);
+            keyCodeDict.put("WIN", VK_WINDOWS); //91 un 92 are Windows buttons, so doesn't matter, which one will be used here
+            keyCodeDict.put("WINDOWS", VK_WINDOWS);
 
-            keyCodeDict.put("BACKSLASH", 220);
-            keyCodeDict.put("SLASH", 191);
+            keyCodeDict.put("BACKSLASH", VK_BACK_SLASH);
+            keyCodeDict.put("SLASH", VK_SLASH);
 
             keyCodeDict.put("LEFT", 37);
             keyCodeDict.put("UP", 38);
@@ -151,8 +148,8 @@ public class MS_KeyCodeDictionary {
             //in the same manner fill printable char codes
             keyCodeDict.put("|", VK_BACK_SLASH);
             keyCodeDict.put("\\", VK_BACK_SLASH);
-            keyCodeDict.put("`", 192);
-            keyCodeDict.put("~", 192);
+            keyCodeDict.put("`", VK_BACK_QUOTE);
+            keyCodeDict.put("~", VK_BACK_QUOTE);
             keyCodeDict.put("!", 49);
             keyCodeDict.put("@", 50);
             keyCodeDict.put("#", 51);
@@ -163,25 +160,29 @@ public class MS_KeyCodeDictionary {
             keyCodeDict.put("*", 56);
             keyCodeDict.put("(", 57);
             keyCodeDict.put(")", 48);
-            keyCodeDict.put("-", 189);
-            keyCodeDict.put("_", 189);
+            keyCodeDict.put("-", VK_MINUS);
+            keyCodeDict.put("_", VK_MINUS);
             keyCodeDict.put("+", VK_EQUALS);
             keyCodeDict.put("=", VK_EQUALS);
-            keyCodeDict.put("[", KeyEvent.VK_OPEN_BRACKET);
-            keyCodeDict.put("{", KeyEvent.VK_OPEN_BRACKET);
+            keyCodeDict.put("[", VK_OPEN_BRACKET);
+            keyCodeDict.put("{", VK_OPEN_BRACKET);
             keyCodeDict.put("]", VK_CLOSE_BRACKET);
             keyCodeDict.put("}", VK_CLOSE_BRACKET);
-            keyCodeDict.put(":", KeyEvent.VK_SEMICOLON);
-            keyCodeDict.put(";", KeyEvent.VK_SEMICOLON);
+            keyCodeDict.put(":", VK_SEMICOLON);
+            keyCodeDict.put(";", VK_SEMICOLON);
             keyCodeDict.put("\"", 222);
             keyCodeDict.put("'", 222);
-            keyCodeDict.put(",", 188);
-            keyCodeDict.put("<", 188);
-            keyCodeDict.put(".", 190);
-            keyCodeDict.put(">", 190);
-            keyCodeDict.put("/", 191);
-            keyCodeDict.put("?", 191);
+            keyCodeDict.put(",", VK_COMMA);
+            keyCodeDict.put("<", VK_COMMA);
+            keyCodeDict.put(".", VK_PERIOD);
+            keyCodeDict.put(">", VK_PERIOD);
+            keyCodeDict.put("/", VK_SLASH);
+            keyCodeDict.put("?", VK_SLASH);
             keyCodeDict.put(" ", 32);
+            keyCodeDict.put("VK_PRINTSCREEN", VK_PRINTSCREEN);
+            keyCodeDict.put("PRINT_SCREEN", VK_PRINTSCREEN);
+            keyCodeDict.put("PRINTSCREEN", VK_PRINTSCREEN);
+            keyCodeDict.put("TEST", VK_QUOTEDBL);
         }
     }
 }
