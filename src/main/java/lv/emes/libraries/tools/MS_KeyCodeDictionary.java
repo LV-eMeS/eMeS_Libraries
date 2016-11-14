@@ -129,6 +129,17 @@ public class MS_KeyCodeDictionary {
             keyCodeDict.put("F11", 122);
             keyCodeDict.put("F12", 123);
 
+            keyCodeDict.put("NUM0", VK_NUMPAD0);
+            keyCodeDict.put("NUM1", VK_NUMPAD1);
+            keyCodeDict.put("NUM2", VK_NUMPAD2);
+            keyCodeDict.put("NUM3", VK_NUMPAD3);
+            keyCodeDict.put("NUM4", VK_NUMPAD4);
+            keyCodeDict.put("NUM5", VK_NUMPAD5);
+            keyCodeDict.put("NUM6", VK_NUMPAD6);
+            keyCodeDict.put("NUM7", VK_NUMPAD7);
+            keyCodeDict.put("NUM8", VK_NUMPAD8);
+            keyCodeDict.put("NUM9", VK_NUMPAD9);
+
             keyCodeDict.put("MENU", VK_CONTEXT_MENU);
             keyCodeDict.put("RIGHT_MCLICK", VK_CONTEXT_MENU);
 
@@ -170,8 +181,8 @@ public class MS_KeyCodeDictionary {
             keyCodeDict.put("}", VK_CLOSE_BRACKET);
             keyCodeDict.put(":", VK_SEMICOLON);
             keyCodeDict.put(";", VK_SEMICOLON);
-            keyCodeDict.put("\"", 222);
-            keyCodeDict.put("'", 222);
+            keyCodeDict.put("\"", VK_QUOTEDBL); //222 TODO currently doesn't work
+            keyCodeDict.put("'", VK_QUOTE); //222
             keyCodeDict.put(",", VK_COMMA);
             keyCodeDict.put("<", VK_COMMA);
             keyCodeDict.put(".", VK_PERIOD);
@@ -182,7 +193,7 @@ public class MS_KeyCodeDictionary {
             keyCodeDict.put("VK_PRINTSCREEN", VK_PRINTSCREEN);
             keyCodeDict.put("PRINT_SCREEN", VK_PRINTSCREEN);
             keyCodeDict.put("PRINTSCREEN", VK_PRINTSCREEN);
-            keyCodeDict.put("TEST", VK_QUOTEDBL);
+            keyCodeDict.put("TEST", VK_ASTERISK);
         }
     }
 }

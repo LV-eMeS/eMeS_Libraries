@@ -4,6 +4,7 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
+import static java.awt.event.KeyEvent.*;
 import static org.junit.Assert.*;
 
 /**
@@ -125,8 +126,8 @@ public class MSKeyCodeDictionaryTest {
         assertEquals(48, MS_KeyCodeDictionary.textToKeyCode("0"));
 
         assertEquals(32, MS_KeyCodeDictionary.textToKeyCode(" "));
-        assertEquals(220, MS_KeyCodeDictionary.textToKeyCode("|")); //todo CORRECT THIS ONE!
-        assertEquals(220, MS_KeyCodeDictionary.textToKeyCode("\\"));
+        assertEquals(VK_BACK_SLASH, MS_KeyCodeDictionary.textToKeyCode("|")); //todo CORRECT THIS ONE!
+        assertEquals(VK_BACK_SLASH, MS_KeyCodeDictionary.textToKeyCode("\\"));
         assertEquals(192, MS_KeyCodeDictionary.textToKeyCode("~"));
         assertEquals(192, MS_KeyCodeDictionary.textToKeyCode("`"));
         assertEquals(49, MS_KeyCodeDictionary.textToKeyCode("!"));
@@ -139,59 +140,59 @@ public class MSKeyCodeDictionaryTest {
         assertEquals(56, MS_KeyCodeDictionary.textToKeyCode("*"));
         assertEquals(57, MS_KeyCodeDictionary.textToKeyCode("("));
         assertEquals(48, MS_KeyCodeDictionary.textToKeyCode(")"));
-        assertEquals(189, MS_KeyCodeDictionary.textToKeyCode("-"));
-        assertEquals(189, MS_KeyCodeDictionary.textToKeyCode("_"));
-        assertEquals(187, MS_KeyCodeDictionary.textToKeyCode("+"));
-        assertEquals(187, MS_KeyCodeDictionary.textToKeyCode("="));
-        assertEquals(219, MS_KeyCodeDictionary.textToKeyCode("["));
-        assertEquals(219, MS_KeyCodeDictionary.textToKeyCode("{"));
-        assertEquals(221, MS_KeyCodeDictionary.textToKeyCode("]"));
-        assertEquals(221, MS_KeyCodeDictionary.textToKeyCode("}"));
-        assertEquals(186, MS_KeyCodeDictionary.textToKeyCode(":"));
-        assertEquals(186, MS_KeyCodeDictionary.textToKeyCode(";"));
+        assertEquals(VK_MINUS, MS_KeyCodeDictionary.textToKeyCode("-"));
+        assertEquals(VK_MINUS, MS_KeyCodeDictionary.textToKeyCode("_"));
+        assertEquals(VK_EQUALS, MS_KeyCodeDictionary.textToKeyCode("+"));
+        assertEquals(VK_EQUALS, MS_KeyCodeDictionary.textToKeyCode("="));
+        assertEquals(VK_OPEN_BRACKET, MS_KeyCodeDictionary.textToKeyCode("["));
+        assertEquals(VK_OPEN_BRACKET, MS_KeyCodeDictionary.textToKeyCode("{"));
+        assertEquals(VK_CLOSE_BRACKET, MS_KeyCodeDictionary.textToKeyCode("]"));
+        assertEquals(VK_CLOSE_BRACKET, MS_KeyCodeDictionary.textToKeyCode("}"));
+        assertEquals(VK_SEMICOLON, MS_KeyCodeDictionary.textToKeyCode(":"));
+        assertEquals(VK_SEMICOLON, MS_KeyCodeDictionary.textToKeyCode(";"));
         assertEquals(222, MS_KeyCodeDictionary.textToKeyCode("\""));
         assertEquals(222, MS_KeyCodeDictionary.textToKeyCode("'"));
-        assertEquals(188, MS_KeyCodeDictionary.textToKeyCode(","));
-        assertEquals(188, MS_KeyCodeDictionary.textToKeyCode("<"));
-        assertEquals(190, MS_KeyCodeDictionary.textToKeyCode(">"));
-        assertEquals(190, MS_KeyCodeDictionary.textToKeyCode("."));
-        assertEquals(191, MS_KeyCodeDictionary.textToKeyCode("/"));
-        assertEquals(191, MS_KeyCodeDictionary.textToKeyCode("?"));
+        assertEquals(VK_COMMA, MS_KeyCodeDictionary.textToKeyCode(","));
+        assertEquals(VK_COMMA, MS_KeyCodeDictionary.textToKeyCode("<"));
+        assertEquals(VK_PERIOD, MS_KeyCodeDictionary.textToKeyCode(">"));
+        assertEquals(VK_PERIOD, MS_KeyCodeDictionary.textToKeyCode("."));
+        assertEquals(VK_SLASH, MS_KeyCodeDictionary.textToKeyCode("/"));
+        assertEquals(VK_SLASH, MS_KeyCodeDictionary.textToKeyCode("?"));
     }
 
     @Test
     public void test02OtherKeys() {
-        assertEquals(MS_KeyCodeDictionary.textToKeyCode("Ctrl"), 17);
-        assertEquals(MS_KeyCodeDictionary.textToKeyCode("CTRL"), 17);
-        assertEquals(MS_KeyCodeDictionary.textToKeyCode("ALT"), 18);
-        assertEquals(MS_KeyCodeDictionary.textToKeyCode("SHIFT"), 16);
-        assertEquals(MS_KeyCodeDictionary.textToKeyCode("DEL"), 46);
-        assertEquals(MS_KeyCodeDictionary.textToKeyCode("DELETE"), 46);
-        assertEquals(MS_KeyCodeDictionary.textToKeyCode("INS"), 45);
-        assertEquals(MS_KeyCodeDictionary.textToKeyCode("INSERT"), 45);
-        assertEquals(MS_KeyCodeDictionary.textToKeyCode("HOME"), 36);
-        assertEquals(MS_KeyCodeDictionary.textToKeyCode("END"), 35);
-        assertEquals(MS_KeyCodeDictionary.textToKeyCode("PGUP"), 33);
-        assertEquals(MS_KeyCodeDictionary.textToKeyCode("PAGEUP"), 33);
-        assertEquals(MS_KeyCodeDictionary.textToKeyCode("PG_UP"), 33);
-        assertEquals(MS_KeyCodeDictionary.textToKeyCode("PAGE_UP"), 33);
-        assertEquals(MS_KeyCodeDictionary.textToKeyCode("PGDOWN"), 34);
-        assertEquals(MS_KeyCodeDictionary.textToKeyCode("PG_DOWN"), 34);
-        assertEquals(MS_KeyCodeDictionary.textToKeyCode("Page_DOWN"), 34);
-        assertEquals(MS_KeyCodeDictionary.textToKeyCode("PAGEDOWN"), 34);
+        assertEquals(VK_CONTROL, MS_KeyCodeDictionary.textToKeyCode("Ctrl"));
+        assertEquals(VK_CONTROL, MS_KeyCodeDictionary.textToKeyCode("CTRL"));
+        assertEquals(VK_ALT, MS_KeyCodeDictionary.textToKeyCode("ALT"));
+        assertEquals(VK_SHIFT, MS_KeyCodeDictionary.textToKeyCode("SHIFT"));
+        assertEquals(VK_DELETE, MS_KeyCodeDictionary.textToKeyCode("DEL"));
+        assertEquals(VK_DELETE, MS_KeyCodeDictionary.textToKeyCode("DELETE"));
+        assertEquals(VK_INSERT, MS_KeyCodeDictionary.textToKeyCode("INS"));
+        assertEquals(VK_INSERT, MS_KeyCodeDictionary.textToKeyCode("INSERT"));
+        assertEquals(VK_HOME, MS_KeyCodeDictionary.textToKeyCode("HOME"));
+        assertEquals(VK_END, MS_KeyCodeDictionary.textToKeyCode("END"));
+        assertEquals(VK_PAGE_UP, MS_KeyCodeDictionary.textToKeyCode("PGUP"));
+        assertEquals(VK_PAGE_UP, MS_KeyCodeDictionary.textToKeyCode("PAGEUP"));
+        assertEquals(VK_PAGE_UP, MS_KeyCodeDictionary.textToKeyCode("PG_UP"));
+        assertEquals(VK_PAGE_UP, MS_KeyCodeDictionary.textToKeyCode("PAGE_UP"));
+        assertEquals(VK_PAGE_DOWN, MS_KeyCodeDictionary.textToKeyCode("PGDOWN"));
+        assertEquals(VK_PAGE_DOWN, MS_KeyCodeDictionary.textToKeyCode("PG_DOWN"));
+        assertEquals(VK_PAGE_DOWN, MS_KeyCodeDictionary.textToKeyCode("Page_DOWN"));
+        assertEquals(VK_PAGE_DOWN, MS_KeyCodeDictionary.textToKeyCode("PAGEDOWN"));
         assertEquals(MS_KeyCodeDictionary.textToKeyCode("SPACE"), 32);
-        assertEquals(MS_KeyCodeDictionary.textToKeyCode("ESC"), 27);
-        assertEquals(MS_KeyCodeDictionary.textToKeyCode("ESCAPE"), 27);
-        assertEquals(MS_KeyCodeDictionary.textToKeyCode("ENT"), 13);
-        assertEquals(MS_KeyCodeDictionary.textToKeyCode("ENTER"), 13);
-        assertEquals(MS_KeyCodeDictionary.textToKeyCode("BACK"), 8);
-        assertEquals(MS_KeyCodeDictionary.textToKeyCode("BCK"), 8);
-        assertEquals(MS_KeyCodeDictionary.textToKeyCode("BACKSPACE"), 8);
-        assertEquals(MS_KeyCodeDictionary.textToKeyCode("BCKS"), 8);
-        assertEquals(MS_KeyCodeDictionary.textToKeyCode("TAB"), 9);
-        assertEquals(MS_KeyCodeDictionary.textToKeyCode("CAPS"), 20);
-        assertEquals(MS_KeyCodeDictionary.textToKeyCode("CAPSLOCK"), 20);
-        assertEquals(MS_KeyCodeDictionary.textToKeyCode("CAPS_LOCK"), 20);
+        assertEquals(VK_ESCAPE, MS_KeyCodeDictionary.textToKeyCode("ESC"));
+        assertEquals(VK_ESCAPE, MS_KeyCodeDictionary.textToKeyCode("ESCAPE"));
+        assertEquals(VK_ENTER, MS_KeyCodeDictionary.textToKeyCode("ENT"));
+        assertEquals(VK_ENTER, MS_KeyCodeDictionary.textToKeyCode("ENTER"));
+        assertEquals(VK_BACK_SPACE, MS_KeyCodeDictionary.textToKeyCode("BACK"));
+        assertEquals(VK_BACK_SPACE, MS_KeyCodeDictionary.textToKeyCode("BCK"));
+        assertEquals(VK_BACK_SPACE, MS_KeyCodeDictionary.textToKeyCode("BACKSPACE"));
+        assertEquals(VK_BACK_SPACE, MS_KeyCodeDictionary.textToKeyCode("BCKS"));
+        assertEquals(VK_TAB, MS_KeyCodeDictionary.textToKeyCode("TAB"));
+        assertEquals(VK_CAPS_LOCK, MS_KeyCodeDictionary.textToKeyCode("CAPS"));
+        assertEquals(VK_CAPS_LOCK, MS_KeyCodeDictionary.textToKeyCode("CAPSLOCK"));
+        assertEquals(VK_CAPS_LOCK, MS_KeyCodeDictionary.textToKeyCode("CAPS_LOCK"));
 
         assertEquals(MS_KeyCodeDictionary.textToKeyCode("F1"), 112);
         assertEquals(MS_KeyCodeDictionary.textToKeyCode("F2"), 113);
@@ -206,13 +207,13 @@ public class MSKeyCodeDictionaryTest {
         assertEquals(MS_KeyCodeDictionary.textToKeyCode("F11"), 122);
         assertEquals(MS_KeyCodeDictionary.textToKeyCode("F12"), 123);
 
-        assertEquals(MS_KeyCodeDictionary.textToKeyCode("MENU"), 93);
-        assertEquals(MS_KeyCodeDictionary.textToKeyCode("RIGHT_MCLICK"), 93);
-        assertEquals(MS_KeyCodeDictionary.textToKeyCode("WIN"), 91);
-        assertEquals(MS_KeyCodeDictionary.textToKeyCode("WINDOWS"), 91);
+        assertEquals(VK_CONTEXT_MENU, MS_KeyCodeDictionary.textToKeyCode("MENU"));
+        assertEquals(VK_CONTEXT_MENU, MS_KeyCodeDictionary.textToKeyCode("RIGHT_MCLICK"));
+        assertEquals(VK_WINDOWS, MS_KeyCodeDictionary.textToKeyCode("WIN"));
+        assertEquals(VK_WINDOWS, MS_KeyCodeDictionary.textToKeyCode("WINDOWS"));
 
-        assertEquals(MS_KeyCodeDictionary.textToKeyCode("BACKSLASH"), 220);
-        assertEquals(MS_KeyCodeDictionary.textToKeyCode("SLASH"), 191);
+        assertEquals(VK_BACK_SLASH, MS_KeyCodeDictionary.textToKeyCode("BACKSLASH"));
+        assertEquals(VK_SLASH, MS_KeyCodeDictionary.textToKeyCode("SLASH"));
         assertEquals(MS_KeyCodeDictionary.textToKeyCode("LEFT"), 37);
         assertEquals(MS_KeyCodeDictionary.textToKeyCode("UP"), 38);
         assertEquals(MS_KeyCodeDictionary.textToKeyCode("RIGHT"), 39);
@@ -223,10 +224,10 @@ public class MSKeyCodeDictionaryTest {
 
     @Test
     public void test03BadKeys() {
-        assertEquals(MS_KeyCodeDictionary.textToKeyCode(" NUMLOCK "), 0);
-        assertEquals(MS_KeyCodeDictionary.textToKeyCode("00"), 0);
-        assertEquals(MS_KeyCodeDictionary.textToKeyCode("Badwords"), 0);
-        assertEquals(MS_KeyCodeDictionary.textToKeyCode("#)*&$*(@_)#^&&$@^"), 0);
+        assertEquals(0, MS_KeyCodeDictionary.textToKeyCode(" NUMLOCK "));
+        assertEquals(0, MS_KeyCodeDictionary.textToKeyCode("00"));
+        assertEquals(0, MS_KeyCodeDictionary.textToKeyCode("Badwords"));
+        assertEquals(0, MS_KeyCodeDictionary.textToKeyCode("#)*&$*(@_)#^&&$@^"));
     }
 
     @Test
