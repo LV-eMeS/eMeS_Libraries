@@ -1,12 +1,15 @@
 package lv.emes.libraries.tools.platform;
 
 import lv.emes.libraries.file_system.MS_FileSystemTools;
+import lv.emes.libraries.file_system.MS_TextFile;
 import lv.emes.libraries.tools.MS_KeyCodeDictionary;
+import lv.emes.libraries.tools.MS_TimeTools;
 import lv.emes.libraries.tools.MS_Tools;
 import lv.emes.libraries.tools.lists.MS_StringList;
 import lv.emes.libraries.tools.platform.windows.ApplicationWindow;
 
 import java.awt.*;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -57,7 +60,7 @@ import static lv.emes.libraries.tools.platform.MS_KeyStrokeExecutor.getInstance;
  * </ul>
  *
  * @author eMeS
- * @version 0.2.
+ * @version 1.0.
  */
 public class MS_ScriptRunner {
     public final static Map<String, Integer> COMMANDS = new HashMap<>();
@@ -132,6 +135,15 @@ public class MS_ScriptRunner {
     private long delay = 0;
     private boolean primaryCommandReading = true;
     private int secondaryCmd = 0;
+
+    public String getPathToLoggerFile() {
+        return pathToLoggerFile;
+    }
+
+    public void setPathToLoggerFile(String pathToLoggerFile) {
+        this.pathToLoggerFile = pathToLoggerFile;
+    }
+
     private String pathToLoggerFile = "";
 
     public MS_ScriptRunner() {
@@ -158,7 +170,7 @@ public class MS_ScriptRunner {
                     }
                 }
 
-                if (cmd.length() > 0) {
+                if ((cmd.length() > 0) && (cmd.charAt(0) != '/')) { //ignore commands starting with comment
                     commandNotFoundTryKeyPressing = false;
                     if (primaryCommandReading) {
                         cmd = cmd.toUpperCase(); //whole script is case insensitive ^_^
@@ -175,7 +187,10 @@ public class MS_ScriptRunner {
                 e.printStackTrace();
                 primaryCommandReading = true; //if command fails then lets try to read next command as primary command!
                 if (!pathToLoggerFile.equals("")) {
-                    //TODO catch errors and write them into logger file
+                    MS_TextFile tmpLogFile = new MS_TextFile(pathToLoggerFile);
+                    Date now = new Date();
+                    tmpLogFile.appendln(MS_TimeTools.eMeSDateTimeToStr(now) + String.format(" : Command [%d] '%s' failed to execute with message:", index + 1, cmd), false);
+                    tmpLogFile.appendln(e.toString(), true);
                     //after this loop continues executing next commands
                 }
             }
@@ -272,14 +287,18 @@ public class MS_ScriptRunner {
             case CMD_SEC_EXECUTE_TEXT:
                 MS_KeyStrokeExecutor exec = getInstance();
                 for (int i = 0; i < commandText.length(); i++) {
-                    char singleCharOfText = commandText.charAt(i);
-                    boolean doShiftPress = MS_KeyCodeDictionary.needToPushShiftToWriteChar(singleCharOfText);
-                    if (doShiftPress)
-                        getInstance().keyDown("SHIFT");
-                    String key = Character.toString(singleCharOfText);
-                    exec.keyPress(key);
-                    if (doShiftPress)
-                        getInstance().keyUp("SHIFT");
+                    try {
+                        char singleCharOfText = commandText.charAt(i);
+                        boolean doShiftPress = MS_KeyCodeDictionary.needToPushShiftToWriteChar(singleCharOfText);
+                        if (doShiftPress)
+                            getInstance().keyDown("SHIFT");
+                        String key = Character.toString(singleCharOfText);
+                        exec.keyPress(key);
+                        if (doShiftPress)
+                            getInstance().keyUp("SHIFT");
+                    } catch (Exception e) {
+                        //TODO catch this one!
+                    }
                 }
                 break;
             case CMD_SEC_RUN_APPLICATION:

@@ -1,16 +1,20 @@
 package lv.emes.libraries.examples;
 
+import lv.emes.libraries.file_system.MS_TextFile;
 import lv.emes.libraries.tools.platform.MS_ScriptRunner;
 
 import java.awt.*;
+
+import static lv.emes.libraries.file_system.MS_FileSystemTools.*;
 
 /**
  * @author eMeS
  */
 public class MSScriptRunnerExample {
     public static void main(String[] args) throws AWTException {
-        MS_ScriptRunner.runScript("text#Lets see, if I can do this now!"); //TODO this cannot recognize apostrophes
-//        MS_ScriptRunner.runScript("hold#alt#num3#num9#release#alt#a#"); //34 - quotes, 39 - apostrophe
-//        MS_ScriptRunner.runScript("test#");
+        String commandText = MS_TextFile.getFileTextAsString(args[0], "");
+        MS_ScriptRunner runner = new MS_ScriptRunner(commandText);
+        runner.setPathToLoggerFile(getFilenameWithoutExtension(getShortFilename(args[0])) + ".log");
+        runner.runScript();
     }
 }

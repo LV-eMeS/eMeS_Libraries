@@ -79,6 +79,8 @@ public class MS_KeyCodeDictionary {
             keyCodeDict.put("CTRL", VK_CONTROL);
             keyCodeDict.put("CONTROL", VK_CONTROL);
             keyCodeDict.put("ALT", VK_ALT);
+            keyCodeDict.put("ALTGR", VK_ALT_GRAPH);
+            keyCodeDict.put("ALT_GR", VK_ALT_GRAPH);
             keyCodeDict.put("SHIFT", VK_SHIFT);
 
             keyCodeDict.put("DEL", VK_DELETE);
@@ -181,7 +183,7 @@ public class MS_KeyCodeDictionary {
             keyCodeDict.put("}", VK_CLOSE_BRACKET);
             keyCodeDict.put(":", VK_SEMICOLON);
             keyCodeDict.put(";", VK_SEMICOLON);
-            keyCodeDict.put("\"", VK_QUOTEDBL); //222 TODO currently doesn't work
+            keyCodeDict.put("\"", VK_QUOTE); //222 TODO currently doesn't work
             keyCodeDict.put("'", VK_QUOTE); //222
             keyCodeDict.put(",", VK_COMMA);
             keyCodeDict.put("<", VK_COMMA);

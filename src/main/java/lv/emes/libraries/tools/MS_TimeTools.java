@@ -10,6 +10,7 @@ import java.util.GregorianCalendar;
  * @version 1.0.
  */
 public final class MS_TimeTools {
+	//TODO translate this class and improve it!
 	//PUBLISKĀS STRUKTŪRAS, IZŅĒMUMI UN KONSTANTES
 	//izņēmumi:
 	public static class IncorrectStartingYearException extends Exception {
