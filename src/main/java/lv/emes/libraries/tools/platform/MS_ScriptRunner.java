@@ -151,19 +151,28 @@ public class MS_ScriptRunner {
     private long delay = 0;
     private boolean primaryCommandReading = true;
     private int secondaryCmd = 0;
-
-    private IFuncStringInputMethod inputMethod = IFuncStringInputMethod.CONSOLE;
+    private IFuncStringInputMethod variableInputMethod = IFuncStringInputMethod.CONSOLE;
+    private IFuncStringMaskedInputMethod passwordInputMethod = IFuncStringMaskedInputMethod.CONSOLE;
+    private IFuncStringOutputMethod outputMethod = IFuncStringOutputMethod.CONSOLE;
 
     public String getPathToLoggerFile() {
         return pathToLoggerFile;
+    }
+
+    public void setPasswordInputMethod(IFuncStringMaskedInputMethod passwordInputMethod) {
+        this.passwordInputMethod = passwordInputMethod;
     }
 
     public void setPathToLoggerFile(String pathToLoggerFile) {
         this.pathToLoggerFile = pathToLoggerFile;
     }
 
-    public void setInputMethod(IFuncStringInputMethod inputMethod) {
-        this.inputMethod = inputMethod;
+    public void setVariableInputMethod(IFuncStringInputMethod variableInputMethod) {
+        this.variableInputMethod = variableInputMethod;
+    }
+
+    public void setOutputMethod(IFuncStringOutputMethod outputMethod) {
+        this.outputMethod = outputMethod;
     }
 
     private String pathToLoggerFile = "";
@@ -310,6 +319,8 @@ public class MS_ScriptRunner {
 
     private void runImplementationSecondary(String commandParamsAsText) throws Exception {
         MS_StringList params;
+        String tmpStr;
+        String tmpStr2;
         switch (secondaryCmd) {
             case CMD_SEC_EXECUTE_TEXT:
                 //TODO check for variables whose keyword is between $, like: $username_4_login$
@@ -385,14 +396,24 @@ public class MS_ScriptRunner {
                 params = new MS_StringList(commandParamsAsText, DELIMITER_OF_PARAMETERS);
                 if (params.count() != 2)
                     throw new ScriptParsingError(String.format(ERROR_PARAMETER_COUNT, 2));
-                //TODO put variable in userVariables
+                //put variable in userVariables
+                outputMethod.writeString(params.get(1));
+                tmpStr2 = variableInputMethod.readString();
+                tmpStr = userVariables.put(params.get(0), tmpStr2);
+                if (tmpStr != null)
+                    throw new ScriptParsingError(String.format(WARNING_USER_VARIABLE_OVERRIDDEN, tmpStr, tmpStr2));
                 break;
             case CMD_SEC_PASSWORD_PROMPT:
                 params = new MS_StringList(commandParamsAsText, DELIMITER_OF_PARAMETERS);
                 if (params.count() != 2)
                     throw new ScriptParsingError(String.format(ERROR_PARAMETER_COUNT, 2));
 
-                //TODO put variable in userVariables
+                //put variable in userVariables
+                outputMethod.writeString(params.get(1));
+                tmpStr2 = passwordInputMethod.readString();
+                tmpStr = userVariables.put(params.get(0), tmpStr2);
+                if (tmpStr != null)
+                    throw new ScriptParsingError(String.format(WARNING_USER_VARIABLE_OVERRIDDEN, params.get(0), tmpStr, tmpStr2));
                 break;
             default:
                 commandNotFoundTryKeyPressing = true;

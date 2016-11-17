@@ -7,9 +7,7 @@ public interface IFuncStringInputMethod {
     String readString();
 
     //some default input methods
-    IFuncStringInputMethod CONSOLE = () -> {
-        return MS_Tools.readlnStringFromConsole();
-    };
+    IFuncStringInputMethod CONSOLE = MS_Tools::readlnStringFromConsole;
     //TODO input method for JavaFX
     //TODO input method for Android
 }
