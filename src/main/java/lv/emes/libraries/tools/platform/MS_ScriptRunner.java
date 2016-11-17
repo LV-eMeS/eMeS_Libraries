@@ -51,6 +51,7 @@ import static lv.emes.libraries.tools.platform.MS_KeyStrokeExecutor.getInstance;
  * <li>MM#-50,20# - moves mouse for 50 pixels to the left and 20 pixels down</li>
  * <li>HOLD#CTRL# - holds CTRL key until RELEASE command is executed</li>
  * <li>RELEASE#CTRL# - releases CTRL key (does button up for CTRL key code)</li>
+ * <li>SS#CTRL# - does HOLD + RELEASE for given key (ctrl in this case)</li>
  * <li>VARIABLE#Please, enter username of application X to log in!# - does promting for
  * user input and informs user with text passed as second parameter</li>
  * <li>PASSWORD#Please, enter password of application X to log in!# - does promting for
@@ -81,9 +82,10 @@ public class MS_ScriptRunner {
     public final static int CMD_NR_MOUSE_MOVE_FOR_COORDINATES = 15;
     public final static int CMD_NR_PUSH_AND_HOLD_BUTTON = 16;
     public final static int CMD_NR_RELEASE_HOLD_BUTTON = 17;
-    public final static int CMD_NR_VARIABLE_PROMPT = 18;
-    public final static int CMD_NR_PASSWORD_PROMPT = 19;
-    public final static int CMD_NR_SET_LOGGING = 20;
+    public final static int CMD_NR_HOLD_AND_RELEASE_BUTTON = 18;
+    public final static int CMD_NR_VARIABLE_PROMPT = 19;
+    public final static int CMD_NR_PASSWORD_PROMPT = 20;
+    public final static int CMD_NR_SET_LOGGING = 21;
 
     static {
         COMMANDS.put("TEXT", CMD_NR_WRITE_TEXT);
@@ -106,6 +108,7 @@ public class MS_ScriptRunner {
         COMMANDS.put("MM", CMD_NR_MOUSE_MOVE_FOR_COORDINATES);
         COMMANDS.put("HOLD", CMD_NR_PUSH_AND_HOLD_BUTTON); //similar like sswin or ssctrl
         COMMANDS.put("RELEASE", CMD_NR_RELEASE_HOLD_BUTTON); //similar like sswin or ssctrl
+        COMMANDS.put("SS", CMD_NR_HOLD_AND_RELEASE_BUTTON);
         COMMANDS.put("VARIABLE", CMD_NR_VARIABLE_PROMPT); //like: variable+variable description+
         COMMANDS.put("PASSWORD", CMD_NR_PASSWORD_PROMPT); //like: password+password description+
         COMMANDS.put("LOGGING", CMD_NR_SET_LOGGING); //by default logging is off, but with this you can set path to a log file where errors will be logged
@@ -121,9 +124,10 @@ public class MS_ScriptRunner {
     private final static int CMD_SEC_MOUSE_MOVE_FOR_COORDINATES = 108;
     private final static int CMD_SEC_PUSH_AND_HOLD_BUTTON = 109;
     private final static int CMD_SEC_RELEASE_HOLD_BUTTON = 110;
-    private final static int CMD_SEC_VARIABLE_PROMPT = 111;
-    private final static int CMD_SEC_PASSWORD_PROMPT = 112;
-    private final static int CMD_SEC_SET_LOGGING = 113;
+    private final static int CMD_SEC_HOLD_AND_RELEASE_BUTTON = 111;
+    private final static int CMD_SEC_VARIABLE_PROMPT = 112;
+    private final static int CMD_SEC_PASSWORD_PROMPT = 113;
+    private final static int CMD_SEC_SET_LOGGING = 114;
 
     public final static char DELIMITER_OF_CMDS = '#';
     public final static char SECOND_DELIMITER_OF_CMDS = ';';
@@ -264,6 +268,10 @@ public class MS_ScriptRunner {
                 primaryCommandReading = false; //read button to push and hold code
                 secondaryCmd = CMD_SEC_RELEASE_HOLD_BUTTON;
                 break;
+            case CMD_NR_HOLD_AND_RELEASE_BUTTON:
+                primaryCommandReading = false;
+                secondaryCmd = CMD_SEC_HOLD_AND_RELEASE_BUTTON;
+                break;
             case CMD_NR_VARIABLE_PROMPT:
                 primaryCommandReading = false; //read variable description
                 secondaryCmd = CMD_SEC_VARIABLE_PROMPT;
@@ -338,7 +346,12 @@ public class MS_ScriptRunner {
                 break;
             case CMD_SEC_RELEASE_HOLD_BUTTON:
                 getInstance().keyUp(commandText);
-                //TODO
+                //TODO do windows key press etc
+                break;
+            case CMD_SEC_HOLD_AND_RELEASE_BUTTON:
+                getInstance().keyDown(commandText);
+                getInstance().keyUp(commandText);
+                //TODO do windows key press etc
                 break;
             case CMD_SEC_VARIABLE_PROMPT:
                 //TODO
