@@ -7,4 +7,3 @@ Contacts: maris.salenieks@gmail.com
 
 Prerequisites:
 * Java 8.
-* Libraries from External sources.

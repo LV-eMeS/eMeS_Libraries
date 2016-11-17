@@ -20,8 +20,8 @@ eMeS libraries Version 1.3.0
 * XML Export to JSON.
 * Methods with name starting with getDirectoryFileList in MS_FileSystemTools;
 * Method to show or hide Windows OS application windows;
-* MS_ProbabilityEvent tested;
 * Script runner in platform tools.
+* MS_ProbabilityEvent tested;
 ==============================================================================
 eMeS libraries Version 1.2.0
 ==============================================================================
