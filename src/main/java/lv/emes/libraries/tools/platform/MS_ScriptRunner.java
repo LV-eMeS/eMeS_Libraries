@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static lv.emes.libraries.tools.platform.MS_KeyStrokeExecutor.getInstance;
+import static lv.emes.libraries.tools.platform.ScriptParsingError.*;
 
 /**
  * A class that accepts specific commands and forms script that can be launched in order to perform different
@@ -34,7 +35,12 @@ import static lv.emes.libraries.tools.platform.MS_KeyStrokeExecutor.getInstance;
  * <p>Available commands for script execution:</p>
  * <ul>
  * <li>TEXT#A Text to write# - does keystroke execution for every printable key written as second parameter</li>
+ * <li>TEXT#User age is: $user_input_age$# - does keystroke execution for text: "User age is: " and
+ * variable or password defined in map <b>userVariables</b> with key "$user_input_age$"</li>
+ * <li>TEXT#Special case of writing '$;'# - does keystroke execution for text:"Special case of writing '$'"
+ * <br><u>Note</u>: be careful, because this is the only way to write symbol $ - by adding semicolon after it.</li>
  * <li>RUN#Notepad.exe# - launches application from path given as second parameter like "notepad.exe"</li>
+ * <li>RUN#path_to_some_executable_with_parameters.exe&cmd_line_param1 param2 param3# - launches application with passed command line parameters</li>
  * <li>WSHOW#notepad# - (platform: Windows) brings first window matching text in task manager as second parameter like "notepad"</li>
  * <li>WHIDE#notepad# - (platform: Windows) minimizes first window matching text in task manager as second parameter like "notepad"</li>
  * <li>PAUSE#1000# - holds script executing for 1 second</li>
@@ -47,21 +53,25 @@ import static lv.emes.libraries.tools.platform.MS_KeyStrokeExecutor.getInstance;
  * <li>MRD# - does right mouse press and hold</li>
  * <li>MRU# - does right mouse release up</li>
  * <li>MW# or WHEEL# - does mouse wheel click</li>
- * <li>MC#500,400# - sets mouse new location</li>
- * <li>MM#-50,20# - moves mouse for 50 pixels to the left and 20 pixels down</li>
+ * <li>MC#500&400# - sets mouse new location</li>
+ * <li>MM#-50&20# - moves mouse for 50 pixels to the left and 20 pixels down</li>
  * <li>HOLD#CTRL# - holds CTRL key until RELEASE command is executed</li>
  * <li>RELEASE#CTRL# - releases CTRL key (does button up for CTRL key code)</li>
  * <li>SS#CTRL# - does HOLD + RELEASE for given key (ctrl in this case)</li>
- * <li>VARIABLE#Please, enter username of application X to log in!# - does promting for
- * user input and informs user with text passed as second parameter</li>
+ * <li>VARIABLE#username_4_login&Please, enter username of application X to log in!# - does promting for
+ * user input and informs user with text passed as second parameter.
+ * <br>This will save in <b>userVariables</b> as map with key=username_4_login; value=user input text.
+ * <br>Those variables will be used in <b>TEXT</b> command and recognized by "$" symbols before and after variable name.</li>
  * <li>PASSWORD#Please, enter password of application X to log in!# - does promting for
- * user secure input (characters will be replaced by *** when inputting)</li>
+ * user secure input (characters will be replaced by *** when inputting)
+ * <br>This will save in <b>userVariables</b> as map with key=username_4_login; value=user input text.
+ * <br>Those variables will be used in <b>TEXT</b> command and recognized by "$" symbols before and after variable name.</li>
  * <li>LOGGING#D:/logs/ScriptRunner.log# - enables logging of errors during script execution;
  * all the errors will be logged in file ScriptRunner.log</li>
  * </ul>
  *
  * @author eMeS
- * @version 1.0.
+ * @version 1.1.
  */
 public class MS_ScriptRunner {
     public final static Map<String, Integer> COMMANDS = new HashMap<>();
@@ -130,15 +140,19 @@ public class MS_ScriptRunner {
     private final static int CMD_SEC_SET_LOGGING = 114;
 
     public final static char DELIMITER_OF_CMDS = '#';
-    public final static char SECOND_DELIMITER_OF_CMDS = ';';
+    public final static char DELIMITER_OF_CMDS_SECOND = ';';
+    public final static char DELIMITER_OF_PARAMETERS = '&';
 
     private String fscript = "";
     private MS_StringList fCommandList;
+    private Map<String, String> userVariables = new HashMap<>();
     private boolean commandNotFoundTryKeyPressing = false;
     private boolean paused = false;
     private long delay = 0;
     private boolean primaryCommandReading = true;
     private int secondaryCmd = 0;
+
+    private IFuncStringInputMethod inputMethod = IFuncStringInputMethod.CONSOLE;
 
     public String getPathToLoggerFile() {
         return pathToLoggerFile;
@@ -148,10 +162,13 @@ public class MS_ScriptRunner {
         this.pathToLoggerFile = pathToLoggerFile;
     }
 
+    public void setInputMethod(IFuncStringInputMethod inputMethod) {
+        this.inputMethod = inputMethod;
+    }
+
     private String pathToLoggerFile = "";
 
     public MS_ScriptRunner() {
-        fCommandList = new MS_StringList();
     }
 
     public MS_ScriptRunner(String scriptText) {
@@ -160,6 +177,7 @@ public class MS_ScriptRunner {
     }
 
     public void runScript() {
+        userVariables.clear();
         if (getInstance().isCapsLockToggled())
             getInstance().keyPress("CAPS"); //caps lock during script executing is not needed at all
 
@@ -188,7 +206,8 @@ public class MS_ScriptRunner {
                         getInstance().keyPress(cmd);
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+//                e.printStackTrace();
+                System.out.println(e.toString());
                 primaryCommandReading = true; //if command fails then lets try to read next command as primary command!
                 if (!pathToLoggerFile.equals("")) {
                     MS_TextFile tmpLogFile = new MS_TextFile(pathToLoggerFile);
@@ -289,14 +308,16 @@ public class MS_ScriptRunner {
         }
     }
 
-    private void runImplementationSecondary(String commandText) {
+    private void runImplementationSecondary(String commandParamsAsText) throws Exception {
         MS_StringList params;
         switch (secondaryCmd) {
             case CMD_SEC_EXECUTE_TEXT:
+                //TODO check for variables whose keyword is between $, like: $username_4_login$
+                //TODO then look in
                 MS_KeyStrokeExecutor exec = getInstance();
-                for (int i = 0; i < commandText.length(); i++) {
+                for (int i = 0; i < commandParamsAsText.length(); i++) {
                     try {
-                        char singleCharOfText = commandText.charAt(i);
+                        char singleCharOfText = commandParamsAsText.charAt(i);
                         boolean doShiftPress = MS_KeyCodeDictionary.needToPushShiftToWriteChar(singleCharOfText);
                         if (doShiftPress)
                             getInstance().keyDown("SHIFT");
@@ -310,54 +331,68 @@ public class MS_ScriptRunner {
                 }
                 break;
             case CMD_SEC_RUN_APPLICATION:
-                params = new MS_StringList(commandText, ',');
+                params = new MS_StringList(commandParamsAsText, DELIMITER_OF_PARAMETERS);
+                if (params.count() != 2)
+                    throw new ScriptParsingError(String.format(ERROR_PARAMETER_COUNT, 2));
                 MS_FileSystemTools.executeApplication(params.get(0), params.get(1));
                 break;
             case CMD_SEC_SHOW_WINDOW_OS_WINDOWS:
-                ApplicationWindow.showApplicationWindow(commandText);
-                //TODO throw error if false
+                if (! ApplicationWindow.showApplicationWindow(commandParamsAsText))
+                    throw new ScriptParsingError(String.format(ERROR_FAILED_TO_SHOW_WINDOW, commandParamsAsText));
                 break;
             case CMD_SEC_HIDE_WINDOW_OS_WINDOWS:
-                ApplicationWindow.hideApplicationWindow(commandText);
-                //TODO throw error if false
+                if (! ApplicationWindow.hideApplicationWindow(commandParamsAsText)) {
+                    throw new ScriptParsingError(String.format(ERROR_FAILED_TO_HIDE_WINDOW, commandParamsAsText));
+                }
                 break;
             case CMD_SEC_PAUSE:
-                delay = Long.parseLong(commandText);
+                delay = Long.parseLong(commandParamsAsText);
                 paused = true;
                 break;
             case CMD_SEC_SET_DELAY_INTERVAL:
-                delay = Long.parseLong(commandText);
+                delay = Long.parseLong(commandParamsAsText);
                 break;
             case CMD_SEC_MOUSE_SET_COORDINATES:
-                params = new MS_StringList(commandText, ',');
+                params = new MS_StringList(commandParamsAsText, DELIMITER_OF_PARAMETERS);
+                if (params.count() != 2)
+                    throw new ScriptParsingError(String.format(ERROR_PARAMETER_COUNT, 2));
                 getInstance().mouseSetCoords(
                         new Point(Integer.parseInt(params.get(0)), Integer.parseInt(params.get(1)))
                 );
                 break;
             case CMD_SEC_MOUSE_MOVE_FOR_COORDINATES:
-                params = new MS_StringList(commandText, ',');
+                params = new MS_StringList(commandParamsAsText, DELIMITER_OF_PARAMETERS);
+                if (params.count() != 2)
+                    throw new ScriptParsingError(String.format(ERROR_PARAMETER_COUNT, 2));
                 getInstance().mouseMove(
                         new Point(Integer.parseInt(params.get(0)), Integer.parseInt(params.get(1)))
                 );
                 break;
             case CMD_SEC_PUSH_AND_HOLD_BUTTON:
-                getInstance().keyDown(commandText);
+                getInstance().keyDown(commandParamsAsText);
                 //TODO do windows key press etc
                 break;
             case CMD_SEC_RELEASE_HOLD_BUTTON:
-                getInstance().keyUp(commandText);
+                getInstance().keyUp(commandParamsAsText);
                 //TODO do windows key press etc
                 break;
             case CMD_SEC_HOLD_AND_RELEASE_BUTTON:
-                getInstance().keyDown(commandText);
-                getInstance().keyUp(commandText);
+                getInstance().keyDown(commandParamsAsText);
+                getInstance().keyUp(commandParamsAsText);
                 //TODO do windows key press etc
                 break;
             case CMD_SEC_VARIABLE_PROMPT:
-                //TODO
+                params = new MS_StringList(commandParamsAsText, DELIMITER_OF_PARAMETERS);
+                if (params.count() != 2)
+                    throw new ScriptParsingError(String.format(ERROR_PARAMETER_COUNT, 2));
+                //TODO put variable in userVariables
                 break;
             case CMD_SEC_PASSWORD_PROMPT:
-                //TODO
+                params = new MS_StringList(commandParamsAsText, DELIMITER_OF_PARAMETERS);
+                if (params.count() != 2)
+                    throw new ScriptParsingError(String.format(ERROR_PARAMETER_COUNT, 2));
+
+                //TODO put variable in userVariables
                 break;
             default:
                 commandNotFoundTryKeyPressing = true;
@@ -378,7 +413,7 @@ public class MS_ScriptRunner {
         this.fscript = fscript;
         fCommandList = new MS_StringList();
         fCommandList.delimiter = DELIMITER_OF_CMDS;
-        fCommandList.secondDelimiter = SECOND_DELIMITER_OF_CMDS;
+        fCommandList.secondDelimiter = DELIMITER_OF_CMDS_SECOND;
         fCommandList.fromString(script);
     }
 }

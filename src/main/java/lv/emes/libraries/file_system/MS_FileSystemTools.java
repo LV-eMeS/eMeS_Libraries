@@ -1,7 +1,7 @@
 package lv.emes.libraries.file_system;
 
 /*
-Copyright [2016] [Maris Salenieks]
+Copyright [2016] [Māris Salenieks]
 
         Licensed under the Apache License, Version 2.0 (the "License");
         you may not use this file except in compliance with the License.
@@ -37,8 +37,6 @@ import java.util.List;
  * Different transformations and actions related with OS file system.
  * <p>Static methods:
  * -executeApplication
- * -getPathToPackage
- * -getPathToSourcePackage
  * -getTmpDirectory
  * -getProjectDirectory
  * -fileExists
@@ -54,7 +52,7 @@ import java.util.List;
  * -getShortFilename
  * -replaceBackslash
  *
- * @version 1.1.
+ * @version 1.2.
  */
 public class MS_FileSystemTools {
     public static final String CURRENT_DIRECTORY = "./";

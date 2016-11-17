@@ -1,11 +1,14 @@
 package lv.emes.libraries.tools;
 
-import java.net.URL; 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.Random;
 
 /** 
  * Module is designed to combine different common programming actions.
- * @version 1.5.
+ * @version 1.6.
  */
 public final class MS_Tools {
 	/**
@@ -86,5 +89,14 @@ public final class MS_Tools {
 	 */
 	public static Boolean inverseBoolean(Boolean bool) {
 		return ! bool;
+	}
+
+	public static String readlnStringFromConsole() {
+		try {
+			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+			return br.readLine();
+		} catch (IOException e) {
+			return "";
+		}
 	}
 }
