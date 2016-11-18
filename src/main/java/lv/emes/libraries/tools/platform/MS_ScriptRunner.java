@@ -142,6 +142,7 @@ public class MS_ScriptRunner {
     public final static char DELIMITER_OF_CMDS = '#';
     public final static char DELIMITER_OF_CMDS_SECOND = ';';
     public final static char DELIMITER_OF_PARAMETERS = '&';
+    public final static char DELIMITER_OF_VARIABLES = '$';
 
     private String fscript = "";
     private MS_StringList fCommandList;
@@ -324,7 +325,13 @@ public class MS_ScriptRunner {
         switch (secondaryCmd) {
             case CMD_SEC_EXECUTE_TEXT:
                 //TODO check for variables whose keyword is between $, like: $username_4_login$
-                //TODO then look in
+                //TODO then replace them with ones in Map
+                MS_StringList list = new MS_StringList();
+                list.delimiter = DELIMITER_OF_VARIABLES;
+                list.secondDelimiter = DELIMITER_OF_CMDS_SECOND;
+                list.fromString(commandParamsAsText);
+                //HINT: every even element of strig list will be a variable
+
                 MS_KeyStrokeExecutor exec = getInstance();
                 for (int i = 0; i < commandParamsAsText.length(); i++) {
                     try {

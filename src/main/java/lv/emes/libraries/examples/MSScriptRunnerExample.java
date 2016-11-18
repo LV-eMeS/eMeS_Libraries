@@ -22,8 +22,7 @@ public class MSScriptRunnerExample {
 //        runner.setOutputMethod(IFuncStringOutputMethod.CONSOLE);
 //        runner.runScript();
         //for testing:
-        String commandText = "variable#pidarasi&Ievadiet, lūdzu, kas ir pidarasi!#" +
-                "password#pidarasi&Ievadiet, lūdzu, kas ir pidarasi!#";
+        String commandText = "variable#memmīši&Ievadiet, lūdzu, kas ir memmīši!#";
         MS_ScriptRunner runner = new MS_ScriptRunner(commandText);
         runner.runScript();
     }
