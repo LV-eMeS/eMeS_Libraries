@@ -12,7 +12,7 @@ import static java.awt.event.KeyEvent.*;
  * -needToPushShiftToWriteChar
  *
  * @author eMeS
- * @version 0.9.
+ * @version 1.0.
  */
 public class MS_KeyCodeDictionary {
     //PRIVATE VARIABLES
@@ -20,8 +20,6 @@ public class MS_KeyCodeDictionary {
      * Contains mapping for different characters and their corresponding key codes.
      */
     private static Map<String, Integer> keyCodeDict = null;
-
-    //PUBLIC METHOD
 
     /**
      * Returns key code of input <b>text</b>. Every recognizable keys are tested in <b>MSKeyCodeDictionaryTest</b>.<br>
@@ -183,7 +181,7 @@ public class MS_KeyCodeDictionary {
             keyCodeDict.put("}", VK_CLOSE_BRACKET);
             keyCodeDict.put(":", VK_SEMICOLON);
             keyCodeDict.put(";", VK_SEMICOLON);
-            keyCodeDict.put("\"", VK_QUOTE); //222 TODO currently doesn't work
+            keyCodeDict.put("\"", VK_QUOTE); //222
             keyCodeDict.put("'", VK_QUOTE); //222
             keyCodeDict.put(",", VK_COMMA);
             keyCodeDict.put("<", VK_COMMA);
