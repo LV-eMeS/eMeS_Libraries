@@ -7,7 +7,7 @@ import lv.emes.libraries.file_system.MS_FileSystemTools;
  * <p>Methods:
  *
  * @author eMeS
- * @version 0.1.
+ * @version 1.0.
  */
 public final class SystemVolumeManager {
     //PRIVATE VARIABLES
