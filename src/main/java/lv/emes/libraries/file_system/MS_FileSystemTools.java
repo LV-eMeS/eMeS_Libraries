@@ -21,9 +21,7 @@ import lv.emes.libraries.tools.lists.MS_StringList;
 import org.apache.commons.io.FileUtils;
 
 import java.awt.*;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -45,17 +43,22 @@ import java.util.List;
  * -createNewDirectory
  * -deleteFile
  * -deleteDirectory
+ * -directoryUp
+ * -getDirectoryFileList
+ * -getDirectoryFileList_Shortnames
+ * -getDirectoryFileList_Directories
  * -getFilenameWithoutExtension
  * -getFileExtensionWithDot
  * -getFileExtensionWithoutDot
  * -getDirectoryOfFile
  * -getShortFilename
  * -replaceBackslash
- *
- * @version 1.2.
+ * -extractResourceToTmpFolder
+ * @version 1.3.
  */
 public class MS_FileSystemTools {
     public static final String CURRENT_DIRECTORY = "./";
+    public static final String NIRCMD_FILE_FOR_WINDOWS = "tools/nircmd.exe";
 
     /**
      * Opens link in default web browser or runs an application in OS. Do not use spaces in links!
@@ -405,5 +408,58 @@ public class MS_FileSystemTools {
             }
         }
         return res;
+    }
+
+    private static void close(final Closeable stream) {
+        if (stream != null) {
+            try {
+                stream.close();
+            } catch (final IOException ex) {
+            }
+        }
+    }
+
+    /**
+     * Looks for resource in JAR file, extracts it in temporary directory if file exists and
+     * returns the full path to a file.
+     * <br><u>Note</u>: filename is altered by adding time as Long to it's original name.
+     * <br><u>Note</u>: when application terminates the job file is deleted from temporary folder.
+     * @param pathToResource path to resource file.
+     * @return full path to extracted file. Empty string if resource not found.
+     */
+    public static String extractResourceToTmpFolder(String pathToResource) {
+        final File tempFile;
+        final InputStream resourceStream = getResourceInputStream(pathToResource);
+        OutputStream fileStream = null;
+        pathToResource = getShortFilename(pathToResource);
+        String fileName = getFilenameWithoutExtension(pathToResource);
+        String fileExtension = getFileExtensionWithDot(pathToResource);
+
+        try {
+            tempFile = File.createTempFile(fileName, Long.toString(System.currentTimeMillis()) + fileExtension);
+        } catch (IOException e) {
+            return "";
+        }
+        tempFile.deleteOnExit();
+
+        try {
+            final byte[] buf;
+            int i;
+
+            fileStream = new FileOutputStream(tempFile);
+            buf = new byte[1024];
+            i = 0;
+
+            while ((i = resourceStream.read(buf)) != -1) {
+                fileStream.write(buf, 0, i);
+            }
+        } catch (Exception e) {
+            return "";
+        } finally {
+            close(resourceStream);
+            close(fileStream);
+        }
+
+        return (tempFile.toString());
     }
 }

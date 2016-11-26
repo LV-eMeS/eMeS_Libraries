@@ -7,6 +7,7 @@ import lv.emes.libraries.tools.MS_TimeTools;
 import lv.emes.libraries.tools.MS_Tools;
 import lv.emes.libraries.tools.lists.MS_StringList;
 import lv.emes.libraries.tools.platform.windows.ApplicationWindow;
+import lv.emes.libraries.tools.platform.windows.SystemVolumeManager;
 
 import java.awt.*;
 import java.util.Date;
@@ -67,7 +68,12 @@ import static lv.emes.libraries.tools.platform.ScriptParsingError.*;
  * <br>This will save in <b>userVariables</b> as map with key=username_4_login; value=user input text.
  * <br>Those variables will be used in <b>TEXT</b> command and recognized by "$" symbols before and after variable name.</li>
  * <li>LOGGING#D:/logs/ScriptRunner.log# - enables logging of errors during script execution;
- * all the errors will be logged in file ScriptRunner.log</li>
+ * all the errors will be logged in file ScriptRunner.log;
+ * by default this feature is turned off</li>
+ * <li>VOL#22000# - sets system volume to 22000</li>
+ * <li>VOLUME#22000# - sets system volume to 22000</li>
+ * <li>VOLU#1000# - increases system volume by 1000</li>
+ * <li>VOLD#1000# - decreases system volume by 1000</li>
  * </ul>
  *
  * @author eMeS
@@ -96,6 +102,9 @@ public class MS_ScriptRunner {
     public final static int CMD_NR_VARIABLE_PROMPT = 19;
     public final static int CMD_NR_PASSWORD_PROMPT = 20;
     public final static int CMD_NR_SET_LOGGING = 21;
+    public final static int CMD_NR_SET_VOLUME_TO= 22;
+    public final static int CMD_NR_VOLUME_UP = 23;
+    public final static int CMD_NR_VOLUME_DOWN = 24;
 
     static {
         COMMANDS.put("TEXT", CMD_NR_WRITE_TEXT);
@@ -122,6 +131,10 @@ public class MS_ScriptRunner {
         COMMANDS.put("VARIABLE", CMD_NR_VARIABLE_PROMPT); //like: variable+variable description+
         COMMANDS.put("PASSWORD", CMD_NR_PASSWORD_PROMPT); //like: password+password description+
         COMMANDS.put("LOGGING", CMD_NR_SET_LOGGING); //by default logging is off, but with this you can set path to a log file where errors will be logged
+        COMMANDS.put("VOL", CMD_NR_SET_VOLUME_TO);
+        COMMANDS.put("VOLUME", CMD_NR_SET_VOLUME_TO); //synonym
+        COMMANDS.put("VOLU", CMD_NR_VOLUME_UP);
+        COMMANDS.put("VOLD", CMD_NR_VOLUME_DOWN);
     }
 
     private final static int CMD_SEC_EXECUTE_TEXT = 101;
@@ -138,6 +151,9 @@ public class MS_ScriptRunner {
     private final static int CMD_SEC_VARIABLE_PROMPT = 112;
     private final static int CMD_SEC_PASSWORD_PROMPT = 113;
     private final static int CMD_SEC_SET_LOGGING = 114;
+    private final static int CMD_SEC_SET_VOLUME_TO = 115;
+    private final static int CMD_SEC_VOLUME_UP = 116;
+    private final static int CMD_SEC_VOLUME_DOWN = 117;
 
     public final static char DELIMITER_OF_CMDS = '#';
     public final static char DELIMITER_OF_CMDS_SECOND = ';';
@@ -313,6 +329,18 @@ public class MS_ScriptRunner {
                 primaryCommandReading = false; //read path to logger
                 secondaryCmd = CMD_SEC_SET_LOGGING;
                 break;
+            case CMD_NR_SET_VOLUME_TO:
+                primaryCommandReading = false; //read volume parameter
+                secondaryCmd = CMD_SEC_SET_VOLUME_TO;
+                break;
+            case CMD_NR_VOLUME_UP:
+                primaryCommandReading = false; //read volume parameter
+                secondaryCmd = CMD_SEC_VOLUME_UP;
+                break;
+            case CMD_NR_VOLUME_DOWN:
+                primaryCommandReading = false; //read volume parameter
+                secondaryCmd = CMD_SEC_VOLUME_DOWN;
+                break;
             default:
                 commandNotFoundTryKeyPressing = true;
         }
@@ -322,6 +350,7 @@ public class MS_ScriptRunner {
         MS_StringList params;
         String tmpStr;
         String tmpStr2;
+        Integer volumeLevelParameter;
         switch (secondaryCmd) {
             case CMD_SEC_EXECUTE_TEXT:
                 MS_StringList listOfVariables = new MS_StringList();
@@ -427,6 +456,33 @@ public class MS_ScriptRunner {
                 tmpStr = userVariables.put(params.get(0), tmpStr2);
                 if (tmpStr != null)
                     throw new ScriptParsingError(String.format(WARNING_USER_VARIABLE_OVERRIDDEN, params.get(0), tmpStr, tmpStr2));
+                break;
+            case CMD_SEC_SET_LOGGING:
+                setPathToLoggerFile(commandParamsAsText);
+                break;
+            case CMD_SEC_SET_VOLUME_TO:
+                try {
+                    volumeLevelParameter = new Integer(commandParamsAsText);
+                } catch (NumberFormatException e) {
+                    throw new ScriptParsingError(String.format(ERROR_WRONG_NUMBER_INPUT, commandParamsAsText));
+                }
+                SystemVolumeManager.setVolume(volumeLevelParameter);
+                break;
+            case CMD_SEC_VOLUME_UP:
+                try {
+                    volumeLevelParameter = new Integer(commandParamsAsText);
+                } catch (NumberFormatException e) {
+                    throw new ScriptParsingError(String.format(ERROR_WRONG_NUMBER_INPUT, commandParamsAsText));
+                }
+                SystemVolumeManager.volumeUp(volumeLevelParameter);
+                break;
+            case CMD_SEC_VOLUME_DOWN:
+                try {
+                    volumeLevelParameter = new Integer(commandParamsAsText);
+                } catch (NumberFormatException e) {
+                    throw new ScriptParsingError(String.format(ERROR_WRONG_NUMBER_INPUT, commandParamsAsText));
+                }
+                SystemVolumeManager.volumeDown(volumeLevelParameter);
                 break;
             default:
                 commandNotFoundTryKeyPressing = true;

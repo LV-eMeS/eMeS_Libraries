@@ -17,10 +17,11 @@ eMeS libraries Version 1.3.0
 ==============================================================================
 * At some point finished XML file parsing tools;
 * XML package moved to tools package;
-* XML Export to JSON.
+* XML Export to JSON;
 * Methods with name starting with getDirectoryFileList in MS_FileSystemTools;
 * Method to show or hide Windows OS application windows;
-* Script runner in platform tools.
+* Script runner in platform tools;
+* Resource extracting to tmp folder;
 * MS_ProbabilityEvent tested;
 ==============================================================================
 eMeS libraries Version 1.2.0

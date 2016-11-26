@@ -146,4 +146,11 @@ public class MSFileSystemToolsTest {
         assertEquals(1, test.count());
         assertEquals(childDirectory, test.get(0));
     }
+
+    @Test
+    public void test10ResourceExtractingToTmpFolder() {
+        String tmpFile = extractResourceToTmpFolder(NIRCMD_FILE_FOR_WINDOWS);
+        String shortName = getShortFilename(tmpFile);
+        assertTrue(fileExists(getTmpDirectory() + shortName));
+    }
 }
