@@ -22,6 +22,7 @@ eMeS libraries Version 1.3.0
 * Method to show or hide Windows OS application windows;
 * Script runner in platform tools;
 * Resource extracting to tmp folder;
+* Volume controller;
 * MS_ProbabilityEvent tested;
 ==============================================================================
 eMeS libraries Version 1.2.0
