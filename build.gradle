@@ -73,7 +73,8 @@ buildscript {
         classpath 'com.github.rholder:gradle-one-jar:1.0.4'
     }
 }
-task jarExecutableLibraries(type: OneJar) {
-    mainClass = 'lv.emes.libraries.examples.MSScriptRunnerExample'
-    archiveName = "eMeS_Libraries-"+projectVersion+".jar"
+task jarScriptRunner(type: OneJar) {
+    mainClass = 'lv.emes.libraries.examples.MSScriptRunnerExecutable'
+//    archiveName = "eMeS_Libraries-"+projectVersion+".jar"
+    archiveName = "ScriptLauncher.jar"
 }

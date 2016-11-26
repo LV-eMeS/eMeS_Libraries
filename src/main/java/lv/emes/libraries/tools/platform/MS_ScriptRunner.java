@@ -62,7 +62,7 @@ import static lv.emes.libraries.tools.platform.ScriptParsingError.*;
  * user input and informs user with text passed as second parameter.
  * <br>This will save in <b>userVariables</b> as map with key=username_4_login; value=user input text.
  * <br>Those variables will be used in <b>TEXT</b> command and recognized by "$" symbols before and after variable name.</li>
- * <li>PASSWORD#Please, enter password of application X to log in!# - does promting for
+ * <li>PASSWORD#password_4_login&Please, enter password of application X to log in!# - does promting for
  * user secure input (characters will be replaced by *** when inputting)
  * <br>This will save in <b>userVariables</b> as map with key=username_4_login; value=user input text.
  * <br>Those variables will be used in <b>TEXT</b> command and recognized by "$" symbols before and after variable name.</li>
@@ -357,8 +357,8 @@ public class MS_ScriptRunner {
                 break;
             case CMD_SEC_RUN_APPLICATION:
                 params = new MS_StringList(commandParamsAsText, DELIMITER_OF_PARAMETERS);
-                if (params.count() != 2)
-                    throw new ScriptParsingError(String.format(ERROR_PARAMETER_COUNT, 2));
+//                if (params.count() != 2)
+//                    throw new ScriptParsingError(String.format(ERROR_PARAMETER_COUNT, 2));
                 MS_FileSystemTools.executeApplication(params.get(0), params.get(1));
                 break;
             case CMD_SEC_SHOW_WINDOW_OS_WINDOWS:

@@ -14,7 +14,7 @@ import static lv.emes.libraries.file_system.MS_FileSystemTools.getShortFilename;
 /**
  * @author eMeS
  */
-public class MSScriptRunnerExample {
+public class MSScriptRunnerExecutable {
     public static void main(String[] args) throws AWTException {
         //For building
         String commandText = MS_TextFile.getFileTextAsString(args[0], "");
