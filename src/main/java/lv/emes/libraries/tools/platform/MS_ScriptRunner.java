@@ -324,13 +324,20 @@ public class MS_ScriptRunner {
         String tmpStr2;
         switch (secondaryCmd) {
             case CMD_SEC_EXECUTE_TEXT:
-                //TODO check for variables whose keyword is between $, like: $username_4_login$
-                //TODO then replace them with ones in Map
-                MS_StringList list = new MS_StringList();
-                list.delimiter = DELIMITER_OF_VARIABLES;
-                list.secondDelimiter = DELIMITER_OF_CMDS_SECOND;
-                list.fromString(commandParamsAsText);
-                //HINT: every even element of strig list will be a variable
+                MS_StringList listOfVariables = new MS_StringList();
+                listOfVariables.delimiter = DELIMITER_OF_VARIABLES;
+                listOfVariables.secondDelimiter = DELIMITER_OF_CMDS_SECOND;
+                listOfVariables.fromString(commandParamsAsText);
+
+                StringBuilder sb = new StringBuilder();
+                //every even element of string list will be a variable
+                listOfVariables.doWithEveryItem((str, i) -> {
+                    if (i % 2 == 1) { //an even element should be altered
+                        str = userVariables.get(str);
+                    }
+                    sb.append(str);
+                });
+                commandParamsAsText = sb.toString();
 
                 MS_KeyStrokeExecutor exec = getInstance();
                 for (int i = 0; i < commandParamsAsText.length(); i++) {
@@ -355,11 +362,11 @@ public class MS_ScriptRunner {
                 MS_FileSystemTools.executeApplication(params.get(0), params.get(1));
                 break;
             case CMD_SEC_SHOW_WINDOW_OS_WINDOWS:
-                if (! ApplicationWindow.showApplicationWindow(commandParamsAsText))
+                if (!ApplicationWindow.showApplicationWindow(commandParamsAsText))
                     throw new ScriptParsingError(String.format(ERROR_FAILED_TO_SHOW_WINDOW, commandParamsAsText));
                 break;
             case CMD_SEC_HIDE_WINDOW_OS_WINDOWS:
-                if (! ApplicationWindow.hideApplicationWindow(commandParamsAsText)) {
+                if (!ApplicationWindow.hideApplicationWindow(commandParamsAsText)) {
                     throw new ScriptParsingError(String.format(ERROR_FAILED_TO_HIDE_WINDOW, commandParamsAsText));
                 }
                 break;
