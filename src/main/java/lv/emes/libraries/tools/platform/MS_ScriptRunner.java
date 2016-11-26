@@ -397,16 +397,13 @@ public class MS_ScriptRunner {
                 break;
             case CMD_SEC_PUSH_AND_HOLD_BUTTON:
                 getInstance().keyDown(commandParamsAsText);
-                //TODO do windows key press etc
                 break;
             case CMD_SEC_RELEASE_HOLD_BUTTON:
                 getInstance().keyUp(commandParamsAsText);
-                //TODO do windows key press etc
                 break;
             case CMD_SEC_HOLD_AND_RELEASE_BUTTON:
                 getInstance().keyDown(commandParamsAsText);
                 getInstance().keyUp(commandParamsAsText);
-                //TODO do windows key press etc
                 break;
             case CMD_SEC_VARIABLE_PROMPT:
                 params = new MS_StringList(commandParamsAsText, DELIMITER_OF_PARAMETERS);
