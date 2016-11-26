@@ -3,6 +3,8 @@ package lv.emes.libraries.tools;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.URL;
 import java.util.Random;
 
@@ -98,5 +100,13 @@ public final class MS_Tools {
 		} catch (IOException e) {
 			return "";
 		}
+	}
+
+	public static Double round(double value, int places) {
+		if (places < 0) throw new IllegalArgumentException();
+
+		BigDecimal bd = new BigDecimal(value);
+		bd = bd.setScale(places, RoundingMode.HALF_UP);
+		return bd.doubleValue();
 	}
 }

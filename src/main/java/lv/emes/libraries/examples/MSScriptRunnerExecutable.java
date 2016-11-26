@@ -21,12 +21,8 @@ public class MSScriptRunnerExecutable {
         runner.setOutputMethod(IFuncStringOutputMethod.CONSOLE);
         runner.runScript();
 
-        //for testing:
-//        String commandText =
-//                "variable#User&Ievadiet, lūdzu, savu vārdu!!!#" +
-//                        "variable#vecums&Ievadiet, lūdzu, cik jums ir gadu!!!#" +
-//                "pause#1500#" +
-//                "TEXT#$User$ age is: $vecums$#";
+//        for testing:
+//        String commandText = "run#cmd#pause#100#text#rundll32.exe user32.dll, LockWorkStation#ent#";
 //        MS_ScriptRunner runner = new MS_ScriptRunner(commandText);
 //        runner.runScript();
     }

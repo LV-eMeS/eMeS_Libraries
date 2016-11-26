@@ -10,9 +10,7 @@ import lv.emes.libraries.tools.platform.windows.ApplicationWindow;
 import lv.emes.libraries.tools.platform.windows.SystemVolumeManager;
 
 import java.awt.*;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import static lv.emes.libraries.tools.platform.MS_KeyStrokeExecutor.getInstance;
 import static lv.emes.libraries.tools.platform.ScriptParsingError.*;
@@ -35,30 +33,30 @@ import static lv.emes.libraries.tools.platform.ScriptParsingError.*;
  * <li>runImplementationSecondary</li></ul>
  * <p>Available commands for script execution:</p>
  * <ul>
- * <li>TEXT#A Text to write# - does keystroke execution for every printable key written as second parameter</li>
+ * <li>TEXT#A Text to write# - does keystroke execution for every printable key written as second parameter.</li>
  * <li>TEXT#User age is: $user_input_age$# - does keystroke execution for text: "User age is: " and
- * variable or password defined in map <b>userVariables</b> with key "$user_input_age$"</li>
+ * variable or password defined in map <b>userVariables</b> with key "$user_input_age$".</li>
  * <li>TEXT#Special case of writing '$;'# - does keystroke execution for text:"Special case of writing '$'"
  * <br><u>Note</u>: be careful, because this is the only way to write symbol $ - by adding semicolon after it.</li>
- * <li>RUN#Notepad.exe# - launches application from path given as second parameter like "notepad.exe"</li>
- * <li>RUN#path_to_some_executable_with_parameters.exe&cmd_line_param1 param2 param3# - launches application with passed command line parameters</li>
- * <li>WSHOW#notepad# - (platform: Windows) brings first window matching text in task manager as second parameter like "notepad"</li>
- * <li>WHIDE#notepad# - (platform: Windows) minimizes first window matching text in task manager as second parameter like "notepad"</li>
- * <li>PAUSE#1000# - holds script executing for 1 second</li>
+ * <li>RUN#Notepad.exe# - launches application from path given as second parameter like "notepad.exe".</li>
+ * <li>RUN#path_to_some_executable_with_parameters.exe&cmd_line_param1 param2 param3# - launches application with passed command line parameters.</li>
+ * <li>WSHOW#notepad# - (platform: Windows) brings first window matching text in task manager as second parameter like "notepad".</li>
+ * <li>WHIDE#notepad# - (platform: Windows) minimizes first window matching text in task manager as second parameter like "notepad".</li>
+ * <li>PAUSE#1000# - holds script executing for 1 second.</li>
  * <li>DI#1000# - defines interval of delaying script command execution for 1 second after each command; to stop this
- * either use DI#0# or PAUSE#X#, and after X miliseconds delaying will be canceled</li>
- * <li>ML# - does left mouse click</li>
- * <li>MLD# - does left mouse press and hold</li>
- * <li>MLU# - does left mouse release up</li>
- * <li>MR# - does right mouse click</li>
- * <li>MRD# - does right mouse press and hold</li>
- * <li>MRU# - does right mouse release up</li>
- * <li>MW# or WHEEL# - does mouse wheel click</li>
- * <li>MC#500&400# - sets mouse new location</li>
- * <li>MM#-50&20# - moves mouse for 50 pixels to the left and 20 pixels down</li>
- * <li>HOLD#CTRL# - holds CTRL key until RELEASE command is executed</li>
- * <li>RELEASE#CTRL# - releases CTRL key (does button up for CTRL key code)</li>
- * <li>SS#CTRL# - does HOLD + RELEASE for given key (ctrl in this case)</li>
+ * either use DI#0# or PAUSE#X#, and after X miliseconds delaying will be canceled.</li>
+ * <li>ML# - does left mouse click.</li>
+ * <li>MLD# - does left mouse press and hold.</li>
+ * <li>MLU# - does left mouse release up.</li>
+ * <li>MR# - does right mouse click.</li>
+ * <li>MRD# - does right mouse press and hold.</li>
+ * <li>MRU# - does right mouse release up.</li>
+ * <li>MW# or WHEEL# - does mouse wheel click.</li>
+ * <li>MC#500&400# - sets mouse new location.</li>
+ * <li>MM#-50&20# - moves mouse for 50 pixels to the left and 20 pixels down.</li>
+ * <li>HOLD#CTRL# - holds CTRL key until RELEASE command is executed.</li>
+ * <li>RELEASE#CTRL# - releases CTRL key (does button up for CTRL key code).</li>
+ * <li>SS#CTRL# - does HOLD + RELEASE for given key (ctrl in this case).</li>
  * <li>VARIABLE#username_4_login&Please, enter username of application X to log in!# - does promting for
  * user input and informs user with text passed as second parameter.
  * <br>This will save in <b>userVariables</b> as map with key=username_4_login; value=user input text.
@@ -69,11 +67,14 @@ import static lv.emes.libraries.tools.platform.ScriptParsingError.*;
  * <br>Those variables will be used in <b>TEXT</b> command and recognized by "$" symbols before and after variable name.</li>
  * <li>LOGGING#D:/logs/ScriptRunner.log# - enables logging of errors during script execution;
  * all the errors will be logged in file ScriptRunner.log;
- * by default this feature is turned off</li>
- * <li>VOL#22000# - sets system volume to 22000</li>
- * <li>VOLUME#22000# - sets system volume to 22000</li>
- * <li>VOLU#1000# - increases system volume by 1000</li>
- * <li>VOLD#1000# - decreases system volume by 1000</li>
+ * by default this feature is turned off.</li>
+ * <li>LOG#test.log# - enables logging in same folder for file with name "test.log"; synonym of <b>LOGGING</b>.</li>
+ * <li>VOL#22000# - sets system volume to 22000.</li>
+ * <li>VOLUME#22000# - sets system volume to 22000.</li>
+ * <li>VOLU#1000# - increases system volume by 1000.</li>
+ * <li>VOLD#1000# - decreases system volume by 1000.</li>
+ * <li>COMBINATION#Ctrl&Alt&Delete# - does Ctrl+Alt+Del keystroke combination.</li>
+ * <li>COMB#Win&D# - does Windows+D keystroke combination. A synonim of <b>COMBINATION</b>.</li>
  * </ul>
  *
  * @author eMeS
@@ -102,9 +103,10 @@ public class MS_ScriptRunner {
     public final static int CMD_NR_VARIABLE_PROMPT = 19;
     public final static int CMD_NR_PASSWORD_PROMPT = 20;
     public final static int CMD_NR_SET_LOGGING = 21;
-    public final static int CMD_NR_SET_VOLUME_TO= 22;
+    public final static int CMD_NR_SET_VOLUME_TO = 22;
     public final static int CMD_NR_VOLUME_UP = 23;
     public final static int CMD_NR_VOLUME_DOWN = 24;
+    public final static int CMD_NR_COMBINATION = 25;
 
     static {
         COMMANDS.put("TEXT", CMD_NR_WRITE_TEXT);
@@ -131,10 +133,13 @@ public class MS_ScriptRunner {
         COMMANDS.put("VARIABLE", CMD_NR_VARIABLE_PROMPT); //like: variable+variable description+
         COMMANDS.put("PASSWORD", CMD_NR_PASSWORD_PROMPT); //like: password+password description+
         COMMANDS.put("LOGGING", CMD_NR_SET_LOGGING); //by default logging is off, but with this you can set path to a log file where errors will be logged
+        COMMANDS.put("LOG", CMD_NR_SET_LOGGING); //synonym
         COMMANDS.put("VOL", CMD_NR_SET_VOLUME_TO);
         COMMANDS.put("VOLUME", CMD_NR_SET_VOLUME_TO); //synonym
         COMMANDS.put("VOLU", CMD_NR_VOLUME_UP);
         COMMANDS.put("VOLD", CMD_NR_VOLUME_DOWN);
+        COMMANDS.put("COMBINATION", CMD_NR_COMBINATION);
+        COMMANDS.put("COMB", CMD_NR_COMBINATION);
     }
 
     private final static int CMD_SEC_EXECUTE_TEXT = 101;
@@ -154,6 +159,7 @@ public class MS_ScriptRunner {
     private final static int CMD_SEC_SET_VOLUME_TO = 115;
     private final static int CMD_SEC_VOLUME_UP = 116;
     private final static int CMD_SEC_VOLUME_DOWN = 117;
+    private final static int CMD_SEC_COMBINATION = 118;
 
     public final static char DELIMITER_OF_CMDS = '#';
     public final static char DELIMITER_OF_CMDS_SECOND = ';';
@@ -209,7 +215,7 @@ public class MS_ScriptRunner {
 
         fCommandList.doWithEveryItem((cmd, index) -> {
             try {
-                System.out.println(cmd);
+//                System.out.println(cmd);
                 if (delay > 0) {
                     MS_Tools.sleep(delay); //delay interval can be set using command "di"
                     if (paused) { //if script was paused then this is the place to remove pause
@@ -341,6 +347,10 @@ public class MS_ScriptRunner {
                 primaryCommandReading = false; //read volume parameter
                 secondaryCmd = CMD_SEC_VOLUME_DOWN;
                 break;
+            case CMD_NR_COMBINATION:
+                primaryCommandReading = false; //read volume parameter
+                secondaryCmd = CMD_SEC_COMBINATION;
+                break;
             default:
                 commandNotFoundTryKeyPressing = true;
         }
@@ -388,7 +398,7 @@ public class MS_ScriptRunner {
                 params = new MS_StringList(commandParamsAsText, DELIMITER_OF_PARAMETERS);
                 StringBuilder appParams = new StringBuilder();
                 if (params.count() > 2)
-                    for (int i=1; i<params.count(); i++)
+                    for (int i = 1; i < params.count(); i++)
                         appParams.append(params.get(i));
                 MS_FileSystemTools.executeApplication(params.get(0), appParams.toString());
                 break;
@@ -483,6 +493,24 @@ public class MS_ScriptRunner {
                     throw new ScriptParsingError(String.format(ERROR_WRONG_NUMBER_INPUT, commandParamsAsText));
                 }
                 SystemVolumeManager.volumeDown(volumeLevelParameter);
+                break;
+            case CMD_SEC_COMBINATION:
+                params = new MS_StringList(commandParamsAsText, DELIMITER_OF_PARAMETERS);
+                if (params.count() < 2)
+                    throw new ScriptParsingError(String.format(ERROR_PARAMETER_COUNT, 2));
+
+                //first push all the buttons down
+                params.first();
+                while (params.currentIndexInsideTheList()) {
+                    getInstance().keyDown(params.get(params.getIndexOfCurrent()));
+                    params.next();
+                }
+                //after release all the buttons
+                params.last();
+                while (params.currentIndexInsideTheList()) {
+                    getInstance().keyUp(params.get(params.getIndexOfCurrent()));
+                    params.prev();
+                }
                 break;
             default:
                 commandNotFoundTryKeyPressing = true;

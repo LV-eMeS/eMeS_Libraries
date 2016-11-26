@@ -4,8 +4,8 @@ import com.sun.jna.platform.KeyboardUtils;
 
 import java.awt.*;
 import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 
-import static java.awt.event.KeyEvent.VK_CAPS_LOCK;
 import static lv.emes.libraries.tools.MS_KeyCodeDictionary.textToKeyCode;
 
 /** 
@@ -78,7 +78,6 @@ public class MS_KeyStrokeExecutor implements IKeyStrokeExecutor {
 	//PUBLIC METHODS
 	@Override
 	public void keyDown(String key) {
-		//TODO do windows key press etc
 		robot.keyPress(translateKey(key));
 	}
 
@@ -100,14 +99,12 @@ public class MS_KeyStrokeExecutor implements IKeyStrokeExecutor {
 
 	@Override
 	public boolean isCapsLockToggled() {
-		//todo System.out.println(Platform.getOSType());
-		return KeyboardUtils.isPressed(VK_CAPS_LOCK);
+		return Toolkit.getDefaultToolkit().getLockingKeyState(KeyEvent.VK_CAPS_LOCK);
 	}
 
 	@Override
 	public void mouseLeftDown() {
 		robot.mousePress(InputEvent.BUTTON1_MASK);
-//		robot.delay(1000);
 	}
 
 	@Override
@@ -124,7 +121,6 @@ public class MS_KeyStrokeExecutor implements IKeyStrokeExecutor {
 	@Override
 	public void mouseRightDown() {
 		robot.mousePress(InputEvent.BUTTON3_MASK);
-//		robot.delay(1000);
 	}
 
 	@Override

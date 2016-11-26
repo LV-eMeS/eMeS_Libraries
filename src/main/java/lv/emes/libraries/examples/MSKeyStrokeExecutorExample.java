@@ -4,9 +4,7 @@ import lv.emes.libraries.tools.platform.MS_KeyStrokeExecutor;
 
 import java.awt.*;
 
-import static junit.framework.TestCase.assertTrue;
-
-/** 
+/**
  * @version 1.0.
  * @author eMeS
  */
@@ -23,5 +21,10 @@ public class MSKeyStrokeExecutorExample {
 		System.out.println(MS_KeyStrokeExecutor.getInstance().isKeyDown("up"));
 		MS_KeyStrokeExecutor.getInstance().keyUp("up");
 		System.out.println("Execution ends.");
+
+		MS_KeyStrokeExecutor.getInstance().keyDown("win");
+		MS_KeyStrokeExecutor.getInstance().keyPress("D");
+		MS_KeyStrokeExecutor.getInstance().keyUp("win");
+		System.out.println(MS_KeyStrokeExecutor.getInstance().isCapsLockToggled());
 	}
 }

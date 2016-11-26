@@ -193,6 +193,8 @@ public class MS_KeyCodeDictionary {
             keyCodeDict.put("VK_PRINTSCREEN", VK_PRINTSCREEN);
             keyCodeDict.put("PRINT_SCREEN", VK_PRINTSCREEN);
             keyCodeDict.put("PRINTSCREEN", VK_PRINTSCREEN);
+            keyCodeDict.put("Printscr", VK_PRINTSCREEN);
+            keyCodeDict.put("Prtscr", VK_PRINTSCREEN);
             keyCodeDict.put("TEST", VK_ASTERISK);
         }
     }
