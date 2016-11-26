@@ -9,7 +9,7 @@ package lv.emes.libraries.tools.platform;
  */
 public class ScriptParsingError extends Exception {
 	//PUBLIC STRUCTURES, EXCEPTIONS, PROPERTIES AND CONSTANTS
-    public final static String ERROR_PARAMETER_COUNT = "Wrong count of passed parameters. Expecting: %d";
+    public final static String ERROR_PARAMETER_COUNT = "Wrong count of passed parameters. Expecting at least: %d";
     public final static String ERROR_FAILED_TO_SHOW_WINDOW = "Failed to show application window with name: %s";
     public final static String ERROR_FAILED_TO_HIDE_WINDOW = "Failed to hide application window with name: %s";
     public final static String WARNING_USER_VARIABLE_OVERRIDDEN = "Warning: parameter '%s' already existed. Previous value '%s' was overridden to '%s'";

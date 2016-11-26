@@ -78,7 +78,7 @@ public class ApplicationWindow {
         return
                 User32.INSTANCE.ShowWindow(hwnd, SW_SHOW)  // Make the window visible if it was hidden
                         &&
-                        User32.INSTANCE.ShowWindow(hwnd, SW_RESTORE)  // Next, restore it if it was minimized
+                        User32.INSTANCE.ShowWindow(hwnd, SW_SHOWNA)
                         &&
                         User32.INSTANCE.SetForegroundWindow(hwnd)
                 ;

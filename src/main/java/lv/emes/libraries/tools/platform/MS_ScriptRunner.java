@@ -351,15 +351,17 @@ public class MS_ScriptRunner {
                         if (doShiftPress)
                             getInstance().keyUp("SHIFT");
                     } catch (Exception e) {
-                        //TODO catch this one!
+//                        throw new ScriptParsingError("Unknown error trying to write text");
                     }
                 }
                 break;
             case CMD_SEC_RUN_APPLICATION:
                 params = new MS_StringList(commandParamsAsText, DELIMITER_OF_PARAMETERS);
-//                if (params.count() != 2)
-//                    throw new ScriptParsingError(String.format(ERROR_PARAMETER_COUNT, 2));
-                MS_FileSystemTools.executeApplication(params.get(0), params.get(1));
+                StringBuilder appParams = new StringBuilder();
+                if (params.count() > 2)
+                    for (int i=1; i<params.count(); i++)
+                        appParams.append(params.get(i));
+                MS_FileSystemTools.executeApplication(params.get(0), appParams.toString());
                 break;
             case CMD_SEC_SHOW_WINDOW_OS_WINDOWS:
                 if (!ApplicationWindow.showApplicationWindow(commandParamsAsText))
