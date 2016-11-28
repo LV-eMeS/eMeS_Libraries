@@ -174,8 +174,8 @@ public class MS_ScriptRunner {
     private long delay = 0;
     private boolean primaryCommandReading = true;
     private int secondaryCmd = 0;
-    private IFuncStringInputMethod variableInputMethod = null;//IFuncStringInputMethod.CONSOLE;
-    private IFuncStringMaskedInputMethod passwordInputMethod = null;//IFuncStringMaskedInputMethod.CONSOLE;
+    private IFuncStringInputMethod variableInputMethod = IFuncStringInputMethod.CONSOLE;
+    private IFuncStringMaskedInputMethod passwordInputMethod = IFuncStringMaskedInputMethod.CONSOLE;
     private IFuncStringOutputMethod outputMethod = IFuncStringOutputMethod.CONSOLE;
 
     public String getPathToLoggerFile() {
