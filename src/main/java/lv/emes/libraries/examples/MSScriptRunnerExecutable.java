@@ -1,8 +1,7 @@
 package lv.emes.libraries.examples;
 
 import lv.emes.libraries.file_system.MS_TextFile;
-import lv.emes.libraries.tools.platform.IFuncStringInputMethod;
-import lv.emes.libraries.tools.platform.IFuncStringMaskedInputMethod;
+import lv.emes.libraries.tools.MS_Tools;
 import lv.emes.libraries.tools.platform.IFuncStringOutputMethod;
 import lv.emes.libraries.tools.platform.MS_ScriptRunner;
 
@@ -16,8 +15,8 @@ public class MSScriptRunnerExecutable {
         //For building
         String commandText = MS_TextFile.getFileTextAsString(args[0], "");
         MS_ScriptRunner runner = new MS_ScriptRunner(commandText);
-        runner.setVariableInputMethod(IFuncStringInputMethod.CONSOLE);
-        runner.setPasswordInputMethod(IFuncStringMaskedInputMethod.CONSOLE);
+        runner.setVariableInputMethod(MS_Tools::readlnStringFromConsole);
+        runner.setPasswordInputMethod(MS_Tools::readlnStringFromConsole);
         runner.setOutputMethod(IFuncStringOutputMethod.CONSOLE);
         runner.runScript();
 
