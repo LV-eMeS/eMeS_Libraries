@@ -5,7 +5,6 @@ import lv.emes.libraries.file_system.MS_TextFile;
 import java.util.ArrayList;
 import java.util.List;
 
-import static lv.emes.libraries.tools.MS_StringTools.chr;
 import static lv.emes.libraries.tools.MS_Tools.inRange;
 
 /** 
@@ -14,13 +13,13 @@ import static lv.emes.libraries.tools.MS_Tools.inRange;
  * <b>secondDelimiter</b> helps in cases when a symbol equal to <b>delimiter</b> is already used in big string.
  * <br><u>Note</u>: those delimiters shouldn't be changed unless they are often used in text which operated with this list.
  * <br><u>Note</u>: class is in it's final implementation state. If there is need for overriding this, use <b>MS_List</b> instead!
- * @version 2.1.
+ * @version 2.2.
  * @see MS_List
  */
 public final class MS_StringList implements IListActions<String> {
 	boolean flagForLoopBreaking;
 	public static final char cDefaultDelimiter = '#';
-	public static final char cSecondDefaultDelim = chr(9835);
+	public static final char cSecondDefaultDelim = '`';//chr(9835);
 	/**
 	 * Delimiter can be changed and will be used in <b>fromString</b> and b>toString</b> methods. Default value of this property is <b>cDefaultDelimiter</b>.
 	 * @see MS_StringList#cDefaultDelimiter
