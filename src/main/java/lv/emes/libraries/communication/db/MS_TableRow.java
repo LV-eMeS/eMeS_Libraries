@@ -29,7 +29,7 @@ public abstract class MS_TableRow {
     //CONSTRUCTORS
 
     /**
-     * This constructor always should be overridden by successors in order to use <b>newTable</b>.
+     * This constructor always should be overridden by descendants in order to use <b>newTable</b>.
      *
      * @param rs result set of table rows retrieved from database.
      */
@@ -75,10 +75,11 @@ public abstract class MS_TableRow {
 
     /**
      * Retrieves all the rows from result set and stores them in list of rows to make table.
-     *
+     * <p><u>Note</u>: this method is using constructor <b>MS_TableRow(ResultSet)</b>, so
+     * be sure to implement it in order to successfully use this method!
      * @param rs                   result set of table rows retrieved from database.
-     * @param specificRowTypeClass a class of object that is successor of <b>MS_TableRow</b> class.
-     * @param <T>                  a type of class that is successor of <b>MS_TableRow</b> class to define type of method's return.
+     * @param specificRowTypeClass a class of object that is descendant of <b>MS_TableRow</b> class.
+     * @param <T>                  a type of class that is descendant of <b>MS_TableRow</b> class to define type of method's return.
      * @return a <b>MS_List</b> filled with new instances of <b>T</b>.
      * <p>Empty list is returned when some error occurs while trying to create objects from <b>rs</b>
      * or simply if <b>rs</b> is empty.
