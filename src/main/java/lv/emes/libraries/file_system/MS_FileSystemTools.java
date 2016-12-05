@@ -25,8 +25,6 @@ import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
@@ -192,7 +190,7 @@ public class MS_FileSystemTools {
      * @return path to a directory where application is launched.
      */
     public static String getProjectDirectory() {
-        return System.getProperty("user.dir") + "/";
+        return replaceBackslash(System.getProperty("user.dir")) + "/";
     }
 
     /**
@@ -306,12 +304,8 @@ public class MS_FileSystemTools {
      * @return path to directory or "./" if only short filename given as parameter <b>aFilename</b>.
      */
     public static String getDirectoryOfFile(String aFilename) {
-        try {
-            Path p = Paths.get(aFilename);
-            return replaceBackslash(p.getParent().toString()) + "/";
-        } catch (Exception r) {
-            return replaceBackslash(CURRENT_DIRECTORY) + "/";
-        }
+        aFilename = replaceBackslash(aFilename);
+        return aFilename.endsWith("/") ? aFilename : directoryUp(aFilename);
     }
 
     /**
@@ -325,7 +319,10 @@ public class MS_FileSystemTools {
             Path p = Paths.get(aFilename);
             return p.getFileName().toString();
         } catch (Exception r) {
-            return aFilename;
+            aFilename = replaceBackslash(aFilename);
+            MS_StringList tmp = new MS_StringList(aFilename, '/');
+            tmp.last();
+            return tmp.current();
         }
     }
 
@@ -336,13 +333,15 @@ public class MS_FileSystemTools {
      * @return true if delete successful, false if file couldn't be found or deleted.
      */
     public static boolean deleteFile(String filename) {
-        Path path = FileSystems.getDefault().getPath(filename);
-        try {
-            Files.delete(path);
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
+//        try {
+//            Path path = FileSystems.getDefault().getPath(filename);
+//            Files.delete(path);
+            File fileToDelete = new File(filename);
+            return fileToDelete.delete();
+//            return true;
+//        } catch (Exception e) {
+//            return false;
+//        }
     }
 
     /**
