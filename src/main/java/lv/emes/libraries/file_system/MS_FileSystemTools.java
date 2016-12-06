@@ -66,6 +66,7 @@ public class MS_FileSystemTools {
      * @throws MalformedURLException
      */
     private static boolean _openLinkInWebBrowser(String aLink) {
+        //TODO check on Android!
         if (Desktop.isDesktopSupported()) {
             Desktop desktop = Desktop.getDesktop();
             try {
