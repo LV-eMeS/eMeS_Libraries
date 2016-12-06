@@ -21,6 +21,7 @@ eMeS libraries Version 1.4.0
 * Java.nio library method usage reduced duo to lack of support in Android.
 * Time tools improved and tested.
 * JavaDoc generation without errors.
+* Small HTTP client.
 ==============================================================================
 eMeS libraries Version 1.3.0
 ==============================================================================
