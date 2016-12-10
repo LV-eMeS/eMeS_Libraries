@@ -8,7 +8,7 @@ import java.io.*;
 /** 
  * Module consists of methods for binary file I/O. 
  * It is mainly used to perform DB operations with binary file exchange.
- * @version 1.4.
+ * @version 1.5.
  */
 public class MS_BinaryTools {
 	/**
@@ -50,7 +50,7 @@ public class MS_BinaryTools {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * Converts input stream into byte array.
 	 * @param input binary input stream.
@@ -62,6 +62,19 @@ public class MS_BinaryTools {
 		} catch (IOException e) {
 			e.printStackTrace();
 			return null;
+		}
+	}
+
+	/**
+	 * Converts input stream into UTF-8 formatted text.
+	 * @param input binary input stream.
+	 * @return text if success, empty string if failure.
+	 */
+	public static String inputToUTF8(InputStream input) {
+		try {
+			return org.apache.commons.io.IOUtils.toString(input, "UTF-8");
+		} catch (IOException e) {
+			return "";
 		}
 	}
 	
