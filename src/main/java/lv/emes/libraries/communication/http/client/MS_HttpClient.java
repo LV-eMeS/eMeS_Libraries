@@ -57,6 +57,7 @@ public class MS_HttpClient {
             requestURL += "?" + getPostDataString(postDataParams);
             url = new URL(requestURL);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            stdConfigForConnection(conn);
             res.connection = conn;
             res.reponseCode = conn.getResponseCode();
             InputStream in = new BufferedInputStream(conn.getInputStream());
@@ -82,11 +83,8 @@ public class MS_HttpClient {
             url = new URL(requestURL);
 
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setReadTimeout(TIMEOUT_MILISECONDS);
-            conn.setConnectTimeout(TIMEOUT_MILISECONDS);
+            stdConfigForConnection(conn);
             conn.setRequestMethod("POST");
-            conn.setDoInput(true);
-            conn.setDoOutput(true);
 
             OutputStream os = conn.getOutputStream();
             BufferedWriter writer = new BufferedWriter(
@@ -118,5 +116,12 @@ public class MS_HttpClient {
         if (res.message == null)
             res.message = response.toString();
         return res;
+    }
+
+    private static void stdConfigForConnection(HttpURLConnection conn) {
+        conn.setReadTimeout(TIMEOUT_MILISECONDS);
+        conn.setConnectTimeout(TIMEOUT_MILISECONDS);
+        conn.setDoInput(true);
+        conn.setDoOutput(true);
     }
 }
