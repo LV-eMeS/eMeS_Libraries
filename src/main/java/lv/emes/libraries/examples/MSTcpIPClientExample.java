@@ -1,16 +1,15 @@
 package lv.emes.libraries.examples;
 
-import java.io.IOException;
-import java.net.UnknownHostException;
-
 import lv.emes.libraries.communication.tcp_ip.MS_ClientServerConstants;
 import lv.emes.libraries.communication.tcp_ip.client.MS_ClientCommand;
 import lv.emes.libraries.communication.tcp_ip.client.MS_TcpIPClient;
 import lv.emes.libraries.file_system.MS_BinaryTools;
 
+import java.io.IOException;
+import java.net.UnknownHostException;
+
 public class MSTcpIPClientExample {
 	public static final String BINARY_DEST_FILE_CLIENT = "src/main/java/lv/emes/examples/exampleFileFromServer.png";
-//	public static final String HOST_TO_CONNECT_TO = "emesserver.ddns.net";
 	public static final String HOST_TO_CONNECT_TO = "localhost";
 	public static final int PORT_OF_HOST = MS_ClientServerConstants.DEFAULT_PORT_FOR_TESTING;
 
@@ -25,7 +24,7 @@ public class MSTcpIPClientExample {
 		MS_ClientCommand cmd = new MS_ClientCommand("Read binary file that I sent to you!");
 		cmd.doOnCommand = (cli, data, out) -> {
 			//save file to local hard disk
-			byte[] bytesFromServer = MS_BinaryTools.textToBytes(data.get(1));
+			byte[] bytesFromServer = MS_BinaryTools.stringToBytes(data.get(1));
 			try {
 				MS_BinaryTools.writeFile(MS_BinaryTools.bytesToIntput(bytesFromServer), BINARY_DEST_FILE_CLIENT);
 			} catch (Exception e) {

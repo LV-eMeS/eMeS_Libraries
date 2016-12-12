@@ -88,20 +88,22 @@ public class MS_BinaryTools {
 	}
 	
 	/**
-	 * Converts String into byte array.
-	 * @param input formatted String type text .
-	 * @return byte array.
-	 */
-	public static byte[] textToBytes(String input) {
-		return Base64.decodeBase64(input);
-	}
-	
-	/**
-	 * Converts byte array into String.
-	 * @param bytes byte array.
+	 * Converts String, that represents binary data, into byte array.
+     * This String should be Base64 string.
+	 * @param input formatted String type text.
+     * @return byte array.
+     */
+    public static byte[] stringToBytes(String input) {
+        return Base64.decodeBase64(input);
+    }
+
+    /**
+     * Converts byte array into String.
+     * This return String will be Base64 string.
+     * @param bytes byte array.
 	 * @return formatted String type text as binary data.
 	 */
-	public static String bytesTotext(byte[] bytes) {
+	public static String bytesToString(byte[] bytes) {
 		return Base64.encodeBase64String(bytes);
 	}
 }

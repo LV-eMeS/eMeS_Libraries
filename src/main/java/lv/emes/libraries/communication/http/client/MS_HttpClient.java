@@ -7,7 +7,6 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -23,10 +22,12 @@ import java.util.Map;
  */
 //http://stackoverflow.com/questions/2938502/sending-post-data-in-android
 public class MS_HttpClient {
-    //TODO http://blog.modulus.io/build-your-first-http-server-in-nodejs
     private static final int TIMEOUT_MILISECONDS = 15000;
 
     private static String getPostDataString(Map<String, String> params) throws UnsupportedEncodingException{
+        if (params == null) //if no parameters is assigned then there is no need to build parameters as string
+            return "";
+
         StringBuilder result = new StringBuilder();
         boolean first = true;
         for(Map.Entry<String, String> entry : params.entrySet()){
@@ -43,46 +44,27 @@ public class MS_HttpClient {
         return result.toString();
     }
 
-    public static void main(String[] args) throws IOException {
-        String urlStringGet = "http://emesserver.ddns.net/Test/test_get.php";
-        String urlStringPost = "http://emesserver.ddns.net/Test/test_post.php";
-        String urlStringNoParams = "http://emesserver.ddns.net/Test/test_no_params.php";
-
-        Map<String, String> params = new HashMap<>();
-        params.put("test", "vards");
-        params.put("name", "vards");
-
-        String response;
-        response = get(urlStringGet, params);
-        System.out.println(response);
-
-        response = post(urlStringPost, params);
-        System.out.println(response);
-
-        response = get(urlStringNoParams, params);
-        System.out.println(response);
-
-        response = post(urlStringNoParams, params);
-        System.out.println(response);
-        //TODO write this as tests!
-    }
-
     /**
      * Does HTTP method "GET" to presented URL <b>requestURL</b> with presented parameters <b>postDataParams</b>.
      * @param requestURL an URL to HTTP server.
      * @param postDataParams map of parameters to pass for this URL.
      * @return HTTP response from server.
      */
-    public static String get(String requestURL, Map<String, String> postDataParams) {
+    public static RequestResult get(String requestURL, Map<String, String> postDataParams) {
+        URL url;
+        RequestResult res = new RequestResult();
         try {
             requestURL += "?" + getPostDataString(postDataParams);
-            URL url = new URL(requestURL);
-            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-            InputStream in = new BufferedInputStream(urlConnection.getInputStream());
-            return MS_BinaryTools.inputToUTF8(in);
+            url = new URL(requestURL);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            res.connection = conn;
+            res.reponseCode = conn.getResponseCode();
+            InputStream in = new BufferedInputStream(conn.getInputStream());
+            res.message = MS_BinaryTools.inputToUTF8(in);
         } catch (IOException e) {
-            return "";
+            res.message = "";
         }
+        return res;
     }
 
     /**
@@ -91,9 +73,11 @@ public class MS_HttpClient {
      * @param postDataParams map of parameters to pass for this URL.
      * @return HTTP response from server.
      */
-    public static String post(String requestURL, Map<String, String> postDataParams) {
+    public static RequestResult post(String requestURL, Map<String, String> postDataParams) {
         URL url;
         StringBuilder response = new StringBuilder();
+        RequestResult res = new RequestResult();
+
         try {
             url = new URL(requestURL);
 
@@ -112,7 +96,10 @@ public class MS_HttpClient {
             writer.flush();
             writer.close();
             os.close();
+
+            res.connection = conn;
             int responseCode = conn.getResponseCode();
+            res.reponseCode = responseCode;
 
             if (responseCode == HttpsURLConnection.HTTP_OK) {
                 String line;
@@ -122,12 +109,14 @@ public class MS_HttpClient {
                 }
             }
             else {
-                return "";
+                res.message = "";
             }
         } catch (Exception e) {
-            return "";
+            res.message = "";
         }
 
-        return response.toString();
+        if (res.message == null)
+            res.message = response.toString();
+        return res;
     }
 }

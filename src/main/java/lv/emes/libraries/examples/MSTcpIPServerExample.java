@@ -52,7 +52,7 @@ public class MSTcpIPServerExample {
 			//load image from resources folder into byte array
 			byte[] by = MS_BinaryTools.inputToBytes(MS_FileSystemTools.getResourceInputStream("test_pic.png"));
 			//prepare to send byte array as text
-			srvr.addDataToContainer(MS_BinaryTools.bytesTotext(by));
+			srvr.addDataToContainer(MS_BinaryTools.bytesToString(by));
 			//send both command "Read binary file that I sent to you!" and binary data to client, which sent command "Send binary file to client now!" to server.
 			srvr.cmdToClient("Read binary file that I sent to you!", cli);			
 		};	

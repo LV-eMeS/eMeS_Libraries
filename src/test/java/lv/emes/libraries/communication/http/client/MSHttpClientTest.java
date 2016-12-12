@@ -1,0 +1,83 @@
+package lv.emes.libraries.communication.http.client;
+
+import lv.emes.libraries.communication.CommunicationConstants;
+import org.junit.BeforeClass;
+import org.junit.FixMethodOrder;
+import org.junit.Test;
+import org.junit.runners.MethodSorters;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import static lv.emes.libraries.communication.http.client.MS_HttpClient.get;
+import static lv.emes.libraries.communication.http.client.MS_HttpClient.post;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+public class MSHttpClientTest {
+    private static final String URL_STRING_GET = "http://"+ CommunicationConstants.TESTING_SERVER_HOSTAME +"/Test/test_get.php";
+    private static final String URL_STRING_POST = "http://"+CommunicationConstants.TESTING_SERVER_HOSTAME+"/Test/test_post.php";
+    private static final String URL_STRING_NO_PARAMS = "http://"+CommunicationConstants.TESTING_SERVER_HOSTAME+"/Test/test_no_params.php";
+    private static final String URL_STRING_WRONG_URL = "http://"+ CommunicationConstants.TESTING_SERVER_HOSTAME +"/Test/no_file_is_added.php";
+    private static final String TEST_PARAMETER_NAME = "test";
+    private static final String TEST_PARAMETER_VALUE = "vards";
+    private static final String TEST_NO_PARAMETER_VALUE = TEST_PARAMETER_NAME;
+
+    private static Map<String, String> params;
+    private static RequestResult response;;
+
+    @BeforeClass
+    //Before even start testing do some preparations!
+    public static void initTestPreConditions() {
+        params = new HashMap<>();
+        params.put(TEST_PARAMETER_NAME, TEST_PARAMETER_VALUE);
+    }
+
+    @Test
+    public void test01GetWithTestVariable() {
+        response = get(URL_STRING_GET, params);
+        assertEquals(200, response.reponseCode);
+        assertEquals(TEST_PARAMETER_VALUE, response.message);
+    }
+
+    @Test
+    public void test02PostWithTestVariable() {
+        response = post(URL_STRING_POST, params);
+        assertEquals(200, response.reponseCode);
+        assertEquals(TEST_PARAMETER_VALUE, response.message);
+    }
+
+    @Test
+    public void test03GetWithoutParameters() {
+        response = get(URL_STRING_NO_PARAMS, params);
+        assertEquals(200, response.reponseCode);
+        assertEquals(TEST_NO_PARAMETER_VALUE, response.message);
+    }
+
+    @Test
+    public void test04PostWithoutParameters() {
+        response = post(URL_STRING_NO_PARAMS, params);
+        assertEquals(200, response.reponseCode);
+        assertEquals(TEST_NO_PARAMETER_VALUE, response.message);
+    }
+
+    @Test
+    public void test05GetWithEmptyParameters() {
+        response = get(URL_STRING_GET, null);
+        assertNotEquals(TEST_NO_PARAMETER_VALUE, response.message);
+    }
+
+    @Test
+    public void test06PostWithEmptyParameters() {
+        response = post(URL_STRING_GET, null);
+        assertNotEquals(TEST_NO_PARAMETER_VALUE, response.message);
+    }
+
+    @Test
+    public void test07GetWrongURL() {
+        response = get(URL_STRING_WRONG_URL, null);
+        assertEquals(404, response.reponseCode);
+        assertEquals("", response.message);
+    }
+}

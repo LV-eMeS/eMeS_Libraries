@@ -188,7 +188,7 @@ public class MSTpcIPServerTest {
         cmdReceiveBytesFromClient.code = CMD4_SEND_BINARY_FROM_SERVER;
         cmdReceiveBytesFromClient.doOnCommand = (server, data, cli, out) -> {
             assertTrue(cli.isConnected());
-            byte[] bytesFromClient = MS_BinaryTools.textToBytes(data.get(1));
+            byte[] bytesFromClient = MS_BinaryTools.stringToBytes(data.get(1));
 //			Thread.sleep(1000);	
 
             try {
@@ -201,7 +201,7 @@ public class MSTpcIPServerTest {
 
         byte[] by = MS_BinaryTools.inputToBytes(MS_FileSystemTools.getResourceInputStream(BINARY_SOURCE_FILE));
         assertTrue(server.isRunning());
-        client1.addDataToContainer(MS_BinaryTools.bytesTotext(by));
+        client1.addDataToContainer(MS_BinaryTools.bytesToString(by));
         client1.cmdToServer(CMD4_SEND_BINARY_FROM_SERVER);
         assertTrue(server.isRunning());
         Thread.sleep(2000);         //w8 till server does his job
@@ -220,7 +220,7 @@ public class MSTpcIPServerTest {
         cmdReceiveBytesFromServer.code = CMD4_SEND_BINARY_FROM_SERVER;
         cmdReceiveBytesFromServer.doOnCommand = (client, data, out) -> {
             assertTrue(client.isConnected());
-            byte[] bytesFromServer = MS_BinaryTools.textToBytes(data.get(1));
+            byte[] bytesFromServer = MS_BinaryTools.stringToBytes(data.get(1));
 
             try {
                 MS_BinaryTools.writeFile(MS_BinaryTools.bytesToIntput(bytesFromServer), BINARY_DEST_FILE_CLIENT);
@@ -232,7 +232,7 @@ public class MSTpcIPServerTest {
 
         byte[] by = MS_BinaryTools.inputToBytes(MS_FileSystemTools.getResourceInputStream(BINARY_SOURCE_FILE));
         assertTrue(server.isRunning());
-        server.addDataToContainer(MS_BinaryTools.bytesTotext(by));
+        server.addDataToContainer(MS_BinaryTools.bytesToString(by));
         server.cmdToClientByID(CMD4_SEND_BINARY_FROM_SERVER, client1.getId());
         assertTrue(server.isRunning());
         Thread.sleep(2000);         //w8 till client does his job
