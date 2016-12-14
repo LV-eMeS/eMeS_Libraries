@@ -67,11 +67,11 @@ public interface MS_IJDBCDatabase {
 
     /**
      * Gets the result of executed statement. Example of use (executes given statement and prints out first column of result as String):
-     * <code><pre>{@code
+     * <pre><code>
      * ResultSet ress = db.getQueryResult(statement);
      * while (ress.next()) {
-     *  System.out.println(ress.getString(1)); //columns are starting with 1
-     * }}</pre></code>
+     *      System.out.println(ress.getString(1)); //columns are starting with 1
+     * }</code></pre>
      * @param statement proper SQL statement which have been executed as SELECT type statement.
      * @return ResultSet
      */

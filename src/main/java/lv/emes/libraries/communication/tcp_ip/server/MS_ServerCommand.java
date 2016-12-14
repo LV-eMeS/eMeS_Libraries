@@ -27,8 +27,8 @@ public class MS_ServerCommand {
 	 * Creates command with particular name and behavior.
 	 * @param code unique name of command.
 	 * @param lambda behavior of command. That is recommended to use lambda expression to fill this like:
-	 * <code><pre>{@code
-	 * (server, data, client, out) -> {methods};}</pre></code>
+	 * <p><code>
+	 * (server, data, client, out) -&gt; {methods};</code>
 	 * @see lv.emes.libraries.communication.tcp_ip.server.IFuncOnIncomingClientMessage
 	 */
 	public MS_ServerCommand(String code, IFuncOnIncomingClientMessage lambda) {

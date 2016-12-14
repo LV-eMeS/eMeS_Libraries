@@ -33,48 +33,48 @@ import static lv.emes.libraries.tools.platform.ScriptParsingError.*;
  * <li>runImplementationSecondary</li></ul>
  * <p>Available commands for script execution:</p>
  * <ul>
- * <li>TEXT#A Text to write# - does keystroke execution for every printable key written as second parameter.</li>
- * <li>TEXT#User age is: $user_input_age$# - does keystroke execution for text: "User age is: " and
+ * <li><code>TEXT#A Text to write#</code> - does keystroke execution for every printable key written as second parameter.</li>
+ * <li><code>TEXT#User age is: $user_input_age$#</code> - does keystroke execution for text: "User age is: " and
  * variable or password defined in map <b>userVariables</b> with key "$user_input_age$".</li>
- * <li>TEXT#Special case of writing '$;'# - does keystroke execution for text:"Special case of writing '$'"
+ * <li><code>TEXT#Special case of writing '$;'#</code> - does keystroke execution for text:"Special case of writing '$'"
  * <br><u>Note</u>: be careful, because this is the only way to write symbol $ - by adding semicolon after it.</li>
- * <li>RUN#Notepad.exe# - launches application from path given as second parameter like "notepad.exe".</li>
- * <li>RUN#path_to_some_executable_with_parameters.exe&cmd_line_param1 param2 param3# - launches application with passed command line parameters.</li>
- * <li>WSHOW#notepad# - (platform: Windows) brings first window matching text in task manager as second parameter like "notepad".</li>
- * <li>WHIDE#notepad# - (platform: Windows) minimizes first window matching text in task manager as second parameter like "notepad".</li>
- * <li>PAUSE#1000# - holds script executing for 1 second.</li>
- * <li>DI#1000# - defines interval of delaying script command execution for 1 second after each command; to stop this
+ * <li><code>RUN#Notepad.exe#</code> - launches application from path given as second parameter like "notepad.exe".</li>
+ * <li><code>RUN#path_to_some_executable_with_parameters.exe&amp;cmd_line_param1 param2 param3#</code> - launches application with passed command line parameters.</li>
+ * <li><code>WSHOW#notepad#</code> - (platform: Windows) brings first window matching text in task manager as second parameter like "notepad".</li>
+ * <li><code>WHIDE#notepad#</code> - (platform: Windows) minimizes first window matching text in task manager as second parameter like "notepad".</li>
+ * <li><code>PAUSE#1000#</code> - holds script executing for 1 second.</li>
+ * <li><code>DI#1000#</code> - defines interval of delaying script command execution for 1 second after each command; to stop this
  * either use DI#0# or PAUSE#X#, and after X miliseconds delaying will be canceled.</li>
- * <li>ML# - does left mouse click.</li>
- * <li>MLD# - does left mouse press and hold.</li>
- * <li>MLU# - does left mouse release up.</li>
- * <li>MR# - does right mouse click.</li>
- * <li>MRD# - does right mouse press and hold.</li>
- * <li>MRU# - does right mouse release up.</li>
- * <li>MW# or WHEEL# - does mouse wheel click.</li>
- * <li>MC#500&400# - sets mouse new location.</li>
- * <li>MM#-50&20# - moves mouse for 50 pixels to the left and 20 pixels down.</li>
- * <li>HOLD#CTRL# - holds CTRL key until RELEASE command is executed.</li>
- * <li>RELEASE#CTRL# - releases CTRL key (does button up for CTRL key code).</li>
- * <li>SS#CTRL# - does HOLD + RELEASE for given key (ctrl in this case).</li>
- * <li>VARIABLE#username_4_login&Please, enter username of application X to log in!# - does promting for
+ * <li><code>ML#</code> - does left mouse click.</li>
+ * <li><code>MLD#</code> - does left mouse press and hold.</li>
+ * <li><code>MLU#</code> - does left mouse release up.</li>
+ * <li><code>MR#</code> - does right mouse click.</li>
+ * <li><code>MRD#</code> - does right mouse press and hold.</li>
+ * <li><code>MRU#</code> - does right mouse release up.</li>
+ * <li><code>MW#</code> or WHEEL# - does mouse wheel click.</li>
+ * <li><code>MC#500&amp;400#</code> - sets mouse new location.</li>
+ * <li><code>MM#-50&amp;20#</code> - moves mouse for 50 pixels to the left and 20 pixels down.</li>
+ * <li><code>HOLD#CTRL#</code> - holds CTRL key until RELEASE command is executed.</li>
+ * <li><code>RELEASE#CTRL#</code> - releases CTRL key (does button up for CTRL key code).</li>
+ * <li><code>SS#CTRL#</code> - does HOLD + RELEASE for given key (ctrl in this case).</li>
+ * <li><code>VARIABLE#username_4_login&amp;Please, enter username of application X to log in!#</code> - does promting for
  * user input and informs user with text passed as second parameter.
  * <br>This will save in <b>userVariables</b> as map with key=username_4_login; value=user input text.
  * <br>Those variables will be used in <b>TEXT</b> command and recognized by "$" symbols before and after variable name.</li>
- * <li>PASSWORD#password_4_login&Please, enter password of application X to log in!# - does promting for
+ * <li><code>PASSWORD#password_4_login&amp;Please, enter password of application X to log in!#</code> - does promting for
  * user secure input (characters will be replaced by *** when inputting)
  * <br>This will save in <b>userVariables</b> as map with key=username_4_login; value=user input text.
  * <br>Those variables will be used in <b>TEXT</b> command and recognized by "$" symbols before and after variable name.</li>
- * <li>LOGGING#D:/logs/ScriptRunner.log# - enables logging of errors during script execution;
+ * <li><code>LOGGING#D:/logs/ScriptRunner.log#</code> - enables logging of errors during script execution;
  * all the errors will be logged in file ScriptRunner.log;
  * by default this feature is turned off.</li>
- * <li>LOG#test.log# - enables logging in same folder for file with name "test.log"; synonym of <b>LOGGING</b>.</li>
- * <li>VOL#22000# - sets system volume to 22000.</li>
- * <li>VOLUME#22000# - sets system volume to 22000.</li>
- * <li>VOLU#1000# - increases system volume by 1000.</li>
- * <li>VOLD#1000# - decreases system volume by 1000.</li>
- * <li>COMBINATION#Ctrl&Alt&Delete# - does Ctrl+Alt+Del keystroke combination.</li>
- * <li>COMB#Win&D# - does Windows+D keystroke combination. A synonim of <b>COMBINATION</b>.</li>
+ * <li><code>LOG#test.log#</code> - enables logging in same folder for file with name "test.log"; synonym of <b>LOGGING</b>.</li>
+ * <li><code>VOL#22000#</code> - sets system volume to 22000.</li>
+ * <li><code>VOLUME#22000#</code> - sets system volume to 22000.</li>
+ * <li><code>VOLU#1000#</code> - increases system volume by 1000.</li>
+ * <li><code>VOLD#1000#</code> - decreases system volume by 1000.</li>
+ * <li><code>COMBINATION#Ctrl&amp;Alt&amp;Delete#</code> - does Ctrl+Alt+Del keystroke combination.</li>
+ * <li><code>COMB#Win&amp;D#</code> - does Windows+D keystroke combination. A synonim of <b>COMBINATION</b>.</li>
  * </ul>
  *
  * @author eMeS

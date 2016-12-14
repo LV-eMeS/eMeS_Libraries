@@ -1,5 +1,5 @@
 eMeS libraries
-Version 1.3.6
+Version 1.4.0
 Release Notes
 
 INTRODUCTION:
@@ -19,9 +19,8 @@ eMeS libraries Version 1.4.0
   sending them via TCP/IP.
 * In MS_TableRow new static method is added to create entire table retrieved from ResultSet.
 * Java.nio library method usage reduced duo to lack of support in Android.
-* Time tools improved and tested.
 * JavaDoc generation without errors.
-* Small HTTP client.
+* Small HTTP client with GET and POST methods available.
 ==============================================================================
 eMeS libraries Version 1.3.0
 ==============================================================================

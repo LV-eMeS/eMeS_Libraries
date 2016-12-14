@@ -1,14 +1,14 @@
 package lv.emes.libraries.communication.tcp_ip.server;
 
-import java.io.DataOutputStream;
-
 import lv.emes.libraries.tools.lists.MS_StringList;
+
+import java.io.DataOutputStream;
 
 /**
  * This functional interface is for client-server message handling purposes. 
  * Set it to define behavior of incoming message for client.
- *     <code><pre>{@code
- *     IFuncOnIncomingClientMessage handler = (server, data, client, out) -> {methods};}</pre></code>
+ *     <p><code>
+ *     IFuncOnIncomingClientMessage handler = (server, data, client, out) -&gt; {methods};</code>
  * <p><b>methods</b> are all the methods to be handled with list of string type data. 
  * <p>MS_TcpIPServer server is server object itself. 
  * <br>For data first element of data list is command code, remaining elements are user

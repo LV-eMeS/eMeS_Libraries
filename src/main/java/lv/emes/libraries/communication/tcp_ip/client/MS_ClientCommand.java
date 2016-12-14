@@ -7,7 +7,7 @@ package lv.emes.libraries.communication.tcp_ip.client;
 public class MS_ClientCommand {
 	public String code = "";
 	/**
-	 * (client, data, out) -> {methods}; 
+	 * (client, data, out) -&gt; {methods};
 	 */
 	public IFuncOnIncomingServerMessage doOnCommand;
 	
@@ -29,7 +29,7 @@ public class MS_ClientCommand {
 	 * Creates command with particular name and behavior.
 	 * @param code unique name of command.
 	 * @param lambda behavior of command. That is recommended to use lambda expression to fill this like:<p>
-	 * (client, data, out) -> {methods};
+	 * (client, data, out) -&gt; {methods};
 	 * @see lv.emes.libraries.communication.tcp_ip.client.IFuncOnIncomingServerMessage
 	 */
 	public MS_ClientCommand(String code, IFuncOnIncomingServerMessage lambda) {

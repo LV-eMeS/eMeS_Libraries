@@ -32,15 +32,15 @@ task TestsJar(type: Jar, dependsOn: classes) {
     from sourceSets.test.allSource
 }
 
-//task javadocJar(type: Jar, dependsOn: javadoc) {
-//    classifier = 'javadoc'
-//    from javadoc.destinationDir
-//}
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
 
 artifacts {
     archives sourcesJar
     archives TestsJar
-//    archives javadocJar
+    archives javadocJar
 }
 
 dependencies {

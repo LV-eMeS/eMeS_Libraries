@@ -57,7 +57,7 @@ public final class MS_StringTools {
     }
 
     /**
-     * Used to describe small letters, capital letters, digits and also symbols (stfgNormalSymbol :/*!@#$%^& etc.),
+     * Used to describe small letters, capital letters, digits and also symbols (stfgNormalSymbol :/*!@#$%^&amp; etc.),
      * and also special UTF-8 or Unicode symbols, for example, 1/4 symbol, degree symbol, etc. (stfgSpecialSymbol Ǒøė˧Ω etc.)
      * This enum is used in set <b>SetForCodeGenParams</b> to implement combinations of those 4 types of symbols.
      */
@@ -95,10 +95,10 @@ public final class MS_StringTools {
     /**
      * Method implements generation of text of size <b>aSymbolCount</b>.
      * Generated text will consist of symbols that are defined in set <b>SetForCodeGenParams</b>.
-     * <br><u>Example</u>: <code><pre>{@code
+     * <br><u>Example</u>: <code>
      * MSStringTools.SetForCodeGenParams.add(TSymbolTypeForGenerator.stfgSmallLetter);
      * MSStringTools.SetForCodeGenParams.add(TSymbolTypeForGenerator.stfgDigit);
-     * String test = MSStringTools.RandomString(5, MSStringTools.SetForCodeGenParams); }</pre></code>
+     * String test = MSStringTools.RandomString(5, MSStringTools.SetForCodeGenParams); </code>
      * <br><u>Note</u>: there is no need to do <code>MSStringTools.SetForCodeGenParams.clear()</code>. Method will do it after successful generation.
      *
      * @param aSymbolCount count of generated symbols.
@@ -348,7 +348,7 @@ public final class MS_StringTools {
     /**
      * Checks only for ASCII letter. Chars that aren't letters or are non ASCII letters (cyrillic and other language characters) are not accepted.
      *
-     * @param aSymbol [a..z, A..Z][0..1, āčūī..., ~!@#$%^&*...]
+     * @param aSymbol [a..z, A..Z][0..1, āčūī..., ~!@#$%^&amp;*...]
      * @return [true][false]
      */
     public static boolean isCharASCIILetter(char aSymbol) {
@@ -461,14 +461,18 @@ public final class MS_StringTools {
     }
 
     /**
-     * ASCII -> char
+     * ASCII -&gt; char.
+     * @param ascii ASCII code.
+     * @return char matching presented ASCII code <b>ascii</b>.
      */
-    public static char chr(int aValue) {
-        return Character.toChars(aValue)[0];
+    public static char chr(int ascii) {
+        return Character.toChars(ascii)[0];
     }
 
     /**
-     * char -> ASCII
+     * Char -&gt; ASCII.
+     * @param aValue a char.
+     * @return ASCII code for presented char <b>aValue</b>.
      */
     public static int ord(char aValue) {
         return (int) aValue;

@@ -1,12 +1,12 @@
 package lv.emes.libraries.communication.tcp_ip.client;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
-
 import lv.emes.libraries.communication.tcp_ip.MS_ClientServerConstants;
 import lv.emes.libraries.tools.MS_Tools;
 import lv.emes.libraries.tools.lists.MS_List;
 import lv.emes.libraries.tools.lists.MS_StringList;
+
+import java.io.DataOutputStream;
+import java.io.IOException;
 
 /** 
  * TCP/IP client which operates commands to connect and communicate to server.
@@ -27,11 +27,11 @@ import lv.emes.libraries.tools.lists.MS_StringList;
  * @version 1.1.
  */
 public class MS_TcpIPClient extends MS_TcpIPClientCore {
-	//PUBLISKĀS STRUKTŪRAS, IZŅĒMUMI UN KONSTANTES	
+	//PUBLIC STRUCTURES, EXCEPTIONS AND CONSTANTS
 	/**
 	 * Set this property with lambda expression to do actions after server went down (disconnected).
 	 * <br><u>Note</u>: communication with this server is already impossible at this moment.
-	 * <p>() -> {some action};
+	 * <p>() -&gt; {some action};
 	 */
 	public IFuncOnServerGoingDown onServerGoingDown = null;
 	//PRIVĀTIE MAINĪGIE	
@@ -39,8 +39,8 @@ public class MS_TcpIPClient extends MS_TcpIPClientCore {
 	private MS_StringList dataContainer = new MS_StringList();
 	private int id = 0;
 	
-	//PUBLISKIE MAINĪGIE	
-	//KONSTRUKTORI	
+	//PUBLIC VARIABLES
+	//CONTRUCTORS
 	/**
 	 * Creates object and initializes default commands.
 	 */

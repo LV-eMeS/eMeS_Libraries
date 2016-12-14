@@ -6,13 +6,16 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 /** 
- * Klase satur tikai statiskas metodes darbībām ar laikiem un datumiem. Tipiskie pārveidojumi un darbības ar laika formātiem.
- * @version 1.0.
+ * Class consists of static methods only and is designed to operate with time and date.
+ * It includes typical modifications and actions with time formats.
+ * @version 1.1.
+ * @author eMeS
  */
 public final class MS_TimeTools {
-	//TODO translate this class and improve it!
-	//PUBLISKĀS STRUKTŪRAS, IZŅĒMUMI UN KONSTANTES
-	//izņēmumi:
+	//TODO improve this class!
+	//PUBLIC STRUCTURES, EXCEPTIONS, PROPERTIES AND CONSTANTS
+	//exceptions:
+
 	public static class IncorrectStartingYearException extends Exception {
 		public IncorrectStartingYearException(int aYear, String aDate) {
 			super("Year ("+aYear+") must be less or equal to the year of given date ("+aDate+").");
@@ -25,7 +28,7 @@ public final class MS_TimeTools {
 		}
 		private static final long serialVersionUID = 4402055459405514854L;		
 	}
-	//ieraksti:	
+	//records:
 	public static class MSRec_Time { 		
 		public int hour, min, sec, millisec;	
 		public static MSRec_Time newInstance(Date aDate) {
@@ -43,18 +46,15 @@ public final class MS_TimeTools {
 		public static MSRec_DateTime newInstance(Date aDate) {
 			return eMeSExtractDateTime(aDate);
 		}		
-	}	
-	
-	//PRIVĀTĀS METODES	
-	
-	//PUBLISKĀS METODES
+	}
+
+	//Methods:
 	/**
-	 * Veido datumu no teksta 'dd.MM.yyyy'. 
-	 * Kļūdas gadījumā met exception, ka nepareizs datuma formāts.
-	 * Lasīt: http://www.tutorialspoint.com/java/java_date_time.htm
-	 * @param aText = "03.07.2016"
-	 * @return Sun Jul 03 00:00:00 EEST 2016
-	 * @throws IncorrectDateFormatException 
+	 * Converts date as text to date.
+	 * @param aText a date presented as text in format 'dd.MM.yyyy'.
+	 *                 <p><u>Example</u>: aText = "03.07.2016"
+	 * @return <u>Example</u>: Sun Jul 03 00:00:00 EEST 2016
+	 * @throws IncorrectDateFormatException when text is in incorrect format.
 	 */
 	public static Date eMeSStrToDate(String aText) throws IncorrectDateFormatException {
 		Date res = null;
@@ -66,12 +66,13 @@ public final class MS_TimeTools {
 	      }
 		return res;				
 	}
-	
+
 	/**
-	 * Veido datumu no teksta 'HH:mm:ss:SSS'. Kļūdas gadījumā met exception, ka nepareizs datuma formāts.
-	 * @param aText = "23:02:11:201"
-	 * @return Thu Jan 01 23:02:11 EET 1970
-	 * @throws IncorrectDateFormatException
+	 * Converts time as text to date.
+	 * @param aText a time presented as text in format 'H:mm:ss:SSS'.
+	 *                 <p><u>Example</u>: aText = "23:02:11:201"
+	 * @return <u>Example</u>: Thu Jan 01 23:02:11 EET 1970
+	 * @throws IncorrectDateFormatException when text is in incorrect format.
 	 */
 	public static Date eMeSStrToTime(String aText) throws IncorrectDateFormatException {
 		Date res = null;
@@ -84,12 +85,12 @@ public final class MS_TimeTools {
 		return res;				
 	}
 
-	 /**
-	 * Veido datumu no teksta formātā 'dd.mm.yyyy HH:mm:ss:SSS'.
-	 * Kļūdas gadījumā met exception, ka nepareizs datuma formāts.
-	 * @param aText = "03.07.2016 23:02:11:000"
-	 * @return Sun Jul 03 23:02:11 EEST 2016
-	 * @throws IncorrectDateFormatException
+	/**
+	 * Converts date and time as text to date.
+	 * @param aText a date and time presented as text in format 'dd.mm.yyyy HH:mm:ss:SSS'.
+	 *                 <p><u>Example</u>: aText = "03.07.2016 23:02:11:000"
+	 * @return <u>Example</u>: Sun Jul 03 23:02:11 EEST 2016
+	 * @throws IncorrectDateFormatException when text is in incorrect format.
 	 */
 	public static Date eMeSStrToDateTime(String aText) throws IncorrectDateFormatException {
 		Date res = null;
@@ -101,9 +102,11 @@ public final class MS_TimeTools {
 	      }
 		return res;				
 	}
-	
+
 	/**
-	 * Pārkonvertē datumu par tekstu formātā "dd.MM.yyyy HH:mm:ss:SSS".
+	 * Converts date and time to text.
+	 * @param aDate a date in format: "dd.MM.yyyy HH:mm:ss:SSS".
+	 * @return a text representing passed date and time.
 	 */
 	public static String eMeSDateTimeToStr(Date aDate) {
 		SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss:SSS"); 
@@ -113,22 +116,31 @@ public final class MS_TimeTools {
 	/**
 	 * Pārkonvertē laiku par tekstu formātā "HH:mm:ss:SSS".
 	 */
+	/**
+	 * Converts time to text.
+	 * @param aDate a date in format: "HH:mm:ss:SSS".
+	 * @return a text representing passed time.
+	 */
 	public static String eMeSTimeToStr(Date aDate) {
 		SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss:SSS"); 
 		return format.format(aDate);				
 	}	
-	
+
 	/**
-	 * Pārkonvertē datumu bez laika daļas par tekstu formātā "dd.MM.yyyy".
+	 * Converts date without time to text.
+	 * @param aDate a date in format: "dd.MM.yyyy".
+	 * @return a text representing passed date.
 	 */
 	public static String eMeSDateToStr(Date aDate) {
 		SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy"); 
 		return format.format(aDate);				
 	}	
 	
-	//Iegūst ierakstu pa daļām
+	//retrieves parts of record
 	/**
-	 * Atgriež ierakstu, kas glabā sevī, cik norādītajā datumā rāda pulkstenis (Kura stunda, minūte, sekunde, milisekunde)
+	 * Extracts time part from date and stores everything in record object.
+	 * @param aDate presented date.
+	 * @return a eMeS time record (hour, minute, second, millisecond).
 	 */
 	public static MSRec_Time eMeSExtractTime(Date aDate) {
 		MSRec_Time res = new MSRec_Time();
@@ -140,9 +152,11 @@ public final class MS_TimeTools {
 		res.sec = cal.get(Calendar.SECOND);
 		return res;		
 	}
-	
+
 	/**
-	 * Atgriež ierakstu, kas glabā sevī, kāds ir datums (kurš gads, kurš mēnesis, kura diena)
+	 * Extracts date part from date and stores everything in record object.
+	 * @param aDate presented date.
+	 * @return a eMeS time record (year, month, day).
 	 */
 	public static MSRec_Date eMeSExtractDate(Date aDate) {
 		MSRec_Date res = new MSRec_Date();
@@ -153,9 +167,11 @@ public final class MS_TimeTools {
 		res.year = cal.get(Calendar.YEAR);
 		return res;			
 	}
-	
+
 	/**
-	 * Atgriež ierakstu, kas glabā sevī pilnu datumu un laiku.
+	 * Extracts date altogether with time part from date and stores everything in record object.
+	 * @param aDate presented date.
+	 * @return a eMeS time record (year, month, day, hour, minute, second, millisecond).
 	 */
 	public static MSRec_DateTime eMeSExtractDateTime(Date aDate) {
 		MSRec_DateTime res = new MSRec_DateTime();
@@ -171,9 +187,11 @@ public final class MS_TimeTools {
 		return res;		
 	}
 	
-	//No ieraksta daļām iegūst datumu
+	//From records parts retrieves date.
 	/**
-	 * No datuma (bez laika vienībām) padotu ieraksta veidā izgūst datumu kā Date tipu.
+	 * From eMeS record object extracts date without time part.
+	 * @param aRecord an eMeS record object.
+	 * @return a date.
 	 */
 	public static Date eMeSExtractDate(MSRec_Date aRecord) {
 		GregorianCalendar cal = new GregorianCalendar();
@@ -186,9 +204,11 @@ public final class MS_TimeTools {
 		cal.set(Calendar.YEAR, aRecord.year);	
 		return cal.getTime();
 	}
-	
+
 	/**
-	 * No laika ieraksta padotu veidā izgūst datumu kā Date tipu.
+	 * From eMeS record object extracts date with time part only.
+	 * @param aRecord an eMeS record object.
+	 * @return a date.
 	 */
 	public static Date eMeSExtractTime(MSRec_Time aRecord) {
 		GregorianCalendar cal = new GregorianCalendar();
@@ -201,9 +221,11 @@ public final class MS_TimeTools {
 		cal.set(Calendar.MILLISECOND, aRecord.millisec);	
 		return cal.getTime();
 	}
-	
+
 	/**
-	 * No datuma kopā ar laiku padotu ieraksta veidā izgūst datumu kā Date tipu.
+	 * From eMeS record object extracts date with date and time part.
+	 * @param aRecord an eMeS record object.
+	 * @return a date.
 	 */
 	public static Date eMeSExtractDateTime(MSRec_DateTime aRecord) {
 		GregorianCalendar cal = new GregorianCalendar();
@@ -216,23 +238,38 @@ public final class MS_TimeTools {
 		cal.set(Calendar.MILLISECOND, aRecord.millisec);
 		return cal.getTime();
 	}
-	
-	//skatās datumu kopumā un iegūst tā daļas vai vērtības
+
+	/**
+	 * Gets just year from date.
+	 * @param aDate any valid date.
+	 * @return year of <b>aDate</b>.
+	 */
 	public static int eMeSGetYearFromDate(Date aDate) {
 		return eMeSExtractDate(aDate).year;
 	}
+	/**
+	 * Gets just month from date.
+	 * @param aDate any valid date.
+	 * @return month of <b>aDate</b>.
+	 */
 	public static int eMeSGetMonthFromDate(Date aDate) {
 		return eMeSExtractDate(aDate).month;
 	}
+	/**
+	 * Gets just day from date.
+	 * @param aDate any valid date.
+	 * @return day of <b>aDate</b>.
+	 */
 	public static int eMeSGetDayFromDate(Date aDate) {
 		return eMeSExtractDate(aDate).day;
 	}
-	
+
 	/**
-	 * Iegūst skaitlisku vērtību, kas raksturo, cik minūtes pagājušas kopš datuma `aDateFrom līdz datumam `aGivenDate. Ja `aDateFrom < `aGivenDate, tad atgriež -1.
-	 * @param aGivenDate = 19.05.2016 17:00
-	 * @param aDateFrom = 01.01.2016 00:00
-	 * @return 3352L
+	 * Gets number representing hours passed from date <b>aDateFrom</b> to <b>aGivenDate</b>.
+	 * If <b>aDateFrom</b> &gt; <b>aGivenDate</b> returns <b>-1</b>.
+	 * @param aGivenDate date till.
+	 * @param aDateFrom constant point of reference.
+	 * @return hour amount or -1 if <b>aDateFrom</b> &gt; <b>aGivenDate</b>.
 	 */
 	public static long eMeSGetHoursFromGivenDate(Date aGivenDate, Date aDateFrom) {
 		if (aDateFrom==null || aGivenDate==null ||aGivenDate==aDateFrom) return 0;
@@ -250,9 +287,11 @@ public final class MS_TimeTools {
 		else 
 			return 0; //ja gadījumā pēc vērtības abi datumi ir vienādi		
 	}
-	
+
 	/**
-	 * Izsaka datumu sekundēs kopš epohas. ("Epoch, January 1, 1970 00:00:00.000 GMT (Gregorian).")
+	 * Seconds of given date starting from Epoch (January 1, 1970 00:00:00.000 GMT (Gregorian).
+	 * @param aDate a date.
+	 * @return amount of seconds.
 	 */
 	public static long eMeSGetSecsFromDate(Date aDate) {
 		if (aDate==null) return 0;
@@ -260,9 +299,11 @@ public final class MS_TimeTools {
 		calGivenDate.setTime(aDate);
 		return calGivenDate.getTimeInMillis() / 60000;
 	}
-	
+
 	/**
-	 * Izsaka datumu milisekundēs kopš Epohas. ("Epoch, January 1, 1970 00:00:00.000 GMT (Gregorian).")
+	 * Milliseconds of given date starting from Epoch (January 1, 1970 00:00:00.000 GMT (Gregorian).
+	 * @param aDate a date.
+	 * @return amount of milliseconds.
 	 */
 	public static long eMeSGetMiliSecsFromDate(Date aDate) {
 		if (aDate==null) return 0;

@@ -25,18 +25,18 @@ public abstract class MS_JDBCDatabase implements MS_IJDBCDatabase {
 	public int port;
 	/**
 	 * Set this to handle this kind of error when trying to do some DB operation with DB which connection is lost or other error connection happens!
-	 * <p><code>(exception) -> {error handling methods};</code>
+	 * <p><code>(exception) -&gt; {error handling methods};</code>
 	 */
 	public IFuncOnSQLException onDBConnectionError = (exception) -> {exception.printStackTrace();}; 
 	/**
 	 * Set this to handle this kind of error when trying to execute statement incorrectly or DB access error happens!
-	 * <p><code>(exception) -> {error handling methods};</code>
+	 * <p><code>(exception) -&gt; {error handling methods};</code>
 	 */
 	public IFuncOnSQLException onDBStatementError = (exception) -> {exception.printStackTrace();}; 
 	/**
 	 * Set this to handle this kind of error when trying to execute statement incorrectly and after that 
 	 * trying to access it when trying to get query result or committing statement!
-	 * <p><code>(exception) -> {error handling methods};</code>
+	 * <p><code>(exception) -&gt; {error handling methods};</code>
 	 */
 	public IFuncOnNullPointerException onDBEmptyStatementError = (exception) -> {exception.printStackTrace();}; 
 	

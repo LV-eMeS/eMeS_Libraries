@@ -14,12 +14,12 @@ public abstract class MS_TcpIPAbstract implements Runnable {
 	//PUBLISKĀS STRUKTŪRAS, IZŅĒMUMI UN KONSTANTES
 	/**
 	 * Set this to handle this kind of error when trying to read message sent by communication partner!
-	 * <p>(exception) -> {};
+	 * <p>(exception) -&gt; {};
 	 */
 	public IFuncOnUTFDataFormatException onUTFDataFormatException = (exception) -> {exception.printStackTrace();}; 
 	/**
 	 * Set this to handle this kind of error when trying to read message sent by communication partner!
-	 * <p>(exception) -> {};
+	 * <p>(exception) -&gt; {};
 	 */
 	public IFuncOnIOException onIOException = (exception) -> {exception.printStackTrace();}; 
 

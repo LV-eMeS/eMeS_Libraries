@@ -63,22 +63,22 @@ public interface IBaseListWithItems<T> {
 
 	/**
 	 * Walks through all the elements in list and does the defined action <b>action</b>.
-	 * <pre><code>{@code
+	 * <code>
      * MS_StringList sl = new MS_StringList("One#Two#");
-     * sl.doWithEveryItem((s, index) -> {
+     * sl.doWithEveryItem((s, index) -&gt; {
 	 * 	System.out.println(s);
 	 * 	System.out.println(index);
      * });
-	 * }</code></pre>
+	 * </code>
 	 * Loop is broken if getBreakDoWithEveryItem() returns true.
 	 * For example, code below will be executed only with first element even if there is more elements in list.
-	 * <pre><code>{@code
+	 * <code>
 	 * MS_StringList sl = new MS_StringList("One#Two#");
-	 * sl.doWithEveryItem((s, index) -> {
+	 * sl.doWithEveryItem((s, index) -&gt; {
 	 * 	System.out.println(s);
 	 * 	setBreakDoWithEveryItem(true);
 	 * });
-	 * }</code></pre>
+	 * </code>
 	 * @param action method that describes the actions that every element must do.
 	 *               Method's incoming parameters are every item of the list and index of item.
 	 */

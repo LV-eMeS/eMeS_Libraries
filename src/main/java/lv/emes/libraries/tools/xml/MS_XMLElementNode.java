@@ -89,7 +89,7 @@ public class MS_XMLElementNode {
     }
 
     /**
-     * {student id="593"}{firstname}eMeS{/firstname}{/student}
+     * <code>&lt;student id="593"&gt;&lt;firstname&gt;eMeS&lt;/firstname&gt;&lt;/student&gt;</code>
      *
      * @param tag "firstname".
      * @return "eMeS"
@@ -126,7 +126,7 @@ public class MS_XMLElementNode {
 
     /**
      * Gets first child element node by its tag. If node doesn't exist, returns null.
-     * <student id="593"><firstname>eMeS</firstname></student>
+     * <p><code>&lt;student id="593"&gt;&lt;firstname&gt;eMeS&lt;/firstname&gt;&lt;/student&gt;</code>
      *
      * @param tag "firstname"
      * @return "eMeS"

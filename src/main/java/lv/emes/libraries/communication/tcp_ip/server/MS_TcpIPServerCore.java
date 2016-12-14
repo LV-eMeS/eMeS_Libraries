@@ -1,12 +1,12 @@
 package lv.emes.libraries.communication.tcp_ip.server;
 
+import lv.emes.libraries.communication.tcp_ip.MS_TcpIPAbstract;
+
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Vector;
-
-import lv.emes.libraries.communication.tcp_ip.MS_TcpIPAbstract;
 
 //import org.apache.log4j.Logger;
 
@@ -52,9 +52,10 @@ abstract class MS_TcpIPServerCore extends MS_TcpIPAbstract {
 	 * @param out output stream of client to send server's response back to client.
 	 */
 	abstract protected void onIncomingClientMessage(String message, MS_ClientOfServer client, DataOutputStream out);
+
 	/**
-	 * Set this to define behavior of server when it new client is connected.
-	 * @param ClientID newly connected client's ID.
+	 * Set this to define behavior of server when new client is connected.
+	 * @param client client that just connected to server.
 	 */
 	abstract protected void onNewClientConnected(MS_ClientOfServer client);
 	

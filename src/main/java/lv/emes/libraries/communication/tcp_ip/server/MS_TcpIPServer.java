@@ -1,11 +1,11 @@
 package lv.emes.libraries.communication.tcp_ip.server;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
-
 import lv.emes.libraries.communication.tcp_ip.MS_ClientServerConstants;
 import lv.emes.libraries.tools.lists.MS_List;
 import lv.emes.libraries.tools.lists.MS_StringList;
+
+import java.io.DataOutputStream;
+import java.io.IOException;
 
 /** 
  * TCP/IP server which operates commands to communicate to client.
@@ -42,16 +42,16 @@ public class MS_TcpIPServer extends MS_TcpIPServerCore {
 	/**
 	 * Set this property with lambda expression to do actions after client went down (disconnected).
 	 * <br><u>Note</u>: communication with this client is already impossible at this moment.
-	 * <code><pre>{@code
-	 * (client) -> {};
-	 * }</pre></code>
+	 * <code>
+	 * (client) -&gt; {};
+	 * </code>
 	 * */
 	public IFuncOnClientDoingSomething onClientGoingOffline = null;	
 	/**
 	 * Set this property with lambda expression to do actions after client successfully connected to server.
-	 * <code><pre>{@code
-	 * (client) -> {};
-	 * }</pre></code>
+	 * <code>
+	 * (client) -&gt; {};
+	 * </code>
 	 */
 	public IFuncOnClientDoingSomething onClientConnecting = null;	
 	/**

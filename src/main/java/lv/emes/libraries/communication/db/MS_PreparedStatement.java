@@ -37,7 +37,7 @@ public class MS_PreparedStatement implements PreparedStatement {
 	 * * Trying to communicate with DB which connection is lost;<br>
 	 * * If DB cannot be accessed;<br>
 	 * * If Trying to set wrong parameter of statement.
-	 * <p><code>(exception) -> {error handling methods};</code>
+	 * <p><code>(exception) -&gt; {error handling methods};</code>
 	 */
 	public IFuncOnSQLException onSQLException = (exception) -> {};  
 	

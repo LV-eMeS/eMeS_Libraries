@@ -21,7 +21,7 @@ public final class MS_StringList implements IListActions<String> {
 	public static final char cDefaultDelimiter = '#';
 	public static final char cSecondDefaultDelim = '`';//chr(9835);
 	/**
-	 * Delimiter can be changed and will be used in <b>fromString</b> and b>toString</b> methods. Default value of this property is <b>cDefaultDelimiter</b>.
+	 * Delimiter can be changed and will be used in <b>fromString</b> and <b>toString</b> methods. Default value of this property is <b>cDefaultDelimiter</b>.
 	 * @see MS_StringList#cDefaultDelimiter
 	 * @see MS_StringList#fromString(String)
 	 * @see MS_StringList#toString()
@@ -116,7 +116,7 @@ public final class MS_StringList implements IListActions<String> {
 	}
 
 	/**
-	 * @inheritDoc
+	 * Gets element by index.
 	 * @param aIndex index of element in the list.
 	 * @return element with index <b>aIndex</b> or empty String if element not found in the list.
 	 */

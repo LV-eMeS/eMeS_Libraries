@@ -9,12 +9,14 @@ import static com.sun.jna.platform.win32.WinUser.*;
 /**
  * Uses Windows User32 API to get application windows and perform hiding and showing of those windows.
  * <p>Static methods:
- * <li>getWindowHandle
- * <li>applicationIsRunning
- * <li>showApplicationWindow
- * <li>hideApplicationWindow
+ * <ul>
+ * <li>getWindowHandle</li>
+ * <li>applicationIsRunning</li>
+ * <li>showApplicationWindow</li>
+ * <li>hideApplicationWindow</li>
+ * </ul>
  * @author eMeS
- * @version 0.1.
+ * @version 1.0.
  */
 public class ApplicationWindow {
     /**

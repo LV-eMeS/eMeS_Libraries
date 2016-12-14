@@ -46,17 +46,17 @@ public abstract class MSCustomGUIScreen {
 	//PUBLIC VARIABLES
 	/**
 	 * Define behavior when screen shows up!<br>
-	 * = (screen) -> {methods after <b>initialize()</b>, but before <b>show()</b>};
+	 * = (screen) -&gt; {methods after <b>initialize()</b>, but before <b>show()</b>};
 	 */
 	public IFuncOnGUIScreenEvent onShow;
 	/**
 	 * Define behavior when screen is hidden, e.g., controls shift to another screen, but this is running background.<br>
-	 * = (screen) -> {methods after <b>hide()</b>};
+	 * = (screen) -&gt; {methods after <b>hide()</b>};
 	 */
 	public IFuncOnGUIScreenEvent onHide;
 	/**
 	 * Define behavior when screen is closed for good. You can free variables here, etc.<br>
-	 * = (screen) -> {methods after <b>close()</b>, but before <b>finalize()</b>};
+	 * = (screen) -&gt; {methods after <b>close()</b>, but before <b>finalize()</b>};
 	 */
 	public IFuncOnGUIScreenEvent onClose;
 

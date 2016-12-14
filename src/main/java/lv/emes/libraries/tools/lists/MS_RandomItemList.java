@@ -67,7 +67,7 @@ public class MS_RandomItemList {
 	 * <p>Actually exceptions shouldn't appear if programmer did calculations correctly. 
 	 * @param item id of an item or simply number to recognize item through many items.
 	 * @param probability chance of getting an item from the list. 
-	 * @throws IncorrectProbabilityException when not 0 < <b>probability</b> <= 1.
+	 * @throws IncorrectProbabilityException when not 0 &lt; <b>probability</b> &lt;= 1.
 	 * @throws NoMoreFreeSpacesException when list is already full.
 	 * @throws ItemTookLastSpacesException when list was almost full and last item had too big probability to add item fully.
 	 */
