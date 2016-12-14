@@ -75,9 +75,9 @@ public class MS_HttpClient {
      * @return HTTP response from server.
      */
     public static RequestResult post(String requestURL, Map<String, String> postDataParams) {
+        RequestResult res = new RequestResult();
         URL url;
         StringBuilder response = new StringBuilder();
-        RequestResult res = new RequestResult();
 
         try {
             url = new URL(requestURL);
