@@ -166,6 +166,17 @@ public final class MS_StringTools {
     }
 
     /**
+     *
+     * @param aSymbolCount
+     * @return
+     */
+    //TODO use enum here!
+    public static String getDateTimeNow(int aSymbolCount) {
+        //TODO do this using MS_TimeTools
+        return "";
+    }
+
+    /**
      * Checks, whether text <b>aSmallString</b> is a part of some bigger text <b>aBigString</b>.
      *
      * @param aBigString     text that will be tested.
