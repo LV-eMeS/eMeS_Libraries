@@ -32,28 +32,28 @@ import java.util.List;
 /**
  * Different transformations and actions related with OS file system.
  * <p>Static methods:
- * -executeApplication
- * -getTmpDirectory
- * -getProjectDirectory
- * -fileExists
- * -directoryExists
- * -createEmptyFile
- * -createNewDirectory
- * -deleteFile
- * -deleteDirectory
- * -directoryUp
- * -getDirectoryFileList
- * -getDirectoryFileList_Shortnames
- * -getDirectoryFileList_Directories
- * -getFilenameWithoutExtension
- * -getFileExtensionWithDot
- * -getFileExtensionWithoutDot
- * -getDirectoryOfFile
- * -getShortFilename
- * -replaceBackslash
- * -extractResourceToTmpFolder
- *
- * @version 1.4.
+ * <ul>
+ *     <li>executeApplication</li>
+ *     <li>getTmpDirectory</li>
+ *     <li>getProjectDirectory</li>
+ *     <li>fileExists</li>
+ *     <li>directoryExists</li>
+ *     <li>createEmptyFile</li>
+ *     <li>createNewDirectory</li>
+ *     <li>deleteFile</li>
+ *     <li>deleteDirectory</li>
+ *     <li>directoryUp</li>
+ *     <li>getDirectoryFileList_Shortnames</li>
+ *     <li>getDirectoryFileList_Directories</li>
+ *     <li>getFilenameWithoutExtension</li>
+ *     <li>getFileExtensionWithDot</li>
+ *     <li>getFileExtensionWithoutDot</li>
+ *     <li>getDirectoryOfFile</li>
+ *     <li>getShortFilename</li>
+ *     <li>replaceBackslash</li>
+ *     <li>extractResourceToTmpFolder</li>
+ * </ul>
+ * @version 1.5.
  */
 public class MS_FileSystemTools {
     public static final String CURRENT_DIRECTORY = "./";

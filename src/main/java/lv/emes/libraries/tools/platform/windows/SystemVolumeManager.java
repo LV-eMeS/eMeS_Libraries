@@ -1,18 +1,31 @@
 package lv.emes.libraries.tools.platform.windows;
 
 import lv.emes.libraries.file_system.MS_FileSystemTools;
+import lv.emes.libraries.tools.platform.IncompatibleOSException;
+import lv.emes.libraries.tools.platform.MS_OperatingSystem;
+import lv.emes.libraries.tools.platform.MS_PlatformIndependentTools;
 
 /**
- * Description.
+ * Handles functions for OS volume.
  * <p>Methods:
- *
+ * <ul>
+ *     <li>volumeUp</li>
+ *     <li>volumeDown</li>
+ *     <li>setVolume</li>
+ * </ul>
  * @author eMeS
- * @version 1.1.
+ * @version 1.2.
  */
 public final class SystemVolumeManager {
     //PRIVATE VARIABLES
     private static String nircmdFileName = "";
     private static final String TEMP_DIRECTORY_FOR_VOLUME_MANAGER = "eMeS_SystemVolumeManager";
+
+    //PRIVATE METHODS
+    private static void checkOSAndThrowExceptionIfIncompatible() throws IncompatibleOSException {
+        if (MS_PlatformIndependentTools.getOS().getOSID() != MS_OperatingSystem.OS_WINDOWS_ID)
+            throw new IncompatibleOSException("Cannot change Windows system volume in different operating system.");
+    }
 
     //PUBLIC METHODS
 
@@ -21,7 +34,7 @@ public final class SystemVolumeManager {
      * If file is already created the existing file's path is returned.
      * @return path to temporary copy of "nircmd.exe".
      */
-    public static String getNircmdFileName() {
+    private static String getNircmdFileName() {
         if (nircmdFileName.equals(""))
             nircmdFileName = MS_FileSystemTools.extractResourceToTmpFolder(MS_FileSystemTools.NIRCMD_FILE_FOR_WINDOWS, TEMP_DIRECTORY_FOR_VOLUME_MANAGER, false);
         return nircmdFileName;
@@ -32,17 +45,19 @@ public final class SystemVolumeManager {
      * Windows only function.
      * @param level nircmd.exe parameter that matches volume level. Recommended: 1000-5000.
      */
-    public static void volumeUp(Integer level) {
+    public static void volumeUp(Integer level) throws IncompatibleOSException {
+        checkOSAndThrowExceptionIfIncompatible();
         String parameters = "changesysvolume " + level;
         MS_FileSystemTools.executeApplication(getNircmdFileName(), parameters);
     }
 
     /**
      * Turns system value down by <b>level</b> specified.
-     * Windows only function.
+     * <br><u>Warning</u>: Windows only function.
      * @param level nircmd.exe parameter that matches volume level. Recommended: 1000-5000.
      */
-    public static void volumeDown(Integer level) {
+    public static void volumeDown(Integer level) throws IncompatibleOSException {
+        checkOSAndThrowExceptionIfIncompatible();
         level = level * -1;
         String parameters = "changesysvolume " + level;
         MS_FileSystemTools.executeApplication(getNircmdFileName(), parameters);
@@ -50,10 +65,11 @@ public final class SystemVolumeManager {
 
     /**
      * Sets system value to <b>level</b> specified.
-     * Windows only function.
+     * <br><u>Warning</u>: Windows only function.
      * @param level nircmd.exe parameter that matches volume level. Recommended: 1000-40000.
      */
-    public static void setVolume(Integer level) {
+    public static void setVolume(Integer level) throws IncompatibleOSException {
+        checkOSAndThrowExceptionIfIncompatible();
         String parameters = "setsysvolume " + level;
         MS_FileSystemTools.executeApplication(getNircmdFileName(), parameters);
     }

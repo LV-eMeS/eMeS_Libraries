@@ -6,9 +6,11 @@ import lv.emes.libraries.tools.MS_Tools;
 /** 
  * An recognizable and commonly used OS token between eMeS libraries.
  * <p>Setters and getters:
- * -getFullOSName
- * -getShortOSName
- * -getOSID
+ * <ul>
+ *     <li>getFullOSName</li>
+ *     <li>getShortOSName</li>
+ *     <li>getOSID</li>
+ * </ul>
  * @version 1.0.
  * @author eMeS
  */
