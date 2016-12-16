@@ -52,10 +52,12 @@ import java.util.List;
  * -getShortFilename
  * -replaceBackslash
  * -extractResourceToTmpFolder
- * @version 1.3.
+ *
+ * @version 1.4.
  */
 public class MS_FileSystemTools {
     public static final String CURRENT_DIRECTORY = "./";
+    public static final String SLASH = "/";
     public static final String NIRCMD_FILE_FOR_WINDOWS = "tools/nircmd.exe";
 
     /**
@@ -163,7 +165,7 @@ public class MS_FileSystemTools {
      * @return text with all existing backslash symbols replaced with slash symbols.
      */
     public static String replaceBackslash(String textWithBackslashes) {
-        return textWithBackslashes.replace("\\", "/");
+        return textWithBackslashes.replace("\\", SLASH);
     }
 
     /**
@@ -191,7 +193,7 @@ public class MS_FileSystemTools {
      * @return path to a directory where application is launched.
      */
     public static String getProjectDirectory() {
-        return replaceBackslash(System.getProperty("user.dir")) + "/";
+        return replaceBackslash(System.getProperty("user.dir")) + SLASH;
     }
 
     /**
@@ -306,7 +308,7 @@ public class MS_FileSystemTools {
      */
     public static String getDirectoryOfFile(String aFilename) {
         aFilename = replaceBackslash(aFilename);
-        return aFilename.endsWith("/") ? aFilename : directoryUp(aFilename);
+        return aFilename.endsWith(SLASH) ? aFilename : directoryUp(aFilename);
     }
 
     /**
@@ -337,8 +339,8 @@ public class MS_FileSystemTools {
 //        try {
 //            Path path = FileSystems.getDefault().getPath(filename);
 //            Files.delete(path);
-            File fileToDelete = new File(filename);
-            return fileToDelete.delete();
+        File fileToDelete = new File(filename);
+        return fileToDelete.delete();
 //            return true;
 //        } catch (Exception e) {
 //            return false;
@@ -409,55 +411,64 @@ public class MS_FileSystemTools {
         }
         return res;
     }
-
-    private static void close(final Closeable stream) {
-        if (stream != null) {
-            try {
-                stream.close();
-            } catch (final IOException ex) {
-            }
-        }
-    }
+//
+//    private static void close(final Closeable stream) {
+//        if (stream != null) {
+//            try {
+//                stream.close();
+//            } catch (final IOException ex) {
+//            }
+//        }
+//    }
 
     /**
-     * Looks for resource in JAR file, extracts it in temporary directory if file exists and
+     * Looks for resource in JAR file, extracts it in temporary directory if resource exists and
      * returns the full path to a file.
-     * <br><u>Note</u>: filename is altered by adding time as Long to it's original name.
-     * <br><u>Note</u>: when application terminates the job file is deleted from temporary folder.
-     * @param pathToResource path to resource file.
+     *
+     * @param pathToResource            path to resource file.
+     * @param dirInTempDirectory        in which directory of temporary folder file should be extracted.
+     *                                  <br><u>Note</u>: Folder can be presented also as: "folder/subFolder/subSubFolder/".
+     *                                  <br><u>Note</u>: Also can be null.
+     *                                  If this argument is null then file will be extracted directly in temporary folder.
+     * @param alwaysExtractResourceFile if true then resource is always extracted, but
+     *                                  if false then looking if resource file already exists in temporary folder and
+     *                                  if so then simply return full path of existing resource file.
+     *                                  <br><u>Warning</u>: resource is checked only for filename not contents of resource,
+     *                                  which means that in temporary folder might be already existing file with same filename
+     *                                  that actually isn't this particular resource.
      * @return full path to extracted file. Empty string if resource not found.
      */
-    public static String extractResourceToTmpFolder(String pathToResource) {
+    public static String extractResourceToTmpFolder(String pathToResource,
+                                                    String dirInTempDirectory,
+                                                    boolean alwaysExtractResourceFile) {
         final File tempFile;
         final InputStream resourceStream = getResourceInputStream(pathToResource);
-        OutputStream fileStream = null;
-        pathToResource = getShortFilename(pathToResource);
-        String fileName = getFilenameWithoutExtension(pathToResource);
-        String fileExtension = getFileExtensionWithDot(pathToResource);
+        String fileName = getShortFilename(pathToResource);
 
-        try {
-            tempFile = File.createTempFile(fileName, Long.toString(System.currentTimeMillis()) + fileExtension);
-        } catch (IOException e) {
-            return "";
+        String tmpDir;
+        if (dirInTempDirectory == null) {
+            tmpDir = getTmpDirectory();
+        } else {
+            tmpDir = dirInTempDirectory.endsWith(SLASH) ?
+                    getTmpDirectory() + dirInTempDirectory :
+                    getTmpDirectory() + dirInTempDirectory + SLASH;
         }
-        tempFile.deleteOnExit();
+        String fullFilename = tmpDir + fileName;
+
+        //now the caching part - looking for
+        if (! alwaysExtractResourceFile) {
+            if (fileExists(fullFilename))
+                return fullFilename;
+        }
+
+        createNewDirectory(tmpDir); //creates if folder doesn't exist
+        tempFile = new File(fullFilename);
 
         try {
-            final byte[] buf;
-            int i;
-
-            fileStream = new FileOutputStream(tempFile);
-            buf = new byte[1024];
-            i = 0;
-
-            while ((i = resourceStream.read(buf)) != -1) {
-                fileStream.write(buf, 0, i);
-            }
+            OutputStream fileStream = new FileOutputStream(tempFile);
+            MS_BinaryTools.copyStream(resourceStream, fileStream);
         } catch (Exception e) {
             return "";
-        } finally {
-            close(resourceStream);
-            close(fileStream);
         }
 
         return (tempFile.toString());

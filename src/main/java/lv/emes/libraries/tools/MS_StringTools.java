@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Set;
 
+import static lv.emes.libraries.tools.EnumDateFormats.DDMMYYYY;
 import static lv.emes.libraries.tools.MS_Tools.inRange;
 
 /**
@@ -32,7 +33,7 @@ import static lv.emes.libraries.tools.MS_Tools.inRange;
  * -pos
  * -getSubstring
  *
- * @version 1.7.
+ * @version 1.8.
  */
 public final class MS_StringTools {
     //konstantes

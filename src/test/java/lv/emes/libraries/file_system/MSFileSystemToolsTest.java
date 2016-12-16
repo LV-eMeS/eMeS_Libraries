@@ -17,12 +17,13 @@ import static org.junit.Assert.*;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MSFileSystemToolsTest {
-    public static String tmpFileName = "eMeS_Testing_File_System_Tools.txt";
-    public static String tmpFilePath = getTmpDirectory() + tmpFileName;
-    public static String tmpDirName = "eMeS_Testing_File_System_Tools/";
-    public static String tmpDirPath = getTmpDirectory() + tmpDirName;
-    public static String childDirectory = "child directory";
-    public static Boolean tmpFileStillExists = false;
+    private static String tmpFileName = "eMeS_Testing_File_System_Tools.txt";
+    private static String tmpFilePath = getTmpDirectory() + tmpFileName;
+    private static String tmpDirName = "eMeS_Testing_File_System_Tools/";
+    private static String tmpDirPath = getTmpDirectory() + tmpDirName;
+    private static String childDirectory = "child directory";
+    private static Boolean tmpFileStillExists = false;
+    private static String SAMPLE_TEXT_FILE_4_TESTING = "sampleTextFile4Testing.txt";
 
     @BeforeClass
     //Before even start testing do some preparations!
@@ -64,7 +65,7 @@ public class MSFileSystemToolsTest {
 
     @Test
     public void test04Resources() throws IOException {
-        InputStream testSubject = getResourceInputStream("sampleTextFile4Testing.txt");
+        InputStream testSubject = getResourceInputStream(SAMPLE_TEXT_FILE_4_TESTING);
         MS_BinaryTools.writeFile(testSubject, tmpFilePath);
         assertTrue(fileExists(tmpFilePath));
         tmpFileStillExists = true;
@@ -149,8 +150,22 @@ public class MSFileSystemToolsTest {
 
     @Test
     public void test10ResourceExtractingToTmpFolder() {
-        String tmpFile = extractResourceToTmpFolder(NIRCMD_FILE_FOR_WINDOWS);
+        String tmpFile = extractResourceToTmpFolder(NIRCMD_FILE_FOR_WINDOWS, null, true);
         String shortName = getShortFilename(tmpFile);
         assertTrue(fileExists(getTmpDirectory() + shortName));
+    }
+
+    @Test
+    public void test11ResourceExtractingToParticularFolderInsideTmpFolder() {
+        String tmpFile = extractResourceToTmpFolder(NIRCMD_FILE_FOR_WINDOWS, "test/", true);
+        String shortName = getShortFilename(tmpFile);
+        assertTrue(fileExists(getTmpDirectory() + "test/" + shortName));
+    }
+
+    @Test
+    public void test12ResourceExtractingToParticularSubFolderInsideTmpFolder() {
+        String tmpFile = extractResourceToTmpFolder(NIRCMD_FILE_FOR_WINDOWS, "test/subTest", true);
+        String shortName = getShortFilename(tmpFile);
+        assertTrue(fileExists(getTmpDirectory() + "test/subTest/" + shortName));
     }
 }

@@ -7,11 +7,12 @@ import lv.emes.libraries.file_system.MS_FileSystemTools;
  * <p>Methods:
  *
  * @author eMeS
- * @version 1.0.
+ * @version 1.1.
  */
 public final class SystemVolumeManager {
     //PRIVATE VARIABLES
     private static String nircmdFileName = "";
+    private static final String TEMP_DIRECTORY_FOR_VOLUME_MANAGER = "eMeS_SystemVolumeManager";
 
     //PUBLIC METHODS
 
@@ -22,7 +23,7 @@ public final class SystemVolumeManager {
      */
     public static String getNircmdFileName() {
         if (nircmdFileName.equals(""))
-            nircmdFileName = MS_FileSystemTools.extractResourceToTmpFolder(MS_FileSystemTools.NIRCMD_FILE_FOR_WINDOWS);
+            nircmdFileName = MS_FileSystemTools.extractResourceToTmpFolder(MS_FileSystemTools.NIRCMD_FILE_FOR_WINDOWS, TEMP_DIRECTORY_FOR_VOLUME_MANAGER, false);
         return nircmdFileName;
     }
 
