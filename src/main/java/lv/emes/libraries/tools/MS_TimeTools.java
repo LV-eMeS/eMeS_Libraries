@@ -32,19 +32,19 @@ public final class MS_TimeTools {
 	public static class MSRec_Time { 		
 		public int hour, min, sec, millisec;	
 		public static MSRec_Time newInstance(Date aDate) {
-			return eMeSExtractTime(aDate);
+			return extractTime(aDate);
 		}
 	}
 	public static class MSRec_Date { 
 		public int year, month, day;	
 		public static MSRec_Date newInstance(Date aDate) {
-			return eMeSExtractDate(aDate);
+			return extractDate(aDate);
 		}		
 	}
 	public static class MSRec_DateTime { 
 		public int year, month, day, hour, min, sec, millisec;	
 		public static MSRec_DateTime newInstance(Date aDate) {
-			return eMeSExtractDateTime(aDate);
+			return extractDateTime(aDate);
 		}		
 	}
 
@@ -56,7 +56,7 @@ public final class MS_TimeTools {
 	 * @return <u>Example</u>: Sun Jul 03 00:00:00 EEST 2016
 	 * @throws IncorrectDateFormatException when text is in incorrect format.
 	 */
-	public static Date eMeSStrToDate(String aText) throws IncorrectDateFormatException {
+	public static Date strToDate(String aText) throws IncorrectDateFormatException {
 		Date res = null;
 		SimpleDateFormat format = new SimpleDateFormat ("dd.MM.yyyy"); 
 	      try { 
@@ -74,7 +74,7 @@ public final class MS_TimeTools {
 	 * @return <u>Example</u>: Thu Jan 01 23:02:11 EET 1970
 	 * @throws IncorrectDateFormatException when text is in incorrect format.
 	 */
-	public static Date eMeSStrToTime(String aText) throws IncorrectDateFormatException {
+	public static Date strToTime(String aText) throws IncorrectDateFormatException {
 		Date res = null;
 		SimpleDateFormat format = new SimpleDateFormat ("HH:mm:ss:SSS"); 
 	      try { 
@@ -92,7 +92,7 @@ public final class MS_TimeTools {
 	 * @return <u>Example</u>: Sun Jul 03 23:02:11 EEST 2016
 	 * @throws IncorrectDateFormatException when text is in incorrect format.
 	 */
-	public static Date eMeSStrToDateTime(String aText) throws IncorrectDateFormatException {
+	public static Date strToDateTime(String aText) throws IncorrectDateFormatException {
 		Date res = null;
 		SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss:SSS"); 
 	      try { 
@@ -108,7 +108,7 @@ public final class MS_TimeTools {
 	 * @param aDate a date in format: "dd.MM.yyyy HH:mm:ss:SSS".
 	 * @return a text representing passed date and time.
 	 */
-	public static String eMeSDateTimeToStr(Date aDate) {
+	public static String dateTimeToStr(Date aDate) {
 		SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss:SSS"); 
 		return format.format(aDate);				
 	}	
@@ -121,7 +121,7 @@ public final class MS_TimeTools {
 	 * @param aDate a date in format: "HH:mm:ss:SSS".
 	 * @return a text representing passed time.
 	 */
-	public static String eMeSTimeToStr(Date aDate) {
+	public static String timeToStr(Date aDate) {
 		SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss:SSS"); 
 		return format.format(aDate);				
 	}	
@@ -131,7 +131,7 @@ public final class MS_TimeTools {
 	 * @param aDate a date in format: "dd.MM.yyyy".
 	 * @return a text representing passed date.
 	 */
-	public static String eMeSDateToStr(Date aDate) {
+	public static String dateToStr(Date aDate) {
 		SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy"); 
 		return format.format(aDate);				
 	}	
@@ -142,7 +142,7 @@ public final class MS_TimeTools {
 	 * @param aDate presented date.
 	 * @return a eMeS time record (hour, minute, second, millisecond).
 	 */
-	public static MSRec_Time eMeSExtractTime(Date aDate) {
+	public static MSRec_Time extractTime(Date aDate) {
 		MSRec_Time res = new MSRec_Time();
 		GregorianCalendar cal = new GregorianCalendar();
 		cal.setTime(aDate);
@@ -158,7 +158,7 @@ public final class MS_TimeTools {
 	 * @param aDate presented date.
 	 * @return a eMeS time record (year, month, day).
 	 */
-	public static MSRec_Date eMeSExtractDate(Date aDate) {
+	public static MSRec_Date extractDate(Date aDate) {
 		MSRec_Date res = new MSRec_Date();
 		GregorianCalendar cal = new GregorianCalendar();
 		cal.setTime(aDate);
@@ -173,7 +173,7 @@ public final class MS_TimeTools {
 	 * @param aDate presented date.
 	 * @return a eMeS time record (year, month, day, hour, minute, second, millisecond).
 	 */
-	public static MSRec_DateTime eMeSExtractDateTime(Date aDate) {
+	public static MSRec_DateTime extractDateTime(Date aDate) {
 		MSRec_DateTime res = new MSRec_DateTime();
 		GregorianCalendar cal = new GregorianCalendar();
 		cal.setTime(aDate);
@@ -193,7 +193,7 @@ public final class MS_TimeTools {
 	 * @param aRecord an eMeS record object.
 	 * @return a date.
 	 */
-	public static Date eMeSExtractDate(MSRec_Date aRecord) {
+	public static Date extractDate(MSRec_Date aRecord) {
 		GregorianCalendar cal = new GregorianCalendar();
 		cal.clear(Calendar.HOUR_OF_DAY);
 		cal.clear(Calendar.MINUTE);
@@ -210,7 +210,7 @@ public final class MS_TimeTools {
 	 * @param aRecord an eMeS record object.
 	 * @return a date.
 	 */
-	public static Date eMeSExtractTime(MSRec_Time aRecord) {
+	public static Date extractTime(MSRec_Time aRecord) {
 		GregorianCalendar cal = new GregorianCalendar();
 		cal.clear(Calendar.DAY_OF_MONTH);
 		cal.clear(Calendar.MONTH);
@@ -227,7 +227,7 @@ public final class MS_TimeTools {
 	 * @param aRecord an eMeS record object.
 	 * @return a date.
 	 */
-	public static Date eMeSExtractDateTime(MSRec_DateTime aRecord) {
+	public static Date extractDateTime(MSRec_DateTime aRecord) {
 		GregorianCalendar cal = new GregorianCalendar();
 		cal.set(Calendar.DAY_OF_MONTH, aRecord.day);
 		cal.set(Calendar.MONTH, aRecord.month - 1);
@@ -244,24 +244,24 @@ public final class MS_TimeTools {
 	 * @param aDate any valid date.
 	 * @return year of <b>aDate</b>.
 	 */
-	public static int eMeSGetYearFromDate(Date aDate) {
-		return eMeSExtractDate(aDate).year;
+	public static int getYearFromDate(Date aDate) {
+		return extractDate(aDate).year;
 	}
 	/**
 	 * Gets just month from date.
 	 * @param aDate any valid date.
 	 * @return month of <b>aDate</b>.
 	 */
-	public static int eMeSGetMonthFromDate(Date aDate) {
-		return eMeSExtractDate(aDate).month;
+	public static int getMonthFromDate(Date aDate) {
+		return extractDate(aDate).month;
 	}
 	/**
 	 * Gets just day from date.
 	 * @param aDate any valid date.
 	 * @return day of <b>aDate</b>.
 	 */
-	public static int eMeSGetDayFromDate(Date aDate) {
-		return eMeSExtractDate(aDate).day;
+	public static int getDayFromDate(Date aDate) {
+		return extractDate(aDate).day;
 	}
 
 	/**
@@ -271,7 +271,7 @@ public final class MS_TimeTools {
 	 * @param aDateFrom constant point of reference.
 	 * @return hour amount or -1 if <b>aDateFrom</b> &gt; <b>aGivenDate</b>.
 	 */
-	public static long eMeSGetHoursFromGivenDate(Date aGivenDate, Date aDateFrom) {
+	public static long getHoursFromGivenDate(Date aGivenDate, Date aDateFrom) {
 		if (aDateFrom==null || aGivenDate==null ||aGivenDate==aDateFrom) return 0;
 		GregorianCalendar calGivenDate = new GregorianCalendar();
 		GregorianCalendar calDateFrom = new GregorianCalendar();
@@ -293,7 +293,7 @@ public final class MS_TimeTools {
 	 * @param aDate a date.
 	 * @return amount of seconds.
 	 */
-	public static long eMeSGetSecsFromDate(Date aDate) {
+	public static long getSecsFromDate(Date aDate) {
 		if (aDate==null) return 0;
 		GregorianCalendar calGivenDate = new GregorianCalendar();
 		calGivenDate.setTime(aDate);
@@ -305,7 +305,7 @@ public final class MS_TimeTools {
 	 * @param aDate a date.
 	 * @return amount of milliseconds.
 	 */
-	public static long eMeSGetMiliSecsFromDate(Date aDate) {
+	public static long getMiliSecsFromDate(Date aDate) {
 		if (aDate==null) return 0;
 		GregorianCalendar calGivenDate = new GregorianCalendar();
 		calGivenDate.setTime(aDate);

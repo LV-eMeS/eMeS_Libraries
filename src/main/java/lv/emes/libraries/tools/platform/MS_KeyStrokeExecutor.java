@@ -11,21 +11,22 @@ import static lv.emes.libraries.tools.MS_KeyCodeDictionary.textToKeyCode;
 /** 
  * Recognizes, what OS is device using and creates corresponding object to imitate keyboard button pressing and mouse controlling.
  * <p>Public methods:
- * -keyDown
- * -keyUp
- * -keyPress
- * -isKeyDown
- * -isCapsLockToggled
- * -getCurrentMouseCoords
- * -mouseLeftDown
- * -mouseLeftUp
- * -mouseLeftClick
- * -mouseRightDown
- * -mouseRightUp
- * -mouseRightClick
- * -mouseSetCoords
- * -mouseMove
- * @version 0.7.
+ * <ul>
+ *     <li>keyDown</li>
+ *     <li>keyUp</li>
+ *     <li>isKeyDown</li>
+ *     <li>isCapsLockToggled</li>
+ *     <li>getCurrentMouseCoords</li>
+ *     <li>mouseLeftDown</li>
+ *     <li>mouseLeftUp</li>
+ *     <li>mouseLeftClick</li>
+ *     <li>mouseRightDown</li>
+ *     <li>mouseRightUp</li>
+ *     <li>mouseRightClick</li>
+ *     <li>mouseSetCoords</li>
+ *     <li>mouseMove</li>
+ * </ul>
+ * @version 0.8.
  * @author eMeS
  */
 public class MS_KeyStrokeExecutor implements IKeyStrokeExecutor {

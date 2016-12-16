@@ -244,7 +244,7 @@ public class MS_ScriptRunner {
                 if (!pathToLoggerFile.equals("")) {
                     MS_TextFile tmpLogFile = new MS_TextFile(pathToLoggerFile);
                     Date now = new Date();
-                    tmpLogFile.appendln(MS_TimeTools.eMeSDateTimeToStr(now) + String.format(" : Command [%d] '%s' failed to execute with message:", index + 1, cmd), false);
+                    tmpLogFile.appendln(MS_TimeTools.dateTimeToStr(now) + String.format(" : Command [%d] '%s' failed to execute with message:", index + 1, cmd), false);
                     tmpLogFile.appendln(e.toString(), true);
                     //after this loop continues executing next commands
                 }

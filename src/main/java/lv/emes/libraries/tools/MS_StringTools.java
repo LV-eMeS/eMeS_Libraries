@@ -3,10 +3,10 @@ package lv.emes.libraries.tools;
 import lv.emes.libraries.tools.lists.MS_StringList;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.EnumSet;
 import java.util.Set;
 
-import static lv.emes.libraries.tools.EnumDateFormats.DDMMYYYY;
 import static lv.emes.libraries.tools.MS_Tools.inRange;
 
 /**
@@ -167,14 +167,21 @@ public final class MS_StringTools {
     }
 
     /**
-     *
-     * @param aSymbolCount
-     * @return
+     * Formats current date and time in given format <b>format</b>.
+     * @param format one of possible acceptable date formats.
+     * @return current date and time as String.
      */
-    //TODO use enum here!
-    public static String getDateTimeNow(int aSymbolCount) {
-        //TODO do this using MS_TimeTools
-        return "";
+    public static String getDateTimeNow(EnumDateFormats format) {
+        String res = "";
+        Date now = new Date();
+        MS_TimeTools.MSRec_DateTime rec = MS_TimeTools.extractDateTime(now);
+        switch (format) {
+            case DD_MM_YYYY:
+                //TODO rec.day
+                break;
+        }
+
+        return res;
     }
 
     /**
