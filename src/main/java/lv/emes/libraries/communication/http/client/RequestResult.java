@@ -1,5 +1,6 @@
 package lv.emes.libraries.communication.http.client;
 
+import java.io.IOException;
 import java.net.HttpURLConnection;
 
 /**
@@ -18,6 +19,7 @@ public class RequestResult {
     String message;
     int reponseCode;
     HttpURLConnection connection;
+    IOException exception;
 
     public String getMessage() {
         return message;
@@ -27,5 +29,8 @@ public class RequestResult {
     }
     public Integer getReponseCode() {
         return reponseCode;
+    }
+    public IOException getException() {
+        return exception;
     }
 }

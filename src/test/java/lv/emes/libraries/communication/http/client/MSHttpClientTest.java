@@ -6,6 +6,7 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
+import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,6 +21,7 @@ public class MSHttpClientTest {
     private static final String URL_STRING_POST = "http://"+CommunicationConstants.TESTING_SERVER_HOSTAME+"/Test/test_post.php";
     private static final String URL_STRING_NO_PARAMS = "http://"+CommunicationConstants.TESTING_SERVER_HOSTAME+"/Test/test_no_params.php";
     private static final String URL_STRING_WRONG_URL = "http://"+ CommunicationConstants.TESTING_SERVER_HOSTAME +"/Test/no_file_is_added.php";
+    private static final String URL_STRING_UNREACHABLE_HOST = "http://111.111.111.111/Test/no_file_is_added.php";
     private static final String TEST_PARAMETER_NAME = "test";
     private static final String TEST_PARAMETER_VALUE = "vards";
     private static final String TEST_NO_PARAMETER_VALUE = TEST_PARAMETER_NAME;
@@ -75,9 +77,35 @@ public class MSHttpClientTest {
     }
 
     @Test
-    public void test07GetWrongURL() {
+    public void test07GetWrongURLScriptFilename() {
         response = get(URL_STRING_WRONG_URL, null);
         assertEquals(404, response.reponseCode);
         assertEquals("", response.message);
+        assertEquals(FileNotFoundException.class, response.exception.getClass());
+    }
+
+    @Test
+    public void test08PostWrongURLScriptFilename() {
+        response = post(URL_STRING_WRONG_URL, null);
+        assertEquals(404, response.reponseCode);
+        assertEquals("", response.message);
+    }
+
+    @Test
+    public void test09Timeout() {
+        IFuncConnectionConfig config = (cn) -> {
+            cn.setConnectTimeout(1);
+            cn.setReadTimeout(1);
+        };
+        response = get(URL_STRING_UNREACHABLE_HOST, null, config);
+        assertEquals(java.net.SocketTimeoutException.class, response.exception.getClass());
+
+        config = (cn) -> {
+            cn.setConnectTimeout(1);
+            cn.setReadTimeout(1);
+            cn.setDoOutput(true);
+        };
+        response = post(URL_STRING_UNREACHABLE_HOST, null, config);
+        assertEquals(java.net.SocketTimeoutException.class, response.exception.getClass());
     }
 }
