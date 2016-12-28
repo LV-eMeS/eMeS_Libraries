@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 /**
  * Starts Spring server with behavior that is defined using @Controller.
  */
-//@ComponentScan(basePackages = "fi.vr.h", excludeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value=EmailSender.class) )
+//@ComponentScan(basePackages = "lv.emes.software", excludeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value=SomeClassToExclude.class) )
 @Configuration
 @EnableAutoConfiguration
 @ComponentScan
