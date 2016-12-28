@@ -1,0 +1,34 @@
+package lv.emes.libraries.communication.http.server
+
+ext {
+    springBootVersion = "1.4.2.RELEASE"
+}
+
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'idea'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile "org.springframework.boot:spring-boot-starter-web:${springBootVersion}"
+}
+
+//----------------------------------------------------------------------------------------------------------------------
+//Things to create runnable JARs
+apply plugin: 'gradle-one-jar'
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.github.rholder:gradle-one-jar:1.0.4'
+    }
+}
+
+task jarSpringBootTest(type: OneJar) {
+    mainClass = 'lv.emes.libraries.communication.http.server.SpringRunner'
+    archiveName = "SpringBootTest.jar"
+}

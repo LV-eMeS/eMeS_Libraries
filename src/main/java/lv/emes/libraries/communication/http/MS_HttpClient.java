@@ -1,4 +1,4 @@
-package lv.emes.libraries.communication.http.client;
+package lv.emes.libraries.communication.http;
 
 import lv.emes.libraries.file_system.MS_BinaryTools;
 

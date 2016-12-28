@@ -1,4 +1,4 @@
-package lv.emes.libraries.communication.http.client;
+package lv.emes.libraries.communication.http;
 
 import java.net.HttpURLConnection;
 
@@ -10,7 +10,7 @@ import java.net.HttpURLConnection;
  * @author eMeS
  * @version 1.0.
  * @see HttpURLConnection
- * @see lv.emes.libraries.communication.http.client.MS_HttpClient
+ * @see MS_HttpClient
  */
 @FunctionalInterface
 public interface IFuncConnectionConfig {

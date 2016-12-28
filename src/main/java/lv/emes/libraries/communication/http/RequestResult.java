@@ -1,4 +1,4 @@
-package lv.emes.libraries.communication.http.client;
+package lv.emes.libraries.communication.http;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;

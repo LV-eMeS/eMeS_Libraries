@@ -7,8 +7,6 @@ apply plugin: 'maven'
 apply plugin: 'idea'
 
 group = 'com.github.LV-eMeS'
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
 
 repositories {
     mavenCentral()
@@ -57,7 +55,6 @@ dependencies {
     compile "org.json:json:20160810"
 //    compile "com.oracle:ojdbc6:11.2.0.3"
 //    compile group: 'com.jayway.restassured', name: 'rest-assured', version: '2.9.0'
-
 
     //For tests:
     compile "junit:junit:4.12"

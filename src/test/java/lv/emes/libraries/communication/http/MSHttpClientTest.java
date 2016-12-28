@@ -1,4 +1,4 @@
-package lv.emes.libraries.communication.http.client;
+package lv.emes.libraries.communication.http;
 
 import lv.emes.libraries.communication.CommunicationConstants;
 import org.junit.BeforeClass;
@@ -10,8 +10,8 @@ import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static lv.emes.libraries.communication.http.client.MS_HttpClient.get;
-import static lv.emes.libraries.communication.http.client.MS_HttpClient.post;
+import static lv.emes.libraries.communication.http.MS_HttpClient.get;
+import static lv.emes.libraries.communication.http.MS_HttpClient.post;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
@@ -27,7 +27,7 @@ public class MSHttpClientTest {
     private static final String TEST_NO_PARAMETER_VALUE = TEST_PARAMETER_NAME;
 
     private static Map<String, String> params;
-    private static RequestResult response;;
+    private static RequestResult response;
 
     @BeforeClass
     //Before even start testing do some preparations!
