@@ -276,6 +276,24 @@ public final class MS_StringList implements IListActions<String> {
         return res.toString();
     }
 
+    /**
+     * Returns all the elements of this list delimited with <b>delimiter</b>.
+     * Unlike <b>toString</b> method this method ignores second delimiter, which means that if string
+     * originally will contain elements same as delimiter then those elements will be also printed without second delimiter.
+     *
+     * @return delimited text of all the elements of eMeS string list.
+     * @see MS_StringList#delimiter
+     * @see MS_StringList#secondDelimiter
+     */
+    public String toText() {
+        StringBuilder res = new StringBuilder();
+        for (String str : fList) {
+            res.append(str);
+            res.append(delimiter);
+        }
+        return res.toString();
+    }
+
     private String pAddSecDelim(String aStringToCheck) {
         int i = 0;
         StringBuilder res = new StringBuilder();
