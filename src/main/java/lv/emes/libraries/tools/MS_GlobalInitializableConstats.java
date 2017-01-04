@@ -1,8 +1,8 @@
 package lv.emes.libraries.tools;
 
-import java.io.IOException;
-
 import lv.emes.libraries.file_system.MS_PropertiesFile;
+
+import java.io.IOException;
 
 /** 
  * This module can be overridden to operate with constants that is read from .properties file using static way to access them.
@@ -43,7 +43,7 @@ public class MS_GlobalInitializableConstats {
 	/**
 	 * Create constants object and set filename of properties file.
 	 * After this you should call <code>updatePropsFromFile()</code> to read properties from this file into static constant variables.
-	 * @param propertiesFilename
+	 * @param propertiesFilename name of properties file.
 	 */
 	public MS_GlobalInitializableConstats(String propertiesFilename) {
 		changePropsFileLocation(propertiesFilename);
@@ -95,12 +95,13 @@ public class MS_GlobalInitializableConstats {
 	}
 	
 	//PROTECTED METHODS
+
 	/**
 	 * Override this method to set values of static variables.
 	 * <p>You should define private static final variable with name "P_VARIABLE" for storing default value.
 	 * <p>You also need corresponding public static variable with name "VARIABLE", which value will be set here.
 	 * <p>Then just use line "VARIABLE = propsFile.getProperty("VARIABLE", P_VARIABLE);" in this method to set this value!
-	 * @param propsFile
+	 * @param propsFile properties file.
 	 */
 	protected void setProperties(MS_PropertiesFile propsFile) {
 		DB_HOSTNAME = propsFile.getProperty("DB_HOSTNAME", P_DB_HOSTNAME);

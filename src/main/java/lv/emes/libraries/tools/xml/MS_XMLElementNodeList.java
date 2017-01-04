@@ -39,7 +39,8 @@ public class MS_XMLElementNodeList implements IBaseListWithItems<MS_XMLElementNo
     /**
      * Mocks instance of NodeList.
      *
-     * @param actualNodeList
+     * @param actualNodeList actual node list that will be mocked as this object.
+     * @param tag a tag of node list to name list.
      */
     public MS_XMLElementNodeList(NodeList actualNodeList, String tag) {
         this.actualNodeList = actualNodeList;

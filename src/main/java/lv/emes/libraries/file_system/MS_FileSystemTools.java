@@ -162,6 +162,7 @@ public class MS_FileSystemTools {
     /**
      * Replaces all the backslashes to slashes.
      *
+     * @param textWithBackslashes text that includes backslashes.
      * @return text with all existing backslash symbols replaced with slash symbols.
      */
     public static String replaceBackslash(String textWithBackslashes) {

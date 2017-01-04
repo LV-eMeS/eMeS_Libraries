@@ -89,11 +89,10 @@ public interface IBaseListWithItems<T> {
      * });<br>
      * </code>
      * <p>
-     * <p>
      * If some temporary variable is needed for lambda expression, just use <b>AtomicReference</b>!.<br>
      * <code>
      * MS_StringList sl = new MS_StringList("One#Two#");<br>
-     * final AtomicReference<Boolean> itemFound = new AtomicReference<>();<br>
+     * final AtomicReference&lt;Boolean&gt; itemFound = new AtomicReference&lt;&gt;();<br>
      * sl.doWithEveryItem((s, index) -&gt; {<br>
      * System.out.println(s);<br>
      * if (s.equals("Two"))<br>

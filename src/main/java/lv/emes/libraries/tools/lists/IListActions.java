@@ -39,7 +39,8 @@ public interface IListActions<T> extends IPerambulateListActions<T>{
 
 	/**
 	 * Removed first matching object <b>aItem</b> from the list.
-	 * @param aItem
+	 * @param aItem item to remove from list.
+	 * @return index of removed item.
 	 */
 	default int remove(T aItem){
 		int elemToRemove = getIndex(aItem);

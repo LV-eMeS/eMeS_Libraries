@@ -40,7 +40,7 @@ public final class MS_StringList implements IListActions<String> {
      * @see MS_StringList#cSecondDefaultDelim
      */
     public char secondDelimiter = cSecondDefaultDelim;
-    protected List<String> fList = new ArrayList<String>(); //sho listi izmantosim visu ieksejo operaciju veiksanai
+    protected List<String> fList = new ArrayList<String>(); //this list will be used for all the internal operations
     public int indexOfCurrent = -1;
 
     /**
@@ -58,6 +58,7 @@ public final class MS_StringList implements IListActions<String> {
      * It also sets a new value of <b>delimiter</b>.
      *
      * @param aString = "a#B#C3#"
+     * @param aDelimiter a delimiter.
      */
     public MS_StringList(String aString, char aDelimiter) {
         this.fromString(aString, aDelimiter);
@@ -73,6 +74,7 @@ public final class MS_StringList implements IListActions<String> {
      * Tries to create a list from file by reading all the contents of this file. If file not exist simply creates an instance of empty eMeS string list.
      *
      * @param aTextFile a eMeS text file that already have linked to a file.
+     * @return a new instance of string list.
      */
     public static MS_StringList newInstance(MS_TextFile aTextFile) {
         MS_StringList res = new MS_StringList();
@@ -84,6 +86,7 @@ public final class MS_StringList implements IListActions<String> {
      * Tries to create a list from file by reading all the contents of this file. If file not exist simply creates an instance of empty eMeS string list.
      *
      * @param aPathToATextFile a path to a text file that will be read line by line.
+     * @return a new instance of string list.
      */
     public static MS_StringList newInstance(String aPathToATextFile) {
         MS_TextFile file = new MS_TextFile(aPathToATextFile);
@@ -94,6 +97,7 @@ public final class MS_StringList implements IListActions<String> {
      * Converts an array of strings to this kind of list.
      *
      * @param aTextArr an array of strings.
+     * @return a new instance of string list.
      */
     public static MS_StringList newInstance(String[] aTextArr) {
         MS_StringList res = new MS_StringList();
@@ -322,6 +326,7 @@ public final class MS_StringList implements IListActions<String> {
      * Every pattern in text <b>aString</b> that ends with element <b>aDelimiter</b> becomes to a new element of this list.
      *
      * @param aString text that is properly delimited with <b>aDelimiter</b>.
+     * @param aDelimiter a delimiter.
      */
     public void fromString(String aString, char aDelimiter) {
         this.delimiter = aDelimiter;
@@ -393,6 +398,7 @@ public final class MS_StringList implements IListActions<String> {
 
     /**
      * Converts this list to array of strings.
+     * @return an array containing all the list elements.
      */
     public String[] toArray() {
         int c = this.count();
