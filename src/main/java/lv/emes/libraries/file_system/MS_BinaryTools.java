@@ -8,10 +8,27 @@ import java.io.*;
 /**
  * Module consists of methods for binary file I/O.
  * It is mainly used to perform DB operations with binary file exchange.
+ * It can also be used in various cases while doing file exchange.
  *
- * @version 1.6.
+ * @version 1.7.
  */
 public class MS_BinaryTools {
+    /**
+     * Reads file from file system as byte array.
+     *
+     * @param aFileName path to a file.
+     * @return byte array or null if failed to read file (most probably due to non-existent file).
+     */
+    public static byte[] readFileToByteArray(String aFileName) {
+        byte[] res;
+        try {
+            res = org.apache.commons.io.FileUtils.readFileToByteArray(new File(aFileName));
+        } catch (IOException e) {
+            res = null;
+        }
+        return res;
+    }
+
     /**
      * Reads file from file system.
      *
