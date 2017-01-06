@@ -54,7 +54,8 @@ public class MS_HttpClient {
         URL url;
         RequestResult res = new RequestResult();
         try {
-            requestURL += "?" + getPostDataString(postDataParams);
+            if (postDataParams != null)
+                requestURL += "?" + getPostDataString(postDataParams);
             url = new URL(requestURL);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             connConfig.initializeConnection(conn);
