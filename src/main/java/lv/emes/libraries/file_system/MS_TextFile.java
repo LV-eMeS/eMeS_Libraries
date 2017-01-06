@@ -446,12 +446,14 @@ public class MS_TextFile {
      */
     public static String getFileTextAsString(String aFilename, String aLineDelimiter) {
         MS_TextFile file = new MS_TextFile(aFilename);
-        String res = "";
-        String tmp = "";
-        while ((tmp = file.readln()) != null)
-            res = res.concat(tmp + aLineDelimiter);
+        StringBuilder res = new StringBuilder();
+        String tmp;
+        while ((tmp = file.readln()) != null) {
+            res.append(tmp);
+            res.append(aLineDelimiter);
+        }
         file.close();
-        return res;
+        return res.toString();
     }
 
     /**
