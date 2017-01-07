@@ -203,7 +203,7 @@ public class MS_FileSystemTools {
      */
     public static boolean fileExists(String aFileName) {
         File file = new File(aFileName);
-        return file.exists();
+        return file.isFile();
     }
 
     /**

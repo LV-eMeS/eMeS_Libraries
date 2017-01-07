@@ -443,6 +443,7 @@ public class MS_TextFile {
      * @param aFilename      path to a file.
      * @param aLineDelimiter "", " ", "\n" or ",", or even something else.
      * @return whole file as plaintext where each line is divided by specified <b>aLineDelimiter</b>.
+     * If file is not found then returns empty string.
      */
     public static String getFileTextAsString(String aFilename, String aLineDelimiter) {
         MS_TextFile file = new MS_TextFile(aFilename);
