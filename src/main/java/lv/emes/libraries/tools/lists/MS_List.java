@@ -1,6 +1,7 @@
 package lv.emes.libraries.tools.lists;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import static lv.emes.libraries.tools.MS_Tools.inRange;
 /** 
@@ -20,15 +21,15 @@ public class MS_List<T> extends ArrayList<T> implements IPerambulateListActions<
 		return (count() == 0) || ! inRange(aIndex, 0, this.count()-1);
 	}
 	//PUBLISKĀS METODES
-	
+
 	/**
 	 * Converts array to list.
 	 * @param aArray array with T type of objects that will fill the list.
+	 * @return list of objects.
 	 */
-	public static MS_List<Object> newInstance(Object[] aArray) {	
+	public static MS_List<Object> newInstance(Object[] aArray) {
 		MS_List<Object> res = new MS_List<>();
-		for (Object obj : aArray)
-			res.add(obj);
+		Collections.addAll(res, aArray);
 		return res;
 	}
 	

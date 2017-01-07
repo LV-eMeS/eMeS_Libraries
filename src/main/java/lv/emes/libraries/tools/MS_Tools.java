@@ -5,24 +5,13 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.net.URL;
 import java.util.Random;
 
 /** 
  * Module is designed to combine different common programming actions.
- * @version 1.6.
+ * @version 1.7.
  */
 public final class MS_Tools {
-	/**
-	 * finds out, which jar file holds given class
-	 * Example: aPathToClass = "org/apache/http/message/BasicLineFormatter.class"
-	 */
-	public static String getJarByPathToResource(String aPathToClass){
-		ClassLoader classLoader = MS_Tools.class.getClassLoader();
-		URL resource = classLoader.getResource(aPathToClass);
-		return resource.toString();
-	}
-
 	public static final String getSystemUserName = System.getProperty("user.name");
 	public static final String getSystemUserCurrentWorkingDir = System.getProperty("user.dir") + "/";
 	public static final String getSystemUserHomeDir = System.getProperty("user.home") + "/";
@@ -55,6 +44,7 @@ public final class MS_Tools {
 	 * Before <b>toString</b> method a text <code>"-----DEBUG: "+<b>text</b>+" -----"</code> will be printed to easy find this debug text in console window.
 	 *
 	 * @param obj an object with <b>toString</b> method implemented.
+	 * @param text text to be printed with debug object (to use Ctrl + F to find text in console output).
 	 */
 	public static void debugObjectConsoleOutput(Object obj, String text) {
 		System.out.println("-----DEBUG: " + text + " -----");

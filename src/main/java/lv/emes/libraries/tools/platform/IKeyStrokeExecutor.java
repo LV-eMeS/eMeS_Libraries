@@ -28,84 +28,85 @@ public interface IKeyStrokeExecutor {
 	 * Imitates keyboard key pressing down and hold it.
 	 * @param key code of valid keyboard key.
 	 */
-	public void keyDown(String key);
+	void keyDown(String key);
 	/**
 	 * Imitates keyboard key releasing.
 	 * @param key code of valid keyboard key.
 	 */
-	public void keyUp(String key);
+	void keyUp(String key);
 	/**
 	 * Imitates keyboard key hitting (pressing down and releasing it immediately).
 	 * @param key code of valid keyboard key.
 	 */
-	public void keyPress(String key);
-	
+	void keyPress(String key);
+
 	/**
 	 * Tests, if key of keyboard is pressed.
 	 * @param key code of valid keyboard key.
+	 * @return true if key <b>key</b> is pushed and hold down, otherwise false.
 	 */
-	public boolean isKeyDown(String key);
+	boolean isKeyDown(String key);
 	
 	/**
 	 * Tests, if Caps Lock key is toggled.
 	 * @return true if caps lock on.
 	 */
-	public boolean isCapsLockToggled();
+	boolean isCapsLockToggled();
 	
 	/**
 	 * @return mouse pointer coordinates in current position.
 	 */
-	public Point getCurrentMouseCoords();
+	Point getCurrentMouseCoords();
 	
 	/**
 	 * Do mouse left click and hold it.
 	 */
-	public void mouseLeftDown();
+	void mouseLeftDown();
 	
 	/**
 	 * Release mouse left click.
 	 */
-	public void mouseLeftUp();
+	void mouseLeftUp();
 	
 	/**
 	 * Do mouse left click and release it immediately.
 	 */
-	public void mouseLeftClick();
+	void mouseLeftClick();
 	
 	/**
 	 * Do mouse right click and hold it.
 	 */
-	public void mouseRightDown();
+	void mouseRightDown();
 	
 	/**
 	 * Release mouse right click.
 	 */
-	public void mouseRightUp();
+	void mouseRightUp();
 
 	/**
 	 * Do mouse right click and release it immediately.
 	 */
-	public void mouseRightClick();
+	void mouseRightClick();
 
 	/**
 	 * Do mouse wheel click and release it immediately.
 	 */
-	public void mouseWheelClick();
+	void mouseWheelClick();
 	
 	/**
 	 * Sets mouse pointer to a specific coordinates on the screen (be aware of user's screen resolution!).
 	 * @param coords X starting from screen's left edge with value 0; Y starting from screen's top edge with value 0.
 	 */
-	public void mouseSetCoords(Point coords);
+	void mouseSetCoords(Point coords);
 	/**
 	 * Moves mouse for specified distance. Simply moves mouse pointer for (X, Y) pixels.
 	 * @param coords X starting from screen's left edge with value 0; Y starting from screen's top edge with value 0.
 	 */
-	public void mouseMove(Point coords);
+	void mouseMove(Point coords);
 	
 	/**
 	 * Rotates mouse wheel up or down for count of <b>steps</b>. 
 	 * @param steps wheel up if given value is negative and down, if value is positive.
 	 */
-	public void mouseWheel(int steps);
+	void mouseWheel(int steps);
 }
