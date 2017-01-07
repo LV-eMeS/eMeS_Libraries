@@ -1,7 +1,6 @@
 ext {
-    projectVersion = "v1.4.9"
+    projectVersion = "v1.5.0"
 }
-group = 'lv.emes.libraries'
 
 apply plugin: 'java'
 apply plugin: 'maven'
@@ -15,7 +14,7 @@ repositories {
 
 dependencies {
     //This project itself
-//    compile "lv.emes.libraries:eMeS_Libraries:" + projectVersion
+//    compile "com.github.LV-eMeS:eMeS_Libraries:" + projectVersion
     //Other dependencies - libraries
     compile "commons-io:commons-io:+"
     compile "commons-codec:commons-codec:+"
