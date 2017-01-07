@@ -1,17 +1,36 @@
 ext {
     projectVersion = "v1.4.3"
 }
+group = 'lv.emes.libraries'
 
 apply plugin: 'java'
 apply plugin: 'maven'
 apply plugin: 'idea'
 
-group = 'com.github.LV-eMeS'
-
 repositories {
     mavenCentral()
     maven { url "https://jitpack.io" }
 //    maven { url "https://code.lds.org/nexus/content/groups/main-repo" } //for ojdbc6
+}
+
+dependencies {
+    //This project itself
+//    compile "lv.emes.libraries:eMeS_Libraries:" + projectVersion
+    //Other dependencies - libraries
+    compile "commons-io:commons-io:+"
+    compile "commons-codec:commons-codec:+"
+    compile "org.apache.commons:commons-compress:1.9"
+    compile "log4j:log4j:1.2.17"
+    compile "mysql:mysql-connector-java:5.1.5"
+    compile "net.java.dev.jna:jna:4.2.2"
+    compile "net.java.dev.jna:jna-platform:4.2.2"
+    compile "org.json:json:20160810"
+//    compile "com.oracle:ojdbc6:11.2.0.3"
+//    compile group: 'com.jayway.restassured', name: 'rest-assured', version: '2.9.0'
+
+    //For tests:
+    compile "junit:junit:4.12"
+    testCompile "junit:junit:4.12"
 }
 
 //All the dealing with encoding
@@ -39,26 +58,6 @@ artifacts {
     archives sourcesJar
     archives TestsJar
     archives javadocJar
-}
-
-dependencies {
-    //This project itself
-//    compile "com.github.LV-eMeS:eMeS_Libraries:" + projectVersion
-    //Other dependencies - libraries
-    compile "commons-io:commons-io:+"
-    compile "commons-codec:commons-codec:+"
-    compile "org.apache.commons:commons-compress:1.9"
-    compile "log4j:log4j:1.2.17"
-    compile "mysql:mysql-connector-java:5.1.5"
-    compile "net.java.dev.jna:jna:4.2.2"
-    compile "net.java.dev.jna:jna-platform:4.2.2"
-    compile "org.json:json:20160810"
-//    compile "com.oracle:ojdbc6:11.2.0.3"
-//    compile group: 'com.jayway.restassured', name: 'rest-assured', version: '2.9.0'
-
-    //For tests:
-    compile "junit:junit:4.12"
-    testCompile "junit:junit:4.12"
 }
 
 //----------------------------------------------------------------------------------------------------------------------

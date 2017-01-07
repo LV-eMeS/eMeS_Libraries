@@ -1,34 +1,51 @@
-package lv.emes.libraries.communication.http.server
+buildscript {
+    ext {
+        eMeS_LibrariesVersion = "v1.4.5" //input current version here!
+        springBootVersion = "1.4.3.RELEASE"
+    }
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
+    }
+}
 
-ext {
-    springBootVersion = "1.4.2.RELEASE"
+repositories {
+    mavenCentral()
+    maven { url "https://jitpack.io" }
+    maven { url "http://repo.spring.io/libs-snapshot" }
 }
 
 apply plugin: 'java'
 apply plugin: 'maven'
 apply plugin: 'idea'
+apply plugin: 'org.springframework.boot'
 
-repositories {
-    mavenCentral()
+//All the dealing with encoding
+compileJava.options.encoding = 'UTF-8'
+tasks.withType(JavaCompile) {options.encoding = 'UTF-8'}
+test {systemProperty "file.encoding", "utf-8"}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+//For Spring Boot jar; Do bootRepackage to build such runnable JAR file!
+jar {
+    baseName = 'SpringWebServerRunner'
+    version =  '0.5.0'
+}
+
+artifacts {
+    archives sourcesJar
 }
 
 dependencies {
-    compile "org.springframework.boot:spring-boot-starter-web:${springBootVersion}"
-}
+    compile "com.github.LV-eMeS:eMeS_Libraries:" + eMeS_LibrariesVersion
+    compile "org.springframework.boot:spring-boot-starter-web"
+    compile("org.springframework.boot:spring-boot-starter-actuator")
 
-//----------------------------------------------------------------------------------------------------------------------
-//Things to create runnable JARs
-apply plugin: 'gradle-one-jar'
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath 'com.github.rholder:gradle-one-jar:1.0.4'
-    }
-}
-
-task jarSpringBootTest(type: OneJar) {
-    mainClass = 'lv.emes.libraries.communication.http.server.SpringRunner'
-    archiveName = "SpringBootTest.jar"
+    testCompile("org.springframework.boot:spring-boot-starter-test")
 }

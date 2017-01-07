@@ -1,4 +1,4 @@
-package lv.emes.libraries.communication.http.server;
+package http.server;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -7,8 +7,8 @@ import org.springframework.context.annotation.Configuration;
 
 /**
  * Starts Spring server with behavior that is defined using @Controller.
+ * Must be declared in topmost package.
  */
-//@ComponentScan(basePackages = "lv.emes.software", excludeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value=SomeClassToExclude.class) )
 @Configuration
 @EnableAutoConfiguration
 @ComponentScan

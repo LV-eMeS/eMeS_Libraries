@@ -542,11 +542,11 @@ public final class MS_StringTools {
     /**
      * Returns position of pattern <b>pattern</b> in text <b>text</b>.
      *
-     * @param text    "Pattern X in this text"
      * @param pattern "X"
+     * @param text    "Pattern X in this text"
      * @return 8
      */
-    public static int getPosition(String text, String pattern) {
+    public static int getPosition(String pattern, String text) {
         return pos(text, pattern);
     }
 
@@ -555,5 +555,9 @@ public final class MS_StringTools {
         for (int i = 1; i <= countOfTabs; i++)
             res.append(C_TAB_SPACE);
         return res.toString();
+    }
+
+    public static String[] getArray(String... strings) {
+        return strings;
     }
 }

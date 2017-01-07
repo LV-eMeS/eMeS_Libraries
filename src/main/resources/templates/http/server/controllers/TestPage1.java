@@ -1,4 +1,4 @@
-package lv.emes.libraries.communication.http.server;
+package http.server.controllers;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;

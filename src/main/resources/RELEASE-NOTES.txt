@@ -1,5 +1,5 @@
 eMeS libraries
-Version 1.4.4
+Version 1.4.8
 Release Notes
 
 INTRODUCTION:
@@ -18,6 +18,8 @@ eMeS libraries Version 1.5.0
 * Example of Spring boot server added in resources folder.
 * MS_TakenPorts created as global constants for every eMeS project.
 * String list improved.
+* In StringTools getArray method to define more constant strings and store them to variable.
+* HTML tools added in lv.emes.libraries.communication.http.html.
 ==============================================================================
 eMeS libraries Version 1.4.0
 ==============================================================================
