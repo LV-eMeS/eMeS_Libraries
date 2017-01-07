@@ -72,6 +72,7 @@ public class ApplicationWindow {
      * <br><u>WARNING</u>: Windows only function.
      *
      * @param appName name of application that can be found in task manager.
+     * @return true if action successfully finished.
      */
     public static Boolean showApplicationWindow(String appName) {
         WinDef.HWND hwnd = getWindowHandle(appName);
@@ -92,6 +93,7 @@ public class ApplicationWindow {
      * <br><u>WARNING</u>: Windows only function.
      *
      * @param appName name of application that can be found in task manager.
+     * @return true if action successfully finished.
      */
     public static Boolean hideApplicationWindow(String appName) {
         WinDef.HWND hwnd = getWindowHandle(appName);

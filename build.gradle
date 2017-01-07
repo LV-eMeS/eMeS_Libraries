@@ -1,5 +1,5 @@
 ext {
-    projectVersion = "v1.4.3"
+    projectVersion = "v1.4.9"
 }
 group = 'lv.emes.libraries'
 

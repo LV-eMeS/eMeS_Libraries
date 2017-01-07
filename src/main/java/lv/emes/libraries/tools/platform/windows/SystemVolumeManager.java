@@ -44,6 +44,7 @@ public final class SystemVolumeManager {
      * Turns system value up by <b>level</b> specified.
      * Windows only function.
      * @param level nircmd.exe parameter that matches volume level. Recommended: 1000-5000.
+     * @throws IncompatibleOSException if trying to use this method in different OS than Windows.
      */
     public static void volumeUp(Integer level) throws IncompatibleOSException {
         checkOSAndThrowExceptionIfIncompatible();
@@ -55,6 +56,7 @@ public final class SystemVolumeManager {
      * Turns system value down by <b>level</b> specified.
      * <br><u>Warning</u>: Windows only function.
      * @param level nircmd.exe parameter that matches volume level. Recommended: 1000-5000.
+     * @throws IncompatibleOSException if trying to use this method in different OS than Windows.
      */
     public static void volumeDown(Integer level) throws IncompatibleOSException {
         checkOSAndThrowExceptionIfIncompatible();
@@ -67,6 +69,7 @@ public final class SystemVolumeManager {
      * Sets system value to <b>level</b> specified.
      * <br><u>Warning</u>: Windows only function.
      * @param level nircmd.exe parameter that matches volume level. Recommended: 1000-40000.
+     * @throws IncompatibleOSException if trying to use this method in different OS than Windows.
      */
     public static void setVolume(Integer level) throws IncompatibleOSException {
         checkOSAndThrowExceptionIfIncompatible();

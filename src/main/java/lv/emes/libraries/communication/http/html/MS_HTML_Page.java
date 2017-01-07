@@ -13,7 +13,8 @@ import static lv.emes.libraries.communication.http.html.MS_HTML_PartTableColumn.
  * <li>leftFooterOfBody</li>
  * <li>centerFooterOfBody</li>
  * <li>rightFooterOfBody</li>
- * <br>
+ * </ul>
+ * <ul>
  * <li>configureHeaderRow</li>
  * <li>configureFooterRow</li>
  * <li>initBodyMainRows</li>
@@ -66,7 +67,7 @@ public abstract class MS_HTML_Page extends AbstractHTMLPart {
     /**
      * Override to fill content of left header of page body!
      * <br><u>Note</u>: object <b>EMPTY_COLUMN</b> is ment to remain unchanged. Do not use it and do not fill it with some content!
-     * @return
+     * @return new column filled with custom content.
      */
     protected MS_HTML_PartTableColumn leftHeaderOfBody() {
         return EMPTY_COLUMN;
@@ -75,7 +76,7 @@ public abstract class MS_HTML_Page extends AbstractHTMLPart {
     /**
      * Override to fill content of center header of page body!
      * <br><u>Note</u>: object <b>EMPTY_COLUMN</b> is ment to remain unchanged. Do not use it and do not fill it with some content!
-     * @return
+     * @return new column filled with custom content.
      */
     protected MS_HTML_PartTableColumn centerHeaderOfBody() {
         return EMPTY_COLUMN;
@@ -84,7 +85,7 @@ public abstract class MS_HTML_Page extends AbstractHTMLPart {
     /**
      * Override to fill content of right header of page body!
      * <br><u>Note</u>: object <b>EMPTY_COLUMN</b> is ment to remain unchanged. Do not use it and do not fill it with some content!
-     * @return
+     * @return new column filled with custom content.
      */
     protected MS_HTML_PartTableColumn rightHeaderOfBody() {
         return EMPTY_COLUMN;
@@ -93,7 +94,7 @@ public abstract class MS_HTML_Page extends AbstractHTMLPart {
     /**
      * Override to fill content of left footer of page body!
      * <br><u>Note</u>: object <b>EMPTY_COLUMN</b> is ment to remain unchanged. Do not use it and do not fill it with some content!
-     * @return
+     * @return new column filled with custom content.
      */
     protected MS_HTML_PartTableColumn leftFooterOfBody() {
         return EMPTY_COLUMN;
@@ -102,7 +103,7 @@ public abstract class MS_HTML_Page extends AbstractHTMLPart {
     /**
      * Override to fill content of center footer of page body!
      * <br><u>Note</u>: object <b>EMPTY_COLUMN</b> is ment to remain unchanged. Do not use it and do not fill it with some content!
-     * @return
+     * @return new column filled with custom content.
      */
     protected MS_HTML_PartTableColumn centerFooterOfBody() {
         return EMPTY_COLUMN;
@@ -111,7 +112,7 @@ public abstract class MS_HTML_Page extends AbstractHTMLPart {
     /**
      * Override to fill content of right footer of page body!
      * <br><u>Note</u>: object <b>EMPTY_COLUMN</b> is ment to remain unchanged. Do not use it and do not fill it with some content!
-     * @return
+     * @return new column filled with custom content.
      */
     protected MS_HTML_PartTableColumn rightFooterOfBody() {
         return EMPTY_COLUMN;
