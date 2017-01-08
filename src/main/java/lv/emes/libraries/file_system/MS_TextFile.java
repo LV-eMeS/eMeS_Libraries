@@ -1,6 +1,10 @@
 package lv.emes.libraries.file_system;
 
 import lv.emes.libraries.tools.lists.MS_List;
+import net.sf.jmimemagic.Magic;
+import net.sf.jmimemagic.MagicException;
+import net.sf.jmimemagic.MagicMatchNotFoundException;
+import net.sf.jmimemagic.MagicParseException;
 import org.apache.commons.compress.utils.IOUtils;
 
 import java.io.*;
@@ -491,5 +495,21 @@ public class MS_TextFile {
     @Override
     protected void finalize() throws Throwable {
         this.close();
+    }
+
+    /**
+     * Checks whether file with file name <b>filename</b> is text file.
+     * @param filename path to file.
+     * @return true if file is text file; false, if not or file not found.
+     */
+    public static boolean isTextFile(String filename) {
+        String mimeType = "";
+        try {
+            mimeType = Magic.getMagicMatch(new File(filename), true).getMimeType();
+        } catch (MagicMatchNotFoundException | MagicException | MagicParseException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return mimeType.startsWith("text");
     }
 }

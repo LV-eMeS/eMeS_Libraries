@@ -24,6 +24,7 @@ dependencies {
     compile "net.java.dev.jna:jna:4.2.2"
     compile "net.java.dev.jna:jna-platform:4.2.2"
     compile "org.json:json:20160810"
+    compile group: 'jmimemagic', name: 'jmimemagic', version: '0.1.2'
 //    compile "com.oracle:ojdbc6:11.2.0.3"
 //    compile group: 'com.jayway.restassured', name: 'rest-assured', version: '2.9.0'
 

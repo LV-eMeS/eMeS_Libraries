@@ -1,5 +1,9 @@
 package lv.emes.libraries.file_system;
 
+import net.sf.jmimemagic.Magic;
+import net.sf.jmimemagic.MagicException;
+import net.sf.jmimemagic.MagicMatchNotFoundException;
+import net.sf.jmimemagic.MagicParseException;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.compress.utils.IOUtils;
 
@@ -143,5 +147,22 @@ public class MS_BinaryTools {
      */
     public static String bytesToString(byte[] bytes) {
         return Base64.encodeBase64String(bytes);
+    }
+
+
+    /**
+     * Checks whether file with file name <b>filename</b> is binary file.
+     * @param filename path to file.
+     * @return true if file is binary file; false, if not or file not found.
+     */
+    public static boolean isBinaryFile(String filename) {
+        String mimeType = "";
+        try {
+            mimeType = Magic.getMagicMatch(new File(filename), true).getMimeType();
+        } catch (MagicMatchNotFoundException | MagicException | MagicParseException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return !mimeType.startsWith("text");
     }
 }

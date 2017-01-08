@@ -1,5 +1,5 @@
 eMeS libraries
-Version 1.5.2
+Version 1.5.3
 Release Notes
 
 INTRODUCTION:
@@ -17,6 +17,7 @@ eMeS libraries Version 1.6.0
 ==============================================================================
 * JavaDoc compiles without warnings.
 * Method fileExists bug fixed.
+* Binary and text file detection.
 ==============================================================================
 eMeS libraries Version 1.5.0
 ==============================================================================
