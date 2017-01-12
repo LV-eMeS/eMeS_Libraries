@@ -65,7 +65,7 @@ public class MS_XML {
         createdFromLocalFile = true;
         xmlFilename = aFileName;
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder dBuilder = null;
+        DocumentBuilder dBuilder;
         dBuilder = factory.newDocumentBuilder();
         doc = dBuilder.parse(new File(aFileName));
     }

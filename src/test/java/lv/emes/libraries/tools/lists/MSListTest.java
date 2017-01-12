@@ -4,12 +4,13 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MSListTest {
     private MS_List<Integer> l = new MS_List<Integer>();
-    int count, sum, elementCountIterated;
+    int count, sum, indexSum;
 
     @Test
     public void test01ListEngine() {
@@ -38,9 +39,9 @@ public class MSListTest {
         l.add(5);
         l.add(3);
         Object[] intArr = l.toArray();
-        assertTrue(((Integer) intArr[0]).intValue() == 5);
-        assertTrue(((Integer) intArr[1]).intValue() == 5);
-        assertTrue(((Integer) intArr[2]).intValue() == 3);
+        assertEquals(5, intArr[0]);
+        assertEquals(5, intArr[1]);
+        assertEquals(3, intArr[2]);
     }
 
     @Test
@@ -49,14 +50,60 @@ public class MSListTest {
         l.add(1);
         l.add(-4);
         sum = 0;
-        elementCountIterated = 0;
+        indexSum = 0;
         l.doWithEveryItem((i, index) -> {
             sum += i;
-            elementCountIterated += index;
+            indexSum += index;
             count++;
         });
-        assertTrue(sum == 14);
-        assertTrue(count == 3);
-        assertTrue(elementCountIterated == 3);
+        assertEquals(14, sum);
+        assertEquals(3, count);
+        assertEquals(3, indexSum);
+    }
+
+    @Test
+    public void test04DoWithEveryItemAndBreak() {
+        l.add(17);
+        l.add(1);
+        l.add(-4);
+        sum = 0;
+        indexSum = 0;
+        assertEquals(false, l.getBreakDoWithEveryItem());
+        l.doWithEveryItem((i, index) -> {
+            sum += i;
+            indexSum += index;
+            count++;
+            if (i == 1)
+                l.breakDoWithEveryItem();
+        });
+        assertEquals(18, sum);
+        assertEquals(2, count);
+        assertEquals(1, indexSum);
+        assertEquals(true, l.getBreakDoWithEveryItem());
+    }
+
+    @Test
+    public void test05DoWithEveryItemAndBreak2() {
+        l.add(17);
+        l.add(1);
+        l.add(-4);
+        sum = 0;
+        indexSum = 0;
+        assertEquals(false, l.getBreakDoWithEveryItem());
+        l.doWithEveryItem((i, index) -> {
+            sum += i;
+            indexSum += index;
+            count++;
+            //second way to do break
+            l.setBreakDoWithEveryItem(true); //breaks right after first iteration (because if statement is lacking)
+        });
+        assertEquals(17, sum);
+        assertEquals(1, count);
+        assertEquals(0, indexSum);
+        assertEquals(true, l.getBreakDoWithEveryItem());
+
+        l.doWithEveryItem((i, index) -> {
+            assertEquals(false, l.getBreakDoWithEveryItem());
+        });
     }
 }

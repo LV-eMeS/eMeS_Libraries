@@ -475,15 +475,14 @@ public class MS_TextFile {
     /**
      * Returns content of given stream as UTF-8 encoded string.
      * @param stream a stream of text file or another stream that could be converted to string.
-     * @return whole stream as plain UTF-8 encoded text as it is.
+     * @return whole stream as plain UTF-8 encoded text as it is. Null if input is null or I/O error occurs.
      */
     public static String getStreamTextAsString(InputStream stream) {
         byte[] bytes;
         try {
             bytes = IOUtils.toByteArray(stream);
         } catch (Exception e) {
-            e.printStackTrace();
-            return "";
+            return null;
         }
         try {
             return new String(bytes, "UTF-8");
