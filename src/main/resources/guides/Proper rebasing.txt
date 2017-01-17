@@ -1,0 +1,47 @@
+Everything is done while on local branches.
+1) 
+From LOCAL_BRANCH
+Rebase Onto Develop.
+
+...
+
+2) 
+Do merging.
+
+3) 
+Go to Develop.
+Rebase onto LOCAL_BRANCH.
+
+4.a) 
+Push everything.
+
+5.a) 
+Check if code review status is finished.
+------------------------------------------------------------------------
+4.b) 
+* Terminal -> 
+git rebase -i HEAD~N
+N - number of commits to squash.
+* Go ahead and change all "pick" to "s" (do not pick commit message, but squash it).
+* [Esc] -> ":wq"
+* Comment all commit messages with "#" and change text for first commit message.
+
+5.b)
+* In code review write message: "MERGED and CLOSED".
+* Click "Decline review".
+------------------------------------------------------------------------
+Rebasing process:
+[Rebase...] 
+Branch: feature-XXX
+Onto: refs/heads/develop
+
+First commit: "reword"
+Other commits: "squash"
+
+[Start rebasing]
+
+Enter new commit text for first commit
+[Resume Rebasing]
+
+Comment all unnecessary commit messages with "#"
+[Resume Rebasing]
