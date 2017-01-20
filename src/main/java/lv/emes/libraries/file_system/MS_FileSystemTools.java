@@ -53,7 +53,7 @@ import java.util.List;
  *     <li>replaceBackslash</li>
  *     <li>extractResourceToTmpFolder</li>
  * </ul>
- * @version 1.5.
+ * @version 1.6.
  */
 public class MS_FileSystemTools {
     public static final String CURRENT_DIRECTORY = "./";
@@ -377,6 +377,11 @@ public class MS_FileSystemTools {
         return directoryBranch.toString();
     }
 
+    /**
+     * Retrieves all the files and folders located in directory <b>pathToDir</b>.
+     * @param pathToDir path to directory in which files are located.
+     * @return list of filename with full file paths.
+     */
     public static MS_StringList getDirectoryFileList(String pathToDir) {
         MS_StringList res = new MS_StringList();
         File dir = new File(pathToDir);
@@ -389,6 +394,11 @@ public class MS_FileSystemTools {
         return res;
     }
 
+    /**
+     * Retrieves all the files located in directory <b>pathToDir</b>.
+     * @param pathToDir path to directory in which files are located.
+     * @return list of short filenames.
+     */
     public static MS_StringList getDirectoryFileList_Shortnames(String pathToDir) {
         MS_StringList res = new MS_StringList();
         File dir = new File(pathToDir);
@@ -401,6 +411,11 @@ public class MS_FileSystemTools {
         return res;
     }
 
+    /**
+     * Retrieves all the directories located in directory <b>pathToDir</b>.
+     * @param pathToDir path to directory in which files are located.
+     * @return list of short directory names.
+     */
     public static MS_StringList getDirectoryFileList_Directories(String pathToDir) {
         MS_StringList res = new MS_StringList();
         File dir = new File(pathToDir);
@@ -412,15 +427,6 @@ public class MS_FileSystemTools {
         }
         return res;
     }
-//
-//    private static void close(final Closeable stream) {
-//        if (stream != null) {
-//            try {
-//                stream.close();
-//            } catch (final IOException ex) {
-//            }
-//        }
-//    }
 
     /**
      * Looks for resource in JAR file, extracts it in temporary directory if resource exists and
