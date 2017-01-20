@@ -2,9 +2,9 @@ package lv.emes.libraries.tools.platform;
 
 import lv.emes.libraries.file_system.MS_FileSystemTools;
 import lv.emes.libraries.file_system.MS_TextFile;
+import lv.emes.libraries.tools.MS_CodingTools;
 import lv.emes.libraries.tools.MS_KeyCodeDictionary;
 import lv.emes.libraries.tools.MS_TimeTools;
-import lv.emes.libraries.tools.MS_Tools;
 import lv.emes.libraries.tools.lists.MS_StringList;
 import lv.emes.libraries.tools.platform.windows.ApplicationWindow;
 import lv.emes.libraries.tools.platform.windows.SystemVolumeManager;
@@ -217,7 +217,7 @@ public class MS_ScriptRunner {
             try {
 //                System.out.println(cmd);
                 if (delay > 0) {
-                    MS_Tools.sleep(delay); //delay interval can be set using command "di"
+                    MS_CodingTools.sleep(delay); //delay interval can be set using command "di"
                     if (paused) { //if script was paused then this is the place to remove pause
                         paused = false;
                         delay = 0; //in next iteration pause will not be used anymore

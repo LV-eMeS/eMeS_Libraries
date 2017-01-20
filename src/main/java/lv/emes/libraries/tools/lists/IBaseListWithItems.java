@@ -83,9 +83,9 @@ public interface IBaseListWithItems<T> {
      * For example, code below will be executed only with first element even if there is more elements in list.<br>
      * <code>
      * MS_StringList sl = new MS_StringList("One#Two#");<br>
-     * sl.doWithEveryItem((s, index) -&gt; {<br>
-     * System.out.println(s);<br>
-     * setBreakDoWithEveryItem(true);<br>
+     * sl.doWithEveryItem((str, index) -&gt; {<br>
+     * System.out.println(str);<br>
+     * sl.setBreakDoWithEveryItem(true);<br>
      * });<br>
      * </code>
      * <p>
@@ -93,11 +93,11 @@ public interface IBaseListWithItems<T> {
      * <code>
      * MS_StringList sl = new MS_StringList("One#Two#");<br>
      * final AtomicReference&lt;Boolean&gt; itemFound = new AtomicReference&lt;&gt;();<br>
-     * sl.doWithEveryItem((s, index) -&gt; {<br>
-     * System.out.println(s);<br>
-     * if (s.equals("Two"))<br>
+     * sl.doWithEveryItem((str, index) -&gt; {<br>
+     * System.out.println(str);<br>
+     * if (str.equals("Two"))<br>
      * itemFound.set(true);<br>
-     * setBreakDoWithEveryItem(itemFound.get());<br>
+     * sl.setBreakDoWithEveryItem(itemFound.get());<br>
      * });<br>
      * </code>
      *

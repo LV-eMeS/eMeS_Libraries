@@ -3,7 +3,7 @@ package lv.emes.libraries.tools.lists;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import static lv.emes.libraries.tools.MS_Tools.inRange;
+import static lv.emes.libraries.tools.MS_CodingTools.inRange;
 /** 
  * Purpose of this class is to make lists of different objects. It's possible to perambulate list using methods from interface <b>IPerambulateListActions</b>.
  * @version 1.2.

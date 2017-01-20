@@ -1,7 +1,7 @@
 package lv.emes.libraries.tools.platform;
 
 import lv.emes.libraries.tools.MS_StringTools;
-import lv.emes.libraries.tools.MS_Tools;
+import lv.emes.libraries.tools.MS_CodingTools;
 
 /** 
  * An recognizable and commonly used OS token between eMeS libraries.
@@ -33,7 +33,7 @@ public class MS_OperatingSystem {
 
 	//CONSTRUCTORS
 	public MS_OperatingSystem() {
-		fullOSName = MS_Tools.getSystemOS;
+		fullOSName = MS_CodingTools.getSystemOS;
 		if (MS_StringTools.textContains(fullOSName, "windows", false)) {
 			shortOSName = OS_WINDOWS;
 			osID = OS_WINDOWS_ID;

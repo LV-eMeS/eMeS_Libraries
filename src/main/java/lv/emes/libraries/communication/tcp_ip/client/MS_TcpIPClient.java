@@ -1,7 +1,7 @@
 package lv.emes.libraries.communication.tcp_ip.client;
 
 import lv.emes.libraries.communication.tcp_ip.MS_ClientServerConstants;
-import lv.emes.libraries.tools.MS_Tools;
+import lv.emes.libraries.tools.MS_CodingTools;
 import lv.emes.libraries.tools.lists.MS_List;
 import lv.emes.libraries.tools.lists.MS_StringList;
 
@@ -175,10 +175,10 @@ public class MS_TcpIPClient extends MS_TcpIPClientCore {
 	 */
 	@Override
 	protected final void onSuccessfulConnect() {
-		this.addDataToContainer(MS_Tools.getSystemOS);
-		this.addDataToContainer(MS_Tools.getSystemUserName);
-		this.addDataToContainer(MS_Tools.getSystemUserCurrentWorkingDir);
-		this.addDataToContainer(MS_Tools.getSystemUserHomeDir);
+		this.addDataToContainer(MS_CodingTools.getSystemOS);
+		this.addDataToContainer(MS_CodingTools.getSystemUserName);
+		this.addDataToContainer(MS_CodingTools.getSystemUserCurrentWorkingDir);
+		this.addDataToContainer(MS_CodingTools.getSystemUserHomeDir);
 		this.cmdToServer(MS_ClientServerConstants.INFO_ABOUT_NEW_CLIENT);
 	}
 }

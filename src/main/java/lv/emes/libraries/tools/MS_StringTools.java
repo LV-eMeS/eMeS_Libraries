@@ -7,7 +7,7 @@ import java.util.Date;
 import java.util.EnumSet;
 import java.util.Set;
 
-import static lv.emes.libraries.tools.MS_Tools.inRange;
+import static lv.emes.libraries.tools.MS_CodingTools.inRange;
 
 /**
  * Module designed to combine different actions related to text formatting and other things to do with String type Objects.
@@ -79,15 +79,15 @@ public final class MS_StringTools {
         //there is 4 regions in ASCII code that contains special symbols.
         //we will take one of those regions
         int resASCII = 0;
-        switch (MS_Tools.randomNumber(1, 3)) {
+        switch (MS_CodingTools.randomNumber(1, 3)) {
             case 1:
-                resASCII = MS_Tools.randomNumber(33, 47);
+                resASCII = MS_CodingTools.randomNumber(33, 47);
                 break;
             case 2:
-                resASCII = MS_Tools.randomNumber(58, 64);
+                resASCII = MS_CodingTools.randomNumber(58, 64);
                 break;
             case 3:
-                resASCII = MS_Tools.randomNumber(91, 94);
+                resASCII = MS_CodingTools.randomNumber(91, 94);
                 break;
         }
         return chr(resASCII);
@@ -116,21 +116,21 @@ public final class MS_StringTools {
             //48..57 digits; 65..90 capital letters; 97..122 small letters;
             int tmp;
             do {
-                tmp = MS_Tools.randomNumber(1, 5);
+                tmp = MS_CodingTools.randomNumber(1, 5);
                 switch (tmp) {
                     case 1:
                         if (aOptions.contains(TSymbolTypeForGenerator.stfgSmallLetter)) {
-                            ch = Character.toChars(MS_Tools.randomNumber(97, 122))[0];  //kāds mazais burts
+                            ch = Character.toChars(MS_CodingTools.randomNumber(97, 122))[0];  //kāds mazais burts
                             break;
                         }
                     case 2:
                         if (aOptions.contains(TSymbolTypeForGenerator.stfgBigLetter)) {
-                            ch = Character.toChars(MS_Tools.randomNumber(65, 90))[0];  //kāds Lielais burts
+                            ch = Character.toChars(MS_CodingTools.randomNumber(65, 90))[0];  //kāds Lielais burts
                             break;
                         }
                     case 3:
                         if (aOptions.contains(TSymbolTypeForGenerator.stfgDigit)) {
-                            ch = Character.toChars(MS_Tools.randomNumber(48, 57))[0];  //kāds cipars
+                            ch = Character.toChars(MS_CodingTools.randomNumber(48, 57))[0];  //kāds cipars
                             break;
                         }
                     case 4:
@@ -140,7 +140,7 @@ public final class MS_StringTools {
                         }
                     case 5:
                         if (aOptions.contains(TSymbolTypeForGenerator.stfgSpecialSymbol)) {
-                            ch = Character.toChars(MS_Tools.randomNumber(123, 254))[0];  //kāds speciālais simbols ¢­ÉÄÊèÉðÎÛ¡°¾Æ²
+                            ch = Character.toChars(MS_CodingTools.randomNumber(123, 254))[0];  //kāds speciālais simbols ¢­ÉÄÊèÉðÎÛ¡°¾Æ²
                             break;
                         }
                     default:
@@ -557,7 +557,12 @@ public final class MS_StringTools {
         return res.toString();
     }
 
-    public static String[] getArray(String... strings) {
+    /**
+     * This method can be used to form constants that includes many strings related to one particular concept.
+     * @param strings all the strings that will be included to result array.
+     * @return an array of strings.
+     */
+    public static String[] getStringArray(String... strings) {
         return strings;
     }
 }

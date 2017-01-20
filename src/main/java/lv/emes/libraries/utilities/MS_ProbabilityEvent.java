@@ -1,6 +1,6 @@
 package lv.emes.libraries.utilities;
 
-import lv.emes.libraries.tools.MS_Tools;
+import lv.emes.libraries.tools.MS_CodingTools;
 
 /**
  * Sometimes we need to test, if some event with defined probability happens. 
@@ -77,7 +77,7 @@ public class MS_ProbabilityEvent {
 	 * @return probability of event to happen with precision of 2 decimals.
 	 */
 	public int getProbabilityAsPercent() {
-		double percent = MS_Tools.round(probability, 2).doubleValue() * 100;
+		double percent = MS_CodingTools.round(probability, 2).doubleValue() * 100;
 		int res = (int) percent;
 		return res;
 	}
@@ -86,7 +86,7 @@ public class MS_ProbabilityEvent {
 	 * @return percentage of event made so far rounded to precision of 2 decimals.
 	 */
 	public int getCurrentProgressAsPercent() {
-		double percent = MS_Tools.round(currentProgress, 2).doubleValue() * 100;
+		double percent = MS_CodingTools.round(currentProgress, 2).doubleValue() * 100;
 		int res = (int) percent;
 		return res;
 	}

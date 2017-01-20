@@ -1,13 +1,13 @@
 package lv.emes.libraries.other;
 
+import lv.emes.libraries.tools.MS_CodingTools;
 import lv.emes.libraries.tools.MS_TimeTools;
 import lv.emes.libraries.tools.MS_TimeTools.IncorrectStartingYearException;
-import lv.emes.libraries.tools.MS_Tools;
 import org.junit.Test;
 
 public class ExceptionTest {
 	private void throwingSomeError() throws Exception {
-		int rnd = MS_Tools.randomNumber(1, 2);
+		int rnd = MS_CodingTools.randomNumber(1, 2);
 		if (rnd == 1)
 			throw new MS_TimeTools.IncorrectStartingYearException(2005, "19.05.2016 17:00");
 		else

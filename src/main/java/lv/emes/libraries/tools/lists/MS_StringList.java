@@ -5,7 +5,7 @@ import lv.emes.libraries.file_system.MS_TextFile;
 import java.util.ArrayList;
 import java.util.List;
 
-import static lv.emes.libraries.tools.MS_Tools.inRange;
+import static lv.emes.libraries.tools.MS_CodingTools.inRange;
 
 /**
  * Purpose of this class is to store many different but related texts in a list. It implements number of methods for different actions with elements of the list,

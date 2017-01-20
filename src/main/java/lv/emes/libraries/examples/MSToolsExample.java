@@ -1,6 +1,6 @@
 package lv.emes.libraries.examples;
 
-import static lv.emes.libraries.tools.MS_Tools.*;
+import static lv.emes.libraries.tools.MS_CodingTools.*;
 
 public class MSToolsExample {
 

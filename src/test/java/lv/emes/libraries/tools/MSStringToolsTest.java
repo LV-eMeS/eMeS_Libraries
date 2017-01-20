@@ -65,19 +65,19 @@ public class MSStringToolsTest {
 	@Test
 	public void test04Array() {
 		String[] arr;
-		arr = getArray();
+		arr = getStringArray();
 		assertEquals(0, arr.length);
 
-		arr = getArray("test");
+		arr = getStringArray("test");
 		assertEquals(1, arr.length);
 		assertEquals("test", arr[0]);
 
-		arr = getArray("test1", "test2");
+		arr = getStringArray("test1", "test2");
 		assertEquals(2, arr.length);
 		assertEquals("test1", arr[0]);
 		assertEquals("test2", arr[1]);
 
-		arr = getArray("test1", "test2", "test3");
+		arr = getStringArray("test1", "test2", "test3");
 		assertEquals(3, arr.length);
 		assertEquals("test1", arr[0]);
 		assertEquals("test2", arr[1]);

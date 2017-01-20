@@ -1,12 +1,12 @@
 package lv.emes.libraries.other;
 
+import lv.emes.libraries.tools.MS_CodingTools;
 import lv.emes.libraries.tools.MS_StringTools;
-import lv.emes.libraries.tools.MS_Tools;
 
 public class ModuleTest {
 	public static void main(String[] args) {
 		System.out.println("C_DIACTRITIC_CHAR_COUNT is: "+MS_StringTools.C_DIACTRITIC_CHAR_COUNT);
-		System.out.println(MS_Tools.getSystemUserName); 
+		System.out.println(MS_CodingTools.getSystemUserName);
 		
 		IStringConverterTest sConverter = s -> Integer.parseInt(s); //pārrakstām abstrakto metodi
 		Integer skaitlis = sConverter.doAbstractAction("158");

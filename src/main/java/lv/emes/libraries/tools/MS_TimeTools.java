@@ -93,7 +93,7 @@ public final class MS_TimeTools {
 	 * @throws IncorrectDateFormatException when text is in incorrect format.
 	 */
 	public static Date strToDateTime(String aText) throws IncorrectDateFormatException {
-		Date res = null;
+		Date res;
 		SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss:SSS"); 
 	      try { 
 	          res = format.parse(aText); 

@@ -9,9 +9,9 @@ import java.util.Random;
 
 /** 
  * Module is designed to combine different common programming actions.
- * @version 1.7.
+ * @version 1.8.
  */
-public final class MS_Tools {
+public final class MS_CodingTools {
 	public static final String getSystemUserName = System.getProperty("user.name");
 	public static final String getSystemUserCurrentWorkingDir = System.getProperty("user.dir") + "/";
 	public static final String getSystemUserHomeDir = System.getProperty("user.home") + "/";
@@ -28,7 +28,7 @@ public final class MS_Tools {
 		return random.nextInt(aTill - aFrom + 1) + aFrom;
 	}
 	
-	//import static lv.emes.tools.MS_Tools.*;
+	//import static lv.emes.tools.MS_CodingTools.*;
 	/** Checks if number <b>aNumber</b> is in interval [<b>aRangeMin</b>, <b>aRangeMax</b>].
 	 * @param aNumber = 5
 	 * @param aRangeMin = 1
@@ -98,5 +98,14 @@ public final class MS_Tools {
 		BigDecimal bd = new BigDecimal(value);
 		bd = bd.setScale(places, RoundingMode.HALF_UP);
 		return bd.doubleValue();
+	}
+
+	/**
+	 * This method can be used to form constants that includes many different objects related to one particular concept.
+	 * @param objects all the objects that will be included to result array.
+	 * @return an array of objects.
+	 */
+	public static Object[] getArray(Object... objects) {
+		return objects;
 	}
 }
