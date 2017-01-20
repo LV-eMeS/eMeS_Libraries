@@ -82,7 +82,7 @@ public interface IBaseListWithItems<T> {
      * Loop is broken if getBreakDoWithEveryItem() returns true.
      * For example, code below will be executed only with first element even if there is more elements in list.<br>
      * <code>
-     * MS_StringList sl = new MS_StringList("One#Two#");<br>
+     * MS_StringList sl = new MS_StringList("One#Two#Three#");<br>
      * sl.doWithEveryItem((str, index) -&gt; {<br>
      * System.out.println(str);<br>
      * sl.setBreakDoWithEveryItem(true);<br>
@@ -95,9 +95,10 @@ public interface IBaseListWithItems<T> {
      * final AtomicReference&lt;Boolean&gt; itemFound = new AtomicReference&lt;&gt;(false);<br>
      * sl.doWithEveryItem((str, index) -&gt; {<br>
      * System.out.println(str);<br>
-     * if (str.equals("Two"))<br>
-     * itemFound.set(true);<br>
-     * sl.setBreakDoWithEveryItem(itemFound.get());<br>
+     * if (str.equals("Two")) {<br>
+     *  itemFound.set(true);<br>
+     *  sl.breakDoWithEveryItem();<br>
+     *     }<br>
      * });<br>
      * </code>
      *
