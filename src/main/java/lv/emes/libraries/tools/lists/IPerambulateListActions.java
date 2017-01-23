@@ -9,9 +9,9 @@ package lv.emes.libraries.tools.lists;
  *     -currentIndexInsideTheList;
  *     -current
  * @param <T> type of list elements.
- * @version 1.2.
+ * @version 1.3.
  */
-public interface IPerambulateListActions<T> extends IBaseListWithItems<T> {
+public interface IPerambulateListActions<T> extends IConcateableList<T> {
 	/**
 	 * Index of current element. Returns -1 when reached end of list.
 	 * @return [-1..count-1] Value depends on use of <b>first</b>, <b>next</b>, <b>prev</b> and <b>last</b>.

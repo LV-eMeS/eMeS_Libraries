@@ -437,4 +437,11 @@ public final class MS_StringList implements IListActions<String> {
         for (int i = 0; i < anotherPart.length(); i++)
             this.add(anotherPart.get(i));
     }
+
+    @Override
+    public void concatenate(IConcateableList<String> otherList) {
+        otherList.doWithEveryItem((item, index) -> {
+            this.add(item);
+        });
+    }
 }

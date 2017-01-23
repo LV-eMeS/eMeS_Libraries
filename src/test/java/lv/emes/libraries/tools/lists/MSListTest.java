@@ -9,7 +9,7 @@ import static org.junit.Assert.assertTrue;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MSListTest {
-    private MS_List<Integer> l = new MS_List<Integer>();
+    private MS_List<Integer> l = new MS_List<>();
     int count, sum, indexSum;
 
     @Test
@@ -105,5 +105,20 @@ public class MSListTest {
         l.doWithEveryItem((i, index) -> {
             assertEquals(false, l.getBreakDoWithEveryItem());
         });
+    }
+
+    @Test
+    public void test06ConcatenateLists() {
+        MS_List<Integer> l2 = new MS_List<>();
+        assertEquals(0, l.count());
+        l.add(1);
+        l.add(3);
+        l2.add(2);
+        l2.add(4);
+        l2.add(5);
+        assertEquals(2, l.count());
+        l.concatenate(l2);
+        assertEquals(5, l.count());
+        assertEquals(5, l.get(4).intValue());
     }
 }

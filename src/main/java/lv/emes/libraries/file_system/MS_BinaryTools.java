@@ -160,7 +160,6 @@ public class MS_BinaryTools {
         try {
             mimeType = Magic.getMagicMatch(new File(filename), true).getMimeType();
         } catch (MagicMatchNotFoundException | MagicException | MagicParseException e) {
-            e.printStackTrace();
             return false;
         }
         return !mimeType.startsWith("text");

@@ -6,7 +6,7 @@ import java.util.Collections;
 import static lv.emes.libraries.tools.MS_CodingTools.inRange;
 /** 
  * Purpose of this class is to make lists of different objects. It's possible to perambulate list using methods from interface <b>IPerambulateListActions</b>.
- * @version 1.2.
+ * @version 1.3.
  * @see IPerambulateListActions
  */
 public class MS_List<T> extends ArrayList<T> implements IPerambulateListActions<T> {
@@ -95,5 +95,12 @@ public class MS_List<T> extends ArrayList<T> implements IPerambulateListActions<
 		for (int i=0; i < c; i++)
 			res[i] = this.get(i);
 		return res;		
+	}
+
+	@Override
+	public void concatenate(IConcateableList<T> otherList) {
+		otherList.doWithEveryItem((item, index) -> {
+			this.add(item);
+		});
 	}
 }

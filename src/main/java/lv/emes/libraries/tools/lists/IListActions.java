@@ -3,9 +3,9 @@ package lv.emes.libraries.tools.lists;
 /**
  * Interface defines main actions with T type lists.
  * @param <T> type of list elements.
- * @version 1.5.
+ * @version 1.7.
  */
-public interface IListActions<T> extends IPerambulateListActions<T>{	
+public interface IListActions<T> extends IPerambulateListActions<T>{
 	/**
 	 * Add element to the end of T list.
 	 * @param aItem object that has to be inserted to list.
