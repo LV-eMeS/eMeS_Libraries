@@ -1,5 +1,5 @@
 eMeS libraries
-Version 1.5.4
+Version 1.5.5
 Release Notes
 
 INTRODUCTION:
@@ -20,6 +20,7 @@ eMeS libraries Version 1.6.0
 * Binary and text file detection.
 * MS_Tools renamed to MS_CodingTools.
 * Concatenation support for lists.
+* Object validator to check if value of some object meets validation requirements.
 ==============================================================================
 eMeS libraries Version 1.5.0
 ==============================================================================
