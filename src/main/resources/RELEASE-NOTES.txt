@@ -19,6 +19,7 @@ eMeS libraries Version 1.6.0
 * Method fileExists bug fixed.
 * Binary and text file detection.
 * MS_Tools renamed to MS_CodingTools.
+* Concatenation support for lists.
 ==============================================================================
 eMeS libraries Version 1.5.0
 ==============================================================================
