@@ -36,6 +36,7 @@ public abstract class MS_JDBCDatabase implements MS_IJDBCDatabase {
 	/**
 	 * Set this to handle this kind of error when trying to execute statement incorrectly and after that 
 	 * trying to access it when trying to get query result or committing statement!
+	 * <br><u>Hint</u>: this kind of exception should be controlled only if outcome of SQL query result is user-dependent.
 	 * <p><code>(exception) -&gt; {error handling methods};</code>
 	 */
 	public IFuncOnNullPointerException onDBEmptyStatementError = (exception) -> {exception.printStackTrace();}; 

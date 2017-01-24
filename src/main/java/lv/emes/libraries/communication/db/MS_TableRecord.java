@@ -6,7 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * Override this class to implement row that will contain all the columns of next RecordSet record.
+ * Override this class to implement record (row) of database that will contain all the columns of next RecordSet record.
  * <p>If you expect for ResultSet to have more than 1 row you should use method <b>newTable</b> which fills
  * <b>MS_List</b> of row instances to make table.
  * <p>Method to override:
@@ -17,23 +17,22 @@ import java.sql.SQLException;
  * <ul><li>newTable()</li></ul>
  *
  * @author eMeS
- * @version 1.2.
+ * @version 1.3.
  * @see MS_List
  */
-public abstract class MS_TableRow {
+public abstract class MS_TableRecord {
     //PUBLIC STRUCTURES, EXCEPTIONS, PROPERTIES AND CONSTANTS
     //PRIVATE VARIABLES
     private boolean rsHadNextRecord = false;
 
     //PUBLIC VARIABLES
     //CONSTRUCTORS
-
     /**
-     * This constructor always should be overridden by descendants in order to use <b>newTable</b>.
+     * This constructor always should be overridden by descendants by calling <code>super()</code> in order to use <b>newTable</b>.
      *
      * @param rs result set of table rows retrieved from database.
      */
-    public MS_TableRow(ResultSet rs) {
+    public MS_TableRecord(ResultSet rs) {
         try {
             if (rs.next()) {
                 rsHadNextRecord = true;
@@ -75,24 +74,24 @@ public abstract class MS_TableRow {
 
     /**
      * Retrieves all the rows from result set and stores them in list of rows to make table.
-     * <p><u>Note</u>: this method is using constructor <b>MS_TableRow(ResultSet)</b>, so
+     * <p><u>Note</u>: this method is using constructor <b>MS_TableRecord(ResultSet)</b>, so
      * be sure to implement it in order to successfully use this method!
      * @param rs                   result set of table rows retrieved from database.
-     * @param specificRowTypeClass a class of object that is descendant of <b>MS_TableRow</b> class.
-     * @param <T>                  a type of class that is descendant of <b>MS_TableRow</b> class to define type of method's return.
+     * @param specificRecordTypeClass a class of object that is descendant of <b>MS_TableRecord</b> class.
+     * @param <T>                  a type of class that is descendant of <b>MS_TableRecord</b> class to define type of method's return.
      * @return a <b>MS_List</b> filled with new instances of <b>T</b>.
      * <p>Empty list is returned when some error occurs while trying to create objects from <b>rs</b>
      * or simply if <b>rs</b> is empty.
      * @see MS_List
      */
-    public static <T extends MS_TableRow> MS_List<T> newTable(ResultSet rs, Class<T> specificRowTypeClass) {
+    public static <T extends MS_TableRecord> MS_List<T> newTable(ResultSet rs, Class<T> specificRecordTypeClass) {
         MS_List<T> table = new MS_List<>();
         T row = null;
         boolean rsHasRows = true;
         while (rsHasRows) {
-            MS_TableRow newRow = null;
+            MS_TableRecord newRow = null;
             try {
-                row = specificRowTypeClass.getConstructor(ResultSet.class).newInstance(rs);
+                row = specificRecordTypeClass.getConstructor(ResultSet.class).newInstance(rs);
                 rsHasRows = row.getIsFilled();
             } catch (Exception e) {
                 //any type of exception including null pointer exception if an object instance
