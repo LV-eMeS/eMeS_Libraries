@@ -21,6 +21,7 @@ eMeS libraries Version 1.6.0
 * MS_Tools renamed to MS_CodingTools.
 * Concatenation support for lists.
 * Object validator to check if value of some object meets validation requirements.
+* SQL query builder.
 ==============================================================================
 eMeS libraries Version 1.5.0
 ==============================================================================
