@@ -1,14 +1,15 @@
 package lv.emes.libraries.communication.http.html;
 
 import lv.emes.libraries.tools.lists.MS_List;
+import lv.emes.libraries.utilities.MS_LineBuilder;
 
 /**
- * HTML part for web page header.
+ * HTML part for web page table that consists of rows and columns.
  *
  * @author eMeS
- * @version 1.0.
+ * @version 1.1.
  */
-public class MS_HTML_PartTable extends MS_HTML_PartHTMLTag {
+public class MS_HTML_PartTable extends MS_HTML_PartOfTag {
     protected MS_List<MS_HTML_PartTableRow> rows = new MS_List<>();
 
     public MS_HTML_PartTable() {
@@ -51,8 +52,8 @@ public class MS_HTML_PartTable extends MS_HTML_PartHTMLTag {
     @Override
     public MS_LineBuilder prepareContent(MS_LineBuilder lb) {
         //set the content of all the rows
-        if (pTagContent == null)
-            pTagContent = new AbstractHTMLPart() {
+        if (pContent == null)
+            pContent = new AbstractHTMLPart() {
                 @Override
                 public MS_LineBuilder prepareContent(MS_LineBuilder tmp) {
                     rows.doWithEveryItem((row, ind) -> {

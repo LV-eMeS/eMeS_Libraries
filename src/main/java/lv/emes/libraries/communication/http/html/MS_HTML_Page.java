@@ -1,8 +1,6 @@
 package lv.emes.libraries.communication.http.html;
 
-import lv.emes.libraries.tools.lists.MS_List;
-
-import static lv.emes.libraries.communication.http.html.MS_HTML_PartTableColumn.EMPTY_COLUMN;
+import lv.emes.libraries.utilities.MS_LineBuilder;
 
 /**
  * HTML page that can be customized. Extending this class there will be possibility to implement such methods as:
@@ -21,20 +19,33 @@ import static lv.emes.libraries.communication.http.html.MS_HTML_PartTableColumn.
  * </ul>
  *
  * @author eMeS
- * @version 1.0.
+ * @version 1.1.
  */
 public abstract class MS_HTML_Page extends AbstractHTMLPart {
     private MS_HTML_PartPageHeader fHeaderOfPage;
     private MS_HTML_PartTable fBodyTable;
-    private MS_List<MS_HTML_PartTableRow> fBodyRows = new MS_List<>();
 
     /**
      * Create Web page.
      * Override this in descendant classes calling <code>super()</code> constructor!
      */
     public MS_HTML_Page() {
-        fHeaderOfPage = new MS_HTML_PartPageHeader("DEFAULT_WEB_PAGE_TITLE here");
-        fBodyTable = new MS_HTML_PartTable().attribute("style", "width:100%");
+        fHeaderOfPage = new MS_HTML_PartPageHeader();
+        fBodyTable = newTable();
+    }
+
+    /**
+     * @return table with fixed layout formatting.
+     */
+    protected final MS_HTML_PartTable newTable() {
+        return new MS_HTML_PartTable().attribute("style", "table-layout:fixed;width:100%");
+    }
+
+    protected final MS_HTML_PartTableColumn newBodyMainRow() {
+        MS_HTML_PartTableColumn res = new MS_HTML_PartTableColumn();
+        fBodyTable.row(new MS_HTML_PartTableRow().column(res));
+        res.attribute("colspan", "3"); //this only column will fill entire page width
+        return res;
     }
 
     /**
@@ -66,56 +77,50 @@ public abstract class MS_HTML_Page extends AbstractHTMLPart {
 
     /**
      * Override to fill content of left header of page body!
-     * <br><u>Note</u>: object <b>EMPTY_COLUMN</b> is ment to remain unchanged. Do not use it and do not fill it with some content!
-     * @return new column filled with custom content.
+     * @return new column with filled content.
      */
-    protected MS_HTML_PartTableColumn leftHeaderOfBody() {
-        return EMPTY_COLUMN;
+    protected MS_HTML_PartTableColumn leftHeader() {
+        return MS_HTML_PartTableColumn.newEmptyColumn();
     }
 
     /**
      * Override to fill content of center header of page body!
-     * <br><u>Note</u>: object <b>EMPTY_COLUMN</b> is ment to remain unchanged. Do not use it and do not fill it with some content!
-     * @return new column filled with custom content.
+     * @return new column with filled content.
      */
-    protected MS_HTML_PartTableColumn centerHeaderOfBody() {
-        return EMPTY_COLUMN;
+    protected MS_HTML_PartTableColumn centerHeader() {
+        return MS_HTML_PartTableColumn.newEmptyColumn();
     }
 
     /**
      * Override to fill content of right header of page body!
-     * <br><u>Note</u>: object <b>EMPTY_COLUMN</b> is ment to remain unchanged. Do not use it and do not fill it with some content!
-     * @return new column filled with custom content.
+     * @return new column with filled content.
      */
-    protected MS_HTML_PartTableColumn rightHeaderOfBody() {
-        return EMPTY_COLUMN;
+    protected MS_HTML_PartTableColumn rightHeader() {
+        return MS_HTML_PartTableColumn.newEmptyColumn();
     }
 
     /**
      * Override to fill content of left footer of page body!
-     * <br><u>Note</u>: object <b>EMPTY_COLUMN</b> is ment to remain unchanged. Do not use it and do not fill it with some content!
-     * @return new column filled with custom content.
+     * @return new column with filled content.
      */
-    protected MS_HTML_PartTableColumn leftFooterOfBody() {
-        return EMPTY_COLUMN;
+    protected MS_HTML_PartTableColumn leftFooter() {
+        return MS_HTML_PartTableColumn.newEmptyColumn();
     }
 
     /**
      * Override to fill content of center footer of page body!
-     * <br><u>Note</u>: object <b>EMPTY_COLUMN</b> is ment to remain unchanged. Do not use it and do not fill it with some content!
-     * @return new column filled with custom content.
+     * @return new column with filled content.
      */
-    protected MS_HTML_PartTableColumn centerFooterOfBody() {
-        return EMPTY_COLUMN;
+    protected MS_HTML_PartTableColumn centerFooter() {
+        return MS_HTML_PartTableColumn.newEmptyColumn();
     }
 
     /**
      * Override to fill content of right footer of page body!
-     * <br><u>Note</u>: object <b>EMPTY_COLUMN</b> is ment to remain unchanged. Do not use it and do not fill it with some content!
-     * @return new column filled with custom content.
+     * @return new column with filled content.
      */
-    protected MS_HTML_PartTableColumn rightFooterOfBody() {
-        return EMPTY_COLUMN;
+    protected MS_HTML_PartTableColumn rightFooter() {
+        return MS_HTML_PartTableColumn.newEmptyColumn();
     }
 
     /**
@@ -124,7 +129,7 @@ public abstract class MS_HTML_Page extends AbstractHTMLPart {
      * @param headerRow header row of page body.
      */
     protected void configureHeaderRow(MS_HTML_PartTableRow headerRow) {
-        headerRow.attribute("align", "justify");
+//        headerRow.attribute("align", "justify");
     }
 
     /**
@@ -133,39 +138,34 @@ public abstract class MS_HTML_Page extends AbstractHTMLPart {
      * @param footerRow footer row of page body.
      */
     protected void configureFooterRow(MS_HTML_PartTableRow footerRow) {
-        footerRow.attribute("align", "justify");
+        //footerRow.attribute("align", "justify");
     }
 
     /**
      * Implement this method to use MS_HTML_Page main field to display main features of page.
-     * Just create new rows and add to list <b>listOfRows</b>!
-     *
-     * @param listOfRows rows that will be appended to page structure table.
+     * Just create new rows by calling method <b>newBodyMainRow</b> and fill the contents of column returned by it's result!
      */
-    protected void initBodyMainRows(MS_List<MS_HTML_PartTableRow> listOfRows) {    }
+    protected void initBodyMainRows() {    }
 
     @Override
     public final MS_LineBuilder prepareContent(MS_LineBuilder lb) {
-        MS_HTML_PartTableColumn leftHeader = leftHeaderOfBody();
-        MS_HTML_PartTableColumn centerHeader = centerHeaderOfBody();
-        MS_HTML_PartTableColumn rightHeader = rightHeaderOfBody();
+        MS_HTML_PartTableColumn leftHeaderCol = leftHeader().attribute("style", "width: 34%;");
+        MS_HTML_PartTableColumn centerHeader = centerHeader().attribute("style", "width: 33%;");
+        MS_HTML_PartTableColumn rightHeader = rightHeader().attribute("style", "width: 33%;");
         MS_HTML_PartTableRow headerRow = new MS_HTML_PartTableRow();
+        headerRow.column(leftHeaderCol).column(centerHeader).column(rightHeader);
         configureHeaderRow(headerRow); //row can be configured here
-        headerRow.column(leftHeader).column(centerHeader).column(rightHeader);
         fBodyTable.row(headerRow);
 
         //append body rows to page
-        initBodyMainRows(fBodyRows);
-        fBodyRows.doWithEveryItem((r, i) -> {
-            fBodyTable.row(r);
-        });
+        initBodyMainRows();
 
-        MS_HTML_PartTableColumn leftFooter = leftFooterOfBody();
-        MS_HTML_PartTableColumn centerFooter = centerFooterOfBody();
-        MS_HTML_PartTableColumn rightFooter = rightFooterOfBody();
+        MS_HTML_PartTableColumn leftFooterCol = leftFooter();
+        MS_HTML_PartTableColumn centerFooter = centerFooter();
+        MS_HTML_PartTableColumn rightFooter = rightFooter();
         MS_HTML_PartTableRow footerRow = new MS_HTML_PartTableRow();
+        footerRow.column(leftFooterCol).column(centerFooter).column(rightFooter);
         configureFooterRow(footerRow); //row can be configured here
-        footerRow.column(leftFooter).column(centerFooter).column(rightFooter);
         fBodyTable.row(footerRow);
 
         //Just put all the pieces together and form lines for use in toString method.

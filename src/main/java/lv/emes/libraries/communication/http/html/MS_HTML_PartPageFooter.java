@@ -1,5 +1,7 @@
 package lv.emes.libraries.communication.http.html;
 
+import lv.emes.libraries.utilities.MS_LineBuilder;
+
 /**
  * HTML part for web page footer.
  *

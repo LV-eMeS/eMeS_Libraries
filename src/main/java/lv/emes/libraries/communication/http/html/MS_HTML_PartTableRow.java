@@ -1,6 +1,7 @@
 package lv.emes.libraries.communication.http.html;
 
 import lv.emes.libraries.tools.lists.MS_List;
+import lv.emes.libraries.utilities.MS_LineBuilder;
 
 /**
  * HTML part for table column design.
@@ -8,7 +9,7 @@ import lv.emes.libraries.tools.lists.MS_List;
  * @author eMeS
  * @version 1.0.
  */
-public class MS_HTML_PartTableRow extends MS_HTML_PartHTMLTag {
+public class MS_HTML_PartTableRow extends MS_HTML_PartOfTag {
     protected MS_List<MS_HTML_PartTableColumn> columns = new MS_List<>();
 
     public static MS_HTML_PartTableRow newJustifiedRow() {
@@ -55,8 +56,8 @@ public class MS_HTML_PartTableRow extends MS_HTML_PartHTMLTag {
     @Override
     public MS_LineBuilder prepareContent(MS_LineBuilder lb) {
         //set the content of all the columns
-        if (pTagContent == null)
-            pTagContent = new AbstractHTMLPart() {
+        if (pContent == null)
+            pContent = new AbstractHTMLPart() {
                 @Override
                 public MS_LineBuilder prepareContent(MS_LineBuilder tmp) {
                     columns.doWithEveryItem((col, ind) -> {

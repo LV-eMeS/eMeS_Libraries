@@ -40,26 +40,26 @@ public class MSMySQLDatabaseTest {
     @Before
     //Before every test do initial setup!
     public void setUpForEachTest() {
-        MS_PreparedStatement st = db.prepareQuery("insert into tests(id, name, count) values (1, 'test1', 1)");
+        MS_PreparedSQLQuery st = db.prepareSQLQuery("insert into tests(id, name, count) values (1, 'test1', 1)");
         db.commitStatement(st);
-        st = db.prepareQuery("insert into tests(id, name, count) values (2, 'test2', 2)");
+        st = db.prepareSQLQuery("insert into tests(id, name, count) values (2, 'test2', 2)");
         db.commitStatement(st);
-        st = db.prepareQuery("insert into tests(id, name, count) values (3, 'test3', 3)");
+        st = db.prepareSQLQuery("insert into tests(id, name, count) values (3, 'test3', 3)");
         db.commitStatement(st);
     }
 
     @After
     //After every test tear down this mess!
     public void tearDownForEachTest() {
-        MS_PreparedStatement st = db.prepareQuery("delete from tests");
+        MS_PreparedSQLQuery st = db.prepareSQLQuery("delete from tests");
         db.commitStatement(st);
     }
 
     @Test
     public void test01GetSecondRecord() throws SQLException {
-        MS_PreparedStatement st;
+        MS_PreparedSQLQuery st;
         String query = "select * from tests where id=2";
-        st = db.prepareQuery(query);
+        st = db.prepareSQLQuery(query);
         ResultSet rs = db.getQueryResult(st);
         assertTrue(rs.next());
         assertEquals("test2", rs.getString(2));
@@ -69,11 +69,11 @@ public class MSMySQLDatabaseTest {
 
     @Test
     public void test02QueryWithParams() throws SQLException {
-        MS_PreparedStatement st;
+        MS_PreparedSQLQuery st;
         String query = "select * from tests where id=?";
         ResultSet rs;
 
-        st = db.prepareQuery(query);
+        st = db.prepareSQLQuery(query);
         st.setInt(1, 2);
         rs = db.getQueryResult(st);
         assertTrue(rs.next());
@@ -84,16 +84,16 @@ public class MSMySQLDatabaseTest {
 
     @Test
     public void test03Editing() throws SQLException {
-        MS_PreparedStatement st;
+        MS_PreparedSQLQuery st;
         String query = "update tests set name='Osvald' where id=2";
         ResultSet rs;
 
-        st = db.prepareQuery(query);
+        st = db.prepareSQLQuery(query);
         db.commitStatement(st);
 
         //now to look at the changes!
         query = "select * from tests where id=2";
-        st = db.prepareQuery(query);
+        st = db.prepareSQLQuery(query);
         rs = db.getQueryResult(st);
         assertTrue(rs.next());
         assertEquals("Osvald", rs.getString(2));
@@ -102,11 +102,11 @@ public class MSMySQLDatabaseTest {
 
     @Test
     public void test04SelectAll() throws SQLException {
-        MS_PreparedStatement st;
+        MS_PreparedSQLQuery st;
         String query = "select * from tests";
         ResultSet rs;
 
-        st = db.prepareQuery(query);
+        st = db.prepareSQLQuery(query);
         rs = db.getQueryResult(st);
         int i = 0;
         while (rs.next()) {

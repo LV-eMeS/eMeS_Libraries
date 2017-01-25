@@ -1,36 +1,51 @@
 package lv.emes.libraries.communication.http.html;
 
+import lv.emes.libraries.utilities.MS_LineBuilder;
+
 /**
  * HTML part for web page header.
  *
  * @author eMeS
- * @version 1.0.
+ * @version 1.1.
  */
-public class MS_HTML_PartInternalURL extends AbstractHTMLPart {
-    protected String fURL = "";
-    private String fText = "";
+public class MS_HTML_PartInternalURL extends MS_HTML_PartOfTag {
     private String fTargetWindow = "";
     private String fPrefix = "";
     private String fPostfix = "";
 
+    public MS_HTML_PartInternalURL() {
+        super("a");
+    }
+
     public MS_HTML_PartInternalURL url(String newURL) {
-        fURL = newURL;
+        return attribute("href", newURL);
+    }
+
+    @Override
+    public MS_HTML_PartInternalURL content(AbstractHTMLPart tagContent) {
+        super.content(tagContent);
+        return this;
+    }
+
+    @Override
+    public MS_HTML_PartInternalURL content(String tagContentAsString) {
+        super.content(tagContentAsString);
+        return this;
+    }
+
+    @Override
+    public MS_HTML_PartInternalURL content(FuncContentPrepareAction actionToPrepareContent) {
+        super.content(actionToPrepareContent);
         return this;
     }
 
     public MS_HTML_PartInternalURL text(String newText) {
-        fText = newText;
-        return this;
-    }
-
-    public MS_HTML_PartInternalURL openInCurrentTab() {
-        fTargetWindow = "";
+        super.content(newText);
         return this;
     }
 
     public MS_HTML_PartInternalURL openInNewTab() {
-        fTargetWindow = "target='_blank' ";
-        return this;
+        return attribute("target", "_blank");
     }
 
     /**
@@ -56,17 +71,19 @@ public class MS_HTML_PartInternalURL extends AbstractHTMLPart {
     }
 
     @Override
+    public MS_HTML_PartInternalURL attribute(String name, String value) {
+        super.attribute(name, value);
+        return this;
+    }
+
+    @Override
     public MS_LineBuilder prepareContent(MS_LineBuilder lb) {
         if (!fPrefix.equals("")) {
-            lb.append(fPrefix);
+            lb.add(fPrefix);
         }
-        String link = "<a " + fTargetWindow + "href=\"" + fURL + "\">" + fText + "</a>";
-        if (fPostfix.equals("")) {
-            lb.add(link);
-        } else {
-            lb.append(link);
+        lb = super.prepareContent(lb);
+        if (! fPostfix.equals(""))
             lb.add(fPostfix);
-        }
         return lb;
     }
 }

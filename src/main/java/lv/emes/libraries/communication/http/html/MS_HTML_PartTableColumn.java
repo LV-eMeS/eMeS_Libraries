@@ -1,13 +1,17 @@
 package lv.emes.libraries.communication.http.html;
 
+import lv.emes.libraries.utilities.MS_LineBuilder;
+
 /**
  * HTML part for table column design.
  *
  * @author eMeS
- * @version 1.0.
+ * @version 1.1.
  */
-public class MS_HTML_PartTableColumn extends MS_HTML_PartHTMLTag {
-    public static final MS_HTML_PartTableColumn EMPTY_COLUMN = new MS_HTML_PartTableColumn();
+public class MS_HTML_PartTableColumn extends MS_HTML_PartOfTag {
+    public static MS_HTML_PartTableColumn newEmptyColumn() {
+        return new MS_HTML_PartTableColumn();
+    }
 
     public MS_HTML_PartTableColumn() {
         super("td");
@@ -26,8 +30,20 @@ public class MS_HTML_PartTableColumn extends MS_HTML_PartHTMLTag {
     }
 
     @Override
+    public MS_HTML_PartTableColumn content(String content) {
+        super.content(content);
+        return this;
+    }
+
+    @Override
     public MS_HTML_PartTableColumn content(FuncContentPrepareAction actionToPrepareContent) {
         super.content(actionToPrepareContent);
+        return this;
+    }
+
+    @Override
+    public MS_HTML_PartTableColumn contentToAppend(FuncContentPrepareAction actionToPrepareContent) {
+        super.contentToAppend(actionToPrepareContent);
         return this;
     }
 

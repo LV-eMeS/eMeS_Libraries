@@ -6,7 +6,7 @@ import java.sql.*;
  * Describes main functions of JDBC database.
  *
  * @author eMeS
- * @version 1.2.
+ * @version 1.3.
  */
 public interface MS_IJDBCDatabase {
     /**
@@ -49,21 +49,21 @@ public interface MS_IJDBCDatabase {
      * just set common error handling operations of JDBCDatabase)
      *
      * @param sql an SQL statement that may contain one or more '?' IN parameter placeholders
-     * @return a new default <code>MS_PreparedStatement</code> object containing the pre-compiled SQL statement
+     * @return a new default <code>MS_PreparedSQLQuery</code> object containing the pre-compiled SQL statement
      * @see lv.emes.libraries.communication.db.MS_JDBCDatabase
      */
-    MS_PreparedStatement prepareQuery(String sql);
+    MS_PreparedSQLQuery prepareSQLQuery(String sql);
 
     /**
      * Just like <code>executeQuery</code>, but if exception occurs, it isn't handled silently, using "onError" methods.
      * So use this method if you want to instantly handle errors using individual approach for some case!
      *
      * @param sql an SQL statement that may contain one or more '?' IN parameter placeholders
-     * @return a new default <code>MS_PreparedStatement</code> object containing the pre-compiled SQL statement
+     * @return a new default <code>MS_PreparedSQLQuery</code> object containing the pre-compiled SQL statement
      * @throws SQLException if a database access error occurs or this method is called on a closed connection
-     * @see lv.emes.libraries.communication.db.MS_IJDBCDatabase#prepareQuery
+     * @see lv.emes.libraries.communication.db.MS_IJDBCDatabase#prepareSQLQuery
      */
-    MS_PreparedStatement prepareQueryWithThrows(String sql) throws SQLException;
+    MS_PreparedSQLQuery prepareSQLQueryWithThrows(String sql) throws SQLException;
 
     /**
      * Gets the result of executed statement. Example of use (executes given statement and prints out first column of result as String):
@@ -76,7 +76,7 @@ public interface MS_IJDBCDatabase {
      * @return ResultSet
      */
 
-    ResultSet getQueryResult(MS_PreparedStatement statement);
+    ResultSet getQueryResult(MS_PreparedSQLQuery statement);
 
     /**
      * Commits executed statement.
@@ -84,7 +84,7 @@ public interface MS_IJDBCDatabase {
      * @param statement a already executed statement to commit.
      * @return true, if success, false - if failed to commit for some reason.
      */
-    boolean commitStatement(MS_PreparedStatement statement);
+    boolean commitStatement(MS_PreparedSQLQuery statement);
 
     /**
      * @return reference to current connection.

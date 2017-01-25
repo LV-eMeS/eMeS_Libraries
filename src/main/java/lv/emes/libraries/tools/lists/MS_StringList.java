@@ -14,7 +14,7 @@ import static lv.emes.libraries.tools.MS_CodingTools.inRange;
  * <br><u>Note</u>: those delimiters shouldn't be changed unless they are often used in text which operated with this list.
  * <br><u>Note</u>: class is in it's final implementation state. If there is need for overriding this, use <b>MS_List</b> instead!
  *
- * @version 2.2.
+ * @version 2.3.
  * @see MS_List
  */
 public final class MS_StringList implements IListActions<String> {
@@ -40,7 +40,7 @@ public final class MS_StringList implements IListActions<String> {
      * @see MS_StringList#cSecondDefaultDelim
      */
     public char secondDelimiter = cSecondDefaultDelim;
-    protected List<String> fList = new ArrayList<String>(); //this list will be used for all the internal operations
+    protected List<String> fList = new ArrayList<>(); //this list will be used for all the internal operations
     public int indexOfCurrent = -1;
 
     /**
@@ -62,6 +62,13 @@ public final class MS_StringList implements IListActions<String> {
      */
     public MS_StringList(String aString, char aDelimiter) {
         this.fromString(aString, aDelimiter);
+    }
+
+    /**
+     * Creates empty list with no loading from string and sets delimiter to presented <b>aDelimiter</b>.
+     * @param aDelimiter a delimiter.
+     */
+    public MS_StringList(char aDelimiter) {
     }
 
     /**
@@ -276,6 +283,30 @@ public final class MS_StringList implements IListActions<String> {
         for (String str : fList) {
             res.append(pAddSecDelim(str));
             res.append(delimiter);
+        }
+        return res.toString();
+    }
+
+    /**
+     * Returns all the elements of this list delimited with <b>delimiter</b>, but do not add delimiter after last element of string list.
+     * If some element already contains a char equal to <b>delimiter</b> then <b>secondDelimiter</b> is added after that char to mark it not as delimiter.
+     *
+     * @return delimited text of all the elements of eMeS string list.
+     * @see MS_StringList#delimiter
+     * @see MS_StringList#secondDelimiter
+     */
+    public String toStringWithNoLastDelimiter() {
+        StringBuilder res = new StringBuilder();
+        String str;
+        if (fList.size() > 1) {
+            for (int i = 0; i < fList.size() - 1; i++) { //everything but last element
+                str = fList.get(i);
+                res.append(pAddSecDelim(str));
+                res.append(delimiter);
+            }
+            res.append(pAddSecDelim(fList.get(fList.size()-1))); //appending last element without separator
+        } else if (fList.size() == 1) { //only last element and no delimiters at all
+            res.append(pAddSecDelim(fList.get(fList.size()-1)));
         }
         return res.toString();
     }

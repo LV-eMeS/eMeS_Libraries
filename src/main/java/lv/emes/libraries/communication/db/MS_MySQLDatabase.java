@@ -7,7 +7,7 @@ import java.sql.SQLException;
  * Implements MySQL database common operation handling. Reduced to 4 simple methods + BLOB handling:
  * <p>Method summary:
  * -connect
- * -prepareQuery
+ * -prepareSQLQuery
  * -getQueryResult
  * -commitStatement
  * -setBLOB

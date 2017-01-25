@@ -201,6 +201,7 @@ public abstract class ObjectValidator<T> {
     /**
      * Creates and initializes new validation error and appends possible error list with it.
      * @param number error number.
+     * @return new validation error.
      */
     protected final ValidationError initNewError(Integer number) {
         ValidationError anError = ValidationError.<T>newInstance(number);
@@ -213,6 +214,7 @@ public abstract class ObjectValidator<T> {
      * This method should be called while overriding <b>doValidation</b> method to point that in some condition
      * this particular error is met.
      * @param number number of error.
+     * @param objectToValidate object that is going to be validated.
      */
     protected final void addErrorToList(Integer number, T objectToValidate) {
         possibleValidationErrors.doWithEveryItem((possibleError, i) -> {

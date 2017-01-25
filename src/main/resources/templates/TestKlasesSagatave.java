@@ -35,6 +35,6 @@ public class TestKlasesSagatave {
 
     @Test
     public void test01NameOfTest() {
-        assertTrue(true);
+        assertEquals(val, variable);
     }
 }

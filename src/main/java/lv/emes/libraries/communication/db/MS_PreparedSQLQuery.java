@@ -24,14 +24,17 @@ import java.sql.Timestamp;
 import java.util.Calendar;
 
 /** 
- * This is a mock prepared statement.
+ * This is a mock prepared statement that is commonly used together with MS_JDBCDatabase.
  * <p>Public methods are just like java.sql.PreparedStatement.
  * <p>Properties:
- * -onSQLException
- * @version 1.0.
+ * <ul>
+ * <li>onSQLException</li>
+ * </ul>
+ * @version 1.1.
  * @author eMeS
+ * @see MS_JDBCDatabase
  */
-public class MS_PreparedStatement implements PreparedStatement {
+public class MS_PreparedSQLQuery implements PreparedStatement {
 	/**
 	 * Set this to handle this kind of error when trying to do DB operations such as:<br>
 	 * * Trying to communicate with DB which connection is lost;<br>
@@ -47,7 +50,7 @@ public class MS_PreparedStatement implements PreparedStatement {
 	 * Mocks PreparedStatement to act like class not interface.
 	 * @param actualStatement a original PreparedStatement.
 	 */
-	public MS_PreparedStatement(PreparedStatement actualStatement) {
+	public MS_PreparedSQLQuery(PreparedStatement actualStatement) {
 		this.actualStatement = actualStatement;
 	}
 

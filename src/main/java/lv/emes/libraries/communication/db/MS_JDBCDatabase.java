@@ -11,13 +11,15 @@ import java.sql.SQLException;
  * Implements most common DB connection use cases. <p>
  * For successors need to override class method connect(hostname, dbName, port, userName, password) to set up connection <b>conn</b>.
  * <p>Method summary:
- * -connect
- * -prepareQuery
- * -getQueryResult
- * -commitStatement
- * -setBLOB
- * -getBLOB
- * @version 1.4.
+ * <ul>
+ * <li>connect</li>
+ * <li>prepareSQLQuery</li>
+ * <li>getQueryResult</li>
+ * <li>commitStatement</li>
+ * <li>setBLOB</li>
+ * <li>getBLOB</li>
+ * </ul>
+ * @version 1.5.
  * @author eMeS
  */
 public abstract class MS_JDBCDatabase implements MS_IJDBCDatabase {
@@ -77,19 +79,19 @@ public abstract class MS_JDBCDatabase implements MS_IJDBCDatabase {
 	/**
 	 * {@inheritDoc}<p>
 	 * <code>
-	 * PreparedStatement stmt = prepareQuery(Select * from table where id=?);<br>
+	 * PreparedStatement stmt = prepareSQLQuery(Select * from table where id=?);<br>
 	 * stmt.setInt(1, id);<br>
 	 * ResultSet getQueryResult(stmt);<br>
 	 * </code>
 	 * OR<br>
 	 * <code>commitQuery(stmt); //if making changes in DB</code>
-	 * @see lv.emes.libraries.communication.db.MS_JDBCDatabase#prepareQueryWithThrows
-	 * @see lv.emes.libraries.communication.db.MS_IJDBCDatabase#prepareQuery(String)
+	 * @see lv.emes.libraries.communication.db.MS_JDBCDatabase#prepareSQLQueryWithThrows
+	 * @see lv.emes.libraries.communication.db.MS_IJDBCDatabase#prepareSQLQuery(String)
 	 */
 	@Override
-	public MS_PreparedStatement prepareQuery(String sql) {
+	public MS_PreparedSQLQuery prepareSQLQuery(String sql) {
 		try {
-			MS_PreparedStatement res = new MS_PreparedStatement(conn.prepareStatement(sql));
+			MS_PreparedSQLQuery res = new MS_PreparedSQLQuery(conn.prepareStatement(sql));
 			res.onSQLException = onDBStatementError;
 			return res;
 		} catch (SQLException e) {
@@ -99,14 +101,14 @@ public abstract class MS_JDBCDatabase implements MS_IJDBCDatabase {
 	}
 	
 	@Override
-	public MS_PreparedStatement prepareQueryWithThrows(String sql) throws SQLException {
-		MS_PreparedStatement res = new MS_PreparedStatement(conn.prepareStatement(sql));
+	public MS_PreparedSQLQuery prepareSQLQueryWithThrows(String sql) throws SQLException {
+		MS_PreparedSQLQuery res = new MS_PreparedSQLQuery(conn.prepareStatement(sql));
 		res.onSQLException = onDBStatementError;
 		return res;
 	}
 	
 	@Override
-	public ResultSet getQueryResult(MS_PreparedStatement statement) {			
+	public ResultSet getQueryResult(MS_PreparedSQLQuery statement) {
 		try {
 			return statement.executeQuery();
 		} catch (SQLException e) {
@@ -118,7 +120,7 @@ public abstract class MS_JDBCDatabase implements MS_IJDBCDatabase {
 		}
 	}
 	
-	public boolean commitStatement(MS_PreparedStatement statement) {
+	public boolean commitStatement(MS_PreparedSQLQuery statement) {
 		try {
 			if (statement.executeUpdate() > 0) {
 				conn.commit();
@@ -148,7 +150,7 @@ public abstract class MS_JDBCDatabase implements MS_IJDBCDatabase {
 	 * @throws FileNotFoundException if file doesn't exist.
 	 * @throws SQLException if something went wrong with assigning correct param to statement.
 	 */
-	public static void setBLOB(MS_PreparedStatement statement, 
+	public static void setBLOB(MS_PreparedSQLQuery statement,
 			int paramNumber, String filename) throws FileNotFoundException, SQLException {
 		FileInputStream inputStream = new FileInputStream(new File(filename));
 		statement.setBinaryStream(paramNumber, (InputStream) inputStream);

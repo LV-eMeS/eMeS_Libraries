@@ -1,4 +1,6 @@
-INSERT INTO software 
+#Applications and programs for updates
+
+INSERT INTO software
 VALUES(null, 'eMeS Program launcher listener', 'eMeS_ProgramLauncherListener', 'Client-server application`s server side that can be run on computer to listen commands from client also called as commander.',
 '', '0.0.1', '');
 

@@ -150,4 +150,21 @@ public class MSStringListTest {
             assertTrue(test);
         });
     }
+
+    @Test
+    public void test16ToStringWithNoLastDelimiter() {
+        MS_StringList sl;
+        String res;
+        sl = new MS_StringList("");
+        res = sl.toStringWithNoLastDelimiter();
+        assertEquals("", res);
+
+        sl = new MS_StringList("One#");
+        res = sl.toStringWithNoLastDelimiter();
+        assertEquals("One", res);
+
+        sl = new MS_StringList("One#Two#");
+        res = sl.toStringWithNoLastDelimiter();
+        assertEquals("One#Two", res);
+    }
 }
