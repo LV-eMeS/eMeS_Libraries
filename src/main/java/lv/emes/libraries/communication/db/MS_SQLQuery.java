@@ -9,9 +9,9 @@ import lv.emes.libraries.utilities.MS_LineBuilder;
  * <p><u>Note</u>: Use only one of those 5 statement types at time!
  *
  * @author eMeS
- * @version 1.0.
+ * @version 1.1.
  */
-public class SQLQuery extends MS_AbstractCompositeText {
+public class MS_SQLQuery extends MS_AbstractCompositeText {
     //Supported SQL statement examples:
     //"select * from users where name = ?"
     //insert into notes values(null, ?, null, ?, ?, curdate(), curdate(), ?, ?)
@@ -24,11 +24,11 @@ public class SQLQuery extends MS_AbstractCompositeText {
     private static final String UPDATE1 = "UPDATE ";
     private static final String DELETE = "DELETE FROM ";
 
-    private static final String SELECT2 = "FROM ";
+    private static final String SELECT2 = " FROM ";
     private static final String INSERT_REPLACE_2 = "VALUES(";
     private static final String UPDATE2 = "SET ";
     private static final String INSERT_REPLACE_3 = ")";
-    private static final String ALL = "* ";
+    private static final String ALL = "*";
 
     private static final int CASE_SELECT = 1;
     private static final int CASE_INSERT = 2;
@@ -62,7 +62,8 @@ public class SQLQuery extends MS_AbstractCompositeText {
                 break;
             case CASE_REPLACE:
                 lb.append(REPLACE);
-                lb.append(tableName).append(" ");
+                if (!tableName.isEmpty())
+                    lb.append(tableName).append(" ");
                 lb.append(INSERT_REPLACE_2);
                 addFieldsToLineBuilder(lb);
                 lb.append(INSERT_REPLACE_3);
@@ -75,7 +76,7 @@ public class SQLQuery extends MS_AbstractCompositeText {
                 break;
             case CASE_DELETE:
                 lb.append(DELETE);
-                lb.append(tableName).append(" ");
+                lb.append(tableName);
                 break;
             default:
                 break;
@@ -94,9 +95,9 @@ public class SQLQuery extends MS_AbstractCompositeText {
                 lb.append(str);
                 lb.append(", ");
             }
-            lb.append(fields.get(fields.size()-1)); //appending last element without separator
+            lb.append(fields.get(fields.size() - 1)); //appending last element without separator
         } else if (fields.size() == 1) { //only last element and no delimiters at all
-            lb.append(fields.get(fields.size()-1));
+            lb.append(fields.get(fields.size() - 1));
         }
     }
 
@@ -105,7 +106,7 @@ public class SQLQuery extends MS_AbstractCompositeText {
      *
      * @return reference to this query itself.
      */
-    public SQLQuery selectFrom() {
+    public MS_SQLQuery selectFrom() {
         operation = 1;
         return this;
     }
@@ -115,7 +116,7 @@ public class SQLQuery extends MS_AbstractCompositeText {
      *
      * @return reference to this query itself.
      */
-    public SQLQuery insertInto() {
+    public MS_SQLQuery insertInto() {
         operation = 2;
         return this;
     }
@@ -125,7 +126,7 @@ public class SQLQuery extends MS_AbstractCompositeText {
      *
      * @return reference to this query itself.
      */
-    public SQLQuery replaceInto() {
+    public MS_SQLQuery replaceInto() {
         operation = 3;
         return this;
     }
@@ -135,7 +136,7 @@ public class SQLQuery extends MS_AbstractCompositeText {
      *
      * @return reference to this query itself.
      */
-    public SQLQuery update() {
+    public MS_SQLQuery update() {
         operation = 4;
         return this;
     }
@@ -145,7 +146,7 @@ public class SQLQuery extends MS_AbstractCompositeText {
      *
      * @return reference to this query itself.
      */
-    public SQLQuery deleteFrom() {
+    public MS_SQLQuery deleteFrom() {
         operation = 5;
         return this;
     }
@@ -156,7 +157,7 @@ public class SQLQuery extends MS_AbstractCompositeText {
      * @param tableName name of table.
      * @return reference to this query itself.
      */
-    public SQLQuery table(String tableName) {
+    public MS_SQLQuery table(String tableName) {
         this.tableName = tableName;
         return this;
     }
@@ -168,8 +169,8 @@ public class SQLQuery extends MS_AbstractCompositeText {
      * @param conditions all the conditions for query where clause.
      * @return reference to this query itself.
      */
-    public SQLQuery where(String conditions) {
-        whereClause = "WHERE " + conditions;
+    public MS_SQLQuery where(String conditions) {
+        whereClause = " WHERE " + conditions;
         return this;
     }
 
@@ -179,18 +180,19 @@ public class SQLQuery extends MS_AbstractCompositeText {
      * @param fieldName field to select, insert, or replace.
      * @return reference to this query itself.
      */
-    public SQLQuery field(String fieldName) {
+    public MS_SQLQuery field(String fieldName) {
         this.fields.add(fieldName);
         return this;
     }
 
     /**
      * For update statement set new value <b>newValue</b> for field with name <b>fieldName</b>.
+     *
      * @param fieldName name of table field.
-     * @param newValue value of field to update.
+     * @param newValue  value of field to update.
      * @return reference to this query itself.
      */
-    public SQLQuery setNewValue(String fieldName, String newValue) {
+    public MS_SQLQuery setNewValue(String fieldName, String newValue) {
         this.fields.add(fieldName + " = " + newValue);
         return this;
     }
@@ -198,9 +200,10 @@ public class SQLQuery extends MS_AbstractCompositeText {
     /**
      * For SELECT type of query this adds asterisk to query fields.
      * <br><u>Warning</u>: do not mix this with other field values!
+     *
      * @return reference to this query itself.
      */
-    public SQLQuery all() {
+    public MS_SQLQuery all() {
         this.fields.add(ALL);
         return this;
     }

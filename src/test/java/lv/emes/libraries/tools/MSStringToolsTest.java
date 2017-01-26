@@ -32,7 +32,7 @@ public class MSStringToolsTest {
 		System.out.println(
 				getRandomString(100, SetForCodeGenParams)
 				);	
-		assertTrue(true);
+		assertEquals(12, getRandomString(12).length());
 	}
 	
 	@Test

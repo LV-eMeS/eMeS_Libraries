@@ -31,7 +31,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * @author eMeS
  * @version 1.0.
  */
-public abstract class ObjectValidator<T> {
+public abstract class MS_ObjectValidator<T> {
     public static final int VALIDATION_ERROR_NULL_OBJECT = 0;
     public static final int VALIDATION_ERROR_EMPTY_VALUE = 1;
     public static final int VALIDATION_ERROR_SIZE_VIOLATED = 2;
@@ -41,14 +41,14 @@ public abstract class ObjectValidator<T> {
 
     private T fObject;
     private boolean isValidated = false;
-    private MS_List<ValidationError<T>> possibleValidationErrors = new MS_List<>();
-    private MS_List<ValidationError<T>> validationErrors = new MS_List<>();
+    private MS_List<MS_ValidationError<T>> possibleValidationErrors = new MS_List<>();
+    private MS_List<MS_ValidationError<T>> validationErrors = new MS_List<>();
     private FuncObjectValidationAction<T> fOnValidation;
 
     /**
      * This constructor is mandatory because all possible validation errors must be initialized here.
      */
-    public ObjectValidator() {
+    public MS_ObjectValidator() {
         initAllPossibleValidationErrors();
     }
 
@@ -59,13 +59,13 @@ public abstract class ObjectValidator<T> {
      * @param validationErrorList list of validation errors occurred in validation process.
      *                            Add new validation errors as do the validation!
      */
-    protected abstract void doValidation(T objectToValidate, MS_List<ValidationError<T>> validationErrorList);
+    protected abstract void doValidation(T objectToValidate, MS_List<MS_ValidationError<T>> validationErrorList);
 
     /**
      * Override this method to add different validation error when object is null or to disable this operation at all.
      */
     protected void addNullPointerValidationError() {
-        validationErrors.add(ValidationError.newInstance(VALIDATION_ERROR_NULL_OBJECT));
+        validationErrors.add(MS_ValidationError.newInstance(VALIDATION_ERROR_NULL_OBJECT));
     }
 
     /**
@@ -74,7 +74,7 @@ public abstract class ObjectValidator<T> {
      * @param object object to be validated.
      * @return referenece to validator itself.
      */
-    public final ObjectValidator validate(T object) {
+    public final MS_ObjectValidator validate(T object) {
         this.fObject = object;
         isValidated = true;
         //also check automatically for null pointer
@@ -94,7 +94,7 @@ public abstract class ObjectValidator<T> {
      * @param object object to be validated
      * @return referenece to validator itself.
      */
-    public ObjectValidator object(T object) {
+    public MS_ObjectValidator object(T object) {
         this.fObject = object;
         return this;
     }
@@ -127,7 +127,7 @@ public abstract class ObjectValidator<T> {
      * After <b>validate</b> returns all the errors for current object.
      * @return validation error collection.
      */
-    public MS_List<ValidationError<T>> getValidationErrors() {
+    public MS_List<MS_ValidationError<T>> getValidationErrors() {
         return validationErrors;
     }
 
@@ -153,7 +153,7 @@ public abstract class ObjectValidator<T> {
      * @param error validation error we are looking for.
      * @return true if error found, else otherwise.
      */
-    public boolean containsError(ValidationError error) {
+    public boolean containsError(MS_ValidationError error) {
         if (error == null)
             return false;
 
@@ -171,7 +171,7 @@ public abstract class ObjectValidator<T> {
 //     * Clears the list of validation errors created by objects.
 //     * @return
 //     */
-//    public ObjectValidator clearErrors() {
+//    public MS_ObjectValidator clearErrors() {
 //        this.validationErrors.clear();
 //        return this;
 //    }
@@ -183,7 +183,7 @@ public abstract class ObjectValidator<T> {
      *                 error that occurs in that particular case.
      * @return reference to validator itself.
      */
-    public final ObjectValidator onValidation(FuncObjectValidationAction<T> validate) {
+    public final MS_ObjectValidator onValidation(FuncObjectValidationAction<T> validate) {
         fOnValidation = validate;
         return this;
     }
@@ -203,8 +203,8 @@ public abstract class ObjectValidator<T> {
      * @param number error number.
      * @return new validation error.
      */
-    protected final ValidationError initNewError(Integer number) {
-        ValidationError anError = ValidationError.<T>newInstance(number);
+    protected final MS_ValidationError initNewError(Integer number) {
+        MS_ValidationError anError = MS_ValidationError.<T>newInstance(number);
         possibleValidationErrors.add(anError);
         return anError;
     }

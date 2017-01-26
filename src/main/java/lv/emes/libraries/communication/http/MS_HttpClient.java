@@ -50,9 +50,9 @@ public class MS_HttpClient {
      * @param connConfig     initial configuration of connection.
      * @return HTTP response from server.
      */
-    public static RequestResult get(String requestURL, Map<String, String> postDataParams, IFuncConnectionConfig connConfig) {
+    public static MS_RequestResult get(String requestURL, Map<String, String> postDataParams, IFuncConnectionConfig connConfig) {
         URL url;
-        RequestResult res = new RequestResult();
+        MS_RequestResult res = new MS_RequestResult();
         try {
             if (postDataParams != null)
                 requestURL += "?" + getPostDataString(postDataParams);
@@ -77,7 +77,7 @@ public class MS_HttpClient {
      * @param postDataParams map of parameters to pass for this URL.
      * @return HTTP response from server.
      */
-    public static RequestResult get(String requestURL, Map<String, String> postDataParams) {
+    public static MS_RequestResult get(String requestURL, Map<String, String> postDataParams) {
         return get(requestURL, postDataParams, IFuncConnectionConfig.DEFAULT_CONFIG_FOR_CONNECTION);
     }
 
@@ -89,8 +89,8 @@ public class MS_HttpClient {
      * @param connConfig     initial configuration of connection.
      * @return HTTP response from server.
      */
-    public static RequestResult post(String requestURL, Map<String, String> postDataParams, IFuncConnectionConfig connConfig) {
-        RequestResult res = new RequestResult();
+    public static MS_RequestResult post(String requestURL, Map<String, String> postDataParams, IFuncConnectionConfig connConfig) {
+        MS_RequestResult res = new MS_RequestResult();
         URL url;
         StringBuilder response = new StringBuilder();
 
@@ -140,7 +140,7 @@ public class MS_HttpClient {
      * @param postDataParams map of parameters to pass for this URL.
      * @return HTTP response from server.
      */
-    public static RequestResult post(String requestURL, Map<String, String> postDataParams) {
+    public static MS_RequestResult post(String requestURL, Map<String, String> postDataParams) {
         return post(requestURL, postDataParams, IFuncConnectionConfig.DEFAULT_CONFIG_FOR_CONNECTION);
     }
 }

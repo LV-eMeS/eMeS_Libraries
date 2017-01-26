@@ -14,10 +14,10 @@ import static org.junit.Assert.*;
  * @version 1.0.
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class ObjectValidatorTest {
+public class MSObjectValidatorTest {
 
-    private static ObjectValidator<Integer> intValidator;
-    private static ObjectValidator<String> stringValidator;
+    private static MS_ObjectValidator<Integer> intValidator;
+    private static MS_ObjectValidator<String> stringValidator;
     private static final String ERROR1 = "Too small value";
     private static final String ERROR2 = "Value too big";
     private static final String BAD_VALUE = "I am invalid value";
@@ -26,7 +26,7 @@ public class ObjectValidatorTest {
     @Before
     //Before even start testing do some preparations!
     public void initTestPreConditions() {
-        intValidator = new ObjectValidator<Integer>() {
+        intValidator = new MS_ObjectValidator<Integer>() {
             @Override
             protected void initAllPossibleValidationErrors() {
                 this.initNewError(1).setErrorMessageForming(() -> ERROR1);
@@ -41,7 +41,7 @@ public class ObjectValidatorTest {
             }
         };
 
-        stringValidator = new ObjectValidator<String>() {
+        stringValidator = new MS_ObjectValidator<String>() {
             String name = "";
 
             @Override
@@ -50,7 +50,7 @@ public class ObjectValidatorTest {
                         String.format(BAD_VALUE_MSG, name));
             }
             @Override
-            protected void doValidation(String objectToValidate, MS_List<ValidationError<String>> validationErrorList) {
+            protected void doValidation(String objectToValidate, MS_List<MS_ValidationError<String>> validationErrorList) {
                 if (objectToValidate.equals(BAD_VALUE))
                     this.addErrorToList(100, objectToValidate);
                 name = MS_StringTools.substring(objectToValidate, 5, 12);

@@ -27,7 +27,7 @@ public class MSHttpClientTest {
     private static final String TEST_NO_PARAMETER_VALUE = TEST_PARAMETER_NAME;
 
     private static Map<String, String> params;
-    private static RequestResult response;
+    private static MS_RequestResult response;
 
     @BeforeClass
     //Before even start testing do some preparations!

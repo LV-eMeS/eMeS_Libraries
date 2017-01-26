@@ -6,7 +6,7 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
-import static lv.emes.libraries.utilities.validation.ObjectValidator.*;
+import static lv.emes.libraries.utilities.validation.MS_ObjectValidator.*;
 import static org.junit.Assert.*;
 
 /**
@@ -14,16 +14,16 @@ import static org.junit.Assert.*;
  * @version 1.0.
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class StringValidatorTest {
+public class MSStringValidatorTest {
 
-    private static StringValidator validator;
+    private static MS_StringValidator validator;
     private String textToValidate;
-    private MS_List<ValidationError<String>> errors;
+    private MS_List<MS_ValidationError<String>> errors;
 
     @Before
     //Before even start testing do some preparations!
     public void initTestPreConditions() {
-        validator = new StringValidator();
+        validator = new MS_StringValidator();
     }
 
     @Test

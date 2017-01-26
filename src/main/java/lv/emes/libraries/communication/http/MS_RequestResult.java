@@ -15,7 +15,7 @@ import java.net.HttpURLConnection;
  * @author eMeS
  * @version 1.0.
  */
-public class RequestResult {
+public class MS_RequestResult {
     String message;
     int reponseCode;
     HttpURLConnection connection;

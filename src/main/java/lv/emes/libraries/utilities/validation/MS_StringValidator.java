@@ -8,12 +8,12 @@ import lv.emes.libraries.tools.lists.MS_List;
  * @author eMeS
  * @version 1.0.
  */
-public class StringValidator extends ObjectValidator<String> {
+public class MS_StringValidator extends MS_ObjectValidator<String> {
     private Integer minLength;
     private Integer maxLength;
 
     @Override
-    protected void doValidation(String objectToValidate, MS_List<ValidationError<String>> validationErrorList) {
+    protected void doValidation(String objectToValidate, MS_List<MS_ValidationError<String>> validationErrorList) {
         if (objectToValidate.equals(""))
             addErrorToList(VALIDATION_ERROR_EMPTY_VALUE, objectToValidate);
 

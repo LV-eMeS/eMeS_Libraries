@@ -6,8 +6,8 @@ package lv.emes.libraries.utilities.validation;
  * @author eMeS
  * @version 1.0.
  */
-public interface ValidationError<T> {
-    ValidationError setErrorMessageForming(FuncFormValidationErrorMessage action);
+public interface MS_ValidationError<T> {
+    MS_ValidationError setErrorMessageForming(FuncFormValidationErrorMessage action);
 
     /**
      * Returns message of validation error using pre-defined method to form message.
@@ -17,9 +17,9 @@ public interface ValidationError<T> {
     Integer getNumber();
 
     T getObject();
-    ValidationError setObject(T object);
+    MS_ValidationError setObject(T object);
 
-    static <T> ValidationError newInstance(Integer number) {
-        return new ValidationErrorImpl<T>(number);
+    static <T> MS_ValidationError newInstance(Integer number) {
+        return new MS_ValidationErrorImpl<T>(number);
     }
 }

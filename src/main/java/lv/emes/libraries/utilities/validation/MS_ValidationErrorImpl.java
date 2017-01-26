@@ -6,12 +6,12 @@ package lv.emes.libraries.utilities.validation;
  * @author eMeS
  * @version 1.0.
  */
-public class ValidationErrorImpl<T> implements ValidationError<T> {
+public class MS_ValidationErrorImpl<T> implements MS_ValidationError<T> {
     private Integer number;
     private T object;
     private FuncFormValidationErrorMessage actionToFormatMessage;
 
-    public ValidationErrorImpl(Integer number) {
+    public MS_ValidationErrorImpl(Integer number) {
         if (number == null)
             number = 0;
         this.number = number;
@@ -21,7 +21,7 @@ public class ValidationErrorImpl<T> implements ValidationError<T> {
         return object;
     }
 
-    public ValidationError setObject(T object) {
+    public MS_ValidationError setObject(T object) {
         this.object = object;
         return this;
     }
@@ -36,7 +36,7 @@ public class ValidationErrorImpl<T> implements ValidationError<T> {
         return actionToFormatMessage != null ? actionToFormatMessage.formMessage() : "";
     }
 
-    public ValidationError setErrorMessageForming(FuncFormValidationErrorMessage action) {
+    public MS_ValidationError setErrorMessageForming(FuncFormValidationErrorMessage action) {
         actionToFormatMessage = action;
         return this;
     }
