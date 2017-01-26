@@ -6,15 +6,17 @@ import java.sql.SQLException;
 /**
  * Implements MySQL database common operation handling. Reduced to 4 simple methods + BLOB handling:
  * <p>Method summary:
- * -connect
- * -prepareSQLQuery
- * -getQueryResult
- * -commitStatement
- * -setBLOB
- * -getBLOB
+ * <ul>
+ * <li>connect</li>
+ * <li>prepareSQLQuery</li>
+ * <li>getQueryResult</li>
+ * <li>commitStatement</li>
+ * <li>setBLOB</li>
+ * <li>getBLOB</li>
+ * </ul>
  *
  * @author eMeS
- * @version 1.3.
+ * @version 1.4.
  */
 public class MS_MySQLDatabase extends MS_JDBCDatabase {
     public static final int DEFAULT_PORT = 3306;
@@ -32,6 +34,6 @@ public class MS_MySQLDatabase extends MS_JDBCDatabase {
         // Create connection
         conn = DriverManager.getConnection("jdbc:mysql://" + this.hostname + ":" + this.port + this.dbName,
                 this.userName, this.password);
-        conn.setAutoCommit(false);
+        conn.setAutoCommit(true);
     }
 }

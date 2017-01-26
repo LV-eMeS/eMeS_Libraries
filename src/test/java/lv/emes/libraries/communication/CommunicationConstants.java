@@ -7,4 +7,5 @@ package lv.emes.libraries.communication;
  */
 public class CommunicationConstants {
     public static final String TESTING_SERVER_HOSTAME = "emesserver.ddns.net";
+    public static final String TESTING_SERVER_PORT_STRING = ":12348";
 }

@@ -1,6 +1,5 @@
 package lv.emes.libraries.communication.http;
 
-import lv.emes.libraries.communication.CommunicationConstants;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -10,6 +9,8 @@ import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
 
+import static lv.emes.libraries.communication.CommunicationConstants.TESTING_SERVER_HOSTAME;
+import static lv.emes.libraries.communication.CommunicationConstants.TESTING_SERVER_PORT_STRING;
 import static lv.emes.libraries.communication.http.MS_HttpClient.get;
 import static lv.emes.libraries.communication.http.MS_HttpClient.post;
 import static org.junit.Assert.assertEquals;
@@ -17,10 +18,10 @@ import static org.junit.Assert.assertNotEquals;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MSHttpClientTest {
-    private static final String URL_STRING_GET = "http://"+ CommunicationConstants.TESTING_SERVER_HOSTAME +"/Test/test_get.php";
-    private static final String URL_STRING_POST = "http://"+CommunicationConstants.TESTING_SERVER_HOSTAME+"/Test/test_post.php";
-    private static final String URL_STRING_NO_PARAMS = "http://"+CommunicationConstants.TESTING_SERVER_HOSTAME+"/Test/test_no_params.php";
-    private static final String URL_STRING_WRONG_URL = "http://"+ CommunicationConstants.TESTING_SERVER_HOSTAME +"/Test/no_file_is_added.php";
+    private static final String URL_STRING_GET = "http://"+ TESTING_SERVER_HOSTAME+TESTING_SERVER_PORT_STRING +"/Test/test_get.php";
+    private static final String URL_STRING_POST = "http://"+TESTING_SERVER_HOSTAME+TESTING_SERVER_PORT_STRING+"/Test/test_post.php";
+    private static final String URL_STRING_NO_PARAMS = "http://"+TESTING_SERVER_HOSTAME+TESTING_SERVER_PORT_STRING+"/Test/test_no_params.php";
+    private static final String URL_STRING_WRONG_URL = "http://"+ TESTING_SERVER_HOSTAME+TESTING_SERVER_PORT_STRING +"/Test/no_file_is_added.php";
     private static final String URL_STRING_UNREACHABLE_HOST = "http://111.111.111.111/Test/no_file_is_added.php";
     private static final String TEST_PARAMETER_NAME = "test";
     private static final String TEST_PARAMETER_VALUE = "vards";

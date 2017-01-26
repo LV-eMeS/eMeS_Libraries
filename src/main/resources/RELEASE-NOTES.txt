@@ -1,5 +1,5 @@
 eMeS libraries
-Version 1.5.6
+Version 1.5.7
 Release Notes
 
 INTRODUCTION:
@@ -22,6 +22,8 @@ eMeS libraries Version 1.6.0
 * Concatenation support for lists.
 * Object validator to check if value of some object meets validation requirements.
 * SQL query builder.
+* JDBC MySQL database now is doing auto commit.
+* Port of test server changed to 12348.
 ==============================================================================
 eMeS libraries Version 1.5.0
 ==============================================================================
