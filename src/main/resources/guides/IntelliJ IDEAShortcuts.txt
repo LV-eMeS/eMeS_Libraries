@@ -17,6 +17,7 @@ Bookmark: Ctrl + Shift + 0-9
 Go to bookmark: Ctrl + 0-9
 Recent files: Ctrl + E
 Toggle breakpoint: Ctrl + F8
+View breakpoint: Ctrl + Shift + F8
 Add imports or ask IDEA to suggest, how to correct some error: Alt + ENTER
 Show JavaDoc documentation: Ctrl + Q
 Generate Getters/Setters and much more: Alt + Insert

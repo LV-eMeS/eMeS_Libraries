@@ -1,4 +1,5 @@
 Everything is done while on local branches.
+0) Be sure that develop has latest changes, so from develop do PULL!
 1) 
 From LOCAL_BRANCH
 Rebase Onto Develop.
