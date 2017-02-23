@@ -1,6 +1,7 @@
 package lv.emes.libraries.communication.db;
 
 import lv.emes.libraries.communication.CommunicationConstants;
+import lv.emes.libraries.tools.lists.MS_List;
 import org.junit.*;
 import org.junit.runners.MethodSorters;
 
@@ -40,11 +41,11 @@ public class MSMySQLDatabaseTest {
     @Before
     //Before every test do initial setup!
     public void setUpForEachTest() {
-        MS_PreparedSQLQuery st = db.prepareSQLQuery("insert into tests(id, name, count) values (1, 'test1', 1)");
+        MS_PreparedSQLQuery st = db.prepareSQLQuery("insert into tests(id, name, count) values (1, 'test1', 33)");
         db.commitStatement(st);
-        st = db.prepareSQLQuery("insert into tests(id, name, count) values (2, 'test2', 2)");
+        st = db.prepareSQLQuery("insert into tests(id, name, count) values (2, 'test2', 22)");
         db.commitStatement(st);
-        st = db.prepareSQLQuery("insert into tests(id, name, count) values (3, 'test3', 3)");
+        st = db.prepareSQLQuery("insert into tests(id, name, count) values (3, 'test3', 11)");
         db.commitStatement(st);
     }
 
@@ -56,52 +57,76 @@ public class MSMySQLDatabaseTest {
     }
 
     @Test
-    public void test01GetSecondRecord() throws SQLException {
+    public void test01GetCellValuesByName() throws SQLException {
+        MS_PreparedSQLQuery st;
+        String query = "select * from tests";
+        st = db.prepareSQLQuery(query);
+        ResultSet rs = db.getQueryResult(st);
+        assertTrue(rs.next());
+        assertEquals("1", rs.getString("id"));
+        assertEquals(1, rs.getInt("id"));
+        assertEquals("test1", rs.getString("name"));
+        assertEquals(33, rs.getInt("count"));
+
+        assertTrue(rs.next()); //second record
+        assertEquals(22, rs.getInt("count"));
+        assertEquals("test2", rs.getString("name"));
+        assertEquals(2, rs.getInt("id"));
+
+        assertTrue(rs.next()); //third record
+        assertEquals(11, rs.getInt(3));
+        assertEquals("test3", rs.getString(2));
+        assertEquals(3, rs.getInt(1));
+    }
+
+    @Test
+    public void test02GetSecondRecord() throws SQLException {
         MS_PreparedSQLQuery st;
         String query = "select * from tests where id=2";
         st = db.prepareSQLQuery(query);
         ResultSet rs = db.getQueryResult(st);
         assertTrue(rs.next());
+        assertEquals(2, rs.getInt(1));
         assertEquals("test2", rs.getString(2));
-        assertEquals("2", rs.getString(3));
-        assertEquals(2, rs.getInt(3));
+        assertEquals("22", rs.getString(3));
+        assertEquals(22, rs.getInt(3));
     }
 
     @Test
-    public void test02QueryWithParams() throws SQLException {
+    public void test03QueryWithParams() throws SQLException {
         MS_PreparedSQLQuery st;
         String query = "select * from tests where id=?";
         ResultSet rs;
 
         st = db.prepareSQLQuery(query);
-        st.setInt(1, 2);
+        st.setInt(1, 3);
         rs = db.getQueryResult(st);
         assertTrue(rs.next());
-        assertEquals("test2", rs.getString(2));
-        assertEquals("2", rs.getString(3));
-        assertEquals(2, rs.getInt(3));
+        assertEquals("3", rs.getString(1));
+        assertEquals("test3", rs.getString(2));
+        assertEquals(11, rs.getInt(3));
     }
 
     @Test
-    public void test03Editing() throws SQLException {
+    public void test04Editing() throws SQLException {
         MS_PreparedSQLQuery st;
-        String query = "update tests set name='Osvald' where id=2";
+        String query = "update tests set name='Osvald' where id=1";
         ResultSet rs;
 
         st = db.prepareSQLQuery(query);
         db.commitStatement(st);
 
         //now to look at the changes!
-        query = "select * from tests where id=2";
+        query = "select * from tests where id=1";
         st = db.prepareSQLQuery(query);
         rs = db.getQueryResult(st);
         assertTrue(rs.next());
         assertEquals("Osvald", rs.getString(2));
-        assertEquals(2, rs.getInt(3));
+        assertEquals(33, rs.getInt(3));
     }
 
     @Test
-    public void test04SelectAll() throws SQLException {
+    public void test05SelectAll() throws SQLException {
         MS_PreparedSQLQuery st;
         String query = "select * from tests";
         ResultSet rs;
@@ -115,5 +140,50 @@ public class MSMySQLDatabaseTest {
             assertEquals("test" + i, rs.getString(2));
         }
         assertEquals(3, i);
+    }
+
+    @Test
+    public void test06TableRecordTest() throws SQLException {
+        MS_PreparedSQLQuery st;
+        String query = "select * from tests";
+        ResultSet rs;
+
+        st = db.prepareSQLQuery(query);
+        rs = db.getQueryResult(st);
+
+        MS_List<Table_tests_Row> testsTable = Table_tests_Row.newTable(rs, Table_tests_Row.class);
+        assertEquals(3, testsTable.count());
+        for (int i = 0; i < testsTable.count(); i++) {
+            assertEquals(i+1, testsTable.get(i).id);
+            assertEquals("test" + (i+1), testsTable.get(i).name);
+        }
+    }
+
+    @Test
+    public void test07GetCount() throws SQLException {
+        MS_PreparedSQLQuery st;
+        String query = "select count(*) from tests";
+        ResultSet rs;
+
+        st = db.prepareSQLQuery(query);
+        rs = db.getQueryResult(st);
+
+        assertEquals(3, new MS_TableRecordCount(rs).getCount());
+    }
+
+    private static class Table_tests_Row extends MS_TableRecord {
+        int id;
+        String name;
+        int count;
+
+        public Table_tests_Row(ResultSet rs) {
+            super(rs);
+        }
+        @Override
+        protected void initColumns(ResultSet rs) throws SQLException {
+            id = rs.getInt("id");
+            name = rs.getString("name");
+            count = rs.getInt("count");
+        }
     }
 }

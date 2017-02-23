@@ -17,7 +17,7 @@ import java.sql.SQLException;
  * <ul><li>newTable()</li></ul>
  *
  * @author eMeS
- * @version 1.3.
+ * @version 1.4.
  * @see MS_List
  */
 public abstract class MS_TableRecord {
@@ -89,7 +89,6 @@ public abstract class MS_TableRecord {
         T row = null;
         boolean rsHasRows = true;
         while (rsHasRows) {
-            MS_TableRecord newRow = null;
             try {
                 row = specificRecordTypeClass.getConstructor(ResultSet.class).newInstance(rs);
                 rsHasRows = row.getIsFilled();
