@@ -19,6 +19,7 @@ import java.util.Base64;
  * Class for encryption/decryption processes.
  * http://netnix.org/2015/04/19/aes-encryption-with-hmac-integrity-in-java/
  */
+//TODO improve this class and work on appropriate Exception throwing
 public class MS_CryptographyUtils {
 
     private final static Integer keyLength = 128;
@@ -32,7 +33,7 @@ public class MS_CryptographyUtils {
      * @param encKey  secret key
      * @param hmacKey HMAC secret key
      * @return encrypted text
-     * @throws Exception
+     * @throws Exception when any problem occurs during encryption.
      */
     public static String encrypt(String text, String encKey, String hmacKey) throws Exception {
         SecureRandom r = SecureRandom.getInstance("SHA1PRNG");
@@ -79,7 +80,7 @@ public class MS_CryptographyUtils {
      * @param encKey  secret key
      * @param hmacKey HMAC secret key
      * @return decrypted text
-     * @throws Exception
+     * @throws GeneralSecurityException when HMAC secret key is incorrect.
      */
     public static String decrypt(String eos, String encKey, String hmacKey) throws GeneralSecurityException {
         // Recover our Byte Array by Base64 Decoding
