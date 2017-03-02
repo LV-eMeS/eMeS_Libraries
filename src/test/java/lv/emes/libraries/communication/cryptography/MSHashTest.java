@@ -1,9 +1,9 @@
-package lv.emes.libraries.tools;
+package lv.emes.libraries.communication.cryptography;
 
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
-import lv.emes.libraries.tools.MS_Hash;
+import lv.emes.libraries.communication.cryptography.MS_Hash;
 
 public class MSHashTest {	
 	@Test

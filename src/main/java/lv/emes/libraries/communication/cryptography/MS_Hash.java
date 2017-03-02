@@ -1,4 +1,4 @@
-package lv.emes.libraries.tools;
+package lv.emes.libraries.communication.cryptography;
 
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
@@ -8,6 +8,7 @@ import javax.crypto.spec.PBEKeySpec;
 //import java.security.SecureRandom;
 //import java.security.spec.InvalidKeySpecException;
 
+import lv.emes.libraries.tools.MS_CodingTools;
 import org.apache.commons.codec.binary.Base64;
 
 /** 

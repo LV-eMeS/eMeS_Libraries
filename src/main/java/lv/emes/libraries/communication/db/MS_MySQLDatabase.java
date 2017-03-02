@@ -36,7 +36,7 @@ public class MS_MySQLDatabase extends MS_JDBCDatabase {
         // Create connection
         String connStr = String.format("jdbc:mysql://%s:%d%s?autoReconnect=%s", this.hostname, this.port, this.dbName, this.autoReconnect.toString());
         conn = DriverManager.getConnection(connStr, this.userName, this.password);
-        conn.setAutoCommit(true);
+        conn.setAutoCommit(false);
     }
 
     public Boolean getDoAutoReconnect() {

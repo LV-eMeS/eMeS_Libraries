@@ -21,7 +21,7 @@ import java.sql.SQLException;
  * </ul>
  *
  * @author eMeS
- * @version 1.5.
+ * @version 1.6.
  */
 public abstract class MS_JDBCDatabase implements MS_IJDBCDatabase {
     public String hostname, dbName, userName, password;
@@ -122,16 +122,20 @@ public abstract class MS_JDBCDatabase implements MS_IJDBCDatabase {
     @Override
     public ResultSet getQueryResult(MS_PreparedSQLQuery statement) {
         try {
-            return statement.executeQuery();
+            ResultSet rs = statement.executeQuery();
+            if (!conn.getAutoCommit())
+                conn.commit();
+            return rs;
         } catch (SQLException e) {
             onDBConnectionError.doOnError(e);
             return null;
-        } catch (NullPointerException e) { //most probably null pointer exception
+        } catch (NullPointerException e) { //most probably null pointer exception happens of wrong statement
             onDBEmptyStatementError.doOnError(e);
             return null;
         }
     }
 
+    @Override
     public boolean commitStatement(MS_PreparedSQLQuery statement) {
         try {
             if (statement.executeUpdate() > 0) {

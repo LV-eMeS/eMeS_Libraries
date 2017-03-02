@@ -1,5 +1,6 @@
 package lv.emes.libraries.tools;
 
+import lv.emes.libraries.communication.cryptography.MS_Hash;
 import lv.emes.libraries.tools.lists.MS_StringList;
 
 import java.util.Collections;
@@ -52,7 +53,7 @@ public final class MS_StringTools {
     public static final String C_BIG_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
     //mazie tipi
-    public static enum TNotificationLang {
+    public enum TNotificationLang {
         nlEN, nlLV
     }
 
@@ -353,10 +354,7 @@ public final class MS_StringTools {
      */
     public static boolean isCharASCIILetter(char aSymbol) {
         int aASCIISymbol = ord(aSymbol);
-        if (inRange(aASCIISymbol, 65, 90) || inRange(aASCIISymbol, 97, 122))
-            return true;
-        else
-            return false;
+        return inRange(aASCIISymbol, 65, 90) || inRange(aASCIISymbol, 97, 122);
     }
 
     /**
