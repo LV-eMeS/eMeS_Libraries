@@ -21,9 +21,10 @@ import java.sql.SQLException;
  * </ul>
  *
  * @author eMeS
- * @version 1.6.
+ * @version 1.7.
  */
 public abstract class MS_JDBCDatabase implements MS_IJDBCDatabase {
+    private Boolean autoReconnect = true;
     public String hostname, dbName, userName, password;
     public int port;
     /**
@@ -102,13 +103,22 @@ public abstract class MS_JDBCDatabase implements MS_IJDBCDatabase {
      */
     @Override
     public MS_PreparedSQLQuery prepareSQLQuery(String sql) {
+        return prepareSQLQuery(sql, true);
+    }
+
+    private MS_PreparedSQLQuery prepareSQLQuery(String sql, boolean retryAction) {
         try {
             MS_PreparedSQLQuery res = new MS_PreparedSQLQuery(conn.prepareStatement(sql));
             res.onSQLException = onDBStatementError;
             return res;
         } catch (SQLException e) {
-            this.onDBConnectionError.doOnError(e);
-            return null;
+            if (autoReconnect && retryAction) {
+                this.reconnect(); //try it one more time with new connection
+                return prepareSQLQuery(sql, false);
+            } else {
+                this.onDBConnectionError.doOnError(e);
+                return null;
+            }
         }
     }
 
@@ -121,14 +131,23 @@ public abstract class MS_JDBCDatabase implements MS_IJDBCDatabase {
 
     @Override
     public ResultSet getQueryResult(MS_PreparedSQLQuery statement) {
+        return getQueryResult(statement, true);
+    }
+
+    private ResultSet getQueryResult(MS_PreparedSQLQuery statement, boolean retryAction) {
         try {
             ResultSet rs = statement.executeQuery();
             if (!conn.getAutoCommit())
                 conn.commit();
             return rs;
         } catch (SQLException e) {
-            onDBConnectionError.doOnError(e);
-            return null;
+            if (autoReconnect && retryAction) {
+                this.reconnect(); //try it one more time with new connection
+                return getQueryResult(statement, false);
+            } else {
+                this.onDBConnectionError.doOnError(e);
+                return null;
+            }
         } catch (NullPointerException e) { //most probably null pointer exception happens of wrong statement
             onDBEmptyStatementError.doOnError(e);
             return null;
@@ -137,6 +156,10 @@ public abstract class MS_JDBCDatabase implements MS_IJDBCDatabase {
 
     @Override
     public boolean commitStatement(MS_PreparedSQLQuery statement) {
+        return commitStatement(statement, true);
+    }
+
+    private boolean commitStatement(MS_PreparedSQLQuery statement, boolean retryAction) {
         try {
             if (statement.executeUpdate() > 0) {
                 if (!conn.getAutoCommit())
@@ -145,8 +168,13 @@ public abstract class MS_JDBCDatabase implements MS_IJDBCDatabase {
             } else
                 return false;
         } catch (SQLException e) {
-            this.onDBConnectionError.doOnError(e);
-            return false;
+            if (autoReconnect && retryAction) {
+                this.reconnect(); //try it one more time with new connection
+                return commitStatement(statement, false);
+            } else {
+                this.onDBConnectionError.doOnError(e);
+                return false;
+            }
         } catch (NullPointerException e) { //most probably null pointer exception happens of wrong statement
             onDBEmptyStatementError.doOnError(e);
             return false;
@@ -203,5 +231,20 @@ public abstract class MS_JDBCDatabase implements MS_IJDBCDatabase {
         IOUtils.copy(in, out);
         in.close();
         out.close();
+    }
+
+    /**
+     * Call this method with <b>true</b> if auto reconnecting is needed to perform to avoid connection loss due to client timeout.<br>
+     * Call this method with <b>false</b> if you want to disable such feature.
+     * @param autoReconnect parameter to perform automatic reconnecting to DB. By default it's <u>true</u>.
+     * @return reference to database object itself.
+     */
+    public MS_JDBCDatabase withAutoReconnect(Boolean autoReconnect) {
+        this.autoReconnect = autoReconnect;
+        return this;
+    }
+
+    public Boolean getDoAutoReconnect() {
+        return autoReconnect;
     }
 }

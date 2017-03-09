@@ -16,12 +16,10 @@ import java.sql.SQLException;
  * </ul>
  *
  * @author eMeS
- * @version 1.4.
+ * @version 1.5.
  */
 public class MS_MySQLDatabase extends MS_JDBCDatabase {
     public static final int DEFAULT_PORT = 3306;
-
-    private Boolean autoReconnect = false;
 
     @Override
     public void connect(String hostname, String dbName, int port, String userName, String password)
@@ -34,22 +32,8 @@ public class MS_MySQLDatabase extends MS_JDBCDatabase {
         super.connect(hostname, dbName, port, userName, password); //simply saving variable values
         Class.forName("com.mysql.jdbc.Driver");
         // Create connection
-        String connStr = String.format("jdbc:mysql://%s:%d%s?autoReconnect=%s", this.hostname, this.port, this.dbName, this.autoReconnect.toString());
+        String connStr = String.format("jdbc:mysql://%s:%d%s", this.hostname, this.port, this.dbName);
         conn = DriverManager.getConnection(connStr, this.userName, this.password);
         conn.setAutoCommit(false);
-    }
-
-    public Boolean getDoAutoReconnect() {
-        return autoReconnect;
-    }
-
-    /**
-     * Call this method with true if auto reconnecting is needed to perform to avoid connection loss due to client timeout.
-     * @param autoReconnect parameter to perform automatic reconnecting to DB. By default it's false.
-     * @return reference to database object itself.
-     */
-    public MS_MySQLDatabase withAutoReconnect(Boolean autoReconnect) {
-        this.autoReconnect = autoReconnect;
-        return this;
     }
 }

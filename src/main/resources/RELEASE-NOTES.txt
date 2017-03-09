@@ -1,5 +1,5 @@
 eMeS libraries
-Version 1.6.1
+Version 1.6.2
 Release Notes
 
 INTRODUCTION:
@@ -15,7 +15,8 @@ Changes in versions:
 ========================================================================================================
 eMeS libraries Version 1.7.0
 ========================================================================================================
-* Auto connect of MySQL Database is back.
+* Auto connection attempt for any JDBC Database in case of connection exception.
+* MS_TestUtils with ResultSet mocking method.
 ========================================================================================================
 eMeS libraries Version 1.6.0
 ========================================================================================================
