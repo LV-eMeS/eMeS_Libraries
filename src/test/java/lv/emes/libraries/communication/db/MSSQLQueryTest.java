@@ -107,4 +107,25 @@ public class MSSQLQueryTest {
         sql.insertInto().table(tableName).field(field1).field(field1).where("name = ?");
         assertEquals("INSERT INTO tabula VALUES(?, ?) WHERE name = ?;", sql.toString());
     }
+
+    @Test
+    public void test15OrderBy() {
+        sql.selectFrom().table(tableName).field(field2).field(field3).orderBy(field2 + " DESC");
+        assertEquals("SELECT kabacis, soda FROM tabula ORDER BY kabacis DESC;", sql.toString());
+    }
+
+    @Test
+    public void test15AnythingElse() {
+        sql.selectFrom().table(tableName).field(field2).field(field3).orderBy(field2).anythingElse("DESC");
+        assertEquals("SELECT kabacis, soda FROM tabula ORDER BY kabacis DESC;", sql.toString());
+    }
+
+    @Test
+    public void test15AscendingOrDescending() {
+        sql.selectFrom().table(tableName).field(field2).field(field3).orderBy(field2).descending();
+        assertEquals("SELECT kabacis, soda FROM tabula ORDER BY kabacis DESC;", sql.toString());
+
+        sql.resetContent().selectFrom().table(tableName).field(field2).field(field3).orderBy(field2).ascending();
+        assertEquals("SELECT kabacis, soda FROM tabula ORDER BY kabacis ASC;", sql.toString());
+    }
 }

@@ -6,10 +6,10 @@ import lv.emes.libraries.utilities.MS_LineBuilder;
 
 /**
  * SQL query to operate with data. Currently only SELECT, INSERT, REPLACE, UPDATE and DELETE statements are supported.
- * <p><u>Note</u>: Use only one of those 5 statement types at time!
+ * <p><u>Warning</u>: Use only one of those 5 statement types at time because thanks to <b>MS_AbstractCompositeText</b> toString method forms text just once.
  *
  * @author eMeS
- * @version 1.1.
+ * @version 1.2.
  */
 public class MS_SQLQuery extends MS_AbstractCompositeText {
     //Supported SQL statement examples:
@@ -39,6 +39,9 @@ public class MS_SQLQuery extends MS_AbstractCompositeText {
     private MS_List<String> fields = new MS_List<>();
     private String tableName = "";
     private String whereClause = "";
+    private String orderByClause = "";
+    private String anythingElseClause = "";
+    private String ascOrDesc = "";
     private int operation = 0; //Do nothing(0), SELECT(1), INSERT(2), REPLACE(3), UPDATE(4) or DELETE(5)
 
     @Override
@@ -83,6 +86,10 @@ public class MS_SQLQuery extends MS_AbstractCompositeText {
         }
         if (!whereClause.isEmpty())
             lb.append(whereClause);
+        if (!orderByClause.isEmpty())
+            lb.append(orderByClause).append(ascOrDesc);
+        if (!anythingElseClause.isEmpty())
+            lb.append(anythingElseClause);
         lb.append(";"); //every query ends with semicolon
         return lb;
     }
@@ -163,14 +170,60 @@ public class MS_SQLQuery extends MS_AbstractCompositeText {
     }
 
     /**
-     * Adds where clause to query.
+     * Adds 'where' clause to query.
      * <br><u>Note</u>: keyword 'WHERE ' altogether with whitespace is added before <b>conditions</b> automatically.
      *
-     * @param conditions all the conditions for query where clause.
+     * @param conditions all the conditions for query 'where' clause.
      * @return reference to this query itself.
      */
     public MS_SQLQuery where(String conditions) {
         whereClause = " WHERE " + conditions;
+        return this;
+    }
+
+    /**
+     * Adds 'order by' clause to query.
+     * <br><u>Note</u>: keywords 'ORDER BY ' altogether with whitespace is added before <b>conditions</b> automatically.
+     *
+     * @param conditions all the conditions for query 'order by' clause.
+     * @return reference to this query itself.
+     */
+    public MS_SQLQuery orderBy(String conditions) {
+        orderByClause = " ORDER BY " + conditions;
+        return this;
+    }
+
+    /**
+     * Reserved for other cases wher we need to write more complicated SQL statement.
+     * Simply inserts <b>additionalSQL</b> part after the whole statement.
+     *
+     * @param additionalSQL additional SQL statement part to be appended at the end of statement (right before ending semicolon)
+     * @return reference to this query itself.
+     */
+    public MS_SQLQuery anythingElse(String additionalSQL) {
+        anythingElseClause = " " + additionalSQL;
+        return this;
+    }
+
+    /**
+     * When using 'order by' additionally ordering can be performed ascending or descending.
+     * This makes ordering in ascending order.
+     *
+     * @return reference to this query itself.
+     */
+    public MS_SQLQuery ascending() {
+        ascOrDesc = " ASC";
+        return this;
+    }
+
+    /**
+     * When using 'order by' additionally ordering can be performed ascending or descending.
+     * This makes ordering in descending order.
+     *
+     * @return reference to this query itself.
+     */
+    public MS_SQLQuery descending() {
+        ascOrDesc = " DESC";
         return this;
     }
 
@@ -205,6 +258,19 @@ public class MS_SQLQuery extends MS_AbstractCompositeText {
      */
     public MS_SQLQuery all() {
         this.fields.add(ALL);
+        return this;
+    }
+
+    @Override
+    public MS_SQLQuery resetContent() {
+        super.resetContent();
+        fields.clear();
+        tableName = "";
+        whereClause = "";
+        orderByClause = "";
+        anythingElseClause = "";
+        ascOrDesc = "";
+        operation = 0;
         return this;
     }
 }
