@@ -30,6 +30,7 @@ dependencies {
 
     //For tests:
     compile "junit:junit:4.12"
+    compile group: 'org.mockito', name: 'mockito-all', version: '1.9.5'
     testCompile "junit:junit:4.12"
 }
 

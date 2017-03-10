@@ -13,7 +13,7 @@ import static org.junit.Assert.assertTrue;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MSMySQLDatabaseTest {
-    public static MS_JDBCDatabase db = new MS_MySQLDatabase();
+    private static MS_JDBCDatabase db = new MS_MySQLDatabase();
 
     @BeforeClass
     //Before even start testing do some preparations!
@@ -23,12 +23,8 @@ public class MSMySQLDatabaseTest {
         db.userName = "test_user";
         db.password = "test_user";
         db.port = 3306;
-        db.onDBConnectionError = (e) -> {
-            e.printStackTrace();
-        };
-        db.onDBStatementError = (e) -> {
-            e.printStackTrace();
-        };
+        db.onDBConnectionError = Exception::printStackTrace;
+        db.onDBStatementError = Exception::printStackTrace;
         db.connect();
     }
 

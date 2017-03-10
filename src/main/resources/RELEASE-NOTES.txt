@@ -1,5 +1,5 @@
 eMeS libraries
-Version 1.6.0
+Version 1.6.3
 Release Notes
 
 INTRODUCTION:
@@ -12,6 +12,11 @@ PREREQUISITE:
 * Libraries from External sources.
 
 Changes in versions:
+========================================================================================================
+eMeS libraries Version 1.7.0
+========================================================================================================
+* MS_TestUtils with ResultSet mocking method.
+* Property isConnectionInitialized for MS_JDBCDatabase.
 ========================================================================================================
 eMeS libraries Version 1.6.0
 ========================================================================================================

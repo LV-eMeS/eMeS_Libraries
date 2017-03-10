@@ -21,34 +21,29 @@ import java.sql.SQLException;
  * </ul>
  *
  * @author eMeS
- * @version 1.6.
+ * @version 1.8.
  */
 public abstract class MS_JDBCDatabase implements MS_IJDBCDatabase {
     public String hostname, dbName, userName, password;
     public int port;
+    public Boolean connectionInited = false;
     /**
      * Set this to handle this kind of error when trying to do some DB operation with DB which connection is lost or other error connection happens!
      * <p><code>(exception) -&gt; {error handling methods};</code>
      */
-    public IFuncOnSQLException onDBConnectionError = (exception) -> {
-        exception.printStackTrace();
-    };
+    public IFuncOnSQLException onDBConnectionError = Throwable::printStackTrace;
     /**
      * Set this to handle this kind of error when trying to execute statement incorrectly or DB access error happens!
      * <p><code>(exception) -&gt; {error handling methods};</code>
      */
-    public IFuncOnSQLException onDBStatementError = (exception) -> {
-        exception.printStackTrace();
-    };
+    public IFuncOnSQLException onDBStatementError = Throwable::printStackTrace;
     /**
      * Set this to handle this kind of error when trying to execute statement incorrectly and after that
      * trying to access it when trying to get query result or committing statement!
      * <br><u>Hint</u>: this kind of exception should be controlled only if outcome of SQL query result is user-dependent.
      * <p><code>(exception) -&gt; {error handling methods};</code>
      */
-    public IFuncOnNullPointerException onDBEmptyStatementError = (exception) -> {
-        exception.printStackTrace();
-    };
+    public IFuncOnNullPointerException onDBEmptyStatementError = Throwable::printStackTrace;
 
     protected Connection conn;
 
@@ -67,6 +62,7 @@ public abstract class MS_JDBCDatabase implements MS_IJDBCDatabase {
         this.port = port;
         this.userName = userName;
         this.password = password;
+        connectionInited = true;
     }
 
     @Override
@@ -203,5 +199,13 @@ public abstract class MS_JDBCDatabase implements MS_IJDBCDatabase {
         IOUtils.copy(in, out);
         in.close();
         out.close();
+    }
+
+    /**
+     * Indicates that connection variables are already set and <b>connect()</b> is called at least once.
+     * @return true if connection is initialized, false if not.
+     */
+    public Boolean isConnectionInitialized() {
+        return connectionInited;
     }
 }
