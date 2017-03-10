@@ -6,7 +6,7 @@ import java.sql.*;
  * Describes main functions of JDBC database.
  *
  * @author eMeS
- * @version 1.4.
+ * @version 1.5.
  */
 public interface MS_IJDBCDatabase {
     /**
@@ -14,6 +14,7 @@ public interface MS_IJDBCDatabase {
      *
      * @throws ClassNotFoundException if JDBC driver not found.
      * @throws SQLException if connection fails due to wrong connection parameters or unreachable server.
+     * @throws NullPointerException if some of connection variables is null.
      */
     void connect() throws ClassNotFoundException, SQLException;
 
@@ -51,11 +52,11 @@ public interface MS_IJDBCDatabase {
     void disconnect() throws SQLException;
 
     /**
-     * Checks, if the connection to DB is established.
+     * Checks, whether the connection to DB is established.
      *
-     * @return true if connected.
+     * @return true if connected, otherwise - false.
      */
-    boolean getIsConnected();
+    boolean isConnected();
 
     /**
      * Prepares statement for given SQL query. Exception handling is done silently (you don't need to handle those exceptions every time,

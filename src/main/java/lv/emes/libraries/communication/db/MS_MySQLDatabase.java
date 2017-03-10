@@ -4,36 +4,33 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 /**
- * Implements MySQL database common operation handling. Reduced to 4 simple methods + BLOB handling:
- * <p>Method summary:
- * <ul>
- * <li>connect</li>
- * <li>prepareSQLQuery</li>
- * <li>getQueryResult</li>
- * <li>commitStatement</li>
- * <li>setBLOB</li>
- * <li>getBLOB</li>
- * </ul>
+ * Implements MySQL database common operation handling.
  *
  * @author eMeS
- * @version 1.5.
+ * @version 2.0.
  */
 public class MS_MySQLDatabase extends MS_JDBCDatabase {
     public static final int DEFAULT_PORT = 3306;
 
     @Override
-    public void connect(String hostname, String dbName, int port, String userName, String password)
-            throws ClassNotFoundException, SQLException {
-        if (port == 0)
-            port = DEFAULT_PORT;
-        if (! dbName.equals("")) //if path to host is defined then it will be written right after hostname
-            dbName = "/" + dbName;
+    public void connect() throws ClassNotFoundException, SQLException {
+        if (this.isConnectionInitializationNeeded()) {
+            if (port == 0) port = DEFAULT_PORT;
 
-        super.connect(hostname, dbName, port, userName, password); //simply saving variable values
-        Class.forName("com.mysql.jdbc.Driver");
-        // Create connection
-        String connStr = String.format("jdbc:mysql://%s:%d%s", this.hostname, this.port, this.dbName);
-        conn = DriverManager.getConnection(connStr, this.userName, this.password);
-        conn.setAutoCommit(false);
+            String connStringDatabaseName;
+            if (dbName.equals("")) {
+                connStringDatabaseName = "";
+            } else {
+                //if path to host is defined then it will be written right after hostname
+                connStringDatabaseName = "/" + dbName;
+            }
+
+            Class.forName("com.mysql.jdbc.Driver");
+            // Create connection
+            connectionString = String.format("jdbc:mysql://%s:%d%s", this.hostname, this.port, connStringDatabaseName);
+            conn = DriverManager.getConnection(this.connectionString, this.userName, this.password);
+            conn.setAutoCommit(false);
+        }
+            conn = DriverManager.getConnection(this.connectionString, this.userName, this.password);
     }
 }

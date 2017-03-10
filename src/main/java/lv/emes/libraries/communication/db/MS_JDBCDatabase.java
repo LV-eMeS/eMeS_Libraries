@@ -19,14 +19,27 @@ import java.sql.SQLException;
  * <li>setBLOB</li>
  * <li>getBLOB</li>
  * </ul>
+ * <p>Setters and getters:
+ * <ul>
+ * <li>withHostname</li>
+ * <li>withDbName</li>
+ * <li>withUserName</li>
+ * <li>withPassword</li>
+ * <li>withPort</li>
+ *
+ * <li>getHostname</li>
+ * <li>getDbName</li>
+ * <li>getUserName</li>
+ * <li>getPassword</li>
+ * <li>getPort</li>
+ * </ul>
  *
  * @author eMeS
- * @version 1.8.
+ * @version 1.9.
  */
 public abstract class MS_JDBCDatabase implements MS_IJDBCDatabase {
-    public String hostname, dbName, userName, password;
-    public int port;
-    public Boolean connectionInited = false;
+    protected String hostname, dbName, userName, password, connectionString;
+    protected int port;
     /**
      * Set this to handle this kind of error when trying to do some DB operation with DB which connection is lost or other error connection happens!
      * <p><code>(exception) -&gt; {error handling methods};</code>
@@ -48,11 +61,6 @@ public abstract class MS_JDBCDatabase implements MS_IJDBCDatabase {
     protected Connection conn;
 
     @Override
-    public void connect() throws ClassNotFoundException, SQLException {
-        connect(hostname, dbName, port, userName, password);
-    }
-
-    @Override
     public void connect(String hostname, String dbName, int port, String userName, String password) throws ClassNotFoundException, SQLException {
         if (dbName == null)
             dbName = "";
@@ -62,7 +70,7 @@ public abstract class MS_JDBCDatabase implements MS_IJDBCDatabase {
         this.port = port;
         this.userName = userName;
         this.password = password;
-        connectionInited = true;
+        this.connect();
     }
 
     @Override
@@ -75,7 +83,7 @@ public abstract class MS_JDBCDatabase implements MS_IJDBCDatabase {
     }
 
     @Override
-    public boolean getIsConnected() {
+    public boolean isConnected() {
         try {
             return !conn.isClosed();
         } catch (Exception e) {
@@ -202,10 +210,61 @@ public abstract class MS_JDBCDatabase implements MS_IJDBCDatabase {
     }
 
     /**
-     * Indicates that connection variables are already set and <b>connect()</b> is called at least once.
-     * @return true if connection is initialized, false if not.
+     * Indicates that connection variables are not set yet, which means that <b>connect()</b> is not called at all for this database.
+     * This check is done by cheking if connection string has been set.
+     * @return true if connection is <b>not</b> initialized, false if it is.
      */
-    public Boolean isConnectionInitialized() {
-        return connectionInited;
+    public Boolean isConnectionInitializationNeeded() {
+        return connectionString == null;
+    }
+
+    public String getHostname() {
+        return hostname;
+    }
+
+    public String getDbName() {
+        return dbName;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public MS_JDBCDatabase withHostname(String hostname) {
+        this.hostname = hostname;
+        connectionString = null;
+        return this;
+    }
+
+    public MS_JDBCDatabase withDbName(String dbName) {
+        this.dbName = dbName;
+        connectionString = null;
+        return this;
+    }
+
+    public MS_JDBCDatabase withUserName(String userName) {
+        this.userName = userName;
+        connectionString = null;
+        return this;
+    }
+
+    public MS_JDBCDatabase withPassword(String password) {
+        this.password = password;
+        connectionString = null;
+        return this;
+    }
+
+    public MS_JDBCDatabase withPort(int port) {
+        this.port = port;
+        connectionString = null;
+        return this;
     }
 }
