@@ -16,7 +16,7 @@ import java.sql.SQLException;
  * </ul>
  *
  * @author eMeS
- * @version 1.4.
+ * @version 1.5.
  */
 public class MS_MySQLDatabase extends MS_JDBCDatabase {
     public static final int DEFAULT_PORT = 3306;
