@@ -17,16 +17,12 @@ import java.sql.SQLException;
  * <ul><li>newTable()</li></ul>
  *
  * @author eMeS
- * @version 1.4.
+ * @version 1.5.
  * @see MS_List
  */
 public abstract class MS_TableRecord {
-    //PUBLIC STRUCTURES, EXCEPTIONS, PROPERTIES AND CONSTANTS
-    //PRIVATE VARIABLES
     private boolean rsHadNextRecord = false;
 
-    //PUBLIC VARIABLES
-    //CONSTRUCTORS
     /**
      * This constructor always should be overridden by descendants by calling <code>super()</code> in order to use <b>newTable</b>.
      *
@@ -42,10 +38,6 @@ public abstract class MS_TableRecord {
         }
     }
 
-    //STATIC CONSTRUCTORS
-    //PRIVATE METHODS
-    //PROTECTED METHODS
-
     /**
      * Use this method to initialize variables that will hold column data. Example:
      * <p>id = rs.getInt(1); //assigns first column's value to variable <b>id</b>.<br>
@@ -59,8 +51,6 @@ public abstract class MS_TableRecord {
      */
     protected abstract void initColumns(ResultSet rs) throws SQLException;
 
-    //PUBLIC METHODS
-
     /**
      * Test if RecordSet had a next record in order to create this object.
      *
@@ -70,23 +60,21 @@ public abstract class MS_TableRecord {
         return rsHadNextRecord;
     }
 
-    //STATIC METHODS
-
     /**
      * Retrieves all the rows from result set and stores them in list of rows to make table.
      * <p><u>Note</u>: this method is using constructor <b>MS_TableRecord(ResultSet)</b>, so
      * be sure to implement it in order to successfully use this method!
      * @param rs                   result set of table rows retrieved from database.
      * @param specificRecordTypeClass a class of object that is descendant of <b>MS_TableRecord</b> class.
-     * @param <T>                  a type of class that is descendant of <b>MS_TableRecord</b> class to define type of method's return.
-     * @return a <b>MS_List</b> filled with new instances of <b>T</b>.
+     * @param <TRecordType>                  a type of class that is descendant of <b>MS_TableRecord</b> class to define type of method's return.
+     * @return a <b>MS_List</b> filled with new instances of <b>TRecordType</b>.
      * <p>Empty list is returned when some error occurs while trying to create objects from <b>rs</b>
      * or simply if <b>rs</b> is empty.
      * @see MS_List
      */
-    public static <T extends MS_TableRecord> MS_List<T> newTable(ResultSet rs, Class<T> specificRecordTypeClass) {
-        MS_List<T> table = new MS_List<>();
-        T row = null;
+    public static <TRecordType extends MS_TableRecord> MS_List<TRecordType> newTable(ResultSet rs, Class<TRecordType> specificRecordTypeClass) {
+        MS_List<TRecordType> table = new MS_List<>();
+        TRecordType row = null;
         boolean rsHasRows = true;
         while (rsHasRows) {
             try {

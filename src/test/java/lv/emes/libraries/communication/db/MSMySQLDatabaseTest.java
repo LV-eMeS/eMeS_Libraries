@@ -7,6 +7,7 @@ import org.junit.runners.MethodSorters;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -156,7 +157,26 @@ public class MSMySQLDatabaseTest {
     }
 
     @Test
-    public void test07GetCount() throws SQLException {
+    public void test07TableUniqueRecordTest() throws SQLException {
+        MS_PreparedSQLQuery st;
+        String query = "select * from tests";
+        ResultSet rs;
+
+        st = db.prepareSQLQuery(query);
+        rs = db.getQueryResult(st);
+
+        Map<Integer, Table_tests_Row> testsTable = Table_tests_Row.newTableWithUniqueKey(rs, Table_tests_Row.class);
+        assertEquals(3, testsTable.size());
+        assertEquals("test1", testsTable.get(1).name);
+        assertEquals("test2", testsTable.get(2).name);
+        assertEquals("test3", testsTable.get(3).name);
+        assertEquals(33, testsTable.get(1).count);
+        assertEquals(2, testsTable.get(2).id);
+        assertEquals(11, testsTable.get(3).count);
+    }
+
+    @Test
+    public void test08GetCount() throws SQLException {
         MS_PreparedSQLQuery st;
         String query = "select count(*) from tests";
         ResultSet rs;
@@ -167,7 +187,7 @@ public class MSMySQLDatabaseTest {
         assertEquals(3, new MS_TableRecordCount(rs).getCount());
     }
 
-    private static class Table_tests_Row extends MS_TableRecord {
+    private static class Table_tests_Row extends MS_TableUniqueRecord {
         int id;
         String name;
         int count;
@@ -175,6 +195,12 @@ public class MSMySQLDatabaseTest {
         public Table_tests_Row(ResultSet rs) {
             super(rs);
         }
+
+        @Override
+        protected Integer getUniqueFieldValue() {
+            return id;
+        }
+
         @Override
         protected void initColumns(ResultSet rs) throws SQLException {
             id = rs.getInt("id");
