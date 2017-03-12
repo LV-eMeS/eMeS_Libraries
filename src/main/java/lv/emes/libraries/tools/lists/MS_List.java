@@ -10,7 +10,7 @@ import static lv.emes.libraries.tools.MS_CodingTools.inRange;
  * @see IPerambulateListActions
  */
 public class MS_List<T> extends ArrayList<T> implements IPerambulateListActions<T> {
-	boolean flagForLoopBreaking;
+	private boolean flagForLoopBreaking;
 	/**
 	 * Makes it possible to set index for the current element.
 	 */
@@ -27,8 +27,8 @@ public class MS_List<T> extends ArrayList<T> implements IPerambulateListActions<
 	 * @param aArray array with T type of objects that will fill the list.
 	 * @return list of objects.
 	 */
-	public static MS_List<Object> newInstance(Object[] aArray) {
-		MS_List<Object> res = new MS_List<>();
+	public static <T> MS_List<T> newInstance(T[] aArray) {
+		MS_List<T> res = new MS_List<>();
 		Collections.addAll(res, aArray);
 		return res;
 	}

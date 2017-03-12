@@ -99,7 +99,7 @@ public abstract class MS_JDBCDatabase implements MS_IJDBCDatabase {
      * ResultSet getQueryResult(stmt);<br>
      * </code>
      * OR<br>
-     * <code>commitQuery(stmt); //if making changes in DB</code>
+     * <code>commitStatement(stmt); //if making changes in DB</code>
      *
      * @see lv.emes.libraries.communication.db.MS_JDBCDatabase#prepareSQLQueryWithThrows
      * @see lv.emes.libraries.communication.db.MS_IJDBCDatabase#prepareSQLQuery(String)
@@ -174,7 +174,7 @@ public abstract class MS_JDBCDatabase implements MS_IJDBCDatabase {
     public static void setBLOB(MS_PreparedSQLQuery statement,
                                int paramNumber, String filename) throws FileNotFoundException, SQLException {
         FileInputStream inputStream = new FileInputStream(new File(filename));
-        statement.setBinaryStream(paramNumber, (InputStream) inputStream);
+        statement.setBinaryStream(paramNumber, inputStream);
     }
 
     /**

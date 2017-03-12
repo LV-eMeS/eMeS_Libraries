@@ -1,10 +1,12 @@
 package lv.emes.libraries.tools.lists;
 
+import lv.emes.libraries.tools.MS_CodingTools;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -120,5 +122,33 @@ public class MSListTest {
         l.concatenate(l2);
         assertEquals(5, l.count());
         assertEquals(5, l.get(4).intValue());
+    }
+
+    @Test
+    public void test07NewInstance() {
+        String[] stringArr = new String[2];
+        stringArr[0] = "te"; stringArr[1] = "test";
+        MS_List<String> strings = MS_List.newInstance(stringArr);
+        assertEquals(2, strings.count());
+        assertEquals("te", strings.get(0));
+        assertEquals("test", strings.get(1));
+
+        Boolean[] boolArr = new Boolean[2];
+        boolArr[0] = true; boolArr[1] = false;
+        MS_List<Boolean> booleans = MS_List.newInstance(boolArr);
+        assertEquals(2, booleans.count());
+        assertTrue(booleans.get(0));
+        assertFalse(booleans.get(1));
+
+        MS_List<Object> numbers = MS_List.newInstance(MS_CodingTools.getArray(1, 3L, 5.0f, 2.17355767892d));
+        assertEquals(4, numbers.count());
+        assertEquals(Integer.class, numbers.get(0).getClass());
+        assertEquals(Long.class, numbers.get(1).getClass());
+        assertEquals(Float.class, numbers.get(2).getClass());
+        assertEquals(Double.class, numbers.get(3).getClass());
+        assertEquals(1, numbers.get(0));
+        assertEquals(3L, numbers.get(1));
+        assertEquals(5f, numbers.get(2));
+        assertEquals(2.17355767892d, numbers.get(3));
     }
 }
