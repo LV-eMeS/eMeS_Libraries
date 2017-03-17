@@ -1,10 +1,11 @@
-Everything is done while on local branches.
+* Everything is done while on local branches;
+* In coding process every time do Fetch + Rebase onto Develop + merge conflicts;
+* When doing rebase 'pick' or 'reword' first commit and 'fixup' other commits (Click -> End).
+
 0) Be sure that develop has latest changes, so from develop do PULL!
 1) 
 From LOCAL_BRANCH
-Rebase Onto Develop.
-
-...
+Rebase Onto Develop...
 
 2) 
 Do merging.
@@ -46,3 +47,4 @@ Enter new commit text for first commit
 
 Comment all unnecessary commit messages with "#"
 [Resume Rebasing]
+------------------------------------------------------------------------

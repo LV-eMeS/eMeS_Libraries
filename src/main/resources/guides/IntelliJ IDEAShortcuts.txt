@@ -24,5 +24,6 @@ Generate Getters/Setters and much more: Alt + Insert
 Implementations of an abstract method: Ctrl + Alt + B
 Generate main method: psvm
 Find usages: Alt + F7
+Create method from code fragment: Ctrl + Alt + M
 https://www.jetbrains.com/help/idea/2016.2/keyboard-shortcuts-you-cannot-miss.html
 //------------------------------------------------------------------------------------------------------------------------

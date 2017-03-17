@@ -20,7 +20,7 @@ import java.util.Map;
  * <ul><li>newTable()</li></ul>
  *
  * @author eMeS
- * @version 1.0.
+ * @version 1.1.
  * @see MS_List
  */
 public abstract class MS_TableUniqueRecord extends MS_TableRecord {
@@ -32,6 +32,8 @@ public abstract class MS_TableUniqueRecord extends MS_TableRecord {
     public MS_TableUniqueRecord(ResultSet rs) {
         super(rs);
     }
+
+    protected MS_TableUniqueRecord() {}
 
     /**
      * Implement this in order for method <b>newTableWithUniqueKey()</b> to work! This must return unique field value.

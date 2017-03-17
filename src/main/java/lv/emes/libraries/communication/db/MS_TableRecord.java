@@ -17,11 +17,16 @@ import java.sql.SQLException;
  * <ul><li>newTable()</li></ul>
  *
  * @author eMeS
- * @version 1.5.
+ * @version 1.6.
  * @see MS_List
  */
 public abstract class MS_TableRecord {
-    private boolean rsHadNextRecord = false;
+    private boolean rsHadNextRecord;
+
+    /**
+     * Constructor only to enable wider functionality for successors.
+     */
+    protected MS_TableRecord() {}
 
     /**
      * This constructor always should be overridden by descendants by calling <code>super()</code> in order to use <b>newTable</b>.
@@ -29,12 +34,21 @@ public abstract class MS_TableRecord {
      * @param rs result set of table rows retrieved from database.
      */
     public MS_TableRecord(ResultSet rs) {
+        initColumnsFromNextResult(rs);
+    }
+
+    /**
+     * Fills all class variables from ResultSet using <b>initColumns</b>.
+     * @param rs filled ResultSet.
+     */
+    public final void initColumnsFromNextResult(ResultSet rs) {
         try {
             if (rs.next()) {
                 rsHadNextRecord = true;
                 initColumns(rs);
             }
         } catch (Exception e) {
+            rsHadNextRecord = false;
         }
     }
 
@@ -57,6 +71,15 @@ public abstract class MS_TableRecord {
      * @return true if RecordSet has next record.
      */
     public boolean getIsFilled() {
+        return rsHadNextRecord;
+    }
+
+    /**
+     * Test if RecordSet had a next record in order to create this object.
+     *
+     * @return true if RecordSet has next record.
+     */
+    public boolean isFilled() {
         return rsHadNextRecord;
     }
 
