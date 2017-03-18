@@ -1,5 +1,5 @@
 eMeS libraries
-Version 1.6.7
+Version 1.6.8
 Release Notes
 
 INTRODUCTION:
@@ -17,7 +17,7 @@ eMeS libraries Version 1.7.0
 ========================================================================================================
 * MS_TestUtils with ResultSet mocking method.
 * Property isConnectionInitialized for MS_JDBCDatabase.
-* Entity support for JDBC.
+* Time tools reorganised and now only supports only conversions to string for Date and LocalDateTime objects.
 ========================================================================================================
 eMeS libraries Version 1.6.0
 ========================================================================================================

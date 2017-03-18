@@ -36,6 +36,10 @@ import static lv.emes.libraries.tools.MS_CodingTools.inRange;
  * @version 1.8.
  */
 public final class MS_StringTools {
+
+    private MS_StringTools() {
+    }
+
     //konstantes
     public static final int C_DIACTRITIC_CHAR_COUNT = 13 * 2;
     public static final int C_PUNCTUATION_COUNT = 8;

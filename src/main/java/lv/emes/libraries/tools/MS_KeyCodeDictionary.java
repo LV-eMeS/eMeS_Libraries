@@ -15,7 +15,9 @@ import static java.awt.event.KeyEvent.*;
  * @version 1.0.
  */
 public class MS_KeyCodeDictionary {
-    //PRIVATE VARIABLES
+    private MS_KeyCodeDictionary() {
+    }
+//PRIVATE VARIABLES
     /**
      * Contains mapping for different characters and their corresponding key codes.
      */

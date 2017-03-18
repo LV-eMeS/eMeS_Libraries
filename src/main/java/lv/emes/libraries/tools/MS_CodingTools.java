@@ -16,7 +16,10 @@ public final class MS_CodingTools {
 	public static final String getSystemUserCurrentWorkingDir = System.getProperty("user.dir") + "/";
 	public static final String getSystemUserHomeDir = System.getProperty("user.home") + "/";
 	public static final String getSystemOS = System.getProperty("os.name");
-	
+
+	private MS_CodingTools() {
+	}
+
 	public static int randomNumber(int aFrom, int aTill){
 		int swapper;
 		if (aTill<aFrom){
@@ -27,8 +30,7 @@ public final class MS_CodingTools {
 		Random random = new Random();
 		return random.nextInt(aTill - aFrom + 1) + aFrom;
 	}
-	
-	//import static lv.emes.tools.MS_CodingTools.*;
+
 	/** Checks if number <b>aNumber</b> is in interval [<b>aRangeMin</b>, <b>aRangeMax</b>].
 	 * @param aNumber = 5
 	 * @param aRangeMin = 1
@@ -94,6 +96,7 @@ public final class MS_CodingTools {
 
 	public static Double round(double value, int places) {
 		if (places < 0) throw new IllegalArgumentException();
+
 
 		BigDecimal bd = new BigDecimal(value);
 		bd = bd.setScale(places, RoundingMode.HALF_UP);

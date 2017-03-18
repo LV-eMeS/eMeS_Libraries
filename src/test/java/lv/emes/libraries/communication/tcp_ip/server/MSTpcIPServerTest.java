@@ -213,7 +213,7 @@ public class MSTpcIPServerTest {
         client1.connect(MS_ClientServerConstants.DEFAULT_HOST, PORT);
         assertTrue(client1.isConnected());
         assertFalse(client2.isConnected());
-        assertEquals(1, getServerConnectionCount());
+        assertEquals("There must be 1 active connection!", 1, getServerConnectionCount());
 
         //make server listen the command that indicates that client is sending bytes to him
         MS_ClientCommand cmdReceiveBytesFromServer = new MS_ClientCommand();

@@ -13,6 +13,9 @@ import org.apache.log4j.Logger;
  * @see lv.emes.libraries.examples.LoggerExample
  */
 public class MS_Logger {
+	private MS_Logger() {
+	}
+
 	//PRIVATE VARIABLES
 	private static Logger log = null;
 	
