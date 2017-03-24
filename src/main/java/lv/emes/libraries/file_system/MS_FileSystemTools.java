@@ -53,7 +53,7 @@ import java.util.List;
  *     <li>replaceBackslash</li>
  *     <li>extractResourceToTmpFolder</li>
  * </ul>
- * @version 1.6.
+ * @version 1.7.
  */
 public class MS_FileSystemTools {
     public static final String CURRENT_DIRECTORY = "./";
@@ -309,7 +309,8 @@ public class MS_FileSystemTools {
      */
     public static String getDirectoryOfFile(String aFilename) {
         aFilename = replaceBackslash(aFilename);
-        return aFilename.endsWith(SLASH) ? aFilename : directoryUp(aFilename);
+        String res = aFilename.endsWith(SLASH) ? aFilename : directoryUp(aFilename);
+        return res.equals("") ? CURRENT_DIRECTORY : res;
     }
 
     /**
@@ -337,15 +338,8 @@ public class MS_FileSystemTools {
      * @return true if delete successful, false if file couldn't be found or deleted.
      */
     public static boolean deleteFile(String filename) {
-//        try {
-//            Path path = FileSystems.getDefault().getPath(filename);
-//            Files.delete(path);
         File fileToDelete = new File(filename);
         return fileToDelete.delete();
-//            return true;
-//        } catch (Exception e) {
-//            return false;
-//        }
     }
 
     /**
@@ -361,6 +355,18 @@ public class MS_FileSystemTools {
         } catch (IOException e) {
             return false;
         }
+    }
+
+    /**
+     * Moves a file to another location or simply renames it.
+     * @param filename path and name of file that needs to be moved.
+     * @param destFilename new path and new filename of file.
+     * @return true if moved successfully.
+     */
+    public static boolean moveFile(String filename, String destFilename) {
+        File fileToMove = new File(filename);
+        File fileToMoveTo = new File(destFilename);
+        return fileToMove.renameTo(fileToMoveTo);
     }
 
     /**

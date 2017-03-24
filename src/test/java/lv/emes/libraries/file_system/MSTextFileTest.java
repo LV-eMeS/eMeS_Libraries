@@ -138,6 +138,8 @@ public class MSTextFileTest {
         MS_TextFile mixed = new MS_TextFile(FIRST_FILE);
         mixed.write(TEXT1, false);
         mixed.writeln(TEXT2, true);
+        //additional test for static method
+        assertTrue(MS_TextFile.isTextFile(FIRST_FILE));
         mixed.append(TEXT3);
         mixed.appendln(TEXT4, true);
         assertEquals(TEXT1 + TEXT2, mixed.readln());

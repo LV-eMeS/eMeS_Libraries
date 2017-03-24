@@ -7,3 +7,4 @@ Contacts: maris.salenieks@gmail.com
 
 Prerequisites:
 * Java 8.
+* Gradle.
