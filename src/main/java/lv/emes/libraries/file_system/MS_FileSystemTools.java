@@ -361,13 +361,14 @@ public class MS_FileSystemTools {
 
     /**
      * Moves a file to another location or simply renames it.
+     * It overwrites file existing in destination.
      * If destination directory doesn't exist, creates it.
      * @param filename path and name of file that needs to be moved.
      * @param destFilename new path and new filename of file.
      * @return true if moved successfully, false, if error in moving process or destination file exists.
      */
     public static boolean moveFile(String filename, String destFilename) {
-        return moveFile(filename, destFilename, false);
+        return moveFile(filename, destFilename, true);
     }
 
     /**
@@ -376,6 +377,7 @@ public class MS_FileSystemTools {
      * @param filename path and name of file that needs to be moved.
      * @param destFilename new path and new filename of file.
      * @param overwriteDest if true then attempts to overwrite existing file in destination path.
+     *                      If false then obviously it will rename file only if destination file doesn't exist.
      * @return true if moved successfully.
      */
     public static boolean moveFile(String filename, String destFilename, boolean overwriteDest) {
