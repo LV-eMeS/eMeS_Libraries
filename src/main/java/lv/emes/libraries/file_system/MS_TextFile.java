@@ -435,7 +435,7 @@ public class MS_TextFile {
      * Note: this method should not be used for file-locking, as the resulting protocol cannot be made to work reliably. The FileLock facility should be used instead.
      *
      * @param aFileName - path + short filename, in other words: full path to file.
-     * @return true if the named file does not exist and was successfully created; false if the named file already exists
+     * @return true if the named file did not exist and was successfully created; false if the named file already exists
      */
     public static boolean createEmptyFile(String aFileName) {
         return MS_FileSystemTools.createEmptyFile(aFileName);

@@ -171,6 +171,7 @@ public class MS_FileSystemTools {
 
     /**
      * @return path to system default temporary folder.
+     * <br><u>Note</u>: path ends with "/".
      */
     public static String getTmpDirectory() {
         String res = System.getProperty("java.io.tmpdir");
@@ -252,7 +253,8 @@ public class MS_FileSystemTools {
      * Creates a new directory with given path. Also creates subdirectories if necessary.
      *
      * @param aPathToDir full path to a directory we are about to create.
-     * @return true if the directory does not exist and was successfully created; false if the named directory already exists.
+     * @return true if the directory does not exist and was successfully created;
+     * false if the named directory already exists.
      */
     public static boolean createNewDirectory(String aPathToDir) {
         File file = new File(aPathToDir);
@@ -359,13 +361,31 @@ public class MS_FileSystemTools {
 
     /**
      * Moves a file to another location or simply renames it.
+     * If destination directory doesn't exist, creates it.
      * @param filename path and name of file that needs to be moved.
      * @param destFilename new path and new filename of file.
-     * @return true if moved successfully.
+     * @return true if moved successfully, false, if error in moving process or destination file exists.
      */
     public static boolean moveFile(String filename, String destFilename) {
+        return moveFile(filename, destFilename, false);
+    }
+
+    /**
+     * Moves a file to another location or simply renames it.
+     * If destination directory doesn't exist, creates it.
+     * @param filename path and name of file that needs to be moved.
+     * @param destFilename new path and new filename of file.
+     * @param overwriteDest if true then attempts to overwrite existing file in destination path.
+     * @return true if moved successfully.
+     */
+    public static boolean moveFile(String filename, String destFilename, boolean overwriteDest) {
+        if (overwriteDest)
+            deleteFile(destFilename);
         File fileToMove = new File(filename);
         File fileToMoveTo = new File(destFilename);
+        //check, if dest dir exists, if not, create it
+        if (!directoryExists(destFilename))
+            createNewDirectory(getDirectoryOfFile(destFilename));
         return fileToMove.renameTo(fileToMoveTo);
     }
 

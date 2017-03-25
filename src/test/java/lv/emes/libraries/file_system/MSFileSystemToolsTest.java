@@ -18,10 +18,13 @@ import static org.junit.Assert.*;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MSFileSystemToolsTest {
     private static String tmpFileName = "eMeS_Testing_File_System_Tools.txt";
+    private static String tmpFileName2 = "eMeS_Testing_File_System_Tools2.txt";
     private static String tmpFilePath = getTmpDirectory() + tmpFileName;
+    private static String tmpFilePath2 = getTmpDirectory() + tmpFileName2;
     private static String tmpDirName = "eMeS_Testing_File_System_Tools/";
     private static String tmpDirPath = getTmpDirectory() + tmpDirName;
     private static String childDirectory = "child directory";
+    private static String childDirectoryUnique = "new_child_directory_6397/";
     private static Boolean tmpFileStillExists = false;
     private static String SAMPLE_TEXT_FILE_4_TESTING = "sampleTextFile4Testing.txt";
 
@@ -29,6 +32,7 @@ public class MSFileSystemToolsTest {
     //Before even start testing do some preparations!
     public static void initTestPreConditions() {
         deleteFile(tmpFilePath);
+        deleteFile(tmpFilePath2);
         deleteDirectory(tmpDirPath);
     }
 
@@ -36,6 +40,7 @@ public class MSFileSystemToolsTest {
     //After all tests perform actions that cleans everything up!
     public static void finalizeTestConditions() {
         deleteFile(tmpFilePath);
+        deleteFile(tmpFilePath2);
         deleteDirectory(tmpDirPath);
     }
 
@@ -49,7 +54,8 @@ public class MSFileSystemToolsTest {
     @Test
     public void test02FileExists() {
         //after next line file should exist with 100% guaranty
-        assertTrue("File couldn't be created, that's why is not possible to test if file exists", MS_TextFile.createEmptyFile(tmpFilePath));
+        assertTrue("File couldn't be created, that's why is not possible to test if file exists",
+                MS_TextFile.createEmptyFile(tmpFilePath));
         assertTrue(fileExists(tmpFilePath));
         File createdFile = new File(tmpFilePath);
         assertTrue(fileExists(createdFile));
@@ -167,5 +173,37 @@ public class MSFileSystemToolsTest {
         String tmpFile = extractResourceToTmpFolder(NIRCMD_FILE_FOR_WINDOWS, "test/subTest", true);
         String shortName = getShortFilename(tmpFile);
         assertTrue(fileExists(getTmpDirectory() + "test/subTest/" + shortName));
+    }
+
+    @Test
+    public void test13FileRenaming() {
+        assertTrue(tmpFileStillExists);
+        String thisFilename = tmpFilePath;
+        String anotherFilename = tmpFilePath2;
+
+        //move file to this same folder
+        tmpFileStillExists = !moveFile(thisFilename, anotherFilename);
+        assertFalse(tmpFileStillExists);
+
+        //create another file with first filename, so now we got 2 files
+        File createdFile = new File(tmpFilePath);
+        assertTrue(MS_TextFile.createEmptyFile(tmpFilePath));
+        assertTrue(fileExists(anotherFilename));
+
+        //move renamed file back using method that doesn't overwrite it
+        tmpFileStillExists = !moveFile(anotherFilename, thisFilename);
+        assertTrue(tmpFileStillExists);
+        assertTrue(fileExists(createdFile));
+        assertTrue(fileExists(anotherFilename));
+
+        //this time move second file to first file dest with overwriting it
+        tmpFileStillExists = moveFile(anotherFilename, thisFilename, true);
+        assertTrue(tmpFileStillExists);
+        assertFalse(fileExists(anotherFilename));
+
+        //now to test, if dest directory is created by renaming process
+        String anotherFileInDiffDir = getTmpDirectory() + childDirectoryUnique + tmpFileName2;
+        tmpFileStillExists = !moveFile(thisFilename, anotherFileInDiffDir);
+        assertFalse(tmpFileStillExists);
     }
 }

@@ -1,5 +1,5 @@
 ext {
-    projectVersion = "1.7.0"
+    projectVersion = "1.7.1"
 }
 
 apply plugin: 'java'
