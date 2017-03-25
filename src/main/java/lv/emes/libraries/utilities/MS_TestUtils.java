@@ -30,7 +30,7 @@ public class MS_TestUtils {
      * <li>byte[]</li>
      * </ul>
      * It also supports <i>null</i> values for objects other than <i>Integer</i>, <i>Long</i> and <i>Boolean</i>.
-     * <br><u>Example of use</u>: <code><pre>private Map<String, Object[]> table = new HashMap<>();
+     * <br><u>Example of use</u>: <pre><code>private Map&lt;String, Object[]&gt; table = new HashMap&lt;&gt;();
      * public void setUp() {
      * table.put("id", new Object[] {1, 2, 3});
      * table.put("name", new Object[] {"test1", String.format("test for id [%d]", 2), "test3"});
@@ -43,10 +43,10 @@ public class MS_TestUtils {
      * rs.getString("name").equals("test for id [2]");
      * rs.getInt("id") == 3;
      * rs.getString("name").equals("test3");
-     * </pre></code>
+     * </code></pre>
      * <br><u>Note</u>: size of array of objects can be different for different keys in order to support cases when get method for some column
      * is performed more often than get method for another.
-     * <br><u>Concrete example</u>: <code><pre>private Map<String, Object[]> table = new HashMap<>();
+     * <br><u>Concrete example</u>: <pre><code>private Map&lt;String, Object[]&gt; table = new HashMap&lt;&gt;();
      * public void setUp() {
      * table.put("id", new Object[] {1, 2, 3});
      * table.put("name", new Object[] {"test1");
@@ -58,7 +58,7 @@ public class MS_TestUtils {
      * rs.getInt("id") == 2;
      * rs.getString("name").equals("test1");
      * rs.getInt("id") == 3;
-     * </pre></code>
+     * </code></pre>
      * @param tableToMockResults map that holds column names as keys and array of values for each column to imitate rows.
      * @param recordCount        count of records that need to be returned by mocked ResultSet, it should also be the size of any list of map's value.
      * @return mocked result set.

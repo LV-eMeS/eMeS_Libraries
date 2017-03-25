@@ -25,6 +25,7 @@ public class MS_List<T> extends ArrayList<T> implements IPerambulateListActions<
 	/**
 	 * Converts array to list.
 	 * @param aArray array with T type of objects that will fill the list.
+	 * @param <T> type of objects that list will contain.
 	 * @return list of objects.
 	 */
 	public static <T> MS_List<T> newInstance(T[] aArray) {
