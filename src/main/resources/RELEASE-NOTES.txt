@@ -1,5 +1,5 @@
 eMeS libraries
-Version 1.7.2
+Version 1.7.3
 Release Notes
 
 INTRODUCTION:
@@ -9,7 +9,7 @@ Contacts: maris.salenieks@gmail.com
 
 PREREQUISITE:
 * Java 8.
-* Libraries from External sources.
+* Gradle.
 
 Changes in versions:
 ========================================================================================================
@@ -17,12 +17,17 @@ eMeS libraries Version 2.0.0
 ========================================================================================================
 * Libraries working on Android.
 ========================================================================================================
+eMeS libraries Version 1.8.0
+========================================================================================================
+* File move method for renaming and moving file to different directory.
+* Test DB scripts removed from libraries.
+* Made TestUtils.mockResultSetForTable null-safe and added support for different array sizes.
+========================================================================================================
 eMeS libraries Version 1.7.0
 ========================================================================================================
 * MS_TestUtils with ResultSet mocking method.
 * Property isConnectionInitialized for MS_JDBCDatabase.
 * Time tools reorganised and now only supports only conversions to string for Date and LocalDateTime objects.
-* File move method for renaming and moving file to different directory.
 ========================================================================================================
 eMeS libraries Version 1.6.0
 ========================================================================================================

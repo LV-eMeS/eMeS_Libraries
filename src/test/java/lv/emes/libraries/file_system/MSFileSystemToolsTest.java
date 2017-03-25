@@ -191,7 +191,7 @@ public class MSFileSystemToolsTest {
         assertTrue(fileExists(anotherFilename));
 
         //move renamed file back using method that doesn't overwrite it
-        tmpFileStillExists = !moveFile(anotherFilename, thisFilename);
+        tmpFileStillExists = !moveFile(anotherFilename, thisFilename, false);
         assertTrue(tmpFileStillExists);
         assertTrue(fileExists(createdFile));
         assertTrue(fileExists(anotherFilename));

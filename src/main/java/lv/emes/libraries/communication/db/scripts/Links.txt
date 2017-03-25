@@ -1,2 +1,0 @@
-http://www.tutorialspoint.com/mysql/mysql-data-types.htm
-https://dev.mysql.com/doc/workbench/en/wb-keys.html

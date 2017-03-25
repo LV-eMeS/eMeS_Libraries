@@ -22,7 +22,7 @@ import java.io.IOException;
  * <p>Methods to override:
  * -setProperties
  * -doOnPropertiesReadException
- * @version 1.2.
+ * @version 1.3.
  * @author eMeS
  */
 public class MS_GlobalInitializableConstats {
@@ -32,7 +32,7 @@ public class MS_GlobalInitializableConstats {
 	private static String propertiesFilePath;
 	
 	private static final String P_DB_HOSTNAME = "localhost";
-	private static final String P_DB_NAME = "emes_small_java_software";
+	private static final String P_DB_NAME = "test_fake_java_software";
 	private static final int P_DB_PORT = 3306;
 	
 	public static String DB_HOSTNAME = P_DB_HOSTNAME;

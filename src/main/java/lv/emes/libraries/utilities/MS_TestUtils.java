@@ -7,17 +7,17 @@ import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
-import java.util.List;
 import java.util.Map;
 
 /**
  * Useful methods to write unit and integration tests easier.
  * @author eMeS
- * @version 1.0.
+ * @version 1.1.
  */
 public class MS_TestUtils {
     /**
-     * Creates mocked ResultSet that returns values according to presented <b>tableToMockResults</b>.
+     * Creates mocked ResultSet that sequentially returns values for getX method calls according to presented <b>tableToMockResults</b>, where X is
+     * data type supported by ResultSet (for example, getString, getBytes, etc.).
      * It supports most common data types for columns like:
      * <ul>
      * <li>String</li>
@@ -29,13 +29,41 @@ public class MS_TestUtils {
      * <li>BigDecimal</li>
      * <li>byte[]</li>
      * </ul>
-     * All lists in map (table rows) must be same size that equals to <b>recordCount</b>.
-     *
-     * @param tableToMockResults map that holds column names as keys and list of values for each column to imitate rows.
+     * It also supports <i>null</i> values for objects other than <i>Integer</i>, <i>Long</i> and <i>Boolean</i>.
+     * <br><u>Example of use</u>: <code><pre>private Map<String, Object[]> table = new HashMap<>();
+     * public void setUp() {
+     * table.put("id", new Object[] {1, 2, 3});
+     * table.put("name", new Object[] {"test1", String.format("test for id [%d]", 2), "test3"});
+     * rs = TestUtils.mockResultSetForTable(table, 3);
+     * }
+     * //Check:
+     * rs.getInt("id") == 1;
+     * rs.getString("name").equals("test1");
+     * rs.getInt("id") == 2;
+     * rs.getString("name").equals("test for id [2]");
+     * rs.getInt("id") == 3;
+     * rs.getString("name").equals("test3");
+     * </pre></code>
+     * <br><u>Note</u>: size of array of objects can be different for different keys in order to support cases when get method for some column
+     * is performed more often than get method for another.
+     * <br><u>Concrete example</u>: <code><pre>private Map<String, Object[]> table = new HashMap<>();
+     * public void setUp() {
+     * table.put("id", new Object[] {1, 2, 3});
+     * table.put("name", new Object[] {"test1");
+     * rs = TestUtils.mockResultSetForTable(table, 3);
+     * }
+     * //Check:
+     * rs.getInt("id") == 1;
+     * rs.getString("name").equals("test1");
+     * rs.getInt("id") == 2;
+     * rs.getString("name").equals("test1");
+     * rs.getInt("id") == 3;
+     * </pre></code>
+     * @param tableToMockResults map that holds column names as keys and array of values for each column to imitate rows.
      * @param recordCount        count of records that need to be returned by mocked ResultSet, it should also be the size of any list of map's value.
      * @return mocked result set.
      */
-    public static ResultSet mockResultSetForTable(Map<String, List<Object>> tableToMockResults, int recordCount) {
+    public static ResultSet mockResultSetForTable(Map<String, Object[]> tableToMockResults, int recordCount) {
         ResultSet rs = Mockito.mock(ResultSet.class);
         try {
             if (tableToMockResults.size() > 0 && recordCount > 0) {
@@ -49,49 +77,46 @@ public class MS_TestUtils {
                 //mock column return values
                 tableToMockResults.forEach((colName, rowValues) -> {
                     try {
-                        if (rowValues.get(0).getClass().equals(String.class)) {
-                            OngoingStubbing<String> ongStub = Mockito.when(rs.getString(colName));
-                            for (int i = 0; i < recordCount; i++) {
-                                ongStub = ongStub.thenReturn((String) rowValues.get(i));
+                        Class<?> aClass = null;
+                        //determine class type of object collection by at least type of first element that is not null
+                        for (Object rowValue : rowValues) {
+                            if (rowValue != null) {
+                                aClass = rowValue.getClass();
+                                break;
                             }
-                        } else if (rowValues.get(0).getClass().equals(Integer.class)) {
-                            OngoingStubbing<Integer> ongStub = Mockito.when(rs.getInt(colName));
-                            for (int i = 0; i < recordCount; i++) {
-                                ongStub = ongStub.thenReturn((Integer) rowValues.get(i));
-                            }
-                        } else if (rowValues.get(0).getClass().equals(Long.class)) {
-                            OngoingStubbing<Long> ongStub = Mockito.when(rs.getLong(colName));
-                            for (int i = 0; i < recordCount; i++) {
-                                ongStub = ongStub.thenReturn((Long) rowValues.get(i));
-                            }
-                        } else if (rowValues.get(0).getClass().equals(Date.class)) {
-                            OngoingStubbing<Date> ongStub = Mockito.when(rs.getDate(colName));
-                            for (int i = 0; i < recordCount; i++) {
-                                ongStub = ongStub.thenReturn((Date) rowValues.get(i));
-                            }
-                        } else if (rowValues.get(0).getClass().equals(Boolean.class)) {
-                            OngoingStubbing<Boolean> ongStub = Mockito.when(rs.getBoolean(colName));
-                            for (int i = 0; i < recordCount; i++) {
-                                ongStub = ongStub.thenReturn((Boolean) rowValues.get(i));
-                            }
-                        } else if (rowValues.get(0).getClass().equals(Timestamp.class)) {
-                            OngoingStubbing<Timestamp> ongStub = Mockito.when(rs.getTimestamp(colName));
-                            for (int i = 0; i < recordCount; i++) {
-                                ongStub = ongStub.thenReturn((Timestamp) rowValues.get(i));
-                            }
-                        } else if (rowValues.get(0).getClass().equals(BigDecimal.class)) {
-                            OngoingStubbing<BigDecimal> ongStub = Mockito.when(rs.getBigDecimal(colName));
-                            for (int i = 0; i < recordCount; i++) {
-                                ongStub = ongStub.thenReturn((BigDecimal) rowValues.get(i));
-                            }
-                        } else if (rowValues.get(0).getClass().equals(byte[].class)) {
-                            OngoingStubbing<byte[]> ongStub = Mockito.when(rs.getBytes(colName));
-                            for (int i = 0; i < recordCount; i++) {
-                                ongStub = ongStub.thenReturn((byte[]) rowValues.get(i));
-                            }
-                        } else {
-                            throw new RuntimeException(String.format("Object of type [%s] is not supported for this kind of mocking.", rowValues.get(0).getClass().getCanonicalName()));
                         }
+
+                        if (aClass != null) { //note: in case when all array elements are nulls we do nothing (unmocked methods will return null)
+                            if (aClass.equals(String.class)) {
+                                OngoingStubbing<String> ongStub = Mockito.when(rs.getString(colName));
+                                mockAllStubRecords(recordCount, rowValues, ongStub);
+                            } else if (aClass.equals(Integer.class)) {
+                                OngoingStubbing<Integer> ongStub = Mockito.when(rs.getInt(colName));
+                                mockAllStubRecords(recordCount, rowValues, ongStub);
+                            } else if (aClass.equals(Long.class)) {
+                                OngoingStubbing<Long> ongStub = Mockito.when(rs.getLong(colName));
+                                mockAllStubRecords(recordCount, rowValues, ongStub);
+                            } else if (aClass.equals(Date.class)) {
+                                OngoingStubbing<Date> ongStub = Mockito.when(rs.getDate(colName));
+                                mockAllStubRecords(recordCount, rowValues, ongStub);
+                            } else if (aClass.equals(Boolean.class)) {
+                                OngoingStubbing<Boolean> ongStub = Mockito.when(rs.getBoolean(colName));
+                                mockAllStubRecords(recordCount, rowValues, ongStub);
+                            } else if (aClass.equals(Timestamp.class)) {
+                                OngoingStubbing<Timestamp> ongStub = Mockito.when(rs.getTimestamp(colName));
+                                mockAllStubRecords(recordCount, rowValues, ongStub);
+                            } else if (aClass.equals(BigDecimal.class)) {
+                                OngoingStubbing<BigDecimal> ongStub = Mockito.when(rs.getBigDecimal(colName));
+                                mockAllStubRecords(recordCount, rowValues, ongStub);
+                            } else if (aClass.equals(byte[].class)) {
+                                OngoingStubbing<byte[]> ongStub = Mockito.when(rs.getBytes(colName));
+                                mockAllStubRecords(recordCount, rowValues, ongStub);
+                            } else {
+                                throw new RuntimeException(String.format("Object of type [%s] is not supported for this kind of mocking.", aClass.getCanonicalName()));
+                            }
+                        }
+                    } catch (ArrayIndexOutOfBoundsException e) {
+                        //ignored on purpose because array sizes for different columns may differ
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
@@ -103,5 +128,12 @@ public class MS_TestUtils {
             throw new RuntimeException(e);
         }
         return rs;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <T> void mockAllStubRecords(int recordCount, Object[] rowValues, OngoingStubbing<T> ongStub) {
+        for (int i = 0; i < recordCount; i++) {
+            ongStub = ongStub.thenReturn((T) rowValues[i]);
+        }
     }
 }
