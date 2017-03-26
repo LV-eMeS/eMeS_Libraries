@@ -274,7 +274,8 @@ public class MS_SQLQuery extends MS_AbstractCompositeText {
     /**
      * Adds join clause of type <b>joinType</b> with table <b>tableToJoin</b> on presented condition <b>onCondition</b>.
      * <br><u>Example</u>: join(JoinTypeEnum.LEFT, "user_types t", "u.user_type_id=t.id")
-     * @param joinType one of supported join types.
+     *
+     * @param joinType    one of supported join types.
      * @param tableToJoin table name and preferable alias of table (alias is delimited from table name with space).
      * @param onCondition boolean expression on condition to link tables.
      * @return reference to this query itself.
@@ -287,7 +288,8 @@ public class MS_SQLQuery extends MS_AbstractCompositeText {
     /**
      * Adds join clause of type <b>joinType</b> with table <b>tableToJoin</b> on presented condition <b>onCondition</b>.
      * <br><u>Example</u>: join("INNER", "user_types t", "u.user_type_id=t.id")
-     * @param joinType one of: LEFT OUTER, RIGHT OUTER, INNER.
+     *
+     * @param joinType    one of: LEFT OUTER, RIGHT OUTER, INNER.
      * @param tableToJoin table name and preferable alias of table (alias is delimited from table name with space).
      * @param onCondition boolean expression on condition to link tables.
      * @return reference to this query itself.
