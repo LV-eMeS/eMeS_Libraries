@@ -7,7 +7,7 @@ import lv.emes.libraries.tools.MS_KeyCodeDictionary;
 import lv.emes.libraries.tools.MS_TimeTools;
 import lv.emes.libraries.tools.lists.MS_StringList;
 import lv.emes.libraries.tools.platform.windows.ApplicationWindow;
-import lv.emes.libraries.tools.platform.windows.SystemVolumeManager;
+import lv.emes.libraries.tools.platform.windows.MS_WindowsAPIManager;
 
 import java.awt.*;
 import java.util.*;
@@ -73,12 +73,14 @@ import static lv.emes.libraries.tools.platform.ScriptParsingError.*;
  * <li><code>VOLUME#22000#</code> - sets system volume to 22000.</li>
  * <li><code>VOLU#1000#</code> - increases system volume by 1000.</li>
  * <li><code>VOLD#1000#</code> - decreases system volume by 1000.</li>
+ * <li><code>MONITOR#ON#</code> - switches on monitor.</li>
+ * <li><code>MONITOR#OFF#</code> - switches off monitor.</li>
  * <li><code>COMBINATION#Ctrl&amp;Alt&amp;Delete#</code> - does Ctrl+Alt+Del keystroke combination.</li>
  * <li><code>COMB#Win&amp;D#</code> - does Windows+D keystroke combination. A synonim of <b>COMBINATION</b>.</li>
  * </ul>
  *
  * @author eMeS
- * @version 1.1.
+ * @version 1.2.
  */
 public class MS_ScriptRunner {
     public final static Map<String, Integer> COMMANDS = new HashMap<>();
@@ -106,7 +108,8 @@ public class MS_ScriptRunner {
     public final static int CMD_NR_SET_VOLUME_TO = 22;
     public final static int CMD_NR_VOLUME_UP = 23;
     public final static int CMD_NR_VOLUME_DOWN = 24;
-    public final static int CMD_NR_COMBINATION = 25;
+    public final static int CMD_NR_MONITOR = 25;
+    public final static int CMD_NR_COMBINATION = 26;
 
     static {
         COMMANDS.put("TEXT", CMD_NR_WRITE_TEXT);
@@ -138,6 +141,7 @@ public class MS_ScriptRunner {
         COMMANDS.put("VOLUME", CMD_NR_SET_VOLUME_TO); //synonym
         COMMANDS.put("VOLU", CMD_NR_VOLUME_UP);
         COMMANDS.put("VOLD", CMD_NR_VOLUME_DOWN);
+        COMMANDS.put("MONITOR", CMD_NR_MONITOR); //monitor on or off
         COMMANDS.put("COMBINATION", CMD_NR_COMBINATION);
         COMMANDS.put("COMB", CMD_NR_COMBINATION);
     }
@@ -159,7 +163,8 @@ public class MS_ScriptRunner {
     private final static int CMD_SEC_SET_VOLUME_TO = 115;
     private final static int CMD_SEC_VOLUME_UP = 116;
     private final static int CMD_SEC_VOLUME_DOWN = 117;
-    private final static int CMD_SEC_COMBINATION = 118;
+    private final static int CMD_SEC_MONITOR = 118;
+    private final static int CMD_SEC_COMBINATION = 119;
 
     public final static char DELIMITER_OF_CMDS = '#';
     public final static char DELIMITER_OF_CMDS_SECOND = ';';
@@ -347,6 +352,10 @@ public class MS_ScriptRunner {
                 primaryCommandReading = false; //read volume parameter
                 secondaryCmd = CMD_SEC_VOLUME_DOWN;
                 break;
+                case CMD_NR_MONITOR:
+                primaryCommandReading = false; //read on or off parameter
+                secondaryCmd = CMD_SEC_MONITOR;
+                break;
             case CMD_NR_COMBINATION:
                 primaryCommandReading = false; //read volume parameter
                 secondaryCmd = CMD_SEC_COMBINATION;
@@ -476,7 +485,7 @@ public class MS_ScriptRunner {
                 } catch (NumberFormatException e) {
                     throw new ScriptParsingError(String.format(ERROR_WRONG_NUMBER_INPUT, commandParamsAsText));
                 }
-                SystemVolumeManager.setVolume(volumeLevelParameter);
+                MS_WindowsAPIManager.setVolume(volumeLevelParameter);
                 break;
             case CMD_SEC_VOLUME_UP:
                 try {
@@ -484,7 +493,7 @@ public class MS_ScriptRunner {
                 } catch (NumberFormatException e) {
                     throw new ScriptParsingError(String.format(ERROR_WRONG_NUMBER_INPUT, commandParamsAsText));
                 }
-                SystemVolumeManager.volumeUp(volumeLevelParameter);
+                MS_WindowsAPIManager.volumeUp(volumeLevelParameter);
                 break;
             case CMD_SEC_VOLUME_DOWN:
                 try {
@@ -492,7 +501,14 @@ public class MS_ScriptRunner {
                 } catch (NumberFormatException e) {
                     throw new ScriptParsingError(String.format(ERROR_WRONG_NUMBER_INPUT, commandParamsAsText));
                 }
-                SystemVolumeManager.volumeDown(volumeLevelParameter);
+                MS_WindowsAPIManager.volumeDown(volumeLevelParameter);
+                break;
+            case CMD_SEC_MONITOR:
+                commandParamsAsText = commandParamsAsText.toLowerCase();
+                if (commandParamsAsText.equals("off") || commandParamsAsText.equals("on"))
+                    MS_WindowsAPIManager.turnMonitor(commandParamsAsText);
+                else
+                    throw new ScriptParsingError(ERROR_FAILED_TO_SWITCH_MONITOR);
                 break;
             case CMD_SEC_COMBINATION:
                 params = new MS_StringList(commandParamsAsText, DELIMITER_OF_PARAMETERS);

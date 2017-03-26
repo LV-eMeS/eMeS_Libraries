@@ -1,5 +1,5 @@
 eMeS libraries
-Version 1.7.4
+Version 1.7.5
 Release Notes
 
 INTRODUCTION:
@@ -22,6 +22,8 @@ eMeS libraries Version 1.8.0
 * File move method for renaming and moving file to different directory.
 * Test DB scripts removed from libraries.
 * Made TestUtils.mockResultSetForTable null-safe and added support for different array sizes.
+* Script runner now can turn on/off monitor.
+* SQL query now supports LEFT JOIN.
 ========================================================================================================
 eMeS libraries Version 1.7.0
 ========================================================================================================

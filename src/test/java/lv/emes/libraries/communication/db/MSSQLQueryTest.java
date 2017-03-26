@@ -6,17 +6,16 @@ import org.junit.runners.MethodSorters;
 import static org.junit.Assert.assertEquals;
 
 /**
- *
  * @author eMeS
  * @version 1.0.
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MSSQLQueryTest {
-	private MS_SQLQuery sql = null;
-	private final String tableName = "tabula";
-	private final String field1 = "?";
-	private final String field2 = "kabacis";
-	private final String field3 = "soda";
+    private MS_SQLQuery sql = null;
+    private final String tableName = "tabula";
+    private final String field1 = "?";
+    private final String field2 = "kabacis";
+    private final String field3 = "soda";
 
     @Before
     //Before every test do initial setup!
@@ -127,5 +126,24 @@ public class MSSQLQueryTest {
 
         sql.resetContent().selectFrom().table(tableName).field(field2).field(field3).orderBy(field2).ascending();
         assertEquals("SELECT kabacis, soda FROM tabula ORDER BY kabacis ASC;", sql.toString());
+    }
+
+    @Test
+    public void test16Joins() {
+        sql.selectFrom().table("users u")
+                .field("u.id").field("u.name").field("t.name")
+                .join(JoinTypeEnum.INNER, "user_types t", "u.type_id = t.id")
+        ;
+        assertEquals("SELECT u.id, u.name, t.name FROM users u INNER JOIN user_types t ON (u.type_id = t.id);", sql.toString());
+
+        sql.resetContent().selectFrom().table("users u")
+                .field("u.id").field("u.name").field("t.name").field("z.name")
+                .join(JoinTypeEnum.LEFT, "user_types t", "u.type_id = t.id")
+                .join(JoinTypeEnum.INNER, "user_z_types z", "t.z_type_id = z.id")
+        ;
+        assertEquals("SELECT u.id, u.name, t.name, z.name FROM users u" +
+                " LEFT JOIN user_types t ON (u.type_id = t.id)" +
+                " INNER JOIN user_z_types z ON (t.z_type_id = z.id)" +
+                ";", sql.toString());
     }
 }

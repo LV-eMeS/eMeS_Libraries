@@ -9,7 +9,7 @@ import lv.emes.libraries.utilities.MS_LineBuilder;
  * <p><u>Warning</u>: Use only one of those 5 statement types at time because thanks to <b>MS_AbstractCompositeText</b> toString method forms text just once.
  *
  * @author eMeS
- * @version 1.2.
+ * @version 1.3.
  */
 public class MS_SQLQuery extends MS_AbstractCompositeText {
     //Supported SQL statement examples:
@@ -18,6 +18,7 @@ public class MS_SQLQuery extends MS_AbstractCompositeText {
     //replace into canvases values(null, ?, ?)
     //update notes set modified = curdate() where id = ?
     //delete from notes where id = ?
+
     private static final String SELECT1 = "SELECT ";
     private static final String INSERT = "INSERT INTO ";
     private static final String REPLACE = "REPLACE INTO ";
@@ -37,6 +38,7 @@ public class MS_SQLQuery extends MS_AbstractCompositeText {
     private static final int CASE_DELETE = 5;
 
     private MS_List<String> fields = new MS_List<>();
+    private MS_List<String> joins = new MS_List<>();
     private String tableName = "";
     private String whereClause = "";
     private String orderByClause = "";
@@ -84,6 +86,9 @@ public class MS_SQLQuery extends MS_AbstractCompositeText {
             default:
                 break;
         }
+
+        //all following clauses are separated with spaces from beginning of clause
+        joins.forEach(lb::append);
         if (!whereClause.isEmpty())
             lb.append(whereClause);
         if (!orderByClause.isEmpty())
@@ -160,6 +165,7 @@ public class MS_SQLQuery extends MS_AbstractCompositeText {
 
     /**
      * Sets table name for any type of query.
+     * <br><u>Example</u>: table("users u")
      *
      * @param tableName name of table.
      * @return reference to this query itself.
@@ -172,6 +178,7 @@ public class MS_SQLQuery extends MS_AbstractCompositeText {
     /**
      * Adds 'where' clause to query.
      * <br><u>Note</u>: keyword 'WHERE ' altogether with whitespace is added before <b>conditions</b> automatically.
+     * <br><u>Example</u>: where("name = 'test' and size > 150")
      *
      * @param conditions all the conditions for query 'where' clause.
      * @return reference to this query itself.
@@ -184,6 +191,7 @@ public class MS_SQLQuery extends MS_AbstractCompositeText {
     /**
      * Adds 'order by' clause to query.
      * <br><u>Note</u>: keywords 'ORDER BY ' altogether with whitespace is added before <b>conditions</b> automatically.
+     * <br><u>Example</u>: orderBy("id, name")
      *
      * @param conditions all the conditions for query 'order by' clause.
      * @return reference to this query itself.
@@ -229,6 +237,7 @@ public class MS_SQLQuery extends MS_AbstractCompositeText {
 
     /**
      * Adds field to query of chosen type.
+     * <br><u>Example</u>: field("name")
      *
      * @param fieldName field to select, insert, or replace.
      * @return reference to this query itself.
@@ -240,6 +249,7 @@ public class MS_SQLQuery extends MS_AbstractCompositeText {
 
     /**
      * For update statement set new value <b>newValue</b> for field with name <b>fieldName</b>.
+     * <br><u>Example</u>: setNewValue("name", "Maris")
      *
      * @param fieldName name of table field.
      * @param newValue  value of field to update.
@@ -261,10 +271,37 @@ public class MS_SQLQuery extends MS_AbstractCompositeText {
         return this;
     }
 
+    /**
+     * Adds join clause of type <b>joinType</b> with table <b>tableToJoin</b> on presented condition <b>onCondition</b>.
+     * <br><u>Example</u>: join(JoinTypeEnum.LEFT, "user_types t", "u.user_type_id=t.id")
+     * @param joinType one of supported join types.
+     * @param tableToJoin table name and preferable alias of table (alias is delimited from table name with space).
+     * @param onCondition boolean expression on condition to link tables.
+     * @return reference to this query itself.
+     * @see JoinTypeEnum
+     */
+    public MS_SQLQuery join(JoinTypeEnum joinType, String tableToJoin, String onCondition) {
+        return join(joinType.name(), tableToJoin, onCondition);
+    }
+
+    /**
+     * Adds join clause of type <b>joinType</b> with table <b>tableToJoin</b> on presented condition <b>onCondition</b>.
+     * <br><u>Example</u>: join("INNER", "user_types t", "u.user_type_id=t.id")
+     * @param joinType one of: LEFT OUTER, RIGHT OUTER, INNER.
+     * @param tableToJoin table name and preferable alias of table (alias is delimited from table name with space).
+     * @param onCondition boolean expression on condition to link tables.
+     * @return reference to this query itself.
+     */
+    public MS_SQLQuery join(String joinType, String tableToJoin, String onCondition) {
+        joins.add(String.format(" %s JOIN %s ON (%s)", joinType, tableToJoin, onCondition));
+        return this;
+    }
+
     @Override
     public MS_SQLQuery resetContent() {
         super.resetContent();
         fields.clear();
+        joins.clear();
         tableName = "";
         whereClause = "";
         orderByClause = "";
