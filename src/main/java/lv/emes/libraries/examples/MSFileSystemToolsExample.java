@@ -11,7 +11,7 @@ public class MSFileSystemToolsExample {
 		System.out.println(MS_FileSystemTools.getDirectoryOfFile("test.bat"));
 		System.out.println(MS_FileSystemTools.fileExists("D:/tm"));
 		System.out.println();
-		
+
 		System.out.println(MS_FileSystemTools.executeApplication("Notepad.exe", "")); //windows application
 //		System.out.println(MS_FileSystemTools.executeApplication("Notepad.exe", "test.bat")); //windows application with params
 //		MS_FileSystemTools.executeApplication("build.gradle", ""); //file in project root folder

@@ -16,8 +16,8 @@ dependencies {
     //This project itself
 //    compile "com.github.LV-eMeS:eMeS_Libraries:" + projectVersion
     //Other dependencies - libraries
-    compile "commons-io:commons-io:+"
-    compile "commons-codec:commons-codec:+"
+    compile "commons-io:commons-io:2.5"
+    compile "commons-codec:commons-codec:1.10"
     compile "org.apache.commons:commons-compress:1.9"
     compile "log4j:log4j:1.2.17"
     compile "mysql:mysql-connector-java:5.1.5"

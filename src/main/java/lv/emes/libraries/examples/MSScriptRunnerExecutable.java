@@ -22,7 +22,7 @@ public class MSScriptRunnerExecutable {
         runner.runScript();
 
 //        for testing:
-//        String commandText = "run#cmd#pause#100#text#rundll32.exe user32.dll, LockWorkStation#ent#";
+//        String commandText = "monitor#OFF#";
 //        MS_ScriptRunner runner = new MS_ScriptRunner(commandText);
 //        runner.runScript();
     }

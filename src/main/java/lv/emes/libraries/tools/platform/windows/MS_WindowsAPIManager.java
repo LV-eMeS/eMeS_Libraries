@@ -12,11 +12,12 @@ import lv.emes.libraries.tools.platform.MS_PlatformIndependentTools;
  *     <li>volumeUp</li>
  *     <li>volumeDown</li>
  *     <li>setVolume</li>
+ *     <li>turnMonitor</li>
  * </ul>
  * @author eMeS
- * @version 1.2.
+ * @version 1.3.
  */
-public final class SystemVolumeManager {
+public final class MS_WindowsAPIManager {
     //PRIVATE VARIABLES
     private static String nircmdFileName = "";
     private static final String TEMP_DIRECTORY_FOR_VOLUME_MANAGER = "eMeS_SystemVolumeManager";
@@ -74,6 +75,17 @@ public final class SystemVolumeManager {
     public static void setVolume(Integer level) throws IncompatibleOSException {
         checkOSAndThrowExceptionIfIncompatible();
         String parameters = "setsysvolume " + level;
+        MS_FileSystemTools.executeApplication(getNircmdFileName(), parameters);
+    }
+
+    /**
+     * Turns monitor on or off depending on presented parameter <b>state</b>.
+     * @param state case insensitive "ON" or "OFF".
+     * @throws IncompatibleOSException if trying to use this method in different OS than Windows.
+     */
+    public static void turnMonitor(String state) throws IncompatibleOSException {
+        checkOSAndThrowExceptionIfIncompatible();
+        String parameters = "cmdwait 100 monitor " + state;
         MS_FileSystemTools.executeApplication(getNircmdFileName(), parameters);
     }
 }

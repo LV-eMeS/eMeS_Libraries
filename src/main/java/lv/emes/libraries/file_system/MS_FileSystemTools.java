@@ -94,15 +94,13 @@ public class MS_FileSystemTools {
     /**
      * Launches process or application with parameters (if any) included in <b>processName</b>. It uses Runtime object.
      * Also supports paths and filename with spaces.
-     * <p>If it fails to execute application, it tries to execute it from command line.
      *
      * @param processName full path (including directory) to executable file. Also relative path is fully supported.
      * @return true if successfully sent command to OS (doesn't mean that process actually executed successfully).
      */
     private static boolean _executeRuntimeEXE(String processName) {
-        Runtime runtime = Runtime.getRuntime();
         try {
-            runtime.exec(processName);
+            Runtime.getRuntime().exec(processName);
             return true;
         } catch (IOException e) {
             return false;
