@@ -10,30 +10,40 @@ import java.io.IOException;
 /** 
  * TCP/IP server which operates commands to communicate to client.
  * <p>Public methods:
- * -registerNewCommand
- * -getCommandList
- * -addDataToContainer
- * -cmdToClientByID
- * -cmdToClient
- * -cmdToAll
- * 
- * -startServer
- * -stopServer
- * -isRunning
- * -getIsActive
- * -setPort
- * -getPort
- * -getClients
- * -getClientByID
- * -disconnectClientByID
+ * <ul>
+ * <li>registerNewCommand</li>
+ * <li>getCommandList</li>
+ * <li>addDataToContainer</li>
+ * <li>cmdToClientByID</li>
+ * <li>cmdToClient</li>
+ * <li>cmdToAll</li>
+ *
+ * <li>startServer</li>
+ * <li>stopServer</li>
+ * <li>disconnectClientByID</li>
+ * </ul>
  * <p>Public properties to set:
- * -onClientConnecting
- * -onClientGoingOffline
- * -onClientSayingHi
+ * <ul>
+ * <li>onClientConnecting</li>
+ * <li>onClientGoingOffline</li>
+ * <li>onClientSayingHi</li>
+ * </ul>
  * <p>Protected methods:
- * -onIncomingClientMessage
- * -onNewClientConnected
- * -writeln
+ * <ul>
+ * <li>onIncomingClientMessage</li>
+ * <li>onNewClientConnected</li>
+ * <li>writeln</li>
+ * </ul>
+ * <p>Setters and getters:
+ * <ul>
+ * <li>isRunning</li>
+ * <li>getIsActive</li>
+ * <li>getPort</li>
+ * <li>getClients</li>
+ * <li>getClientByID</li>
+ *
+ * <li>setPort</li>
+ * </ul>
  * @author eMeS
  * @version 1.2.
  */
@@ -86,7 +96,7 @@ public class MS_TcpIPServer extends MS_TcpIPServerCore {
 				try {
 					onClientSayingHi.doOnEvent(client);
 				} catch (Exception e) {
-					e.printStackTrace();
+					throw new RuntimeException(e);
 				}
 		};
 		this.registerNewCommand(tmp);
@@ -101,7 +111,7 @@ public class MS_TcpIPServer extends MS_TcpIPServerCore {
 				try {
 					onClientGoingOffline.doOnEvent(client);
 				} catch (Exception e) {
-					e.printStackTrace();
+					throw new RuntimeException(e);
 				}
 		};
 		this.registerNewCommand(tmp);
@@ -242,7 +252,7 @@ public class MS_TcpIPServer extends MS_TcpIPServerCore {
 			try {
 				onClientConnecting.doOnEvent(client);
 			} catch (Exception e) {
-				e.printStackTrace();
+				throw new RuntimeException(e);
 			}
 	}
 	

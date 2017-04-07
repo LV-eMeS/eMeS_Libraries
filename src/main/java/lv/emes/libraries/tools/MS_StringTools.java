@@ -66,7 +66,7 @@ public final class MS_StringTools {
      * and also special UTF-8 or Unicode symbols, for example, 1/4 symbol, degree symbol, etc. (stfgSpecialSymbol Ǒøė˧Ω etc.)
      * This enum is used in set <b>SetForCodeGenParams</b> to implement combinations of those 4 types of symbols.
      */
-    public enum TSymbolTypeForGenerator {
+    public enum TSymbolTypeForGenerator { //TODO rewrite as builder pattern
         stfgSmallLetter, stfgBigLetter, stfgDigit, stfgNormalSymbol, stfgSpecialSymbol
     }
 

@@ -5,6 +5,8 @@ import lv.emes.libraries.tools.platform.IncompatibleOSException;
 import lv.emes.libraries.tools.platform.MS_OperatingSystem;
 import lv.emes.libraries.tools.platform.MS_PlatformIndependentTools;
 
+import static com.sun.jna.platform.win32.WinUser.KEYBDINPUT.KEYEVENTF_EXTENDEDKEY;
+
 /**
  * Handles functions for OS volume.
  * <p>Methods:
@@ -18,6 +20,7 @@ import lv.emes.libraries.tools.platform.MS_PlatformIndependentTools;
  * @version 1.3.
  */
 public final class MS_WindowsAPIManager {
+
     //PRIVATE VARIABLES
     private static String nircmdFileName = "";
     private static final String TEMP_DIRECTORY_FOR_VOLUME_MANAGER = "eMeS_SystemVolumeManager";
@@ -87,5 +90,9 @@ public final class MS_WindowsAPIManager {
         checkOSAndThrowExceptionIfIncompatible();
         String parameters = "cmdwait 100 monitor " + state;
         MS_FileSystemTools.executeApplication(getNircmdFileName(), parameters);
+    }
+
+    public static void fireMediaEvent(MediaEventTypeEnum eventType) {
+        MS_User32.INSTANCE.keybd_event(eventType.getWindowsAPIKeyCode(), (byte) 0, KEYEVENTF_EXTENDEDKEY, 0);
     }
 }

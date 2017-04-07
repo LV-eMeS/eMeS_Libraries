@@ -8,14 +8,16 @@ import java.net.Socket;
 /**
  * Holds information about connected client.
  * <p>Public methods:
- * -isConnected
- * -disconnect
- * -getSocket
- * -getId
- * -getIp
- * -getIn
- * -getOut
- * @version 1.2.
+ * <ul>
+ * <li>isConnected</li>
+ * <li>disconnect</li>
+ * <li>getSocket</li>
+ * <li>getId</li>
+ * <li>getIp</li>
+ * <li>getOut</li>
+ * <li>isConnected</li>
+ * </ul>
+ * @version 1.4.
  */
 public class MS_ClientOfServer {	
 	protected int id = 0;
@@ -55,7 +57,7 @@ public class MS_ClientOfServer {
 			this.in = new DataInputStream(this.clientSocket.getInputStream());
 			this.out = new DataOutputStream(this.clientSocket.getOutputStream());
 		} catch (IOException e) {
-			e.printStackTrace();
+			throw new RuntimeException(e);
 		}
 	}
 

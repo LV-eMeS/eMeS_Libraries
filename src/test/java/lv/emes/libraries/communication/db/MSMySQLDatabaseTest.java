@@ -196,6 +196,7 @@ public class MSMySQLDatabaseTest {
             super(rs);
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         protected Integer getUniqueFieldValue() {
             return id;

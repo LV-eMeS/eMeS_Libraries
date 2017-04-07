@@ -15,24 +15,30 @@ import java.util.Vector;
 /** 
  * Core things of TCP/IP server. Accessible only to package because will be overridden.
  * <p>Public methods:
- * -startServer
- * -stopServer
- * -isRunning
- * -setPort
- * -getPort
- * -getClients
- * -getClientByID
- * -disconnectClientByID
- * -disconnectAllClients
- * -writeBytes
- * -readBytes
+ * <ul>
+ * <li>startServer</li>
+ * <li>stopServer</li>
+ * <li>isRunning</li>
+ * <li>setPort</li>
+ * <li>getPort</li>
+ * <li>getClients</li>
+ * <li>getClientByID</li>
+ * <li>disconnectClientByID</li>
+ * <li>disconnectAllClients</li>
+ * <li>writeBytes</li>
+ * <li>readBytes</li>
+ * </ul>
  * <p>Public properties to set:
- * -onUTFDataFormatException
- * -onIOException
+ * <ul>
+ * <li>onUTFDataFormatException</li>
+ * <li>onIOException</li>
+ * </ul>
  * <p>Protected methods:
- * -onIncomingClientMessage
- * -onNewClientConnected
- * -writeln
+ * <ul>
+ * <li>onIncomingClientMessage</li>
+ * <li>onNewClientConnected</li>
+ * <li>writeln</li>
+ * </ul>
  * @author eMeS
  * @version 1.2.
  */
@@ -121,6 +127,7 @@ abstract class MS_TcpIPServerCore extends MS_TcpIPAbstract {
 	public void stopServer() {
 		if (! isActive) return;
 		serverThread.interrupt(); //do not listen for new connections anymore!
+		serverThread = null;
 		isActive = false;
 		try {
 			server.close();
@@ -159,7 +166,7 @@ abstract class MS_TcpIPServerCore extends MS_TcpIPAbstract {
 			}			
 		} catch (Exception e) {
 			//everything is ok, because threads are slower that infinite loop, so isRunning didn't catch up with actual situation
-		} 	
+		}
 		finally {
 			stopServer();	
 		}

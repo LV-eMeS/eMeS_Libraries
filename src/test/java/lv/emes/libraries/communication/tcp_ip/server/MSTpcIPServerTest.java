@@ -5,6 +5,7 @@ import lv.emes.libraries.communication.tcp_ip.client.MS_ClientCommand;
 import lv.emes.libraries.communication.tcp_ip.client.MS_TcpIPClient;
 import lv.emes.libraries.file_system.MS_BinaryTools;
 import lv.emes.libraries.file_system.MS_FileSystemTools;
+import lv.emes.libraries.tools.MS_CodingTools;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
@@ -20,6 +21,7 @@ import static org.junit.Assert.assertTrue;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MSTpcIPServerTest {
     private static final int PORT = 12343;
+    private static final int DEFAULT_SLEEP_TIME = 150;
     private static MS_TcpIPServer server;
     private static MS_TcpIPClient client1;
     private static MS_TcpIPClient client2;
@@ -42,6 +44,10 @@ public class MSTpcIPServerTest {
 
     private int getServerConnectionCount() {
         return server.getClients().size();
+    }
+
+    private static void doSleepForXTimes(int times) {
+        MS_CodingTools.sleep(times * DEFAULT_SLEEP_TIME);
     }
 
     @BeforeClass
@@ -112,27 +118,27 @@ public class MSTpcIPServerTest {
 
     @Test
     public void test01SimpleMessagging() throws InterruptedException {
-        Thread.sleep(200);
+        doSleepForXTimes(2);
         assertEquals(2, getServerConnectionCount());
         client1.addDataToContainer(TEXT1);
         assertTrue(client1.cmdToServer(CMD1_DISCONNECT_AND_PRINTLN));
-        Thread.sleep(100);
+        doSleepForXTimes(1);
         assertTrue(serverReceived.equals(TEXT1));
 
         assertTrue(client1.cmdToServer(CMD2_SIMPLY_PRINTLN));
-        Thread.sleep(100);
+        doSleepForXTimes(1);
         assertTrue(serverReceived.equals(TEXT5)); //empty text, cause no data added
 
         //second client
         client2.addDataToContainer(TEXT2);
         assertTrue(client2.cmdToServer(CMD1_DISCONNECT_AND_PRINTLN));
-        Thread.sleep(100);
+        doSleepForXTimes(1);
         assertTrue(serverReceived.equals(TEXT2)); //empty text, cause no data added
 
         //let's shutdown the server for a sek
         client1.addDataToContainer(TEXT3);
         assertTrue(client1.cmdToServer(CMD1_DISCONNECT_AND_PRINTLN));
-        Thread.sleep(100);
+        doSleepForXTimes(1);
         assertTrue(serverReceived.equals(TEXT3));
         assertTrue(!server.isRunning());
         assertTrue(!client1.isConnected());
@@ -140,6 +146,12 @@ public class MSTpcIPServerTest {
         assertTrue(secondReceivedThatServerIsGoingOff);
     }
 
+    /**
+     * Before this test both clients are disconnected and server is down.
+     * In test server is restarted and both clients are connecting back.
+     * At the end of test server disconnects clients, but stays online.
+     * @throws Exception on any error.
+     */
     @Test
     public void test02SimpleMessaggingToClient() throws Exception {
         //do reconnecting
@@ -148,34 +160,40 @@ public class MSTpcIPServerTest {
         assertEquals(0, getServerConnectionCount());
         serverIsOn = true;
         client1.connect(MS_ClientServerConstants.DEFAULT_HOST, PORT);
-        Thread.sleep(200);
+        doSleepForXTimes(2);
         assertEquals(1, getServerConnectionCount());
         client1.connect(MS_ClientServerConstants.DEFAULT_HOST, PORT); //double connecting shouldn't matter
         assertEquals(1, getServerConnectionCount());
         client2.connect(MS_ClientServerConstants.DEFAULT_HOST, PORT);
-        Thread.sleep(300);
+        doSleepForXTimes(3);
         assertEquals(2, getServerConnectionCount());
 
-        Thread.sleep(100);
+        doSleepForXTimes(1);
         assertTrue(server.cmdToClientByID(CMD3_PRINTLN_PLUS_CLIENT_ID, client1.getId()));
-        Thread.sleep(100);
+        doSleepForXTimes(1);
         assertTrue(serverReceived.equals(TEXT5));
 
         //server's empty message
         server.addDataToContainer(TEXT4);
         server.cmdToAll(CMD3_PRINTLN_PLUS_CLIENT_ID);
-        Thread.sleep(1500);
+        doSleepForXTimes(5);
         assertTrue(serverReceived.equals(TEXT4));
 
-        //DC that client!
+        //DC those client!
         server.disconnectAllClients();
         assertEquals(0, getServerConnectionCount());
         assertTrue(serverIsOn);
         assertTrue(server.getClients().size() == 0);
-        Thread.sleep(1000);
-        assertTrue(!client1.isConnected());
+        doSleepForXTimes(3);
+        assertFalse(client1.isConnected());
     }
 
+    /**
+     * Before this test both clients are disconnected, but server is still up.
+     * In test only first client is connecting back.
+     * At the end of test server is on and still 1 client is connected.
+     * @throws Exception on any error.
+     */
     @Test
     public void test03BinaryDataExchangeOnServer() throws Exception {
         //do reconnecting
@@ -189,11 +207,11 @@ public class MSTpcIPServerTest {
         cmdReceiveBytesFromClient.doOnCommand = (server, data, cli, out) -> {
             assertTrue(cli.isConnected());
             byte[] bytesFromClient = MS_BinaryTools.stringToBytes(data.get(1));
-//			Thread.sleep(1000);	
 
             try {
                 MS_BinaryTools.writeFile(MS_BinaryTools.bytesToIntput(bytesFromClient), BINARY_DEST_FILE_SERVER);
             } catch (Exception e) {
+                throw new RuntimeException("Failed to save file locally");
             }
             assertTrue("Server returned no bytes.", Array.getLength(bytesFromClient) > 0);
         };
@@ -204,11 +222,16 @@ public class MSTpcIPServerTest {
         client1.addDataToContainer(MS_BinaryTools.bytesToString(by));
         client1.cmdToServer(CMD4_SEND_BINARY_FROM_SERVER);
         assertTrue(server.isRunning());
-        Thread.sleep(2000);         //w8 till server does his job
+        doSleepForXTimes(8); //w8 till server does his job
     }
 
+    /**
+     * In test only first client is connected.
+     * At the end of test server is on and still 1 client is connected.
+     * @throws Exception on any error.
+     */
     @Test
-    public void test03BinaryDataExchangeOnClient() throws Exception {
+    public void test04BinaryDataExchangeOnClient() throws Exception {
         //do reconnecting
         client1.connect(MS_ClientServerConstants.DEFAULT_HOST, PORT);
         assertTrue(client1.isConnected());
@@ -225,6 +248,7 @@ public class MSTpcIPServerTest {
             try {
                 MS_BinaryTools.writeFile(MS_BinaryTools.bytesToIntput(bytesFromServer), BINARY_DEST_FILE_CLIENT);
             } catch (Exception e) {
+                throw new RuntimeException("Failed to save file locally");
             }
             assertTrue("Client returned no bytes.", Array.getLength(bytesFromServer) > 0);
         };
@@ -235,6 +259,6 @@ public class MSTpcIPServerTest {
         server.addDataToContainer(MS_BinaryTools.bytesToString(by));
         server.cmdToClientByID(CMD4_SEND_BINARY_FROM_SERVER, client1.getId());
         assertTrue(server.isRunning());
-        Thread.sleep(2000);         //w8 till client does his job
+        doSleepForXTimes(8); //w8 till server does his job
     }
 }

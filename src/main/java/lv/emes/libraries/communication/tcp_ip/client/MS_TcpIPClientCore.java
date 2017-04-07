@@ -5,32 +5,36 @@ import lv.emes.libraries.communication.tcp_ip.MS_TcpIPAbstract;
 import java.io.*;
 import java.net.Socket;
 import java.net.UnknownHostException;
-
-//import org.apache.log4j.Logger;
-
-//import lv.emes.tools.MS_StringTools;
+import java.util.Random;
 
 /**
  * Core things of TCP/IP client. Accessible only to package because will be overridden.
  * <p>Public methods:
- * -connect
- * -disconnect
- * -isConnected
- * -writeBytes
- * -readBytes
+ * <ul>
+ * <li>connect</li>
+ * <li>disconnect</li>
+ * <li>isConnected</li>
+ * <li>writeBytes</li>
+ * <li>readBytes</li>
+ * </ul>
  * <p>Public properties to set:
- * -onUTFDataFormatException
- * -onIOException
+ * <ul>
+ * <li>onUTFDataFormatException</li>
+ * <li>onIOException</li>
+ * </ul>
  * <p>Protected methods:
- * -onIncomingServerMessage
- * -onDisconnectingFromServer
- * -writeln
+ * <ul>
+ * <li>onIncomingServerMessage</li>
+ * <li>onDisconnectingFromServer</li>
+ * <li>writeln</li>
+ * </ul>
  *
  * @author eMeS
- * @version 1.2.
+ * @version 1.3.
  */
 abstract class MS_TcpIPClientCore extends MS_TcpIPAbstract {
     //	static Logger log = Logger.getLogger(MS_TcpClientCore.class.getName());
+    private final int DEFAULT_THREAD_SLEEP_TIME = 250;
     private Socket server; // server socket
 
     protected int lastConnectedPort = -1;
@@ -84,6 +88,7 @@ abstract class MS_TcpIPClientCore extends MS_TcpIPAbstract {
         // close all data streams
         try {
             messageThread.interrupt();
+            messageThread = null;
             server.close();
             server = null;
         } catch (Exception e) {
@@ -97,9 +102,10 @@ abstract class MS_TcpIPClientCore extends MS_TcpIPAbstract {
         while (isConnected()) {
             //Every message is read as UTF-8 String.
             try {
+                Thread.sleep(new Random().nextInt(DEFAULT_THREAD_SLEEP_TIME));
                 String msg = in.readUTF();
                 onIncomingServerMessage(msg, out); //calls central method of client message reading
-            } catch (EOFException exc) { //happens when server disconnects client without warning
+            } catch (EOFException | InterruptedException exc) { //happens when server disconnects client without warning
                 disconnect();
             } catch (UTFDataFormatException exc) {
 //				log.error("Failed to read UTF-8 message from server correctly due to incorrect format. @run()");
@@ -108,7 +114,7 @@ abstract class MS_TcpIPClientCore extends MS_TcpIPAbstract {
                         if (this.isConnected()) //many times this error just happens because of client disconnected himself from the server, so check, if he is connected
                             onUTFDataFormatException.doOnEvent(exc);
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        throw new RuntimeException(e);
                     }
             } catch (IOException exc) {
 //				log.info("Connection with server lost. @run()");
@@ -117,7 +123,7 @@ abstract class MS_TcpIPClientCore extends MS_TcpIPAbstract {
                         if (this.isConnected()) //many times this error just happens because of client disconnected himself from the server, so check, if he is connected
                             onIOException.doOnEvent(exc);
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        throw new RuntimeException(e);
                     }
                 disconnect();
             }

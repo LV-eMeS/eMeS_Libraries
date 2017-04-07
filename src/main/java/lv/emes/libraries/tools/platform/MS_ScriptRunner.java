@@ -6,8 +6,9 @@ import lv.emes.libraries.tools.MS_CodingTools;
 import lv.emes.libraries.tools.MS_KeyCodeDictionary;
 import lv.emes.libraries.tools.MS_TimeTools;
 import lv.emes.libraries.tools.lists.MS_StringList;
-import lv.emes.libraries.tools.platform.windows.ApplicationWindow;
+import lv.emes.libraries.tools.platform.windows.MS_ApplicationWindow;
 import lv.emes.libraries.tools.platform.windows.MS_WindowsAPIManager;
+import lv.emes.libraries.tools.platform.windows.MediaEventTypeEnum;
 
 import java.awt.*;
 import java.util.*;
@@ -51,12 +52,13 @@ import static lv.emes.libraries.tools.platform.ScriptParsingError.*;
  * <li><code>MR#</code> - does right mouse click.</li>
  * <li><code>MRD#</code> - does right mouse press and hold.</li>
  * <li><code>MRU#</code> - does right mouse release up.</li>
- * <li><code>MW#</code> or WHEEL# - does mouse wheel click.</li>
+ * <li><code>MW#</code> or <code>WHEEL#</code> - does mouse wheel click.</li>
  * <li><code>MC#500&amp;400#</code> - sets mouse new location.</li>
  * <li><code>MM#-50&amp;20#</code> - moves mouse for 50 pixels to the left and 20 pixels down.</li>
  * <li><code>HOLD#CTRL#</code> - holds CTRL key until RELEASE command is executed.</li>
  * <li><code>RELEASE#CTRL#</code> - releases CTRL key (does button up for CTRL key code).</li>
  * <li><code>SS#CTRL#</code> - does HOLD + RELEASE for given key (ctrl in this case).</li>
+ * <li><code>SAY#Hello, World!#</code> - prints "Hello, World!" using currently set output method.</li>
  * <li><code>VARIABLE#username_4_login&amp;Please, enter username of application X to log in!#</code> - does promting for
  * user input and informs user with text passed as second parameter.
  * <br>This will save in <b>userVariables</b> as map with key=username_4_login; value=user input text.
@@ -75,41 +77,48 @@ import static lv.emes.libraries.tools.platform.ScriptParsingError.*;
  * <li><code>VOLD#1000#</code> - decreases system volume by 1000.</li>
  * <li><code>MONITOR#ON#</code> - switches on monitor.</li>
  * <li><code>MONITOR#OFF#</code> - switches off monitor.</li>
+ * <li><code>MUSIC#NEXT#</code> - plays next media track.</li>
+ * <li><code>MUSIC#PREV#</code> - plays previous media track.</li>
+ * <li><code>MUSIC#PLAY#</code> or <code>MUSIC#PAUSE#</code> or <code>MUSIC#PLAYPAUSE#</code> - plays or pauses media track.</li>
+ * <li><code>MUSIC#STOP#</code> - stops playing music.</li>
  * <li><code>COMBINATION#Ctrl&amp;Alt&amp;Delete#</code> - does Ctrl+Alt+Del keystroke combination.</li>
  * <li><code>COMB#Win&amp;D#</code> - does Windows+D keystroke combination. A synonim of <b>COMBINATION</b>.</li>
  * </ul>
  *
  * @author eMeS
- * @version 1.2.
+ * @version 1.3.
  */
 public class MS_ScriptRunner {
-    public final static Map<String, Integer> COMMANDS = new HashMap<>();
-    public final static int CMD_NR_WRITE_TEXT = 1;
-    public final static int CMD_NR_RUN_APPLICATION = 2;
-    public final static int CMD_NR_SHOW_WINDOW_OS_WINDOWS = 3;
-    public final static int CMD_NR_HIDE_WINDOW_OS_WINDOWS = 4;
-    public final static int CMD_NR_PAUSE = 5;
-    public final static int CMD_NR_SET_DELAY_INTERVAL = 6;
-    public final static int CMD_NR_MOUSE_LEFT = 7;
-    public final static int CMD_NR_MOUSE_RIGHT = 8;
-    public final static int CMD_NR_MOUSE_LEFT_DOWN = 9;
-    public final static int CMD_NR_MOUSE_LEFT_UP = 10;
-    public final static int CMD_NR_MOUSE_RIGHT_DOWN = 11;
-    public final static int CMD_NR_MOUSE_RIGHT_UP = 12;
-    public final static int CMD_NR_MOUSE_WHEEL_CLICK = 13;
-    public final static int CMD_NR_MOUSE_SET_COORDINATES = 14;
-    public final static int CMD_NR_MOUSE_MOVE_FOR_COORDINATES = 15;
-    public final static int CMD_NR_PUSH_AND_HOLD_BUTTON = 16;
-    public final static int CMD_NR_RELEASE_HOLD_BUTTON = 17;
-    public final static int CMD_NR_HOLD_AND_RELEASE_BUTTON = 18;
-    public final static int CMD_NR_VARIABLE_PROMPT = 19;
-    public final static int CMD_NR_PASSWORD_PROMPT = 20;
-    public final static int CMD_NR_SET_LOGGING = 21;
-    public final static int CMD_NR_SET_VOLUME_TO = 22;
-    public final static int CMD_NR_VOLUME_UP = 23;
-    public final static int CMD_NR_VOLUME_DOWN = 24;
-    public final static int CMD_NR_MONITOR = 25;
-    public final static int CMD_NR_COMBINATION = 26;
+
+    private final static Map<String, Integer> COMMANDS = new HashMap<>();
+    private final static int CMD_NR_WRITE_TEXT = 1;
+    private final static int CMD_NR_RUN_APPLICATION = 2;
+    private final static int CMD_NR_SHOW_WINDOW_OS_WINDOWS = 3;
+    private final static int CMD_NR_HIDE_WINDOW_OS_WINDOWS = 4;
+    private final static int CMD_NR_PAUSE = 5;
+    private final static int CMD_NR_SET_DELAY_INTERVAL = 6;
+    private final static int CMD_NR_MOUSE_LEFT = 7;
+    private final static int CMD_NR_MOUSE_RIGHT = 8;
+    private final static int CMD_NR_MOUSE_LEFT_DOWN = 9;
+    private final static int CMD_NR_MOUSE_LEFT_UP = 10;
+    private final static int CMD_NR_MOUSE_RIGHT_DOWN = 11;
+    private final static int CMD_NR_MOUSE_RIGHT_UP = 12;
+    private final static int CMD_NR_MOUSE_WHEEL_CLICK = 13;
+    private final static int CMD_NR_MOUSE_SET_COORDINATES = 14;
+    private final static int CMD_NR_MOUSE_MOVE_FOR_COORDINATES = 15;
+    private final static int CMD_NR_PUSH_AND_HOLD_BUTTON = 16;
+    private final static int CMD_NR_RELEASE_HOLD_BUTTON = 17;
+    private final static int CMD_NR_HOLD_AND_RELEASE_BUTTON = 18;
+    private final static int CMD_NR_VARIABLE_PROMPT = 19;
+    private final static int CMD_NR_PASSWORD_PROMPT = 20;
+    private final static int CMD_NR_SET_LOGGING = 21;
+    private final static int CMD_NR_SET_VOLUME_TO = 22;
+    private final static int CMD_NR_VOLUME_UP = 23;
+    private final static int CMD_NR_VOLUME_DOWN = 24;
+    private final static int CMD_NR_MONITOR = 25;
+    private final static int CMD_NR_MUSIC = 26;
+    private final static int CMD_NR_COMBINATION = 27;
+    private final static int CMD_NR_SAY = 28;
 
     static {
         COMMANDS.put("TEXT", CMD_NR_WRITE_TEXT);
@@ -142,8 +151,11 @@ public class MS_ScriptRunner {
         COMMANDS.put("VOLU", CMD_NR_VOLUME_UP);
         COMMANDS.put("VOLD", CMD_NR_VOLUME_DOWN);
         COMMANDS.put("MONITOR", CMD_NR_MONITOR); //monitor on or off
+        COMMANDS.put("MUSIC", CMD_NR_MUSIC); //music play/pause/stop, previous/next track
+        COMMANDS.put("MEDIA", CMD_NR_MUSIC); //synonym
         COMMANDS.put("COMBINATION", CMD_NR_COMBINATION);
         COMMANDS.put("COMB", CMD_NR_COMBINATION);
+        COMMANDS.put("SAY", CMD_NR_SAY);
     }
 
     private final static int CMD_SEC_EXECUTE_TEXT = 101;
@@ -164,12 +176,14 @@ public class MS_ScriptRunner {
     private final static int CMD_SEC_VOLUME_UP = 116;
     private final static int CMD_SEC_VOLUME_DOWN = 117;
     private final static int CMD_SEC_MONITOR = 118;
-    private final static int CMD_SEC_COMBINATION = 119;
+    private final static int CMD_SEC_MUSIC = 119;
+    private final static int CMD_SEC_COMBINATION = 120;
+    private final static int CMD_SEC_SAY = 121;
 
-    public final static char DELIMITER_OF_CMDS = '#';
-    public final static char DELIMITER_OF_CMDS_SECOND = ';';
-    public final static char DELIMITER_OF_PARAMETERS = '&';
-    public final static char DELIMITER_OF_VARIABLES = '$';
+    private final static char DELIMITER_OF_CMDS = '#';
+    private final static char DELIMITER_OF_CMDS_SECOND = ';';
+    private final static char DELIMITER_OF_PARAMETERS = '&';
+    private final static char DELIMITER_OF_VARIABLES = '$';
 
     private String fscript = "";
     private MS_StringList fCommandList;
@@ -180,14 +194,14 @@ public class MS_ScriptRunner {
     private boolean primaryCommandReading = true;
     private int secondaryCmd = 0;
     private IFuncStringInputMethod variableInputMethod = IFuncStringInputMethod.CONSOLE;
-    private IFuncStringMaskedInputMethod passwordInputMethod = IFuncStringMaskedInputMethod.CONSOLE;
+    private IFuncStringInputMethod passwordInputMethod = IFuncStringInputMethod.CONSOLE;
     private IFuncStringOutputMethod outputMethod = IFuncStringOutputMethod.CONSOLE;
 
     public String getPathToLoggerFile() {
         return pathToLoggerFile;
     }
 
-    public void setPasswordInputMethod(IFuncStringMaskedInputMethod passwordInputMethod) {
+    public void setPasswordInputMethod(IFuncStringInputMethod passwordInputMethod) {
         this.passwordInputMethod = passwordInputMethod;
     }
 
@@ -211,50 +225,6 @@ public class MS_ScriptRunner {
     public MS_ScriptRunner(String scriptText) {
         this();
         setScriptText(scriptText);
-    }
-
-    public void runScript() {
-        userVariables.clear();
-        if (getInstance().isCapsLockToggled())
-            getInstance().keyPress("CAPS"); //caps lock during script executing is not needed at all
-
-        fCommandList.doWithEveryItem((cmd, index) -> {
-            try {
-//                System.out.println(cmd);
-                if (delay > 0) {
-                    MS_CodingTools.sleep(delay); //delay interval can be set using command "di"
-                    if (paused) { //if script was paused then this is the place to remove pause
-                        paused = false;
-                        delay = 0; //in next iteration pause will not be used anymore
-                    }
-                }
-
-                if ((cmd.length() > 0) && (cmd.charAt(0) != '/')) { //ignore commands starting with comment
-                    commandNotFoundTryKeyPressing = false;
-                    if (primaryCommandReading) {
-                        cmd = cmd.toUpperCase(); //whole script is case insensitive ^_^
-                        //starting to check for every possible command
-                        runImplementationPrimary(COMMANDS.get(cmd));
-                    } else {
-                        runImplementationSecondary(cmd);
-                    }
-
-                    if (commandNotFoundTryKeyPressing)
-                        getInstance().keyPress(cmd);
-                }
-            } catch (Exception e) {
-//                e.printStackTrace();
-                System.out.println(e.toString());
-                primaryCommandReading = true; //if command fails then lets try to read next command as primary command!
-                if (!pathToLoggerFile.equals("")) {
-                    MS_TextFile tmpLogFile = new MS_TextFile(pathToLoggerFile);
-                    Date now = new Date();
-                    tmpLogFile.appendln(MS_TimeTools.dateTimeToStr(now) + String.format(" : Command [%d] '%s' failed to execute with message:", index + 1, cmd), false);
-                    tmpLogFile.appendln(e.toString(), true);
-                    //after this loop continues executing next commands
-                }
-            }
-        });
     }
 
     private void runImplementationPrimary(Integer cmdNumber) {
@@ -352,13 +322,21 @@ public class MS_ScriptRunner {
                 primaryCommandReading = false; //read volume parameter
                 secondaryCmd = CMD_SEC_VOLUME_DOWN;
                 break;
-                case CMD_NR_MONITOR:
+            case CMD_NR_MONITOR:
                 primaryCommandReading = false; //read on or off parameter
                 secondaryCmd = CMD_SEC_MONITOR;
+                break;
+            case CMD_NR_MUSIC:
+                primaryCommandReading = false; //read play, pause, stop, next, prev parameters
+                secondaryCmd = CMD_SEC_MUSIC;
                 break;
             case CMD_NR_COMBINATION:
                 primaryCommandReading = false; //read volume parameter
                 secondaryCmd = CMD_SEC_COMBINATION;
+                break;
+            case CMD_NR_SAY:
+                primaryCommandReading = false; //read text to say
+                secondaryCmd = CMD_SEC_SAY;
                 break;
             default:
                 commandNotFoundTryKeyPressing = true;
@@ -372,20 +350,7 @@ public class MS_ScriptRunner {
         Integer volumeLevelParameter;
         switch (secondaryCmd) {
             case CMD_SEC_EXECUTE_TEXT:
-                MS_StringList listOfVariables = new MS_StringList();
-                listOfVariables.delimiter = DELIMITER_OF_VARIABLES;
-                listOfVariables.secondDelimiter = DELIMITER_OF_CMDS_SECOND;
-                listOfVariables.fromString(commandParamsAsText);
-
-                StringBuilder sb = new StringBuilder();
-                //every even element of string list will be a variable
-                listOfVariables.doWithEveryItem((str, i) -> {
-                    if (i % 2 == 1) { //an even element should be altered
-                        str = userVariables.get(str);
-                    }
-                    sb.append(str);
-                });
-                commandParamsAsText = sb.toString();
+                commandParamsAsText = extractCommandContainingVariables(commandParamsAsText);
 
                 MS_KeyStrokeExecutor exec = getInstance();
                 for (int i = 0; i < commandParamsAsText.length(); i++) {
@@ -412,11 +377,11 @@ public class MS_ScriptRunner {
                 MS_FileSystemTools.executeApplication(params.get(0), appParams.toString());
                 break;
             case CMD_SEC_SHOW_WINDOW_OS_WINDOWS:
-                if (!ApplicationWindow.showApplicationWindow(commandParamsAsText))
+                if (!MS_ApplicationWindow.showApplicationWindow(commandParamsAsText))
                     throw new ScriptParsingError(String.format(ERROR_FAILED_TO_SHOW_WINDOW, commandParamsAsText));
                 break;
             case CMD_SEC_HIDE_WINDOW_OS_WINDOWS:
-                if (!ApplicationWindow.hideApplicationWindow(commandParamsAsText)) {
+                if (!MS_ApplicationWindow.hideApplicationWindow(commandParamsAsText)) {
                     throw new ScriptParsingError(String.format(ERROR_FAILED_TO_HIDE_WINDOW, commandParamsAsText));
                 }
                 break;
@@ -458,8 +423,7 @@ public class MS_ScriptRunner {
                 if (params.count() != 2)
                     throw new ScriptParsingError(String.format(ERROR_PARAMETER_COUNT, 2));
                 //put variable in userVariables
-                outputMethod.writeString(params.get(1));
-                tmpStr2 = variableInputMethod.readString();
+                tmpStr2 = variableInputMethod.readString(params.get(1));
                 tmpStr = userVariables.put(params.get(0), tmpStr2);
                 if (tmpStr != null)
                     throw new ScriptParsingError(String.format(WARNING_USER_VARIABLE_OVERRIDDEN, tmpStr, tmpStr2));
@@ -470,8 +434,7 @@ public class MS_ScriptRunner {
                     throw new ScriptParsingError(String.format(ERROR_PARAMETER_COUNT, 2));
 
                 //put variable in userVariables
-                outputMethod.writeString(params.get(1));
-                tmpStr2 = passwordInputMethod.readString();
+                tmpStr2 = passwordInputMethod.readString(params.get(1));
                 tmpStr = userVariables.put(params.get(0), tmpStr2);
                 if (tmpStr != null)
                     throw new ScriptParsingError(String.format(WARNING_USER_VARIABLE_OVERRIDDEN, params.get(0), tmpStr, tmpStr2));
@@ -510,6 +473,11 @@ public class MS_ScriptRunner {
                 else
                     throw new ScriptParsingError(ERROR_FAILED_TO_SWITCH_MONITOR);
                 break;
+            case CMD_SEC_MUSIC:
+                MediaEventTypeEnum eventType = MediaEventTypeEnum.getByKey(commandParamsAsText);
+                if (eventType == null)
+                    throw new ScriptParsingError("Unsupported media event. Expected one of [PLAY, PAUSE, PLAYPAUSE, STOP, NEXT, PREV].");
+                MS_WindowsAPIManager.fireMediaEvent(eventType);
             case CMD_SEC_COMBINATION:
                 params = new MS_StringList(commandParamsAsText, DELIMITER_OF_PARAMETERS);
                 if (params.count() < 2)
@@ -528,10 +496,81 @@ public class MS_ScriptRunner {
                     params.prev();
                 }
                 break;
+            case CMD_SEC_SAY:
+                commandParamsAsText = extractCommandContainingVariables(commandParamsAsText);
+                outputMethod.writeString(commandParamsAsText);
+                break;
             default:
                 commandNotFoundTryKeyPressing = true;
         }
         primaryCommandReading = true; //after this always go to new command reading
+    }
+
+    /**
+     * Extracting input from script as text where instead of variable names there is put actual values of variables.
+     *
+     * @param incomingCommand command data like: <b>Something before $variable_name$ and something after</b>.
+     * @return if <b>variable_name=this text</b> then it's transformed to: <b>Something before this text and something after</b>.
+     */
+    private String extractCommandContainingVariables(String incomingCommand) {
+        MS_StringList listOfVariables = new MS_StringList();
+        listOfVariables.delimiter = DELIMITER_OF_VARIABLES;
+        listOfVariables.secondDelimiter = DELIMITER_OF_CMDS_SECOND;
+        listOfVariables.fromString(incomingCommand);
+
+        StringBuilder sb = new StringBuilder();
+        //every even element of string list will be a variable because variables are like $pass$
+        listOfVariables.doWithEveryItem((str, i) -> {
+            if (i % 2 == 1) { //an even element should be altered
+                str = userVariables.get(str);
+            }
+            sb.append(str);
+        });
+        return sb.toString();
+    }
+
+    public void runScript() {
+        userVariables.clear();
+        if (getInstance().isCapsLockToggled())
+            getInstance().keyPress("CAPS"); //caps lock during script executing is not needed at all
+
+        fCommandList.doWithEveryItem((cmd, index) -> {
+            try {
+//                System.out.println(cmd);
+                if (delay > 0) {
+                    MS_CodingTools.sleep(delay); //delay interval can be set using command "di"
+                    if (paused) { //if script was paused then this is the place to remove pause
+                        paused = false;
+                        delay = 0; //in next iteration pause will not be used anymore
+                    }
+                }
+
+                if ((cmd.length() > 0) && (cmd.charAt(0) != '/')) { //ignore commands starting with comment
+                    commandNotFoundTryKeyPressing = false;
+                    if (primaryCommandReading) {
+                        cmd = cmd.toUpperCase(); //whole script is case insensitive ^_^
+                        //starting to check for every possible command
+                        runImplementationPrimary(COMMANDS.get(cmd));
+                    } else {
+                        runImplementationSecondary(cmd);
+                    }
+
+                    if (commandNotFoundTryKeyPressing)
+                        getInstance().keyPress(cmd);
+                }
+            } catch (Exception e) {
+//                e.printStackTrace();
+                System.out.println(e.toString());
+                primaryCommandReading = true; //if command fails then lets try to read next command as primary command!
+                if (!pathToLoggerFile.equals("")) {
+                    MS_TextFile tmpLogFile = new MS_TextFile(pathToLoggerFile);
+                    Date now = new Date();
+                    tmpLogFile.appendln(MS_TimeTools.dateTimeToStr(now) + String.format(" : Command [%d] '%s' failed to execute with message:", index + 1, cmd), false);
+                    tmpLogFile.appendln(e.toString(), true);
+                    //after this loop continues executing next commands
+                }
+            }
+        });
     }
 
     public static void runScript(String scriptText) {

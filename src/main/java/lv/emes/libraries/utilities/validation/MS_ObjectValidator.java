@@ -203,6 +203,7 @@ public abstract class MS_ObjectValidator<T> {
      * @param number error number.
      * @return new validation error.
      */
+    @SuppressWarnings("unchecked")
     protected final MS_ValidationError initNewError(Integer number) {
         MS_ValidationError anError = MS_ValidationError.<T>newInstance(number);
         possibleValidationErrors.add(anError);

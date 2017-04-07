@@ -18,7 +18,7 @@ import static com.sun.jna.platform.win32.WinUser.*;
  * @author eMeS
  * @version 1.0.
  */
-public class ApplicationWindow {
+public class MS_ApplicationWindow {
     /**
      * Finds window handle for application with given title or name.
      * <br><u>WARNING</u>: Windows only function.
@@ -59,11 +59,7 @@ public class ApplicationWindow {
      */
     public static Boolean applicationIsRunning(String appName) {
         WinDef.HWND hwnd = getWindowHandle(appName);
-        if (hwnd != null)
-            return true;
-        else {
-            return false;
-        }
+        return hwnd != null;
     }
 
     /**

@@ -1,5 +1,5 @@
 eMeS libraries
-Version 1.7.5
+Version 1.7.6
 Release Notes
 
 INTRODUCTION:
@@ -24,6 +24,8 @@ eMeS libraries Version 1.8.0
 * Made TestUtils.mockResultSetForTable null-safe and added support for different array sizes.
 * Script runner now can turn on/off monitor.
 * SQL query now supports LEFT JOIN.
+* Swing components to read user input directly with dialog box.
+* Media events added for script runner.
 ========================================================================================================
 eMeS libraries Version 1.7.0
 ========================================================================================================
