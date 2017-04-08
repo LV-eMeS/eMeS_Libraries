@@ -53,7 +53,7 @@ public class MSListTest {
         l.add(-4);
         sum = 0;
         indexSum = 0;
-        l.doWithEveryItem((i, index) -> {
+        l.forEachItem((i, index) -> {
             sum += i;
             indexSum += index;
             count++;
@@ -71,7 +71,7 @@ public class MSListTest {
         sum = 0;
         indexSum = 0;
         assertEquals(false, l.getBreakDoWithEveryItem());
-        l.doWithEveryItem((i, index) -> {
+        l.forEachItem((i, index) -> {
             sum += i;
             indexSum += index;
             count++;
@@ -92,7 +92,7 @@ public class MSListTest {
         sum = 0;
         indexSum = 0;
         assertEquals(false, l.getBreakDoWithEveryItem());
-        l.doWithEveryItem((i, index) -> {
+        l.forEachItem((i, index) -> {
             sum += i;
             indexSum += index;
             count++;
@@ -104,7 +104,7 @@ public class MSListTest {
         assertEquals(0, indexSum);
         assertEquals(true, l.getBreakDoWithEveryItem());
 
-        l.doWithEveryItem((i, index) -> {
+        l.forEachItem((i, index) -> {
             assertEquals(false, l.getBreakDoWithEveryItem());
         });
     }

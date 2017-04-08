@@ -145,7 +145,7 @@ public class MSStringListTest {
     @Test
     public void test15DoWithEveryStringInList() {
         MS_StringList sl = new MS_StringList("One#Two#");
-        sl.doWithEveryItem((s, index) -> {
+        sl.forEachItem((s, index) -> {
             boolean test = s.equals("One") || s.equals("Two");
             assertTrue(test);
         });

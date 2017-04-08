@@ -138,7 +138,7 @@ public abstract class MS_ObjectValidator<T> {
      */
     public boolean containsError(Integer errorNumber) {
         final AtomicReference<Boolean> errorFound = new AtomicReference<>(false);
-        validationErrors.doWithEveryItem((error, index) -> {
+        validationErrors.forEachItem((error, index) -> {
             if (error.getNumber().equals(errorNumber)) {
                 errorFound.set(true);
                 validationErrors.breakDoWithEveryItem();
@@ -158,7 +158,7 @@ public abstract class MS_ObjectValidator<T> {
             return false;
 
         final AtomicReference<Boolean> errorFound = new AtomicReference<>(false);
-        validationErrors.doWithEveryItem((err, index) -> {
+        validationErrors.forEachItem((err, index) -> {
             if (err.getNumber().equals(error.getNumber()) && err.getMessage().equals(error.getMessage())) {
                 errorFound.set(true);
                 validationErrors.breakDoWithEveryItem();
@@ -218,7 +218,7 @@ public abstract class MS_ObjectValidator<T> {
      * @param objectToValidate object that is going to be validated.
      */
     protected final void addErrorToList(Integer number, T objectToValidate) {
-        possibleValidationErrors.doWithEveryItem((possibleError, i) -> {
+        possibleValidationErrors.forEachItem((possibleError, i) -> {
             if (possibleError.getNumber().equals(number)) {
                 this.validationErrors.add(possibleError);
                 possibleError.setObject(objectToValidate);

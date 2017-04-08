@@ -53,7 +53,7 @@ public class MSXMLFileTest {
         }
 
         //just testing iterating
-        allFoods.doWithEveryItem((node, ind) -> {
+        allFoods.forEachItem((node, ind) -> {
             assertEquals("food", node.getTagName()); //like assertEquals("food", aCurrentFood.getTagName());
             assertEquals("name", node.getFirstChild("name").getTagName()); //like assertEquals("name", aCurrentFood.getFirstChild("name").getTagName());
             assertEquals(1, node.getChildList("name").count());
@@ -101,14 +101,14 @@ public class MSXMLFileTest {
     public void test04ParseAndEditElements() throws ParserConfigurationException, SAXException, IOException {
         MS_XML file = file1;
         MS_XMLElementNodeList allFoods = file.getNodesByTagName("food");
-        allFoods.doWithEveryItem((item, ind) -> {
+        allFoods.forEachItem((item, ind) -> {
             MS_XMLElementNode nameOfFood = item.getFirstChild("name");
             nameOfFood.toElement().setTextContent(FOOD_NAME_LIST.get(allFoods.count() + ind));
             assertEquals(FOOD_NAME_LIST.get(allFoods.count() + ind), nameOfFood.getValue());
         });
 
         //now to check for a new values
-        allFoods.doWithEveryItem((node, index) -> {
+        allFoods.forEachItem((node, index) -> {
 //            System.out.println(node);
             assertEquals(FOOD_NAME_LIST.get(index + 5), node.getFirstChild("name").getValue());
         });

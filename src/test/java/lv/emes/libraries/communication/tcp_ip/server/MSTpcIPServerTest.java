@@ -199,6 +199,7 @@ public class MSTpcIPServerTest {
         //do reconnecting
         client1.connect(MS_ClientServerConstants.DEFAULT_HOST, PORT);
         assertTrue(client1.isConnected());
+        doSleepForXTimes(2);
         assertEquals(1, getServerConnectionCount());
 
         //make server listen the command that indicates that client is sending bytes to him

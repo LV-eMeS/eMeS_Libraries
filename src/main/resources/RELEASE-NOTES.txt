@@ -1,5 +1,5 @@
 eMeS libraries
-Version 1.7.7
+Version 1.8.0
 Release Notes
 
 INTRODUCTION:
@@ -15,6 +15,7 @@ Changes in versions:
 ========================================================================================================
 eMeS libraries Version 2.0.0
 ========================================================================================================
+* Default methods for all interfaces removed to support Android API <24.
 * Libraries working on Android.
 ========================================================================================================
 eMeS libraries Version 1.8.0

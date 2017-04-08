@@ -6,7 +6,7 @@ import java.util.Collections;
 import static lv.emes.libraries.tools.MS_CodingTools.inRange;
 /** 
  * Purpose of this class is to make lists of different objects. It's possible to perambulate list using methods from interface <b>IPerambulateListActions</b>.
- * @version 1.3.
+ * @version 1.4.
  * @see IPerambulateListActions
  */
 public class MS_List<T> extends ArrayList<T> implements IPerambulateListActions<T> {
@@ -40,6 +40,16 @@ public class MS_List<T> extends ArrayList<T> implements IPerambulateListActions<
 	}
 
 	@Override
+	public int length() {
+		return count();
+	}
+
+	@Override
+	public void breakDoWithEveryItem() {
+		setBreakDoWithEveryItem(true);
+	}
+
+	@Override
 	public void setBreakDoWithEveryItem(boolean value) {
 		flagForLoopBreaking = value;
 	}
@@ -47,6 +57,18 @@ public class MS_List<T> extends ArrayList<T> implements IPerambulateListActions<
 	@Override
 	public boolean getBreakDoWithEveryItem() {
 		return flagForLoopBreaking;
+	}
+
+	@Override
+	public void forEachItem(IFuncSomeAction<T> action) {
+		setBreakDoWithEveryItem(false);
+		if (action != null)
+			for (int i = 0; i < this.count(); i++) {
+				T itm = this.get(i);
+				action.doAction(itm, i);
+				if (getBreakDoWithEveryItem())
+					break;
+			}
 	}
 
 	@Override
@@ -100,7 +122,7 @@ public class MS_List<T> extends ArrayList<T> implements IPerambulateListActions<
 
 	@Override
 	public void concatenate(IConcateableList<T> otherList) {
-		otherList.doWithEveryItem((item, index) -> {
+		otherList.forEachItem((item, index) -> {
 			this.add(item);
 		});
 	}

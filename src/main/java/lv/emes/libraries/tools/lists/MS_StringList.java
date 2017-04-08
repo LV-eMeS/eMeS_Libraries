@@ -14,7 +14,7 @@ import static lv.emes.libraries.tools.MS_CodingTools.inRange;
  * <br><u>Note</u>: those delimiters shouldn't be changed unless they are often used in text which operated with this list.
  * <br><u>Note</u>: class is in it's final implementation state. If there is need for overriding this, use <b>MS_List</b> instead!
  *
- * @version 2.3.
+ * @version 2.4.
  * @see MS_List
  */
 public final class MS_StringList implements IListActions<String> {
@@ -152,6 +152,11 @@ public final class MS_StringList implements IListActions<String> {
     }
 
     @Override
+    public void breakDoWithEveryItem() {
+        setBreakDoWithEveryItem(true);
+    }
+
+    @Override
     public void setBreakDoWithEveryItem(boolean value) {
         flagForLoopBreaking = value;
     }
@@ -159,6 +164,18 @@ public final class MS_StringList implements IListActions<String> {
     @Override
     public boolean getBreakDoWithEveryItem() {
         return flagForLoopBreaking;
+    }
+
+    @Override
+    public void forEachItem(IFuncSomeAction<String> action) {
+        setBreakDoWithEveryItem(false);
+        if (action != null)
+            for (int i = 0; i < this.count(); i++) {
+                String itm = this.get(i);
+                action.doAction(itm, i);
+                if (getBreakDoWithEveryItem())
+                    break;
+            }
     }
 
     public int getAsInteger(int aIndex) {
@@ -206,6 +223,16 @@ public final class MS_StringList implements IListActions<String> {
     @Override
     public int count() {
         return fList.size();
+    }
+
+    @Override
+    public int size() {
+        return count();
+    }
+
+    @Override
+    public int length() {
+        return count();
     }
 
     @Override
@@ -471,7 +498,7 @@ public final class MS_StringList implements IListActions<String> {
 
     @Override
     public void concatenate(IConcateableList<String> otherList) {
-        otherList.doWithEveryItem((item, index) -> {
+        otherList.forEachItem((item, index) -> {
             this.add(item);
         });
     }

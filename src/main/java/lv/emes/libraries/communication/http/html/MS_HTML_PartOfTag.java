@@ -114,7 +114,7 @@ public class MS_HTML_PartOfTag extends AbstractHTMLPart {
             pContent.prepareContent(lb);
 
         if (afterContentPrepared != null)
-            afterContentPrepared.doWithEveryItem((action, i) -> {
+            afterContentPrepared.forEachItem((action, i) -> {
                 action.executeAction(lb);
             });
     }

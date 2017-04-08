@@ -88,7 +88,7 @@ public class MS_SQLQuery extends MS_AbstractCompositeText {
         }
 
         //all following clauses are separated with spaces from beginning of clause
-        joins.forEach(lb::append);
+        joins.forEach(lb::append);//FIXME looping through all elements without lambda
         if (!whereClause.isEmpty())
             lb.append(whereClause);
         if (!orderByClause.isEmpty())

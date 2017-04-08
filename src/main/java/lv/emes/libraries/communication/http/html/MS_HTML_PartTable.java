@@ -56,7 +56,7 @@ public class MS_HTML_PartTable extends MS_HTML_PartOfTag {
             pContent = new AbstractHTMLPart() {
                 @Override
                 public MS_LineBuilder prepareContent(MS_LineBuilder tmp) {
-                    rows.doWithEveryItem((row, ind) -> {
+                    rows.forEachItem((row, ind) -> {
                         row.prepareContent(tmp);
                     });
                     return null;

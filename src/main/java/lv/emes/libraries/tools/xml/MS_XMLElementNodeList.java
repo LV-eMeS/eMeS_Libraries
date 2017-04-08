@@ -1,6 +1,7 @@
 package lv.emes.libraries.tools.xml;
 
 import lv.emes.libraries.tools.lists.IBaseListWithItems;
+import lv.emes.libraries.tools.lists.IFuncSomeAction;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -13,7 +14,7 @@ import org.w3c.dom.NodeList;
  * <p>Setters and getters:
  *
  * @author eMeS
- * @version 1.1.
+ * @version 1.2.
  * @see MS_XMLElementNode
  */
 public class MS_XMLElementNodeList implements IBaseListWithItems<MS_XMLElementNode> {
@@ -40,7 +41,7 @@ public class MS_XMLElementNodeList implements IBaseListWithItems<MS_XMLElementNo
      * Mocks instance of NodeList.
      *
      * @param actualNodeList actual node list that will be mocked as this object.
-     * @param tag a tag of node list to name list.
+     * @param tag            a tag of node list to name list.
      */
     public MS_XMLElementNodeList(NodeList actualNodeList, String tag) {
         this.actualNodeList = actualNodeList;
@@ -68,8 +69,23 @@ public class MS_XMLElementNodeList implements IBaseListWithItems<MS_XMLElementNo
     }
 
     @Override
+    public int size() {
+        return count();
+    }
+
+    @Override
+    public int length() {
+        return count();
+    }
+
+    @Override
     public MS_XMLElementNode get(int aIndex) {
         return getNode(aIndex);
+    }
+
+    @Override
+    public void breakDoWithEveryItem() {
+        setBreakDoWithEveryItem(true);
     }
 
     @Override
@@ -80,5 +96,17 @@ public class MS_XMLElementNodeList implements IBaseListWithItems<MS_XMLElementNo
     @Override
     public boolean getBreakDoWithEveryItem() {
         return flagForLoopBreaking;
+    }
+
+    @Override
+    public void forEachItem(IFuncSomeAction<MS_XMLElementNode> action) {
+        setBreakDoWithEveryItem(false);
+        if (action != null)
+            for (int i = 0; i < this.count(); i++) {
+                MS_XMLElementNode itm = this.get(i);
+                action.doAction(itm, i);
+                if (getBreakDoWithEveryItem())
+                    break;
+            }
     }
 }

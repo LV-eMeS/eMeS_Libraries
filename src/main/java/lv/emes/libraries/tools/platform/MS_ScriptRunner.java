@@ -86,7 +86,7 @@ import static lv.emes.libraries.tools.platform.ScriptParsingError.*;
  * </ul>
  *
  * @author eMeS
- * @version 1.3.
+ * @version 1.4.
  */
 public class MS_ScriptRunner {
 
@@ -193,15 +193,15 @@ public class MS_ScriptRunner {
     private long delay = 0;
     private boolean primaryCommandReading = true;
     private int secondaryCmd = 0;
-    private IFuncStringInputMethod variableInputMethod = IFuncStringInputMethod.CONSOLE;
-    private IFuncStringInputMethod passwordInputMethod = IFuncStringInputMethod.CONSOLE;
-    private IFuncStringOutputMethod outputMethod = IFuncStringOutputMethod.CONSOLE;
+    private MS_IFuncStringInputMethod variableInputMethod = MS_InputOutputMethodDefaults.INPUT_CONSOLE;
+    private MS_IFuncStringInputMethod passwordInputMethod = MS_InputOutputMethodDefaults.INPUT_CONSOLE;
+    private MS_IFuncStringOutputMethod outputMethod = MS_InputOutputMethodDefaults.OUTPUT_CONSOLE;
 
     public String getPathToLoggerFile() {
         return pathToLoggerFile;
     }
 
-    public void setPasswordInputMethod(IFuncStringInputMethod passwordInputMethod) {
+    public void setPasswordInputMethod(MS_IFuncStringInputMethod passwordInputMethod) {
         this.passwordInputMethod = passwordInputMethod;
     }
 
@@ -209,11 +209,11 @@ public class MS_ScriptRunner {
         this.pathToLoggerFile = pathToLoggerFile;
     }
 
-    public void setVariableInputMethod(IFuncStringInputMethod variableInputMethod) {
+    public void setVariableInputMethod(MS_IFuncStringInputMethod variableInputMethod) {
         this.variableInputMethod = variableInputMethod;
     }
 
-    public void setOutputMethod(IFuncStringOutputMethod outputMethod) {
+    public void setOutputMethod(MS_IFuncStringOutputMethod outputMethod) {
         this.outputMethod = outputMethod;
     }
 
@@ -520,7 +520,7 @@ public class MS_ScriptRunner {
 
         StringBuilder sb = new StringBuilder();
         //every even element of string list will be a variable because variables are like $pass$
-        listOfVariables.doWithEveryItem((str, i) -> {
+        listOfVariables.forEachItem((str, i) -> {
             if (i % 2 == 1) { //an even element should be altered
                 str = userVariables.get(str);
             }
@@ -534,7 +534,7 @@ public class MS_ScriptRunner {
         if (getInstance().isCapsLockToggled())
             getInstance().keyPress("CAPS"); //caps lock during script executing is not needed at all
 
-        fCommandList.doWithEveryItem((cmd, index) -> {
+        fCommandList.forEachItem((cmd, index) -> {
             try {
 //                System.out.println(cmd);
                 if (delay > 0) {
