@@ -11,6 +11,7 @@ import java.util.Map;
 
 /**
  * Useful methods to write unit and integration tests easier.
+ *
  * @author eMeS
  * @version 1.1.
  */
@@ -59,6 +60,7 @@ public class MS_TestUtils {
      * rs.getString("name").equals("test1");
      * rs.getInt("id") == 3;
      * </code></pre>
+     *
      * @param tableToMockResults map that holds column names as keys and array of values for each column to imitate rows.
      * @param recordCount        count of records that need to be returned by mocked ResultSet, it should also be the size of any list of map's value.
      * @return mocked result set.
@@ -75,7 +77,9 @@ public class MS_TestUtils {
                 stub.thenReturn(false);
 
                 //mock column return values
-                tableToMockResults.forEach((colName, rowValues) -> {
+                for (Map.Entry<String, Object[]> entry : tableToMockResults.entrySet()) {
+                    String colName = entry.getKey();
+                    Object[] rowValues = entry.getValue();
                     try {
                         Class<?> aClass = null;
                         //determine class type of object collection by at least type of first element that is not null
@@ -120,7 +124,9 @@ public class MS_TestUtils {
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
-                });
+
+                }
+
             } else { //when nothing to mock
                 Mockito.when(rs.next()).thenReturn(false);
             }
