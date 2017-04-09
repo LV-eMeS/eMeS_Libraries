@@ -13,7 +13,7 @@ import java.net.HttpURLConnection;
  * <li>getReponseCode</li>
  * </ul>
  * @author eMeS
- * @version 1.0.
+ * @version 1.1.
  */
 public class MS_RequestResult {
     String message;

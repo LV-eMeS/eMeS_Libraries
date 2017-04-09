@@ -35,14 +35,7 @@ public interface MS_IJDBCDatabase {
      * Does connect operation by request.
      * @return true if connected successfully to DB again, otherwise false.
      */
-    default boolean reconnect() {
-        try {
-            connect();
-            return true;
-        } catch (ClassNotFoundException | SQLException e) {
-            return false;
-        }
-    }
+    boolean reconnect();
 
     /**
      * Closing connecting to DB.

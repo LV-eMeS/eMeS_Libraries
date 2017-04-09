@@ -215,6 +215,24 @@ public final class MS_StringList implements IListActions<String> {
     }
 
     @Override
+    public int remove(String aItem) {
+        int elemToRemove = getIndex(aItem);
+        if (elemToRemove!=-1)
+            return remove(elemToRemove);
+        return elemToRemove;
+    }
+
+    @Override
+    public boolean removeLast() {
+        return remove(this.count()-1) != -1;
+    }
+
+    @Override
+    public boolean removeFirst() {
+        return remove(0) != -1;
+    }
+
+    @Override
     public void clear() {
         fList.clear();
     }
@@ -276,6 +294,11 @@ public final class MS_StringList implements IListActions<String> {
     @Override
     public void prev() {
         setIndexOfCurrent(indexOfCurrent - 1);
+    }
+
+    @Override
+    public boolean currentIndexInsideTheList() {
+        return count() > 0 && getIndexOfCurrent() > -1 && getIndexOfCurrent() < count();
     }
 
     //JAUNAS METODES, kas nav nakusas no interfeisa

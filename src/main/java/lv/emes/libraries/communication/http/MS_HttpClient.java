@@ -18,7 +18,7 @@ import java.util.Map;
  * </ul>
  *
  * @author eMeS
- * @version 1.1.
+ * @version 1.2.
  */
 //http://stackoverflow.com/questions/2938502/sending-post-data-in-android
 public class MS_HttpClient {
@@ -50,7 +50,7 @@ public class MS_HttpClient {
      * @param connConfig     initial configuration of connection.
      * @return HTTP response from server.
      */
-    public static MS_RequestResult get(String requestURL, Map<String, String> postDataParams, IFuncConnectionConfig connConfig) {
+    public static MS_RequestResult get(String requestURL, Map<String, String> postDataParams, MS_IFuncConnectionConfig connConfig) {
         URL url;
         MS_RequestResult res = new MS_RequestResult();
         try {
@@ -78,7 +78,7 @@ public class MS_HttpClient {
      * @return HTTP response from server.
      */
     public static MS_RequestResult get(String requestURL, Map<String, String> postDataParams) {
-        return get(requestURL, postDataParams, IFuncConnectionConfig.DEFAULT_CONFIG_FOR_CONNECTION);
+        return get(requestURL, postDataParams, MS_IFuncConnectionConfigDefaults.DEFAULT_CONFIG_FOR_CONNECTION);
     }
 
     /**
@@ -89,7 +89,7 @@ public class MS_HttpClient {
      * @param connConfig     initial configuration of connection.
      * @return HTTP response from server.
      */
-    public static MS_RequestResult post(String requestURL, Map<String, String> postDataParams, IFuncConnectionConfig connConfig) {
+    public static MS_RequestResult post(String requestURL, Map<String, String> postDataParams, MS_IFuncConnectionConfig connConfig) {
         MS_RequestResult res = new MS_RequestResult();
         URL url;
         StringBuilder response = new StringBuilder();
@@ -141,6 +141,6 @@ public class MS_HttpClient {
      * @return HTTP response from server.
      */
     public static MS_RequestResult post(String requestURL, Map<String, String> postDataParams) {
-        return post(requestURL, postDataParams, IFuncConnectionConfig.DEFAULT_CONFIG_FOR_CONNECTION);
+        return post(requestURL, postDataParams, MS_IFuncConnectionConfigDefaults.DEFAULT_CONFIG_FOR_CONNECTION);
     }
 }

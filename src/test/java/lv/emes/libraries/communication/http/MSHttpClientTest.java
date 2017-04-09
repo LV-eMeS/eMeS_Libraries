@@ -94,7 +94,7 @@ public class MSHttpClientTest {
 
     @Test
     public void test09Timeout() {
-        IFuncConnectionConfig config = (cn) -> {
+        MS_IFuncConnectionConfig config = (cn) -> {
             cn.setConnectTimeout(1);
             cn.setReadTimeout(1);
         };

@@ -108,7 +108,12 @@ public class MS_List<T> extends ArrayList<T> implements IPerambulateListActions<
 	public void prev() {
 		setIndexOfCurrent(indexOfCurrent-1);	
 	}
-	
+
+	@Override
+	public boolean currentIndexInsideTheList() {
+		return count() > 0 && getIndexOfCurrent() > -1 && getIndexOfCurrent() < count();
+	}
+
 	/**
 	 * Converts list to array of T kind of objects.
 	 */

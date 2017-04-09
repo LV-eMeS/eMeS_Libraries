@@ -4,7 +4,7 @@ package lv.emes.libraries.utilities.validation;
  * An error that occur in validation process.
  *
  * @author eMeS
- * @version 1.0.
+ * @version 1.1.
  */
 public class MS_ValidationErrorImpl<T> implements MS_ValidationError<T> {
     private Integer number;

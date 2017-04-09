@@ -4,7 +4,7 @@ package lv.emes.libraries.utilities.validation;
  * Actions for error that occur in validation process.
  *
  * @author eMeS
- * @version 1.0.
+ * @version 1.1.
  */
 public interface MS_ValidationError<T> {
     MS_ValidationError setErrorMessageForming(FuncFormValidationErrorMessage action);
@@ -18,8 +18,4 @@ public interface MS_ValidationError<T> {
 
     T getObject();
     MS_ValidationError setObject(T object);
-
-    static <T> MS_ValidationError newInstance(Integer number) {
-        return new MS_ValidationErrorImpl<T>(number);
-    }
 }

@@ -65,7 +65,7 @@ public abstract class MS_ObjectValidator<T> {
      * Override this method to add different validation error when object is null or to disable this operation at all.
      */
     protected void addNullPointerValidationError() {
-        validationErrors.add(MS_ValidationError.newInstance(VALIDATION_ERROR_NULL_OBJECT));
+        validationErrors.add(new MS_ValidationErrorImpl<>(VALIDATION_ERROR_NULL_OBJECT));
     }
 
     /**
@@ -205,7 +205,7 @@ public abstract class MS_ObjectValidator<T> {
      */
     @SuppressWarnings("unchecked")
     protected final MS_ValidationError initNewError(Integer number) {
-        MS_ValidationError anError = MS_ValidationError.<T>newInstance(number);
+        MS_ValidationError anError = new MS_ValidationErrorImpl<T>(number);
         possibleValidationErrors.add(anError);
         return anError;
     }

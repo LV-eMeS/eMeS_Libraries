@@ -54,7 +54,5 @@ public interface IPerambulateListActions<T> extends IConcateableList<T> {
 	 * Tests whether current element is inside the list.
 	 * @return returns true if current element is still in the list. Returns false if by perambulation process all the list is walked through.
 	 */
-	default boolean currentIndexInsideTheList() {
-		return count() > 0 && getIndexOfCurrent() > -1 && getIndexOfCurrent() < count();		
-	}
+	boolean currentIndexInsideTheList();
 }

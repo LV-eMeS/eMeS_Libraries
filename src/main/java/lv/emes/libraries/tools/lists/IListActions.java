@@ -42,28 +42,19 @@ public interface IListActions<T> extends IPerambulateListActions<T>{
 	 * @param aItem item to remove from list.
 	 * @return index of removed item.
 	 */
-	default int remove(T aItem){
-		int elemToRemove = getIndex(aItem);
-		if (elemToRemove!=-1)
-			return remove(elemToRemove);
-		return elemToRemove;
-	}
+	int remove(T aItem);
 
 	/**
 	 * Removes last element of the list.
 	 * @return false if list is empty or for some other reason element cannot be removed, otherwise true.
 	 */
-	default boolean removeLast() {
-		return remove(this.count()-1) != -1;
-	}
+	boolean removeLast();
 
 	/**
 	 * Removes first element of the list.
 	 * @return false if list is empty or for some other reason element cannot be removed, otherwise true.
 	 */
-	default boolean removeFirst() {
-		return remove(0) != -1;
-	}
+	boolean removeFirst();
 
 	/**
 	 * Clears list by removing all the elements.

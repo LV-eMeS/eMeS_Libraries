@@ -267,4 +267,14 @@ public abstract class MS_JDBCDatabase implements MS_IJDBCDatabase {
         connectionString = null;
         return this;
     }
+
+    @Override
+    public boolean reconnect() {
+        try {
+            connect();
+            return true;
+        } catch (ClassNotFoundException | SQLException e) {
+            return false;
+        }
+    }
 }
