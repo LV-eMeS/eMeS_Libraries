@@ -13,7 +13,7 @@ import lv.emes.libraries.utilities.MS_LineBuilder;
 public class MS_HTML_PartOfTag extends AbstractHTMLPart {
     private MS_StringList fAttributes = new MS_StringList();
     AbstractHTMLPart pContent = null;
-    private MS_List<FuncContentPrepareAction> afterContentPrepared;
+    private MS_List<IFuncContentPrepareAction> afterContentPrepared;
     boolean fNoEndTag = false;
 
     public MS_HTML_PartOfTag(String tagName) {
@@ -57,7 +57,7 @@ public class MS_HTML_PartOfTag extends AbstractHTMLPart {
      * @param actionToPrepareContent an action that will be performed when HTML string will be made for this kind of object.
      * @return reference to HTML tag object itself.
      */
-    public MS_HTML_PartOfTag content(FuncContentPrepareAction actionToPrepareContent) {
+    public MS_HTML_PartOfTag content(IFuncContentPrepareAction actionToPrepareContent) {
         pContent = new AbstractHTMLPart() {
             @Override
             protected MS_LineBuilder prepareContent(MS_LineBuilder lb) {
@@ -74,7 +74,7 @@ public class MS_HTML_PartOfTag extends AbstractHTMLPart {
      * @param actionToPrepareContent an action that will be performed when HTML string will be made for this kind of object.
      * @return reference to HTML tag object itself.
      */
-    public MS_HTML_PartOfTag contentToAppend(FuncContentPrepareAction actionToPrepareContent) {
+    public MS_HTML_PartOfTag contentToAppend(IFuncContentPrepareAction actionToPrepareContent) {
         if (pContent == null) //if content of this tag is currently empty then simply save the new content
             return this.content(actionToPrepareContent);
         else {

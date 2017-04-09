@@ -42,7 +42,7 @@ public class MS_PreparedSQLQuery implements PreparedStatement {
 	 * * If Trying to set wrong parameter of statement.
 	 * <p><code>(exception) -&gt; {error handling methods};</code>
 	 */
-	public IFuncOnSQLException onSQLException = (exception) -> {};  
+	public IFuncOnSQLException onSQLException = (exception) -> {};
 	
 	private PreparedStatement actualStatement;
 

@@ -7,6 +7,6 @@ package lv.emes.libraries.utilities.validation;
  * @version 1.0.
  */
 @FunctionalInterface
-public interface FuncFormValidationErrorMessage {
+public interface IFuncFormValidationErrorMessage {
     String formMessage();
 }

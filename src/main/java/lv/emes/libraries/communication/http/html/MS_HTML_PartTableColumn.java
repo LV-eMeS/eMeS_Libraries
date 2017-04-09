@@ -36,13 +36,13 @@ public class MS_HTML_PartTableColumn extends MS_HTML_PartOfTag {
     }
 
     @Override
-    public MS_HTML_PartTableColumn content(FuncContentPrepareAction actionToPrepareContent) {
+    public MS_HTML_PartTableColumn content(IFuncContentPrepareAction actionToPrepareContent) {
         super.content(actionToPrepareContent);
         return this;
     }
 
     @Override
-    public MS_HTML_PartTableColumn contentToAppend(FuncContentPrepareAction actionToPrepareContent) {
+    public MS_HTML_PartTableColumn contentToAppend(IFuncContentPrepareAction actionToPrepareContent) {
         super.contentToAppend(actionToPrepareContent);
         return this;
     }

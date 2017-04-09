@@ -43,7 +43,7 @@ public abstract class MS_ObjectValidator<T> {
     private boolean isValidated = false;
     private MS_List<MS_ValidationError<T>> possibleValidationErrors = new MS_List<>();
     private MS_List<MS_ValidationError<T>> validationErrors = new MS_List<>();
-    private FuncObjectValidationAction<T> fOnValidation;
+    private IFuncObjectValidationAction<T> fOnValidation;
 
     /**
      * This constructor is mandatory because all possible validation errors must be initialized here.
@@ -183,7 +183,7 @@ public abstract class MS_ObjectValidator<T> {
      *                 error that occurs in that particular case.
      * @return reference to validator itself.
      */
-    public final MS_ObjectValidator onValidation(FuncObjectValidationAction<T> validate) {
+    public final MS_ObjectValidator onValidation(IFuncObjectValidationAction<T> validate) {
         fOnValidation = validate;
         return this;
     }

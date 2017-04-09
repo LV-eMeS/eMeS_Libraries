@@ -49,7 +49,7 @@ public class MS_HTML_PartTableRow extends MS_HTML_PartOfTag {
      * @return reference to table row itself.
      */
     @Override
-    public MS_HTML_PartTableRow content(FuncContentPrepareAction actionToPrepareContent) {
+    public MS_HTML_PartTableRow content(IFuncContentPrepareAction actionToPrepareContent) {
         return this;
     }
 

@@ -9,6 +9,6 @@ import lv.emes.libraries.utilities.MS_LineBuilder;
  * @version 1.0.
  */
 @FunctionalInterface
-public interface FuncContentPrepareAction {
+public interface IFuncContentPrepareAction {
     void executeAction(MS_LineBuilder lb);
 }

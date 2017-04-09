@@ -7,7 +7,7 @@ package lv.emes.libraries.utilities.validation;
  * @version 1.1.
  */
 public interface MS_ValidationError<T> {
-    MS_ValidationError setErrorMessageForming(FuncFormValidationErrorMessage action);
+    MS_ValidationError setErrorMessageForming(IFuncFormValidationErrorMessage action);
 
     /**
      * Returns message of validation error using pre-defined method to form message.

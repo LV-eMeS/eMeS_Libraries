@@ -9,7 +9,7 @@ package lv.emes.libraries.utilities.validation;
 public class MS_ValidationErrorImpl<T> implements MS_ValidationError<T> {
     private Integer number;
     private T object;
-    private FuncFormValidationErrorMessage actionToFormatMessage;
+    private IFuncFormValidationErrorMessage actionToFormatMessage;
 
     public MS_ValidationErrorImpl(Integer number) {
         if (number == null)
@@ -36,7 +36,7 @@ public class MS_ValidationErrorImpl<T> implements MS_ValidationError<T> {
         return actionToFormatMessage != null ? actionToFormatMessage.formMessage() : "";
     }
 
-    public MS_ValidationError setErrorMessageForming(FuncFormValidationErrorMessage action) {
+    public MS_ValidationError setErrorMessageForming(IFuncFormValidationErrorMessage action) {
         actionToFormatMessage = action;
         return this;
     }

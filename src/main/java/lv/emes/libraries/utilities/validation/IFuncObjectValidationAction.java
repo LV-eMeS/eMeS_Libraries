@@ -9,6 +9,6 @@ import lv.emes.libraries.tools.lists.MS_List;
  * @version 1.0.
  */
 @FunctionalInterface
-public interface FuncObjectValidationAction<T> {
+public interface IFuncObjectValidationAction<T> {
     void doValidationProcess(T objectToValidate, MS_List<MS_ValidationError<T>> validationErrorList);
 }

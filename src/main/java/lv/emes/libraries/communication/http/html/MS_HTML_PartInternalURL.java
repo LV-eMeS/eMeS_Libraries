@@ -34,7 +34,7 @@ public class MS_HTML_PartInternalURL extends MS_HTML_PartOfTag {
     }
 
     @Override
-    public MS_HTML_PartInternalURL content(FuncContentPrepareAction actionToPrepareContent) {
+    public MS_HTML_PartInternalURL content(IFuncContentPrepareAction actionToPrepareContent) {
         super.content(actionToPrepareContent);
         return this;
     }
