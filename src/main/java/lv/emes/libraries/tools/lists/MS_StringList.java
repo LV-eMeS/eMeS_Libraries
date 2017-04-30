@@ -69,6 +69,7 @@ public final class MS_StringList implements IListActions<String> {
      * @param aDelimiter a delimiter.
      */
     public MS_StringList(char aDelimiter) {
+        this.delimiter = aDelimiter;
     }
 
     /**
