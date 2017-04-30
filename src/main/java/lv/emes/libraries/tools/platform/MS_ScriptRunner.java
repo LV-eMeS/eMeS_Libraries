@@ -1,17 +1,18 @@
 package lv.emes.libraries.tools.platform;
 
 import lv.emes.libraries.file_system.MS_FileSystemTools;
-import lv.emes.libraries.file_system.MS_TextFile;
+import lv.emes.libraries.file_system.MS_Logger;
 import lv.emes.libraries.tools.MS_CodingTools;
 import lv.emes.libraries.tools.MS_KeyCodeDictionary;
-import lv.emes.libraries.tools.MS_TimeTools;
 import lv.emes.libraries.tools.lists.MS_StringList;
 import lv.emes.libraries.tools.platform.windows.MS_ApplicationWindow;
 import lv.emes.libraries.tools.platform.windows.MS_WindowsAPIManager;
 import lv.emes.libraries.tools.platform.windows.MediaEventTypeEnum;
 
 import java.awt.*;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static lv.emes.libraries.tools.platform.MS_KeyStrokeExecutor.getInstance;
 import static lv.emes.libraries.tools.platform.ScriptParsingError.*;
@@ -86,7 +87,7 @@ import static lv.emes.libraries.tools.platform.ScriptParsingError.*;
  * </ul>
  *
  * @author eMeS
- * @version 1.4.
+ * @version 1.5.
  */
 public class MS_ScriptRunner {
 
@@ -187,6 +188,8 @@ public class MS_ScriptRunner {
 
     private String fscript = "";
     private MS_StringList fCommandList;
+    private boolean isScriptRunningTerminated = false;
+    private MS_StringList fScriptTerminationShortcutKeyCombination;
     private Map<String, String> userVariables = new HashMap<>();
     private boolean commandNotFoundTryKeyPressing = false;
     private boolean paused = false;
@@ -196,30 +199,10 @@ public class MS_ScriptRunner {
     private MS_IFuncStringInputMethod variableInputMethod = MS_InputOutputMethodDefaults._INPUT_CONSOLE;
     private MS_IFuncStringInputMethod passwordInputMethod = MS_InputOutputMethodDefaults._INPUT_CONSOLE;
     private MS_IFuncStringOutputMethod outputMethod = MS_InputOutputMethodDefaults._OUTPUT_CONSOLE;
-
-    public String getPathToLoggerFile() {
-        return pathToLoggerFile;
-    }
-
-    public void setPasswordInputMethod(MS_IFuncStringInputMethod passwordInputMethod) {
-        this.passwordInputMethod = passwordInputMethod;
-    }
-
-    public void setPathToLoggerFile(String pathToLoggerFile) {
-        this.pathToLoggerFile = pathToLoggerFile;
-    }
-
-    public void setVariableInputMethod(MS_IFuncStringInputMethod variableInputMethod) {
-        this.variableInputMethod = variableInputMethod;
-    }
-
-    public void setOutputMethod(MS_IFuncStringOutputMethod outputMethod) {
-        this.outputMethod = outputMethod;
-    }
-
     private String pathToLoggerFile = "";
 
     public MS_ScriptRunner() {
+        fScriptTerminationShortcutKeyCombination = new MS_StringList("ctrl+alt+shift+4", '+');
     }
 
     public MS_ScriptRunner(String scriptText) {
@@ -530,47 +513,58 @@ public class MS_ScriptRunner {
     }
 
     public void runScript() {
+        Thread terminatorListenerThread = new Thread(
+                new MS_ScriptRunnerTerminateConditionChecker(this), "Script runner terminate condition listener");
+        terminatorListenerThread.start();
+
         userVariables.clear();
         if (getInstance().isCapsLockToggled())
             getInstance().keyPress("CAPS"); //caps lock during script executing is not needed at all
 
         fCommandList.forEachItem((cmd, index) -> {
-            try {
-//                System.out.println(cmd);
-                if (delay > 0) {
-                    MS_CodingTools.sleep(delay); //delay interval can be set using command "di"
-                    if (paused) { //if script was paused then this is the place to remove pause
-                        paused = false;
-                        delay = 0; //in next iteration pause will not be used anymore
-                    }
-                }
-
-                if ((cmd.length() > 0) && (cmd.charAt(0) != '/')) { //ignore commands starting with comment
-                    commandNotFoundTryKeyPressing = false;
-                    if (primaryCommandReading) {
-                        cmd = cmd.toUpperCase(); //whole script is case insensitive ^_^
-                        //starting to check for every possible command
-                        runImplementationPrimary(COMMANDS.get(cmd));
-                    } else {
-                        runImplementationSecondary(cmd);
-                    }
-
-                    if (commandNotFoundTryKeyPressing)
-                        getInstance().keyPress(cmd);
-                }
-            } catch (Exception e) {
-//                e.printStackTrace();
-                System.out.println(e.toString());
-                primaryCommandReading = true; //if command fails then lets try to read next command as primary command!
-                if (!pathToLoggerFile.equals("")) {
-                    MS_TextFile tmpLogFile = new MS_TextFile(pathToLoggerFile);
-                    Date now = new Date();
-                    tmpLogFile.appendln(MS_TimeTools.dateTimeToStr(now) + String.format(" : Command [%d] '%s' failed to execute with message:", index + 1, cmd), false);
-                    tmpLogFile.appendln(e.toString(), true);
-                    //after this loop continues executing next commands
-                }
+            MS_Logger logFile = new MS_Logger(pathToLoggerFile);
+            if (isScriptRunningTerminated) {
+                logFile.warning("Script running terminated by user's request.");
+                fCommandList.breakDoWithEveryItem();
             }
+            else {
+                try {
+//                System.out.println(cmd);
+                    if (delay > 0) {
+                        MS_CodingTools.sleep(delay); //delay interval can be set using command "di"
+                        if (paused) { //if script was paused then this is the place to remove pause
+                            paused = false;
+                            delay = 0; //in next iteration pause will not be used anymore
+                        }
+                    }
+
+                    if ((cmd.length() > 0) && (cmd.charAt(0) != '/')) { //ignore commands starting with comment
+                        commandNotFoundTryKeyPressing = false;
+                        if (primaryCommandReading) {
+                            cmd = cmd.toUpperCase(); //whole script is case insensitive ^_^
+                            //starting to check for every possible command
+                            runImplementationPrimary(COMMANDS.get(cmd));
+                        } else {
+                            runImplementationSecondary(cmd);
+                        }
+
+                        if (commandNotFoundTryKeyPressing)
+                            getInstance().keyPress(cmd);
+                    }
+                } catch (Exception e) {
+//                e.printStackTrace();
+                    System.out.println(e.toString());
+                    primaryCommandReading = true; //if command fails then lets try to read next command as primary command!
+                    if (!pathToLoggerFile.equals("")) {
+                        logFile.error(String.format("Command [%d] '%s' failed to execute with message:", index + 1, cmd), e);
+                        //after this loop continues executing next commands
+                    }
+                }
+            } //else if running terminated END
         });
+
+        if (terminatorListenerThread.isAlive())
+            terminatorListenerThread.interrupt();
     }
 
     public static void runScript(String scriptText) {
@@ -583,10 +577,63 @@ public class MS_ScriptRunner {
     }
 
     public void setScriptText(String script) {
-        this.fscript = fscript;
+        this.fscript = script;
         fCommandList = new MS_StringList();
         fCommandList.delimiter = DELIMITER_OF_CMDS;
         fCommandList.secondDelimiter = DELIMITER_OF_CMDS_SECOND;
         fCommandList.fromString(script);
+    }
+
+    public MS_StringList getScriptTerminationShortcutKeyCombination() {
+        return fScriptTerminationShortcutKeyCombination;
+    }
+
+    public String getPathToLoggerFile() {
+        return pathToLoggerFile;
+    }
+
+    public void setPasswordInputMethod(MS_IFuncStringInputMethod passwordInputMethod) {
+        this.passwordInputMethod = passwordInputMethod;
+    }
+
+    public void setPathToLoggerFile(String pathToLoggerFile) {
+        this.pathToLoggerFile = pathToLoggerFile;
+    }
+
+    public void setVariableInputMethod(MS_IFuncStringInputMethod variableInputMethod) {
+        this.variableInputMethod = variableInputMethod;
+    }
+
+    public void setOutputMethod(MS_IFuncStringOutputMethod outputMethod) {
+        this.outputMethod = outputMethod;
+    }
+
+    /**
+     * Sets new combination for script runner to terminate by user's request.
+     * Default combination is: CTRL + ALT + SHIFT + 4
+     * @param scriptTerminationShortcutKeyCombinationList list filled with recognizable keyboard key combination.
+     */
+    public void setScriptTerminationShortcutKeyCombination(MS_StringList scriptTerminationShortcutKeyCombinationList) {
+        this.fScriptTerminationShortcutKeyCombination.fromList(scriptTerminationShortcutKeyCombinationList);
+    }
+
+    public synchronized void terminateScriptRunning() {
+        isScriptRunningTerminated = true;
+    }
+
+    /**
+     * Determines, if script running is terminated by user's request.
+     * Does key stroke execution check, if user pressed specific key combination that signals for execution stop for current script.
+     * @return true if user requested termination of script executing.
+     */
+    boolean scriptRunningTerminated() {
+        AtomicBoolean res = new AtomicBoolean(true);
+        fScriptTerminationShortcutKeyCombination.forEachItem((key, ind) -> {
+            if (!MS_KeyStrokeExecutor.getInstance().isKeyDown(key)) {
+                res.set(false);
+                fScriptTerminationShortcutKeyCombination.breakDoWithEveryItem();
+            }
+        });
+        return res.get();
     }
 }

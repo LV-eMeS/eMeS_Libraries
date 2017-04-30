@@ -63,6 +63,7 @@ public final class MS_CodingTools {
     /**
      * Delays application activity for some time.
      * Method is using Thread.sleep().
+     * <p><u>Warning</u>: do not use it anywhere else but main thread, cause it scuppers InterruptedException!
      *
      * @param miliseconds amount of miliseconds that will delay application.
      */

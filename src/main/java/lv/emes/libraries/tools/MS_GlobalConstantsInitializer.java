@@ -13,15 +13,19 @@ import java.io.IOException;
  * <p>Example of use:<br>
  * 		MS_GlobalConstantsInitializer consts = new MS_GlobalConstantsInitializer("filename.properties");<br>
 		consts.updatePropsFromFile();<br>
-		System.out.println(MS_GlobalConstantsInitializer.DB_NAME);
+		System.out.println(MS_GlobalConstantsInitializer._DB_HOSTNAME);
  * <p>Public methods:
- * -changePropsFileLocation
- * -setPropsFileLocation
- * -getCurrentPropsFileLocation
- * -updatePropsFromFile
+ * <ul>
+ *     <li>changePropsFileLocation</li>
+ *     <li>setPropsFileLocation</li>
+ *     <li>getCurrentPropsFileLocation</li>
+ *     <li>updatePropsFromFile</li>
+ * </ul>
  * <p>Methods to override:
- * -setProperties
- * -doOnPropertiesReadException
+ * <ul>
+ *     <li>setProperties</li>
+ *     <li>doOnPropertiesReadException</li>
+ * </ul>
  * @version 1.4.
  * @author eMeS
  */
@@ -34,7 +38,7 @@ public abstract class MS_GlobalConstantsInitializer {
 	//variables containing values of constants
 //	private static final String P_DB_HOSTNAME = "localhost";
 
-//	public static String DB_HOSTNAME = P_DB_HOSTNAME;
+//	public static String _DB_HOSTNAME = P_DB_HOSTNAME;
 
 	//CONSTRUCTORS
 	/**
@@ -90,7 +94,7 @@ public abstract class MS_GlobalConstantsInitializer {
 	 * <p>You should define private static final variable with name "P_VARIABLE" for storing default value.
 	 * <p>You also need corresponding public static variable with name "VARIABLE", which value will be set here.
 	 * <p>Then just use line "VARIABLE = propsFile.getProperty("VARIABLE", P_VARIABLE);" in this method to set this value!
-	 * <p><code>DB_HOSTNAME = propsFile.getProperty("DB_HOSTNAME", P_DB_HOSTNAME);</code>
+	 * <p><code>_DB_HOSTNAME = propsFile.getProperty("db_hostname", P_DB_HOSTNAME);</code>
 	 * @param propsFile properties file.
 	 */
 	protected abstract void setProperties(MS_PropertiesFile propsFile);

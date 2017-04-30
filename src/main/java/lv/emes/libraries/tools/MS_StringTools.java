@@ -12,26 +12,28 @@ import static lv.emes.libraries.tools.MS_CodingTools.inRange;
 /**
  * Module designed to combine different actions related to text formatting and other things to do with String type Objects.
  * Also there is included latvian laguage customization tools.
- * Methods:
- * -getRandomString
- * -isSubstring
- * -textContains
- * -replaceInString
- * -getInversedText
- * -getTextWithCapitalizedFirstLetter
- * -hasOnlyDigitsInText
- * -hasOnlyASCIILettersInText
- * -isCharASCIILetter
- * -removeLV
- * -textToWords
- * -removePunctuation
- * -getHashFromString
- * -intToStr
- * -strToInt
- * -chr
- * -ord
- * -pos
- * -getSubstring
+ * <p>Methods:
+ * <ul>
+ *     <li>getRandomString</li>
+ *     <li>isSubstring</li>
+ *     <li>textContains</li>
+ *     <li>replaceInString</li>
+ *     <li>getInversedText</li>
+ *     <li>getTextWithCapitalizedFirstLetter</li>
+ *     <li>hasOnlyDigitsInText</li>
+ *     <li>hasOnlyASCIILettersInText</li>
+ *     <li>isCharASCIILetter</li>
+ *     <li>removeLV</li>
+ *     <li>textToWords</li>
+ *     <li>removePunctuation</li>
+ *     <li>getHashFromString</li>
+ *     <li>intToStr</li>
+ *     <li>strToInt</li>
+ *     <li>chr</li>
+ *     <li>ord</li>
+ *     <li>pos</li>
+ *     <li>getSubstring</li>
+ * </ul>
  *
  * @version 1.8.
  */

@@ -1,8 +1,9 @@
 package lv.emes.libraries.file_system;
 
 import lv.emes.libraries.tools.MS_TimeTools;
-
 import java.time.LocalDateTime;
+
+import static lv.emes.libraries.tools.MS_StringTools._LINE_BRAKE;
 
 /**
  * A text file writer that just appends specific file with specifically formatted text.
@@ -15,7 +16,7 @@ import java.time.LocalDateTime;
  * </ul>
  *
  * @author eMeS
- * @version 1.0.
+ * @version 1.1.
  */
 public class MS_Logger {
 
@@ -77,6 +78,18 @@ public class MS_Logger {
      */
     public void error(String msg) {
         pAppendLineWithLeadingDate("ERROR " + msg);
+    }
+
+    /**
+     * Opens logger file and appends it with message <b>msg</b> starting with word "ERROR".
+     * After message in new line error <b>error</b> is printed.
+     * After appending is done logger file is closed.
+     *
+     * @param msg arbitrary text to be added to logger lines.
+     * @param error exception that occurred by this error.
+     */
+    public void error(String msg, Exception error) {
+        pAppendLineWithLeadingDate("ERROR " + msg + _LINE_BRAKE + error.toString());
     }
 
     /**

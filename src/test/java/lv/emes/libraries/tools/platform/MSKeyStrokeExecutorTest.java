@@ -12,11 +12,11 @@ import static junit.framework.TestCase.assertTrue;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MSKeyStrokeExecutorTest {
-	public static MS_KeyStrokeExecutor insta = null;
+	public static MS_KeyStrokeExecutor executorInstance = null;
 
     @BeforeClass
     public static void setUp() throws AWTException {
-        insta = new MS_KeyStrokeExecutor();
+        executorInstance = new MS_KeyStrokeExecutor();
     }
 
     @AfterClass
@@ -26,17 +26,27 @@ public class MSKeyStrokeExecutorTest {
 
     @Test
     public void test01KeyDown() {
-        insta.keyDown("shift");
-        assertTrue(insta.isKeyDown("shift"));
-        insta.keyUp("shift");
+        executorInstance.keyDown("shift");
+        assertTrue(executorInstance.isKeyDown("shift"));
+        executorInstance.keyUp("shift");
 
-        insta.keyDown("ctrl");
-        assertTrue(insta.isKeyDown("ctrl"));
-        insta.keyUp("ctrl");
+        executorInstance.keyDown("ctrl");
+        assertTrue(executorInstance.isKeyDown("ctrl"));
+        executorInstance.keyUp("ctrl");
 
-        insta.keyDown("alt");
-        assertTrue(insta.isKeyDown("alt"));
-        insta.keyUp("alt");
+        executorInstance.keyDown("alt");
+        assertTrue(executorInstance.isKeyDown("alt"));
+        executorInstance.keyUp("alt");
+
+        //Following 2 blocks are not working at time due to Java bug.
+//        executorInstance.keyDown("delete");
+//        assertTrue(executorInstance.isKeyDown("delete"));
+//        executorInstance.keyUp("delete");
+//
+//
+//        executorInstance.keyDown("f4");
+//        assertTrue(executorInstance.isKeyDown("f4"));
+//        executorInstance.keyUp("f4");
     }
 
 //    @Test
@@ -44,15 +54,15 @@ public class MSKeyStrokeExecutorTest {
 //     * Not working at time due to Java bug.
 //     */
 //    public void test02CapsLock() throws InterruptedException {
-//        if (insta.isCapsLockToggled()) {
-//            insta.keyPress("caps");
+//        if (executorInstance.isCapsLockToggled()) {
+//            executorInstance.keyPress("caps");
 ////            Thread.sleep(5000);
-//            assertFalse(insta.isCapsLockToggled());
+//            assertFalse(executorInstance.isCapsLockToggled());
 //        } else {
 ////            Thread.sleep(5000);
-//            insta.keyPress("caps");
-//            assertTrue(insta.isCapsLockToggled());
+//            executorInstance.keyPress("caps");
+//            assertTrue(executorInstance.isCapsLockToggled());
 //        }
-//        insta.keyPress("caps"); //RETURN TO CURRENT STATE
+//        executorInstance.keyPress("caps"); //RETURN TO CURRENT STATE
 //    }
 }

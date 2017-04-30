@@ -302,7 +302,7 @@ public final class MS_StringList implements IListActions<String> {
         return count() > 0 && getIndexOfCurrent() > -1 && getIndexOfCurrent() < count();
     }
 
-    //JAUNAS METODES, kas nav nakusas no interfeisa
+    //NEW METHODS, that aren't coming from interfaces
     //------------------------------------------------------------------------------------------------------------------------
 
     /**
@@ -312,6 +312,17 @@ public final class MS_StringList implements IListActions<String> {
      */
     public void fromList(List<String> aList) {
         fList = aList;
+    }
+
+    /**
+     * Copies all the information of presented list to this one.
+     *
+     * @param aList an another eMeS string list.
+     */
+    public void fromList(MS_StringList aList) {
+        this.delimiter = aList.delimiter;
+        this.secondDelimiter = aList.secondDelimiter;
+        this.fList = aList.fList;
     }
 
     /**

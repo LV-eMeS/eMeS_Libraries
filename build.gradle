@@ -77,10 +77,5 @@ buildscript {
 task jarScriptRunner(type: OneJar) {
     mainClass = 'lv.emes.libraries.examples.MSScriptRunnerExecutable'
 //    archiveName = "eMeS_Libraries-"+eMeS_LibrariesVersion+".jar"
-    archiveName = "ScriptLauncher.jar"
-}
-
-task jarListeningScriptRunner(type: OneJar) {
-    mainClass = 'lv.emes.libraries.examples.MSListeningScriptRunnerExecutable'
-    archiveName = "ListeningScriptRunner.jar"
+    archiveName = "ScriptRunner.jar"
 }
