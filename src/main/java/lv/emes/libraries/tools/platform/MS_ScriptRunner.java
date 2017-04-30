@@ -513,6 +513,7 @@ public class MS_ScriptRunner {
     }
 
     public void runScript() {
+        isScriptRunningTerminated = false;
         Thread terminatorListenerThread = new Thread(
                 new MS_ScriptRunnerTerminateConditionChecker(this), "Script runner terminate condition listener");
         terminatorListenerThread.start();

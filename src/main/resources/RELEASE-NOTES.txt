@@ -1,5 +1,5 @@
 eMeS libraries
-Version 1.8.4
+Version 1.8.5
 Release Notes
 
 INTRODUCTION:
@@ -20,6 +20,7 @@ eMeS libraries Version 2.0.0
 ========================================================================================================
 eMeS libraries Version 1.9.0
 * Standalone MS_Logger to append log files.
+* Script runner now can be terminated by user's request
 ========================================================================================================
 eMeS libraries Version 1.8.0
 ========================================================================================================
