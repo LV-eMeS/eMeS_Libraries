@@ -17,10 +17,10 @@ import lv.emes.libraries.tools.MS_CodingTools;
  */
 public class MS_RandomItemList {
 	//PUBLIC STRUCTURES, EXCEPTIONS, PROPERTIES AND CONSTANTS
-	public static final int EMPTY_ITEM = 0;
-	public static final int SMALL_LIST = 100;
-	public static final int MEDIUM_LIST = 1000;
-	public static final int LARGE_LIST = 5000;
+	public static final int _EMPTY_ITEM = 0;
+	public static final int _SMALL_LIST = 100;
+	public static final int _MEDIUM_LIST = 1000;
+	public static final int _LARGE_LIST = 5000;
 	//exceptions
 	public static class IncorrectProbabilityException extends Exception {
 		private static final long serialVersionUID = 1986903532036673012L;
@@ -57,7 +57,7 @@ public class MS_RandomItemList {
 			totalItemCount = listSize;
 			items = new int[listSize]; //set the size of array
 			for (int i = 0; i < totalItemCount; i++)
-				items[i] = EMPTY_ITEM; //initialize empty values
+				items[i] = _EMPTY_ITEM; //initialize empty values
 		}
 	}
 	
@@ -129,12 +129,12 @@ public class MS_RandomItemList {
 	
 	/**
 	 * Picks 1 random item from the list.
-	 * @return 1 item from stored items. If ; <b>EMPTY_ITEM</b> if list is empty or 
+	 * @return 1 item from stored items. If ; <b>_EMPTY_ITEM</b> if list is empty or
 	 */
 	public int getItem() {
 		if (items != null)
 			return items[MS_CodingTools.randomNumber(0, totalItemCount-1)];
 		else
-			return EMPTY_ITEM;
+			return _EMPTY_ITEM;
 	}
 }

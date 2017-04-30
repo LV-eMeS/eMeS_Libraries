@@ -12,7 +12,7 @@ import org.w3c.dom.NodeList;
  * @version 1.0.
  */
 public class MS_XMLElementNode {
-    public static final String TEXT_NODE_NAME = "#text";
+    public static final String _TEXT_NODE_NAME = "#text";
     private Node actualNode;
     private Element el = null;
     private Boolean nodeIsAnElement;

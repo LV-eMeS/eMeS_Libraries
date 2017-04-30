@@ -86,7 +86,7 @@ public class MS_TcpIPServer extends MS_TcpIPServerCore {
 		super(port);
 		//save information about connecting client. Right after connection success client will send some info about himself (OS, 
 		MS_ServerCommand tmp = new MS_ServerCommand();
-		tmp.code = MS_ClientServerConstants.INFO_ABOUT_NEW_CLIENT;
+		tmp.code = MS_ClientServerConstants._INFO_ABOUT_NEW_CLIENT;
 		tmp.doOnCommand = (server, data, client, out) -> {
 			client.os = data.get(1);
 			client.osUserName = data.get(2);
@@ -104,7 +104,7 @@ public class MS_TcpIPServer extends MS_TcpIPServerCore {
 		//set behavior of client disconnecting. Note that server and list already is aware that client is missing.
 		//Here you need just to set user-defined behavior
 		tmp = new MS_ServerCommand();
-		tmp.code = MS_ClientServerConstants.CLIENT_DISCONNECTS_NOTIFY_MESSAGE;
+		tmp.code = MS_ClientServerConstants._CLIENT_DISCONNECTS_NOTIFY_MESSAGE;
 		tmp.doOnCommand = (server, data, client, out) -> {
 			//user can define his own expected behavior when server goes down.
 			if (onClientGoingOffline != null)
@@ -231,14 +231,14 @@ public class MS_TcpIPServer extends MS_TcpIPServerCore {
 	
 	/**
 	 * {@inheritDoc}
-	 * And notifies all connected clients that server is shutting down with command <b>DC_NOTIFY_MESSAGE</b>
+	 * And notifies all connected clients that server is shutting down with command <b>_DC_NOTIFY_MESSAGE</b>
 	 * which is first command in <b>commandList</b> of client objects. <p>To disable this option change <b>notifyClientsOnDC</b> to false or
 	 * simply remove 0-th element in <b>commandList</b> of all client objects (<b>MS_TcpClient</b>), which is not recommended.
 	 */
 	@Override
 	public void stopServer() {
 		if (notifyClientsOnDC) 
-			this.cmdToAll(MS_ClientServerConstants.DC_NOTIFY_MESSAGE);
+			this.cmdToAll(MS_ClientServerConstants._DC_NOTIFY_MESSAGE);
 		//make them all disconnect themselves too (only server side sockets, not client side sockets)
 		this.disconnectAllClients();
 		super.stopServer();
@@ -247,7 +247,7 @@ public class MS_TcpIPServer extends MS_TcpIPServerCore {
 	@Override
 	protected void onNewClientConnected(MS_ClientOfServer client) {
 		this.addDataToContainer(Integer.toString(client.id));
-		this.cmdToClient(MS_ClientServerConstants.NEW_CLIENT_ID_NOTIFY_MESSAGE, client);	
+		this.cmdToClient(MS_ClientServerConstants._NEW_CLIENT_ID_NOTIFY_MESSAGE, client);
 		if (onClientConnecting != null)
 			try {
 				onClientConnecting.doOnEvent(client);

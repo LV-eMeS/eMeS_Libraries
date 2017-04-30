@@ -28,7 +28,7 @@ public class MS_LineBuilder {
     public MS_LineBuilder add(String str) {
         if (!str.isEmpty())
             sb.append(str);
-        sb.append(MS_StringTools.C_LINE_BRAKE);
+        sb.append(MS_StringTools._LINE_BRAKE);
         return this;
     }
 

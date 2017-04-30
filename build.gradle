@@ -32,7 +32,6 @@ dependencies {
 //    compile group: 'com.jayway.restassured', name: 'rest-assured', version: '2.9.0'
 
     //For tests:
-    compile "junit:junit:4.12"
     compile group: 'org.mockito', name: 'mockito-all', version: '1.9.5'
     testCompile "junit:junit:4.12"
 }
@@ -79,4 +78,9 @@ task jarScriptRunner(type: OneJar) {
     mainClass = 'lv.emes.libraries.examples.MSScriptRunnerExecutable'
 //    archiveName = "eMeS_Libraries-"+eMeS_LibrariesVersion+".jar"
     archiveName = "ScriptLauncher.jar"
+}
+
+task jarListeningScriptRunner(type: OneJar) {
+    mainClass = 'lv.emes.libraries.examples.MSListeningScriptRunnerExecutable'
+    archiveName = "ListeningScriptRunner.jar"
 }

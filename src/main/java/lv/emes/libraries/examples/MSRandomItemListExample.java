@@ -12,7 +12,7 @@ public class MSRandomItemListExample {
 	public static final int BANANA = 4;
 	
 	public static void main(String[] args) {
-		MS_RandomItemList listOfFruits = new MS_RandomItemList(MS_RandomItemList.SMALL_LIST);
+		MS_RandomItemList listOfFruits = new MS_RandomItemList(MS_RandomItemList._SMALL_LIST);
 		try {
 			listOfFruits.storeItem(APPLE, .4f);
 			listOfFruits.storeItem(ORANGE, .2f); //40% of list is free after this action	
@@ -46,7 +46,7 @@ public class MSRandomItemListExample {
 			case BANANA:
 				System.out.println("Got banana.");
 				break;
-			case MS_RandomItemList.EMPTY_ITEM:
+			case MS_RandomItemList._EMPTY_ITEM:
 				System.out.println("Got nothing...");
 				break;
 			}		//case end	

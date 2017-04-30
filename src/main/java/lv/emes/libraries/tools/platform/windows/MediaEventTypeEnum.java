@@ -23,24 +23,24 @@ public enum MediaEventTypeEnum {
 
     PLAY_PAUSE_MUSIC(VK_MEDIA_PLAY_PAUSE), STOP_MUSIC(VK_MEDIA_STOP), NEXT_TRACK(VK_MEDIA_NEXT_TRACK), PREV_TRACK(VK_MEDIA_PREV_TRACK);
 
-    public static final String PLAY_MUSIC_KEY = "PLAY";
-    public static final String PAUSE_MUSIC_KEY = "PAUSE";
-    public static final String PLAY_PAUSE_MUSIC_KEY = "PLAYPAUSE";
-    public static final String STOP_MUSIC_KEY = "STOP";
-    public static final String NEXT_TRACK_KEY = "NEXT";
-    public static final String PREVIOUS_TRACK_KEY = "PREV";
+    public static final String _PLAY_MUSIC_KEY = "PLAY";
+    public static final String _PAUSE_MUSIC_KEY = "PAUSE";
+    public static final String _PLAY_PAUSE_MUSIC_KEY = "PLAYPAUSE";
+    public static final String _STOP_MUSIC_KEY = "STOP";
+    public static final String _NEXT_TRACK_KEY = "NEXT";
+    public static final String _PREVIOUS_TRACK_KEY = "PREV";
 
     private int windowsAPIKeyCode;
     private static Map<String, MediaEventTypeEnum> typesByKey = initKeys();
 
     private static Map<String, MediaEventTypeEnum> initKeys() {
         Map<String, MediaEventTypeEnum> res = new HashMap<>();
-        res.put(PLAY_MUSIC_KEY, PLAY_PAUSE_MUSIC);
-        res.put(PAUSE_MUSIC_KEY, PLAY_PAUSE_MUSIC);
-        res.put(PLAY_PAUSE_MUSIC_KEY, PLAY_PAUSE_MUSIC);
-        res.put(STOP_MUSIC_KEY, STOP_MUSIC);
-        res.put(NEXT_TRACK_KEY, NEXT_TRACK);
-        res.put(PREVIOUS_TRACK_KEY, PREV_TRACK);
+        res.put(_PLAY_MUSIC_KEY, PLAY_PAUSE_MUSIC);
+        res.put(_PAUSE_MUSIC_KEY, PLAY_PAUSE_MUSIC);
+        res.put(_PLAY_PAUSE_MUSIC_KEY, PLAY_PAUSE_MUSIC);
+        res.put(_STOP_MUSIC_KEY, STOP_MUSIC);
+        res.put(_NEXT_TRACK_KEY, NEXT_TRACK);
+        res.put(_PREVIOUS_TRACK_KEY, PREV_TRACK);
         return res;
     }
 

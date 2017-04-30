@@ -114,7 +114,7 @@ public class MS_GlobalInitializableConstats {
 	 * @param exc an occurred exception.
 	 */
 	protected void doOnPropertiesReadException(IOException exc) {
-		MS_Logger.getLogger(MS_GlobalInitializableConstats.class).error("Couldn't read properties from file", exc);
+		MS_Log4Java.getLogger(MS_GlobalInitializableConstats.class).error("Couldn't read properties from file", exc);
 		
 	}
 }

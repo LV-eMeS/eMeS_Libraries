@@ -1,5 +1,8 @@
 package lv.emes.libraries.communication.cryptography;
 
+import lv.emes.libraries.tools.MS_CodingTools;
+import org.apache.commons.codec.binary.Base64;
+
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
@@ -7,9 +10,6 @@ import javax.crypto.spec.PBEKeySpec;
 //import java.security.NoSuchAlgorithmException;
 //import java.security.SecureRandom;
 //import java.security.spec.InvalidKeySpecException;
-
-import lv.emes.libraries.tools.MS_CodingTools;
-import org.apache.commons.codec.binary.Base64;
 
 /** 
  * Purpose of this module is easy hash (SHA1) generating from input text. 
@@ -22,11 +22,11 @@ public class MS_Hash {
     // The higher the number of iterations the more 
     // expensive computing the hash is for us and
     // also for an attacker.
-    private static final int CITERATIONS = 20*1000;
+    private static final int _ITERATIONS = 20000;
     //private static final int CDEFAULT_SALT_LENGTH = 32;
     //byte[] salt = SecureRandom.getInstance("SHA1PRNG").generateSeed(CSALTLEN);
-    private static final int CDEFAULT_KEY_LEN = 256;
-    private static final byte[] CDEFAULT_SALT = {
+    private static final int _DEFAULT_KEY_LEN = 256;
+    private static final byte[] _DEFAULT_SALT = {
     		1, -115, 85, 122, -18, -49, -94, 25, -36, -128, -43, -83, 122, -21, 38, 47, 2, 124, 70, -54, 111, 67, 106, 39, -28, 51, -32, -112, 50, -28, 97, -37
     		};
     
@@ -45,7 +45,7 @@ public class MS_Hash {
         
 		try {
 			key = f.generateSecret(new PBEKeySpec(
-			    aTextToHash.toCharArray(), aSalt, CITERATIONS, aKeyLength)
+			    aTextToHash.toCharArray(), aSalt, _ITERATIONS, aKeyLength)
 			);
 		} catch (Exception e) {
 			return "";
@@ -59,7 +59,7 @@ public class MS_Hash {
      */
     public static String getHash(String aTextToHash) {    	
     	// store the salt with the password
-    	return hash(aTextToHash, CDEFAULT_SALT, CDEFAULT_KEY_LEN);
+    	return hash(aTextToHash, _DEFAULT_SALT, _DEFAULT_KEY_LEN);
     }
     
     /** From passed text generates text hashed with SHA1 algorithm using default salt value and given length of key. 
@@ -70,7 +70,7 @@ public class MS_Hash {
     public static String getHash(String aTextToHash, int aKeyLength) {    	
     	if (! MS_CodingTools.inRange(aKeyLength, 256, 2048) ) return "";
     	// store the salt with the password
-    	return hash(aTextToHash, CDEFAULT_SALT, aKeyLength);
+    	return hash(aTextToHash, _DEFAULT_SALT, aKeyLength);
     }
     //ar user izvēlētu sāli
     
@@ -82,7 +82,7 @@ public class MS_Hash {
      */
     public static String getHash(String aTextToHash, String aSalt) {  	    	
     	byte [] salt = aSalt.getBytes(); //iegūst lietotāja doto sāli kā bitu masīvu
-    	return hash(aTextToHash, salt, CDEFAULT_KEY_LEN);
+    	return hash(aTextToHash, salt, _DEFAULT_KEY_LEN);
     }    
     /**
     /** From passed text generates text hashed with SHA1 algorithm using passed salt value and passed length of key. 

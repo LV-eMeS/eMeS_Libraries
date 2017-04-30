@@ -19,27 +19,27 @@ import static lv.emes.libraries.tools.MS_CodingTools.inRange;
  */
 public final class MS_StringList implements IListActions<String> {
     boolean flagForLoopBreaking;
-    public static final char cDefaultDelimiter = '#';
-    public static final char cSecondDefaultDelim = '`';//chr(9835);
+    public static final char _DEFAULT_DELIMITER = '#';
+    public static final char _SECOND_DEFAULT_DELIM = '`';//chr(9835);
     /**
-     * Delimiter can be changed and will be used in <b>fromString</b> and <b>toString</b> methods. Default value of this property is <b>cDefaultDelimiter</b>.
+     * Delimiter can be changed and will be used in <b>fromString</b> and <b>toString</b> methods. Default value of this property is <b>_DEFAULT_DELIMITER</b>.
      *
-     * @see MS_StringList#cDefaultDelimiter
+     * @see MS_StringList#_DEFAULT_DELIMITER
      * @see MS_StringList#fromString(String)
      * @see MS_StringList#toString()
      * @see MS_StringList#fromTextFile(MS_TextFile)
      * @see MS_StringList#fromTextFile(String)
      */
-    public char delimiter = cDefaultDelimiter;
+    public char delimiter = _DEFAULT_DELIMITER;
     /**
      * Will be used when loading from string which contains some characters with value <b>delimiter</b> that are not actually perform delimiter functions.
      * In this case after <b>delimiter</b> symbol this <b>secondDelimiter</b> symbol will be inserted.
-     * Default value for this property is <b>cSecondDefaultDelim</b>.
+     * Default value for this property is <b>_SECOND_DEFAULT_DELIM</b>.
      *
      * @see MS_StringList#delimiter
-     * @see MS_StringList#cSecondDefaultDelim
+     * @see MS_StringList#_SECOND_DEFAULT_DELIM
      */
-    public char secondDelimiter = cSecondDefaultDelim;
+    public char secondDelimiter = _SECOND_DEFAULT_DELIM;
     protected List<String> fList = new ArrayList<>(); //this list will be used for all the internal operations
     public int indexOfCurrent = -1;
 

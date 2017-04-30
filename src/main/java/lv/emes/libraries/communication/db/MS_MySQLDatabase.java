@@ -10,12 +10,12 @@ import java.sql.SQLException;
  * @version 2.0.
  */
 public class MS_MySQLDatabase extends MS_JDBCDatabase {
-    public static final int DEFAULT_PORT = 3306;
+    public static final int _DEFAULT_PORT = 3306;
 
     @Override
     public void connect() throws ClassNotFoundException, SQLException {
         if (this.isConnectionInitializationNeeded()) {
-            if (port == 0) port = DEFAULT_PORT;
+            if (port == 0) port = _DEFAULT_PORT;
 
             String connStringDatabaseName;
             if (dbName.equals("")) {

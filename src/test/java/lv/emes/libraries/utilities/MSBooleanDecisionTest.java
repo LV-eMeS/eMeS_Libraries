@@ -14,15 +14,15 @@ public class MSBooleanDecisionTest {
         int result;
 
         result = MS_BooleanDecision.getCase(true, false);
-        assertEquals(result, MS_BooleanDecision.FIRST);
+        assertEquals(result, MS_BooleanDecision._FIRST);
 
         result = MS_BooleanDecision.getCase(false, true);
-        assertEquals(result, MS_BooleanDecision.SECOND);
+        assertEquals(result, MS_BooleanDecision._SECOND);
 
         result = MS_BooleanDecision.getCase(false, false);
-        assertEquals(result, MS_BooleanDecision.NONE);
+        assertEquals(result, MS_BooleanDecision._NONE);
 
         result = MS_BooleanDecision.getCase(true, true);
-        assertEquals(result, MS_BooleanDecision.BOTH);
+        assertEquals(result, MS_BooleanDecision._BOTH);
     }
 }

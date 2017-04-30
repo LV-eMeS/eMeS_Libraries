@@ -27,7 +27,7 @@ public final class MS_WindowsAPIManager {
 
     //PRIVATE METHODS
     private static void checkOSAndThrowExceptionIfIncompatible() throws IncompatibleOSException {
-        if (MS_PlatformIndependentTools.getOS().getOSID() != MS_OperatingSystem.OS_WINDOWS_ID)
+        if (MS_PlatformIndependentTools.getOS().getOSID() != MS_OperatingSystem._OS_WINDOWS_ID)
             throw new IncompatibleOSException("Cannot change Windows system volume in different operating system.");
     }
 

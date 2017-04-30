@@ -11,9 +11,9 @@ import java.net.UnknownHostException;
 public class MSTcpIPClientExample {
 	public static final String BINARY_DEST_FILE_CLIENT = "src/main/java/lv/emes/examples/exampleFileFromServer.png";
 	public static final String HOST_TO_CONNECT_TO = "localhost";
-	public static final int PORT_OF_HOST = MS_ClientServerConstants.DEFAULT_PORT_FOR_TESTING;
+	public static final int PORT_OF_HOST = MS_ClientServerConstants._DEFAULT_PORT_FOR_TESTING;
 
-	public static void main(String[] args) throws UnknownHostException, IllegalArgumentException, IOException {
+	public static void main(String[] args) throws IllegalArgumentException, IOException {
 		MS_TcpIPClient client = new MS_TcpIPClient();
 		client.onIOException = (exception) -> {
 			System.out.println("Some exception happened while reading message from server.");

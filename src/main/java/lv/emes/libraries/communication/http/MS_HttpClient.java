@@ -22,6 +22,7 @@ import java.util.Map;
  */
 //http://stackoverflow.com/questions/2938502/sending-post-data-in-android
 public class MS_HttpClient {
+
     private static String getPostDataString(Map<String, String> params) throws UnsupportedEncodingException {
         if (params == null) //if no parameters is assigned then there is no need to build parameters as string
             return "";

@@ -11,20 +11,20 @@ package lv.emes.libraries.utilities;
  * @version 1.0.
  */
 public class MS_BooleanDecision {
-    public static final int NONE = 0;
-    public static final int FIRST = 1;
-    public static final int SECOND = 2;
-    public static final int BOTH = 3;
+    public static final int _NONE = 0;
+    public static final int _FIRST = 1;
+    public static final int _SECOND = 2;
+    public static final int _BOTH = 3;
 
     private MS_BooleanDecision() {}
 
     public static int getCase(boolean first, boolean second) {
         if (first) {
-            if (second) return BOTH;
-            else return FIRST;
+            if (second) return _BOTH;
+            else return _FIRST;
         } else {
-            if (second) return SECOND;
-            else return NONE;
+            if (second) return _SECOND;
+            else return _NONE;
         }
     }
 }

@@ -40,23 +40,23 @@ public final class MS_StringTools {
     private MS_StringTools() {
     }
 
-    //konstantes
-    public static final int C_DIACTRITIC_CHAR_COUNT = 13 * 2;
-    public static final int C_PUNCTUATION_COUNT = 8;
-    public static final char[] C_DIACTRITIC_CHARS = {'ē', 'ŗ', 'ū', 'ī', 'ō', 'ā', 'š', 'ģ', 'ķ', 'ļ', 'ž', 'č', 'ņ',
+    //constants
+    public static final int _DIACTRITIC_CHAR_COUNT = 13 * 2;
+    public static final int _PUNCTUATION_COUNT = 8;
+    public static final char[] _DIACTRITIC_CHARS = {'ē', 'ŗ', 'ū', 'ī', 'ō', 'ā', 'š', 'ģ', 'ķ', 'ļ', 'ž', 'č', 'ņ',
             'Ē', 'Ŗ', 'Ū', 'Ī', 'Ō', 'Ā', 'Š', 'Ģ', 'Ķ', 'Ļ', 'Ž', 'Č', 'Ņ'};
-    public static final char[] C_NON_DIACTRITIC_CHARS = {'e', 'r', 'u', 'i', 'o', 'a', 's', 'g', 'k', 'l', 'z', 'c', 'n',
+    public static final char[] _NON_DIACTRITIC_CHARS = {'e', 'r', 'u', 'i', 'o', 'a', 's', 'g', 'k', 'l', 'z', 'c', 'n',
             'E', 'R', 'U', 'I', 'O', 'A', 'S', 'G', 'K', 'L', 'Z', 'C', 'N'};
-    public static final String C_CARRIAGE_RETURN = "\r"; //chr 13 - carriage return (Mac style)
-    public static final String C_LINE_FEED = "\n"; //chr 10 - line feed (Unix style)
-    public static final String C_LINE_BRAKE = C_CARRIAGE_RETURN + C_LINE_FEED; //Windows style line breaks
-    public static final String C_TAB_SPACE = "\t";
-    public static final char[] C_PUNCTUATION_CHARS = {'.', ',', '!', '?', ';', ':', '/', '\\'};
-    public static final String C_NUMBERS = "0123456789";
-    public static final String C_SMALL_LETTERS = "abcdefghijklmnopqrstuvwxyz";
-    public static final String C_BIG_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    public static final String _CARRIAGE_RETURN = "\r"; //chr 13 - carriage return (Mac style)
+    public static final String _LINE_FEED = "\n"; //chr 10 - line feed (Unix style)
+    public static final String _LINE_BRAKE = _CARRIAGE_RETURN + _LINE_FEED; //Windows style line breaks
+    public static final String _TAB_SPACE = "\t";
+    public static final char[] _PUNCTUATION_CHARS = {'.', ',', '!', '?', ';', ':', '/', '\\'};
+//    public static final String _NUMBERS = "0123456789";
+//    public static final String _SMALL_LETTERS = "abcdefghijklmnopqrstuvwxyz";
+//    public static final String _BIG_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-    //mazie tipi
+    //small types
     public enum TNotificationLang {
         nlEN, nlLV
     }
@@ -72,12 +72,7 @@ public final class MS_StringTools {
 
     public static Set<TSymbolTypeForGenerator> SetForCodeGenParams = Collections.synchronizedSet(EnumSet.noneOf(TSymbolTypeForGenerator.class));
 
-    //klases
-/*	public class T_DateTime { //pilda PASCAL analoga - ieraksts - lomu.
-        int iMilliSec, iSecond, iMinute, iHour, iDay, iMonth, iYear;
-		String sMilliSec, sSecond, sMinute, sHour, sDay, sMonth, sYear;
-	}*/
-    //metodes
+    //methods
     //------------------------------------------------------------------------------------------------------------------------
     private static char _returnSpecialSymbol() {
         //there is 4 regions in ASCII code that contains special symbols.
@@ -391,9 +386,9 @@ public final class MS_StringTools {
 
         char[] resAsArray = aText.toCharArray();
         for (int i = 0; i < aText.length(); i++) {
-            for (int j = 0; j < C_DIACTRITIC_CHAR_COUNT; j++) {
-                if (aText.charAt(i) == C_DIACTRITIC_CHARS[j]) {
-                    resAsArray[i] = C_NON_DIACTRITIC_CHARS[j];
+            for (int j = 0; j < _DIACTRITIC_CHAR_COUNT; j++) {
+                if (aText.charAt(i) == _DIACTRITIC_CHARS[j]) {
+                    resAsArray[i] = _NON_DIACTRITIC_CHARS[j];
                 } //if ends here
             }
         } //outer for ends here
@@ -412,7 +407,7 @@ public final class MS_StringTools {
     }
 
     /**
-     * Removes any commas, dots etc. Punctuation symbols declared in <b>C_PUNCTUATION_CHARS</b>.
+     * Removes any commas, dots etc. Punctuation symbols declared in <b>_PUNCTUATION_CHARS</b>.
      *
      * @param aText input text with punctuation.
      * @return output text without punctuation.
@@ -426,8 +421,8 @@ public final class MS_StringTools {
             int j = 0;
             char iThSymbol = aText.charAt(i);
 
-            while (j < C_PUNCTUATION_COUNT) {
-                if (iThSymbol == C_PUNCTUATION_CHARS[j]) {
+            while (j < _PUNCTUATION_COUNT) {
+                if (iThSymbol == _PUNCTUATION_CHARS[j]) {
                     allowToAddSymbolToRes = false;
                     break;
                 }
@@ -536,7 +531,7 @@ public final class MS_StringTools {
     public static String getTabSpace(int countOfTabs) {
         StringBuilder res = new StringBuilder();
         for (int i = 1; i <= countOfTabs; i++)
-            res.append(C_TAB_SPACE);
+            res.append(_TAB_SPACE);
         return res.toString();
     }
 

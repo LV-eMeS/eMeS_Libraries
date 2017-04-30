@@ -193,9 +193,9 @@ public class MS_ScriptRunner {
     private long delay = 0;
     private boolean primaryCommandReading = true;
     private int secondaryCmd = 0;
-    private MS_IFuncStringInputMethod variableInputMethod = MS_InputOutputMethodDefaults.INPUT_CONSOLE;
-    private MS_IFuncStringInputMethod passwordInputMethod = MS_InputOutputMethodDefaults.INPUT_CONSOLE;
-    private MS_IFuncStringOutputMethod outputMethod = MS_InputOutputMethodDefaults.OUTPUT_CONSOLE;
+    private MS_IFuncStringInputMethod variableInputMethod = MS_InputOutputMethodDefaults._INPUT_CONSOLE;
+    private MS_IFuncStringInputMethod passwordInputMethod = MS_InputOutputMethodDefaults._INPUT_CONSOLE;
+    private MS_IFuncStringOutputMethod outputMethod = MS_InputOutputMethodDefaults._OUTPUT_CONSOLE;
 
     public String getPathToLoggerFile() {
         return pathToLoggerFile;
@@ -378,11 +378,11 @@ public class MS_ScriptRunner {
                 break;
             case CMD_SEC_SHOW_WINDOW_OS_WINDOWS:
                 if (!MS_ApplicationWindow.showApplicationWindow(commandParamsAsText))
-                    throw new ScriptParsingError(String.format(ERROR_FAILED_TO_SHOW_WINDOW, commandParamsAsText));
+                    throw new ScriptParsingError(String.format(_ERROR_FAILED_TO_SHOW_WINDOW, commandParamsAsText));
                 break;
             case CMD_SEC_HIDE_WINDOW_OS_WINDOWS:
                 if (!MS_ApplicationWindow.hideApplicationWindow(commandParamsAsText)) {
-                    throw new ScriptParsingError(String.format(ERROR_FAILED_TO_HIDE_WINDOW, commandParamsAsText));
+                    throw new ScriptParsingError(String.format(_ERROR_FAILED_TO_HIDE_WINDOW, commandParamsAsText));
                 }
                 break;
             case CMD_SEC_PAUSE:
@@ -395,7 +395,7 @@ public class MS_ScriptRunner {
             case CMD_SEC_MOUSE_SET_COORDINATES:
                 params = new MS_StringList(commandParamsAsText, DELIMITER_OF_PARAMETERS);
                 if (params.count() != 2)
-                    throw new ScriptParsingError(String.format(ERROR_PARAMETER_COUNT, 2));
+                    throw new ScriptParsingError(String.format(_ERROR_PARAMETER_COUNT, 2));
                 getInstance().mouseSetCoords(
                         new Point(Integer.parseInt(params.get(0)), Integer.parseInt(params.get(1)))
                 );
@@ -403,7 +403,7 @@ public class MS_ScriptRunner {
             case CMD_SEC_MOUSE_MOVE_FOR_COORDINATES:
                 params = new MS_StringList(commandParamsAsText, DELIMITER_OF_PARAMETERS);
                 if (params.count() != 2)
-                    throw new ScriptParsingError(String.format(ERROR_PARAMETER_COUNT, 2));
+                    throw new ScriptParsingError(String.format(_ERROR_PARAMETER_COUNT, 2));
                 getInstance().mouseMove(
                         new Point(Integer.parseInt(params.get(0)), Integer.parseInt(params.get(1)))
                 );
@@ -421,23 +421,23 @@ public class MS_ScriptRunner {
             case CMD_SEC_VARIABLE_PROMPT:
                 params = new MS_StringList(commandParamsAsText, DELIMITER_OF_PARAMETERS);
                 if (params.count() != 2)
-                    throw new ScriptParsingError(String.format(ERROR_PARAMETER_COUNT, 2));
+                    throw new ScriptParsingError(String.format(_ERROR_PARAMETER_COUNT, 2));
                 //put variable in userVariables
                 tmpStr2 = variableInputMethod.readString(params.get(1));
                 tmpStr = userVariables.put(params.get(0), tmpStr2);
                 if (tmpStr != null)
-                    throw new ScriptParsingError(String.format(WARNING_USER_VARIABLE_OVERRIDDEN, tmpStr, tmpStr2));
+                    throw new ScriptParsingError(String.format(_WARNING_USER_VARIABLE_OVERRIDDEN, tmpStr, tmpStr2));
                 break;
             case CMD_SEC_PASSWORD_PROMPT:
                 params = new MS_StringList(commandParamsAsText, DELIMITER_OF_PARAMETERS);
                 if (params.count() != 2)
-                    throw new ScriptParsingError(String.format(ERROR_PARAMETER_COUNT, 2));
+                    throw new ScriptParsingError(String.format(_ERROR_PARAMETER_COUNT, 2));
 
                 //put variable in userVariables
                 tmpStr2 = passwordInputMethod.readString(params.get(1));
                 tmpStr = userVariables.put(params.get(0), tmpStr2);
                 if (tmpStr != null)
-                    throw new ScriptParsingError(String.format(WARNING_USER_VARIABLE_OVERRIDDEN, params.get(0), tmpStr, tmpStr2));
+                    throw new ScriptParsingError(String.format(_WARNING_USER_VARIABLE_OVERRIDDEN, params.get(0), tmpStr, tmpStr2));
                 break;
             case CMD_SEC_SET_LOGGING:
                 setPathToLoggerFile(commandParamsAsText);
@@ -446,7 +446,7 @@ public class MS_ScriptRunner {
                 try {
                     volumeLevelParameter = new Integer(commandParamsAsText);
                 } catch (NumberFormatException e) {
-                    throw new ScriptParsingError(String.format(ERROR_WRONG_NUMBER_INPUT, commandParamsAsText));
+                    throw new ScriptParsingError(String.format(_ERROR_WRONG_NUMBER_INPUT, commandParamsAsText));
                 }
                 MS_WindowsAPIManager.setVolume(volumeLevelParameter);
                 break;
@@ -454,7 +454,7 @@ public class MS_ScriptRunner {
                 try {
                     volumeLevelParameter = new Integer(commandParamsAsText);
                 } catch (NumberFormatException e) {
-                    throw new ScriptParsingError(String.format(ERROR_WRONG_NUMBER_INPUT, commandParamsAsText));
+                    throw new ScriptParsingError(String.format(_ERROR_WRONG_NUMBER_INPUT, commandParamsAsText));
                 }
                 MS_WindowsAPIManager.volumeUp(volumeLevelParameter);
                 break;
@@ -462,7 +462,7 @@ public class MS_ScriptRunner {
                 try {
                     volumeLevelParameter = new Integer(commandParamsAsText);
                 } catch (NumberFormatException e) {
-                    throw new ScriptParsingError(String.format(ERROR_WRONG_NUMBER_INPUT, commandParamsAsText));
+                    throw new ScriptParsingError(String.format(_ERROR_WRONG_NUMBER_INPUT, commandParamsAsText));
                 }
                 MS_WindowsAPIManager.volumeDown(volumeLevelParameter);
                 break;
@@ -471,7 +471,7 @@ public class MS_ScriptRunner {
                 if (commandParamsAsText.equals("off") || commandParamsAsText.equals("on"))
                     MS_WindowsAPIManager.turnMonitor(commandParamsAsText);
                 else
-                    throw new ScriptParsingError(ERROR_FAILED_TO_SWITCH_MONITOR);
+                    throw new ScriptParsingError(_ERROR_FAILED_TO_SWITCH_MONITOR);
                 break;
             case CMD_SEC_MUSIC:
                 MediaEventTypeEnum eventType = MediaEventTypeEnum.getByKey(commandParamsAsText);
@@ -481,7 +481,7 @@ public class MS_ScriptRunner {
             case CMD_SEC_COMBINATION:
                 params = new MS_StringList(commandParamsAsText, DELIMITER_OF_PARAMETERS);
                 if (params.count() < 2)
-                    throw new ScriptParsingError(String.format(ERROR_PARAMETER_COUNT, 2));
+                    throw new ScriptParsingError(String.format(_ERROR_PARAMETER_COUNT, 2));
 
                 //first push all the buttons down
                 params.first();

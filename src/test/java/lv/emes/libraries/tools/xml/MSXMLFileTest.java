@@ -143,7 +143,7 @@ public class MSXMLFileTest {
     @Test
     public void test07NodeIsNotAnElement() throws IOException, ParserConfigurationException, SAXException {
         MS_XMLElementNode textNode = file1.getRootNode().getAllChildNodes().get(0);
-        assertEquals(MS_XMLElementNode.TEXT_NODE_NAME, textNode.getTagName());
+        assertEquals(MS_XMLElementNode._TEXT_NODE_NAME, textNode.getTagName());
         assertEquals(0, textNode.getAllChildNodes().length());
         assertEquals(null, textNode.getFirstChild(""));
         assertEquals(null, textNode.getChildList(""));

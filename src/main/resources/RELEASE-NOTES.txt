@@ -18,6 +18,9 @@ eMeS libraries Version 2.0.0
 * Default methods for all interfaces removed to support Android API <24.
 * Libraries working on Android.
 ========================================================================================================
+eMeS libraries Version 1.9.0
+* Standalone MS_Logger to append log files.
+========================================================================================================
 eMeS libraries Version 1.8.0
 ========================================================================================================
 * File move method for renaming and moving file to different directory.

@@ -47,7 +47,7 @@ public class MS_TcpIPClient extends MS_TcpIPClientCore {
 	public MS_TcpIPClient() {
 		//set behavior of server disconnecting
 		MS_ClientCommand tmp = new MS_ClientCommand();
-		tmp.code = MS_ClientServerConstants.DC_NOTIFY_MESSAGE;
+		tmp.code = MS_ClientServerConstants._DC_NOTIFY_MESSAGE;
 		tmp.doOnCommand = (client, data, out) -> {
 			this.disconnect(); //break connection because it's already closed from server's side
 			//user can define his own expected behavior when server goes down.
@@ -58,7 +58,7 @@ public class MS_TcpIPClient extends MS_TcpIPClientCore {
 		
 		//save this client's ID
 		tmp = new MS_ClientCommand();
-		tmp.code = MS_ClientServerConstants.NEW_CLIENT_ID_NOTIFY_MESSAGE;
+		tmp.code = MS_ClientServerConstants._NEW_CLIENT_ID_NOTIFY_MESSAGE;
 		tmp.doOnCommand = (client, data, out) -> {
 			id = data.getAsInteger(1); //save the id
 		};
@@ -153,7 +153,7 @@ public class MS_TcpIPClient extends MS_TcpIPClientCore {
 	@Override
 	protected void onDisconnectingFromServer() {
 		//notify server that you are disconnecting!
-		this.cmdToServer(MS_ClientServerConstants.CLIENT_DISCONNECTS_NOTIFY_MESSAGE);
+		this.cmdToServer(MS_ClientServerConstants._CLIENT_DISCONNECTS_NOTIFY_MESSAGE);
 	}
 	
 	/**
@@ -179,6 +179,6 @@ public class MS_TcpIPClient extends MS_TcpIPClientCore {
 		this.addDataToContainer(MS_CodingTools.getSystemUserName);
 		this.addDataToContainer(MS_CodingTools.getSystemUserCurrentWorkingDir);
 		this.addDataToContainer(MS_CodingTools.getSystemUserHomeDir);
-		this.cmdToServer(MS_ClientServerConstants.INFO_ABOUT_NEW_CLIENT);
+		this.cmdToServer(MS_ClientServerConstants._INFO_ABOUT_NEW_CLIENT);
 	}
 }

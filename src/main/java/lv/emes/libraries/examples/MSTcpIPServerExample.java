@@ -11,7 +11,7 @@ import java.io.IOException;
 public class MSTcpIPServerExample {
 
 	public static void main(String[] args) {
-		int portNumber = MS_ClientServerConstants.DEFAULT_PORT_FOR_TESTING; //default port for this application
+		int portNumber = MS_ClientServerConstants._DEFAULT_PORT_FOR_TESTING; //default port for this application
 		try {
 			portNumber = Integer.parseInt(args[0]);
 		} catch (Exception e) {

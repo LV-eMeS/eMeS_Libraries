@@ -25,18 +25,18 @@ package lv.emes.libraries.gui;
  */
 public abstract class MSCustomGUIScreen {
 	//PUBLIC STRUCTURES, EXCEPTIONS, PROPERTIES AND CONSTANTS	
-	public static final int UNKNOWN_SCREEN = 0;
-	public static final int HELLO_SCREEN = 1;
-	public static final int GOODBYE_SCREEN = 2;
-	public static final int LOGIN_SCREEN = 3;
-	public static final int WAITING_SCREEN = 4;
-	public static final int ERROR_SCREEN = 5;
-	public static final int WARNING_SCREEN = 6;
-	public static final int INFORMATION_SCREEN = 7;
+	public static final int _UNKNOWN_SCREEN = 0;
+	public static final int _HELLO_SCREEN = 1;
+	public static final int _GOODBYE_SCREEN = 2;
+	public static final int _LOGIN_SCREEN = 3;
+	public static final int _WAITING_SCREEN = 4;
+	public static final int _ERROR_SCREEN = 5;
+	public static final int _WARNING_SCREEN = 6;
+	public static final int _INFORMATION_SCREEN = 7;
 	
-	public static final int STANDARD_SCREEN = 101;
-	public static final int MESSAGE_SCREEN = 102;
-	public static final int DIALOG = 103;
+	public static final int _STANDARD_SCREEN = 101;
+	public static final int _MESSAGE_SCREEN = 102;
+	public static final int _DIALOG = 103;
 
 	//PRIVATE VARIABLES
 	private MSCustomGUIScreen previousScreen;
@@ -80,13 +80,14 @@ public abstract class MSCustomGUIScreen {
 	/**
 	 * Can be overridden to define actions before showing this kind of screen.
 	 */
-	protected void initialize() {};
-	/**
+	protected void initialize() {}
+
+    /**
 	 * Can be overridden to define actions when this kind of screen is finishing its work (closing).
 	 */
-	protected void finalize() {};
-	
-	public void show() {
+	protected void finalize() {}
+
+    public void show() {
 		this.initialize();
 		if (onShow != null)
 			onShow.doOnEvent(this);
@@ -94,14 +95,15 @@ public abstract class MSCustomGUIScreen {
 	public void hide() {
 		if (onHide != null)
 			onHide.doOnEvent(this);
-	};	
-	public void close() {
+	}
+
+    public void close() {
 		if (onClose != null)
 			onClose.doOnEvent(this);
 		this.finalize();
-	};
-	
-	/**
+	}
+
+    /**
 	 * Hides current screen and shows defined previous screen. If previous screen is null then nothing happens.
 	 */
 	public void showPreviousScreen() {

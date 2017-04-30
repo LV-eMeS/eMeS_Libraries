@@ -17,9 +17,9 @@ public class MSStringToolsTest {
 	@Test
 	public void test01PrimitiveFunctions() {	
 		//test constants
-		System.out.println("My test message"+C_LINE_BRAKE +"is in new line");
-		System.out.println(C_TAB_SPACE + "My test message begins with tab");
-		System.out.println("C_DIACTRITIC_CHAR_COUNT is: "+C_DIACTRITIC_CHAR_COUNT);
+		System.out.println("My test message"+ _LINE_BRAKE +"is in new line");
+		System.out.println(_TAB_SPACE + "My test message begins with tab");
+		System.out.println("_DIACTRITIC_CHAR_COUNT is: "+ _DIACTRITIC_CHAR_COUNT);
 		
 		//test genRandomString
 		SetForCodeGenParams.addAll(Collections.synchronizedSet(EnumSet.allOf(TSymbolTypeForGenerator.class)));
@@ -109,9 +109,9 @@ public class MSStringToolsTest {
 		assertEquals("a", getSubstring("a", 0, 2));
 		assertEquals("", getSubstring("a", 0, 0));
 		assertEquals("", getSubstring("a", 1, 1));
-		assertEquals(C_TAB_SPACE, getTabSpace(1));
-		assertEquals(C_TAB_SPACE + C_TAB_SPACE, MS_StringTools.getTabSpace(2));
-		assertEquals(C_TAB_SPACE + C_TAB_SPACE + C_TAB_SPACE, getTabSpace(3));
+		assertEquals(_TAB_SPACE, getTabSpace(1));
+		assertEquals(_TAB_SPACE + _TAB_SPACE, MS_StringTools.getTabSpace(2));
+		assertEquals(_TAB_SPACE + _TAB_SPACE + _TAB_SPACE, getTabSpace(3));
 		assertEquals("", getTabSpace(-33));
 		assertEquals("", getTabSpace(0));
 		assertEquals(8, getPosition("X", "Pattern X in this text"));

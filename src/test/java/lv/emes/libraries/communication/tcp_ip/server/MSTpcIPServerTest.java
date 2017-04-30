@@ -81,7 +81,7 @@ public class MSTpcIPServerTest {
         server.registerNewCommand(cmdRead);
         //CLIENT
         client1 = new MS_TcpIPClient();
-        client1.connect(MS_ClientServerConstants.DEFAULT_HOST, PORT);
+        client1.connect(MS_ClientServerConstants._DEFAULT_HOST, PORT);
         MS_ClientCommand cmdReadClient = new MS_ClientCommand();
         cmdReadClient.code = CMD3_PRINTLN_PLUS_CLIENT_ID;
         cmdReadClient.doOnCommand = (client, data, out) -> {
@@ -94,9 +94,9 @@ public class MSTpcIPServerTest {
             serverIsOn = false;
         };
 
-        //SECOND CLIENT
+        //_SECOND CLIENT
         client2 = new MS_TcpIPClient();
-        client2.connect(MS_ClientServerConstants.DEFAULT_HOST, PORT);
+        client2.connect(MS_ClientServerConstants._DEFAULT_HOST, PORT);
         cmdReadClient = new MS_ClientCommand();
         cmdReadClient.code = CMD3_PRINTLN_PLUS_CLIENT_ID;
         cmdReadClient.doOnCommand = (client, data, out) -> {
@@ -159,12 +159,12 @@ public class MSTpcIPServerTest {
         server.startServer();
         assertEquals(0, getServerConnectionCount());
         serverIsOn = true;
-        client1.connect(MS_ClientServerConstants.DEFAULT_HOST, PORT);
+        client1.connect(MS_ClientServerConstants._DEFAULT_HOST, PORT);
         doSleepForXTimes(2);
         assertEquals(1, getServerConnectionCount());
-        client1.connect(MS_ClientServerConstants.DEFAULT_HOST, PORT); //double connecting shouldn't matter
+        client1.connect(MS_ClientServerConstants._DEFAULT_HOST, PORT); //double connecting shouldn't matter
         assertEquals(1, getServerConnectionCount());
-        client2.connect(MS_ClientServerConstants.DEFAULT_HOST, PORT);
+        client2.connect(MS_ClientServerConstants._DEFAULT_HOST, PORT);
         doSleepForXTimes(3);
         assertEquals(2, getServerConnectionCount());
 
@@ -197,7 +197,7 @@ public class MSTpcIPServerTest {
     @Test
     public void test03BinaryDataExchangeOnServer() throws Exception {
         //do reconnecting
-        client1.connect(MS_ClientServerConstants.DEFAULT_HOST, PORT);
+        client1.connect(MS_ClientServerConstants._DEFAULT_HOST, PORT);
         assertTrue(client1.isConnected());
         doSleepForXTimes(2);
         assertEquals(1, getServerConnectionCount());
@@ -234,7 +234,7 @@ public class MSTpcIPServerTest {
     @Test
     public void test04BinaryDataExchangeOnClient() throws Exception {
         //do reconnecting
-        client1.connect(MS_ClientServerConstants.DEFAULT_HOST, PORT);
+        client1.connect(MS_ClientServerConstants._DEFAULT_HOST, PORT);
         assertTrue(client1.isConnected());
         assertFalse(client2.isConnected());
         assertEquals("There must be 1 active connection!", 1, getServerConnectionCount());
