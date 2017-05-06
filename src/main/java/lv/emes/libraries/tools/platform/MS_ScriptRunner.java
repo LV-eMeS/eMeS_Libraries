@@ -89,6 +89,7 @@ import static lv.emes.libraries.tools.platform.ScriptParsingError.*;
  * @author eMeS
  * @version 1.5.
  */
+//TODO 1.6 mouse wheel up/down support
 public class MS_ScriptRunner {
 
     private final static Map<String, Integer> COMMANDS = new HashMap<>();

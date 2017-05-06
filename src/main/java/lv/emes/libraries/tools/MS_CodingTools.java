@@ -8,20 +8,32 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Random;
 
 /**
  * Module is designed to combine different common programming actions.
  *
- * @version 2.0.
+ * @version 2.1.
  */
 public final class MS_CodingTools {
+
+    private MS_CodingTools() {
+    }
+
     public static final String getSystemUserName = System.getProperty("user.name");
     public static final String getSystemUserCurrentWorkingDir = System.getProperty("user.dir") + "/";
     public static final String getSystemUserHomeDir = System.getProperty("user.home") + "/";
     public static final String getSystemOS = System.getProperty("os.name");
 
-    private MS_CodingTools() {
+
+    public static String getIPAddress() {
+        try {
+            return InetAddress.getLocalHost().getHostAddress();
+        } catch (UnknownHostException e) {
+            return "";
+        }
     }
 
     public static int randomNumber(int aFrom, int aTill) {

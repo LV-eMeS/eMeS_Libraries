@@ -126,10 +126,6 @@ public class MS_FileSystemTools {
     public static boolean executeApplication(String fileName, String params) {
         //trying to execute it as batch
         MS_StringList inputParameters = new MS_StringList(params, ' ');
-        MS_StringList commandLineParameters = new MS_StringList();
-        commandLineParameters.add("cmd");
-        commandLineParameters.add("/c");
-        commandLineParameters.add("Start");
         String batchFilename = getShortFilename(fileName);
 
         //if pathToBach have spaces, use exec application
@@ -140,14 +136,20 @@ public class MS_FileSystemTools {
                 return _executeRuntimeEXE(fileName + " " + params);
         }
 
+        MS_StringList commandLineParameters = new MS_StringList();
+        commandLineParameters.add("cmd");
+        commandLineParameters.add("/c");
+        commandLineParameters.add("Start");
         commandLineParameters.add(batchFilename);
         commandLineParameters.concatenate(inputParameters);
         List<String> cmdAndArgs = commandLineParameters.toList();
-        String directory = getDirectoryOfFile(fileName);
-        File dir = new File(directory);
+
         ProcessBuilder pb = new ProcessBuilder(cmdAndArgs);
-        if (!dir.equals(CURRENT_DIRECTORY))
+        String directory = getDirectoryOfFile(fileName);
+        if (!directory.equals(CURRENT_DIRECTORY)) {
+            File dir = new File(directory);
             pb.directory(dir);
+        }
         try {
             pb.start();
             return true;

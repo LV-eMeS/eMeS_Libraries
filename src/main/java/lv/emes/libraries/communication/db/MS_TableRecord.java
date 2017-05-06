@@ -48,6 +48,7 @@ public abstract class MS_TableRecord {
                 initColumns(rs);
             }
         } catch (Exception e) {
+            e.printStackTrace();
             rsHadNextRecord = false;
         }
     }

@@ -1,5 +1,5 @@
 ext {
-    eMeS_LibrariesVersion = "v1.8.5"
+    eMeS_LibrariesVersion = "v1.8.6"
     jnaVersion = "4.4.0"
 }
 
@@ -17,6 +17,7 @@ dependencies {
     //This project itself
 //    compile "com.github.LV-eMeS:eMeS_Libraries:" + eMeS_LibrariesVersion
     //Other dependencies - libraries
+    compile "junit:junit:4.12"
     compile "commons-io:commons-io:2.5"
     compile "commons-codec:commons-codec:1.10"
     compile "org.apache.commons:commons-compress:1.9"

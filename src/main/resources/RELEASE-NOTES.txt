@@ -1,5 +1,5 @@
 eMeS libraries
-Version 1.8.5
+Version 1.8.6
 Release Notes
 
 INTRODUCTION:
