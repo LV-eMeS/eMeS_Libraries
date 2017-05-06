@@ -22,7 +22,6 @@ import org.apache.commons.io.FileUtils;
 
 import java.awt.*;
 import java.io.*;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
@@ -65,9 +64,8 @@ public class MS_FileSystemTools {
      *
      * @param aLink path to resource.
      * @return true if successfully opened, false, if not.
-     * @throws MalformedURLException
      */
-    private static boolean _openLinkInWebBrowser(String aLink) {
+    public static boolean openLinkInWebBrowser(String aLink) {
         //TODO check on Android!
         if (Desktop.isDesktopSupported()) {
             Desktop desktop = Desktop.getDesktop();
@@ -155,7 +153,7 @@ public class MS_FileSystemTools {
             return true;
         } catch (Exception e1) {
             //if won't execute as batch then use Open Link method that uses Desktop
-            return _openLinkInWebBrowser(fileName);
+            return openLinkInWebBrowser(fileName);
         }
     }
 

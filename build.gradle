@@ -1,5 +1,5 @@
 ext {
-    eMeS_LibrariesVersion = "v1.8.6"
+    eMeS_LibrariesVersion = "v1.8.8"
     jnaVersion = "4.4.0"
 }
 
