@@ -5,7 +5,7 @@ package lv.emes.libraries.tools.lists;
  * Loop breaking is also supported by using <b>breakDoWithEveryItem</b>.
  *
  * @param <T> type of list elements.
- * @version 1.3.
+ * @version 1.4.
  */
 public interface IBaseListWithItems<T> {
     /**
@@ -99,4 +99,14 @@ public interface IBaseListWithItems<T> {
      *               Method's incoming parameters are every item of the list and index of item.
      */
     void forEachItem(IFuncSomeAction<T> action);
+
+    /**
+     * Loops through list starting from element with specified index <b>startFromIndex</b>.
+     * <br><u>Note</u>: if presented index is not in the bounds of list element count this method will do nothing.
+     * @param startFromIndex 0..count()-1
+     * @param action method that describes the actions that every element must do.
+     *               Method's incoming parameters are every item of the list and index of item.
+     * @see IBaseListWithItems#forEachItem(IFuncSomeAction)
+     */
+    void forEachItem(int startFromIndex, IFuncSomeAction<T> action);
 }

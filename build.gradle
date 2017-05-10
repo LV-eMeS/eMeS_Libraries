@@ -1,5 +1,5 @@
 ext {
-    eMeS_LibrariesVersion = "v1.8.8"
+    eMeS_LibrariesVersion = "v1.8.9"
     jnaVersion = "4.4.0"
 }
 
@@ -34,6 +34,7 @@ dependencies {
 
     //For tests:
     compile group: 'org.mockito', name: 'mockito-all', version: '1.9.5'
+    compile "junit:junit:4.12"
     testCompile "junit:junit:4.12"
 }
 

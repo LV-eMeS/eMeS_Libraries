@@ -371,7 +371,7 @@ public class MS_TextFile {
     public List<String> importStringListFromFile() {
         List<String> res = new MS_List<String>();
         String row;
-        close();
+        close(); //to be sure that whole file will be read
         while ((row = this.readln()) != null)
             res.add(row);
         close();
@@ -453,9 +453,13 @@ public class MS_TextFile {
         MS_TextFile file = new MS_TextFile(aFilename);
         StringBuilder res = new StringBuilder();
         String tmp;
-        while ((tmp = file.readln()) != null) {
+        //try to read first line in the beginning
+        if ((tmp = file.readln()) != null)
             res.append(tmp);
+        //now if there is more lines in file do appending with delimiter
+        while ((tmp = file.readln()) != null) {
             res.append(aLineDelimiter);
+            res.append(tmp);
         }
         file.close();
         return res.toString();

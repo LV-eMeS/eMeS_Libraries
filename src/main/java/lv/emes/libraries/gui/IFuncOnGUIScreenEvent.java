@@ -6,5 +6,5 @@ package lv.emes.libraries.gui;
  */
 @FunctionalInterface
 public interface IFuncOnGUIScreenEvent {
-	void doOnEvent(MSCustomGUIScreen sender);
+	void doOnEvent(MS_CustomGUIScreen sender);
 }

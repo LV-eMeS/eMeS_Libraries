@@ -2,6 +2,7 @@ package lv.emes.libraries.tools.xml;
 
 import lv.emes.libraries.tools.lists.IBaseListWithItems;
 import lv.emes.libraries.tools.lists.IFuncSomeAction;
+import lv.emes.libraries.tools.lists.MS_ListActionWorker;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -14,7 +15,7 @@ import org.w3c.dom.NodeList;
  * <p>Setters and getters:
  *
  * @author eMeS
- * @version 1.2.
+ * @version 1.3.
  * @see MS_XMLElementNode
  */
 public class MS_XMLElementNodeList implements IBaseListWithItems<MS_XMLElementNode> {
@@ -100,13 +101,11 @@ public class MS_XMLElementNodeList implements IBaseListWithItems<MS_XMLElementNo
 
     @Override
     public void forEachItem(IFuncSomeAction<MS_XMLElementNode> action) {
-        setBreakDoWithEveryItem(false);
-        if (action != null)
-            for (int i = 0; i < this.count(); i++) {
-                MS_XMLElementNode itm = this.get(i);
-                action.doAction(itm, i);
-                if (getBreakDoWithEveryItem())
-                    break;
-            }
+        MS_ListActionWorker.forEachItem(this, action);
+    }
+
+    @Override
+    public void forEachItem(int startFromIndex, IFuncSomeAction<MS_XMLElementNode> action) {
+        MS_ListActionWorker.forEachItem(this, startFromIndex, action);
     }
 }

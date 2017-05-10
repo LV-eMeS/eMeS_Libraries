@@ -14,10 +14,11 @@ import static lv.emes.libraries.tools.MS_CodingTools.inRange;
  * <br><u>Note</u>: those delimiters shouldn't be changed unless they are often used in text which operated with this list.
  * <br><u>Note</u>: class is in it's final implementation state. If there is need for overriding this, use <b>MS_List</b> instead!
  *
- * @version 2.4.
+ * @version 2.5.
  * @see MS_List
  */
 public final class MS_StringList implements IListActions<String> {
+
     boolean flagForLoopBreaking;
     public static final char _DEFAULT_DELIMITER = '#';
     public static final char _SECOND_DEFAULT_DELIM = '`';//chr(9835);
@@ -169,14 +170,12 @@ public final class MS_StringList implements IListActions<String> {
 
     @Override
     public void forEachItem(IFuncSomeAction<String> action) {
-        setBreakDoWithEveryItem(false);
-        if (action != null)
-            for (int i = 0; i < this.count(); i++) {
-                String itm = this.get(i);
-                action.doAction(itm, i);
-                if (getBreakDoWithEveryItem())
-                    break;
-            }
+        MS_ListActionWorker.forEachItem(this, action);
+    }
+
+    @Override
+    public void forEachItem(int startFromIndex, IFuncSomeAction<String> action) {
+        MS_ListActionWorker.forEachItem(this, startFromIndex, action);
     }
 
     public int getAsInteger(int aIndex) {

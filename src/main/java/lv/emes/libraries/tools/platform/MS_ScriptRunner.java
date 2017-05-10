@@ -315,7 +315,7 @@ public class MS_ScriptRunner {
                 secondaryCmd = CMD_SEC_MUSIC;
                 break;
             case CMD_NR_COMBINATION:
-                primaryCommandReading = false; //read volume parameter
+                primaryCommandReading = false; //read combination keys
                 secondaryCmd = CMD_SEC_COMBINATION;
                 break;
             case CMD_NR_SAY:
@@ -462,6 +462,7 @@ public class MS_ScriptRunner {
                 if (eventType == null)
                     throw new ScriptParsingError("Unsupported media event. Expected one of [PLAY, PAUSE, PLAYPAUSE, STOP, NEXT, PREV].");
                 MS_WindowsAPIManager.fireMediaEvent(eventType);
+                break;
             case CMD_SEC_COMBINATION:
                 params = new MS_StringList(commandParamsAsText, DELIMITER_OF_PARAMETERS);
                 if (params.count() < 2)

@@ -1,4 +1,3 @@
-*.class
 /.gradle/
 /gradle/
 /out/
@@ -6,3 +5,4 @@ build/
 src/test/resources/test_pic_back.png
 src/test/resources/test_pic_back_from_server.png
 /.idea/
+/gradlew

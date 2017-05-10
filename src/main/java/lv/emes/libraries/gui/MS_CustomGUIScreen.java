@@ -23,7 +23,8 @@ package lv.emes.libraries.gui;
  * @version 1.1.
  * @author eMeS
  */
-public abstract class MSCustomGUIScreen {
+public abstract class MS_CustomGUIScreen {
+
 	//PUBLIC STRUCTURES, EXCEPTIONS, PROPERTIES AND CONSTANTS	
 	public static final int _UNKNOWN_SCREEN = 0;
 	public static final int _HELLO_SCREEN = 1;
@@ -33,14 +34,15 @@ public abstract class MSCustomGUIScreen {
 	public static final int _ERROR_SCREEN = 5;
 	public static final int _WARNING_SCREEN = 6;
 	public static final int _INFORMATION_SCREEN = 7;
-	
+	public static final int _ACTION_SCREEN = 8;
+
 	public static final int _STANDARD_SCREEN = 101;
 	public static final int _MESSAGE_SCREEN = 102;
 	public static final int _DIALOG = 103;
 
 	//PRIVATE VARIABLES
-	private MSCustomGUIScreen previousScreen;
-	private MSCustomGUIScreen nextScreen;
+	private MS_CustomGUIScreen previousScreen;
+	private MS_CustomGUIScreen nextScreen;
 	private int type;
 
 	//PUBLIC VARIABLES
@@ -64,9 +66,9 @@ public abstract class MSCustomGUIScreen {
 	/**
 	 * Creates screen with defined type of screen. 
 	 * Type must be specified, to determine, which type screen is running when using this interface from many inherited classes.
-	 * @param type custom type number or one of this class statically defined types. If 0 then <b>MSCustomGUIScreen.UNKNOWN_SCREEN</b>.
+	 * @param type custom type number or one of this class statically defined types. If 0 then <b>MS_CustomGUIScreen.UNKNOWN_SCREEN</b>.
 	 */
-	public MSCustomGUIScreen(int type) {
+	public MS_CustomGUIScreen(int type) {
 		this.type = type;
 	}
 	
@@ -137,10 +139,10 @@ public abstract class MSCustomGUIScreen {
 	}
 	
 	//getters and setters
-	public void setPreviousScreen(MSCustomGUIScreen screen) {
+	public void setPreviousScreen(MS_CustomGUIScreen screen) {
 		previousScreen = screen;
 	}
-	public void setNextScreen(MSCustomGUIScreen screen) {
+	public void setNextScreen(MS_CustomGUIScreen screen) {
 		nextScreen = screen;
 	}
 

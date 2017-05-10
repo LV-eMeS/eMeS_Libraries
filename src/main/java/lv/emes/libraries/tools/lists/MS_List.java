@@ -6,10 +6,11 @@ import java.util.Collections;
 import static lv.emes.libraries.tools.MS_CodingTools.inRange;
 /** 
  * Purpose of this class is to make lists of different objects. It's possible to perambulate list using methods from interface <b>IPerambulateListActions</b>.
- * @version 1.4.
+ * @version 1.5.
  * @see IPerambulateListActions
  */
 public class MS_List<T> extends ArrayList<T> implements IPerambulateListActions<T> {
+
 	private boolean flagForLoopBreaking;
 	/**
 	 * Makes it possible to set index for the current element.
@@ -61,14 +62,12 @@ public class MS_List<T> extends ArrayList<T> implements IPerambulateListActions<
 
 	@Override
 	public void forEachItem(IFuncSomeAction<T> action) {
-		setBreakDoWithEveryItem(false);
-		if (action != null)
-			for (int i = 0; i < this.count(); i++) {
-				T itm = this.get(i);
-				action.doAction(itm, i);
-				if (getBreakDoWithEveryItem())
-					break;
-			}
+		MS_ListActionWorker.forEachItem(this, action);
+	}
+
+	@Override
+	public void forEachItem(int startFromIndex, IFuncSomeAction<T> action) {
+		MS_ListActionWorker.forEachItem(this, startFromIndex, action);
 	}
 
 	@Override

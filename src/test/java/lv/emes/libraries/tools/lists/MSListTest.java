@@ -12,7 +12,7 @@ import static org.junit.Assert.assertTrue;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MSListTest {
     private MS_List<Integer> l = new MS_List<>();
-    int count, sum, indexSum;
+    private int count, sum, indexSum;
 
     @Test
     public void test01ListEngine() {
@@ -51,16 +51,69 @@ public class MSListTest {
         l.add(17);
         l.add(1);
         l.add(-4);
+
         sum = 0;
         indexSum = 0;
+        count = 0;
         l.forEachItem((i, index) -> {
             sum += i;
             indexSum += index;
             count++;
         });
         assertEquals(14, sum);
-        assertEquals(3, count);
         assertEquals(3, indexSum);
+        assertEquals(3, count);
+
+        //now to test for loop starting from second element
+        sum = 0;
+        indexSum = 0;
+        count = 0;
+        l.forEachItem(1, (i, index) -> {
+            sum += i;
+            indexSum += index;
+            count++;
+        });
+        assertEquals(-3, sum); //1-4
+        assertEquals(3, indexSum); //1+2
+        assertEquals(2, count); //only 2 elements should be scanned (second and third)
+
+        //now to test for loop starting from last element
+        sum = 0;
+        indexSum = 0;
+        count = 0;
+        l.forEachItem(l.count()-1, (i, index) -> {
+            sum += i;
+            indexSum += index;
+            count++;
+        });
+        assertEquals(-4, sum);
+        assertEquals(2, indexSum);
+        assertEquals(1, count);
+
+        //now to test for loop starting from non existing element
+        sum = 0;
+        indexSum = 0;
+        count = 0;
+        l.forEachItem(156, (i, index) -> {
+            sum += i;
+            indexSum += index;
+            count++;
+        });
+        //nothing should be changed
+        assertEquals(0, sum);
+        assertEquals(0, indexSum);
+        assertEquals(0, count);
+
+        //now try to work with non existing elements from lower index boundary
+        l.forEachItem(-15, (i, index) -> {
+            sum += i;
+            indexSum += index;
+            count++;
+        });
+        //still nothing should be changed
+        assertEquals(0, sum);
+        assertEquals(0, indexSum);
+        assertEquals(0, count);
     }
 
     @Test
@@ -68,8 +121,11 @@ public class MSListTest {
         l.add(17);
         l.add(1);
         l.add(-4);
+        l.add(220);
+
         sum = 0;
         indexSum = 0;
+        count = 0;
         assertEquals(false, l.getBreakDoWithEveryItem());
         l.forEachItem((i, index) -> {
             sum += i;
@@ -82,6 +138,22 @@ public class MSListTest {
         assertEquals(2, count);
         assertEquals(1, indexSum);
         assertEquals(true, l.getBreakDoWithEveryItem());
+
+        //test break when loop started from specific index
+        sum = 0;
+        indexSum = 0;
+        count = 0;
+        l.forEachItem(1, (i, index) -> {
+            sum += i;
+            indexSum += index;
+            count++;
+            if (i == 1)
+                l.breakDoWithEveryItem();
+        });
+        assertEquals(1, sum);
+        assertEquals(1, count);
+        assertEquals(1, indexSum);
+        assertEquals(true, l.getBreakDoWithEveryItem());
     }
 
     @Test
@@ -89,8 +161,10 @@ public class MSListTest {
         l.add(17);
         l.add(1);
         l.add(-4);
+
         sum = 0;
         indexSum = 0;
+        count = 0;
         assertEquals(false, l.getBreakDoWithEveryItem());
         l.forEachItem((i, index) -> {
             sum += i;
