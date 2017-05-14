@@ -25,7 +25,7 @@ public class MS_HTML_PartOfTag extends AbstractHTMLPart {
      * Adds new attribute for tag (no checking for duplicates).
      * @param name name of attribute.
      * @param value value of attribute.
-     * @return reference to HTML tag object itself.
+     * @return reference to object itself.
      */
     public MS_HTML_PartOfTag attribute(String name, String value) {
         fAttributes.add(name.concat("=\"").concat(value).concat("\""));

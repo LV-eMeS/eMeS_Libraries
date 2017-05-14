@@ -7,14 +7,17 @@ import static java.awt.event.KeyEvent.*;
 
 /**
  * Holds mapping for system keystroke codes to be translated from String to int type.
- * <p>Methods:
- * -textToKeyCode
- * -needToPushShiftToWriteChar
+ * <p>Static methods:
+ * <ul>
+ * <li>textToKeyCode</li>
+ * <li>needToPushShiftToWriteChar</li>
+ * </ul>
  *
  * @author eMeS
  * @version 1.0.
  */
 public class MS_KeyCodeDictionary {
+
     private MS_KeyCodeDictionary() {
     }
 //PRIVATE VARIABLES

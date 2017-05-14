@@ -1,5 +1,5 @@
 eMeS libraries
-Version 1.8.9
+Version 1.9.0
 Release Notes
 
 INTRODUCTION:
@@ -22,6 +22,8 @@ eMeS libraries Version 1.9.0
 * Standalone MS_Logger to append log files.
 * Script runner now can be terminated by user's request.
 * eMeS lists now can be iterated in "for each" loop starting from specific element.
+* MS_Thread for easy thread with specific task configuration.
+* Mouse wheel support for script runner.
 ========================================================================================================
 eMeS libraries Version 1.8.0
 ========================================================================================================

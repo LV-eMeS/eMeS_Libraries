@@ -12,7 +12,7 @@ public class MSScriptRunnerExecutable {
 
     public static void main(String[] args) {
         //for testing:
-//        String commandText = "di#1000#" + "variable#varrrr&Please, write something!#say#$varrrr$";
+//        String commandText = "di#1000#" + "wheel#up&30#";
 
         //For building
         String commandText = MS_TextFile.getFileTextAsString(args[0], "");

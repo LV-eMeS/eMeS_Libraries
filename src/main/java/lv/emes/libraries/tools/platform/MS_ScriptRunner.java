@@ -53,7 +53,9 @@ import static lv.emes.libraries.tools.platform.ScriptParsingError.*;
  * <li><code>MR#</code> - does right mouse click.</li>
  * <li><code>MRD#</code> - does right mouse press and hold.</li>
  * <li><code>MRU#</code> - does right mouse release up.</li>
- * <li><code>MW#</code> or <code>WHEEL#</code> - does mouse wheel click.</li>
+ * <li><code>WHEEL#CLICK#</code> - does mouse wheel click.</li>
+ * <li><code>WHEEL#UP&amp;1#</code> - does mouse wheel roll up/away from user for 1 position.</li>
+ * <li><code>WHEEL#DOWN&amp;1#</code> - does mouse wheel roll down/towards to user for 1 position.</li>
  * <li><code>MC#500&amp;400#</code> - sets mouse new location.</li>
  * <li><code>MM#-50&amp;20#</code> - moves mouse for 50 pixels to the left and 20 pixels down.</li>
  * <li><code>HOLD#CTRL#</code> - holds CTRL key until RELEASE command is executed.</li>
@@ -87,9 +89,8 @@ import static lv.emes.libraries.tools.platform.ScriptParsingError.*;
  * </ul>
  *
  * @author eMeS
- * @version 1.5.
+ * @version 1.6.
  */
-//TODO 1.6 mouse wheel up/down support
 public class MS_ScriptRunner {
 
     private final static Map<String, Integer> COMMANDS = new HashMap<>();
@@ -105,7 +106,7 @@ public class MS_ScriptRunner {
     private final static int CMD_NR_MOUSE_LEFT_UP = 10;
     private final static int CMD_NR_MOUSE_RIGHT_DOWN = 11;
     private final static int CMD_NR_MOUSE_RIGHT_UP = 12;
-    private final static int CMD_NR_MOUSE_WHEEL_CLICK = 13;
+    private final static int CMD_NR_MOUSE_WHEEL = 13;
     private final static int CMD_NR_MOUSE_SET_COORDINATES = 14;
     private final static int CMD_NR_MOUSE_MOVE_FOR_COORDINATES = 15;
     private final static int CMD_NR_PUSH_AND_HOLD_BUTTON = 16;
@@ -137,8 +138,7 @@ public class MS_ScriptRunner {
         COMMANDS.put("MR", CMD_NR_MOUSE_RIGHT);
         COMMANDS.put("MRD", CMD_NR_MOUSE_RIGHT_DOWN);
         COMMANDS.put("MRU", CMD_NR_MOUSE_RIGHT_UP);
-        COMMANDS.put("MW", CMD_NR_MOUSE_WHEEL_CLICK);
-        COMMANDS.put("WHEEL", CMD_NR_MOUSE_WHEEL_CLICK); //synonym
+        COMMANDS.put("WHEEL", CMD_NR_MOUSE_WHEEL);
         COMMANDS.put("MC", CMD_NR_MOUSE_SET_COORDINATES);
         COMMANDS.put("MM", CMD_NR_MOUSE_MOVE_FOR_COORDINATES);
         COMMANDS.put("HOLD", CMD_NR_PUSH_AND_HOLD_BUTTON); //similar like sswin or ssctrl
@@ -181,6 +181,7 @@ public class MS_ScriptRunner {
     private final static int CMD_SEC_MUSIC = 119;
     private final static int CMD_SEC_COMBINATION = 120;
     private final static int CMD_SEC_SAY = 121;
+    private final static int CMD_SEC_MOUSE_WHEEL = 122;
 
     private final static char DELIMITER_OF_CMDS = '#';
     private final static char DELIMITER_OF_CMDS_SECOND = ';';
@@ -259,8 +260,9 @@ public class MS_ScriptRunner {
             case CMD_NR_MOUSE_RIGHT_UP:
                 getInstance().mouseRightUp();
                 break;
-            case CMD_NR_MOUSE_WHEEL_CLICK:
-                getInstance().mouseWheelClick();
+            case CMD_NR_MOUSE_WHEEL:
+                secondaryCmd = CMD_SEC_MOUSE_WHEEL;
+                primaryCommandReading = false;
                 break;
             case CMD_NR_MOUSE_SET_COORDINATES:
                 primaryCommandReading = false; //read mouse X;Y
@@ -359,6 +361,35 @@ public class MS_ScriptRunner {
                     for (int i = 1; i < params.count(); i++)
                         appParams.append(params.get(i));
                 MS_FileSystemTools.executeApplication(params.get(0), appParams.toString());
+                break;
+            case CMD_SEC_MOUSE_WHEEL:
+                params = new MS_StringList(commandParamsAsText.toUpperCase(), DELIMITER_OF_PARAMETERS);
+                if (params.count() == 1) {
+                    if (params.get(0).equals("CLICK"))
+                        getInstance().mouseWheelClick();
+                } else if (params.count() == 2) {
+                    int wheelSteps;
+                    if (params.get(0).equals("UP")) {
+                        try {
+                            wheelSteps = -1 * Integer.parseInt(params.get(1));
+                        } catch (NumberFormatException e) {
+                            throw new ScriptParsingError(String.format(_ERROR_WRONG_NUMBER_INPUT, params.get(1)));
+                        }
+                    } else if (params.get(0).equals("DOWN")) {
+                        try {
+                            wheelSteps = Integer.parseInt(params.get(1));
+                        } catch (NumberFormatException e) {
+                            throw new ScriptParsingError(String.format(_ERROR_WRONG_NUMBER_INPUT, params.get(1)));
+                        }
+                    } else {
+                        throw new ScriptParsingError(String.format(_ERROR_WRONG_MOUSE_WHEEL_COMMAND, commandParamsAsText));
+                    }
+                    //if everything is okay then perform mouse wheel rotate action
+                    getInstance().mouseWheel(wheelSteps);
+
+                } else {
+                    throw new ScriptParsingError(String.format(_ERROR_WRONG_MOUSE_WHEEL_COMMAND, commandParamsAsText));
+                }
                 break;
             case CMD_SEC_SHOW_WINDOW_OS_WINDOWS:
                 if (!MS_ApplicationWindow.showApplicationWindow(commandParamsAsText))
@@ -529,8 +560,7 @@ public class MS_ScriptRunner {
             if (isScriptRunningTerminated) {
                 logFile.warning("Script running terminated by user's request.");
                 fCommandList.breakDoWithEveryItem();
-            }
-            else {
+            } else {
                 try {
 //                System.out.println(cmd);
                     if (delay > 0) {
@@ -614,6 +644,7 @@ public class MS_ScriptRunner {
     /**
      * Sets new combination for script runner to terminate by user's request.
      * Default combination is: CTRL + ALT + SHIFT + 4
+     *
      * @param scriptTerminationShortcutKeyCombinationList list filled with recognizable keyboard key combination.
      */
     public void setScriptTerminationShortcutKeyCombination(MS_StringList scriptTerminationShortcutKeyCombinationList) {
@@ -627,6 +658,7 @@ public class MS_ScriptRunner {
     /**
      * Determines, if script running is terminated by user's request.
      * Does key stroke execution check, if user pressed specific key combination that signals for execution stop for current script.
+     *
      * @return true if user requested termination of script executing.
      */
     boolean scriptRunningTerminated() {

@@ -15,6 +15,8 @@ public class ScriptParsingError extends Exception {
     public final static String _ERROR_FAILED_TO_SWITCH_MONITOR = "Failed to switch monitor on or off due to invalid syntax. " +
             "Correct syntax is: 'monitor#on#' or 'monitor#off#'";
     public final static String _ERROR_WRONG_NUMBER_INPUT = "Failed to set number with value '%s' as parameter to command";
+    public final static String _ERROR_WRONG_MOUSE_WHEEL_COMMAND = "Failed to do mouse wheel action with parameters '%s' as parameter to command" +
+            "Expecting something like: 'WHEEL#CLICK', 'WHEEL#UP&1#' or 'WHEEL#DOWN&3#'";
     public final static String _WARNING_USER_VARIABLE_OVERRIDDEN = "Warning: parameter '%s' already existed. Previous value '%s' was overridden to '%s'";
 
 	//CONSTRUCTORS

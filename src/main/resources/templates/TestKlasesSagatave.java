@@ -3,10 +3,11 @@ package templates;
 import org.junit.*;
 import org.junit.runners.MethodSorters;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class TestKlasesSagatave {
+
 //	private static Variable variable = null;
 
     @BeforeClass

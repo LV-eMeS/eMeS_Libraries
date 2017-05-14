@@ -106,7 +106,7 @@ public interface IKeyStrokeExecutor {
 	
 	/**
 	 * Rotates mouse wheel up or down for count of <b>steps</b>. 
-	 * @param steps wheel up if given value is negative and down, if value is positive.
+	 * @param steps wheel up if given value is negative(-) and down, if value is positive(+).
 	 */
 	void mouseWheel(int steps);
 }
