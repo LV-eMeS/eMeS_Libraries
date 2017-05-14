@@ -71,6 +71,11 @@ public class MS_List<T> extends ArrayList<T> implements IPerambulateListActions<
 	}
 
 	@Override
+	public void forEachItem(int startFromIndex, int endIndex, IFuncSomeAction<T> action) {
+		MS_ListActionWorker.forEachItem(this, startFromIndex, endIndex, action);
+	}
+
+	@Override
 	public int getIndexOfCurrent() {		
 		return indexOfCurrent;	
 	}

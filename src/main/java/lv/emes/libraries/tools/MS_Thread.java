@@ -11,6 +11,7 @@ import lv.emes.libraries.utilities.MS_IBuilder;
  * <ul>
  * <li>start</li>
  * <li>waitFor</li>
+ * <li>stop</li>
  * </ul>
  * <p>Methods to implement:
  * <ul>
@@ -23,6 +24,9 @@ import lv.emes.libraries.utilities.MS_IBuilder;
  * <li>withTimeout</li>
  * <li>getThreadName</li>
  * <li>getTimeout</li>
+ * <li>isInterrupted</li>
+ * <li>isWorkCompleted</li>
+ * <li>isStarted</li>
  * </ul>
  *
  * @author eMeS
@@ -47,7 +51,7 @@ public abstract class MS_Thread<T extends MS_Thread<T>> implements Runnable, MS_
      * @return reference to an thread itself.
      * @throws IllegalStateException when attempt is made to start thread that is already started.
      */
-    public T start() {
+    public final T start() {
         if (started)
             throw new IllegalStateException(THREAD_IS_STARTED);
         thread = new Thread(this, threadName);
@@ -63,9 +67,10 @@ public abstract class MS_Thread<T extends MS_Thread<T>> implements Runnable, MS_
      * If <b>timeout</b> is set and is greater than 0 then waiting will be performed
      * for specified time in milliseconds, after that thread will be interrupted if it will not finish in that time.
      *
+     * @return reference to thread itself.
      * @throws IllegalStateException when attempt is made to wait for thread that hasn't even started.
      */
-    public void waitFor() throws IllegalStateException {
+    public final T waitFor() throws IllegalStateException {
         if (!started)
             throw new IllegalStateException(THREAD_IS_NOT_STARTED);
         try {
@@ -75,20 +80,23 @@ public abstract class MS_Thread<T extends MS_Thread<T>> implements Runnable, MS_
             interrupted = true;
         }
         started = false;
+        return getThis();
     }
 
     /**
      * Stops thread's work. Thread is interrupted and it's state is changed to interrupted.
      *
+     * @return reference to thread itself.
      * @throws IllegalStateException when attempt is made to stop thread that hasn't even started.
      */
-    public void stop() {
+    public final T stop() {
         if (!started)
             throw new IllegalStateException(THREAD_IS_NOT_STARTED);
         thread.interrupt();
         interrupted = true;
         workCompleted = false;
         started = false;
+        return getThis();
     }
 
     /**

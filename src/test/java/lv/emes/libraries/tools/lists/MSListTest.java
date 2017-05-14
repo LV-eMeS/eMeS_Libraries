@@ -114,6 +114,45 @@ public class MSListTest {
         assertEquals(0, sum);
         assertEquals(0, indexSum);
         assertEquals(0, count);
+
+        //now to test for loop starting from 2nd element and ending with the same element
+        sum = 0;
+        indexSum = 0;
+        count = 0;
+        l.forEachItem(1, 1, (i, index) -> {
+            sum += i;
+            indexSum += index;
+            count++;
+        });
+        assertEquals(1, sum);
+        assertEquals(1, indexSum);
+        assertEquals(1, count);
+
+        //test when start and end elements are switched
+        sum = 0;
+        indexSum = 0;
+        count = 0;
+        l.forEachItem(1, 0, (i, index) -> {
+            sum += i;
+            indexSum += index;
+            count++;
+        });
+        assertEquals(18, sum);
+        assertEquals(1, indexSum);
+        assertEquals(2, count);
+
+        //test when end element is out of range
+        sum = 0;
+        indexSum = 0;
+        count = 0;
+        l.forEachItem(1, 1230, (i, index) -> {
+            sum += i;
+            indexSum += index;
+            count++;
+        });
+        assertEquals(0, sum);
+        assertEquals(0, indexSum);
+        assertEquals(0, count);
     }
 
     @Test

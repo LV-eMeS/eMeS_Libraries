@@ -178,6 +178,11 @@ public final class MS_StringList implements IListActions<String> {
         MS_ListActionWorker.forEachItem(this, startFromIndex, action);
     }
 
+    @Override
+    public void forEachItem(int startFromIndex, int endIndex, IFuncSomeAction<String> action) {
+        MS_ListActionWorker.forEachItem(this, startFromIndex, endIndex, action);
+    }
+
     public int getAsInteger(int aIndex) {
         try {
             return Integer.parseInt(get(aIndex));

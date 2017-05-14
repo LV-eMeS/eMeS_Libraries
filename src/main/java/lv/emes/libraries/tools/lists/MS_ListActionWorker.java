@@ -14,18 +14,30 @@ import lv.emes.libraries.tools.MS_CodingTools;
  */
 public class MS_ListActionWorker {
 
-    public static <T> void forEachItem(IBaseListWithItems<T> list, int startFromIndex, IFuncSomeAction<T> action) {
-        //range check for indexes that fits in list size
-        if (MS_CodingTools.inRange(startFromIndex, 0, list.count()-1)) {
+    public static <T> void forEachItem(IBaseListWithItems<T> list, int startFromIndex, int endIndex, IFuncSomeAction<T> action) {
+        //range check for indexes that fits in list size and are correct to perform for loop
+        int maxIndex = list.count()-1;
+        if (endIndex < startFromIndex) { //make swap
+            int swapper = startFromIndex;
+            startFromIndex = endIndex;
+            endIndex = swapper;
+        }
+
+        if (MS_CodingTools.inRange(startFromIndex, 0, maxIndex) &&
+                MS_CodingTools.inRange(endIndex, startFromIndex, maxIndex)) {
             list.setBreakDoWithEveryItem(false);
             if (action != null)
-                for (int i = startFromIndex; i < list.count(); i++) {
+                for (int i = startFromIndex; i <= endIndex; i++) {
                     T itm = list.get(i);
                     action.doAction(itm, i);
                     if (list.getBreakDoWithEveryItem())
                         break;
                 }
         }
+    }
+
+    public static <T> void forEachItem(IBaseListWithItems<T> list, int startFromIndex, IFuncSomeAction<T> action) {
+        forEachItem(list, startFromIndex, list.count()-1, action);
     }
 
     public static <T> void forEachItem(IBaseListWithItems<T> list, IFuncSomeAction<T> action) {

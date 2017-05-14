@@ -109,4 +109,17 @@ public interface IBaseListWithItems<T> {
      * @see IBaseListWithItems#forEachItem(IFuncSomeAction)
      */
     void forEachItem(int startFromIndex, IFuncSomeAction<T> action);
+
+    /**
+     * Loops through list starting from element with specified index <b>startFromIndex</b> till <b>endIndex</b> including it.
+     * <br><u>Note</u>: if presented <b>startFromIndex</b> is not in the bounds of list element count this method will do nothing.
+     * <br><u>Note</u>: if presented <b>endIndex</b> is not in the bounds of list element count this method will do nothing.
+     * <br><u>Note</u>: if presented <b>endIndex</b> is less than <b>startFromIndex</b> indexes will switch places.
+     * @param startFromIndex 0..count()-1
+     * @param endIndex startFromIndex..count()-1
+     * @param action method that describes the actions that every element must do.
+     *               Method's incoming parameters are every item of the list and index of item.
+     * @see IBaseListWithItems#forEachItem(IFuncSomeAction)
+     */
+    void forEachItem(int startFromIndex, int endIndex, IFuncSomeAction<T> action);
 }

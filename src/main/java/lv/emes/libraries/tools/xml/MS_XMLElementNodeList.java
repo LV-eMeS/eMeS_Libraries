@@ -108,4 +108,9 @@ public class MS_XMLElementNodeList implements IBaseListWithItems<MS_XMLElementNo
     public void forEachItem(int startFromIndex, IFuncSomeAction<MS_XMLElementNode> action) {
         MS_ListActionWorker.forEachItem(this, startFromIndex, action);
     }
+
+    @Override
+    public void forEachItem(int startFromIndex, int endIndex, IFuncSomeAction<MS_XMLElementNode> action) {
+        MS_ListActionWorker.forEachItem(this, startFromIndex, endIndex, action);
+    }
 }
