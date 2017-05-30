@@ -17,6 +17,7 @@ eMeS libraries Version 2.0.0
 ========================================================================================================
 * Default methods for all interfaces removed to support Android API <24.
 * Libraries working on Android.
+* MS_Scheduler .
 ========================================================================================================
 eMeS libraries Version 1.9.0
 * Standalone MS_Logger to append log files.
