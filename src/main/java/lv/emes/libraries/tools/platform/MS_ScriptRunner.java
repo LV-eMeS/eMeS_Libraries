@@ -86,10 +86,11 @@ import static lv.emes.libraries.tools.platform.ScriptParsingError.*;
  * <li><code>MUSIC#STOP#</code> - stops playing music.</li>
  * <li><code>COMBINATION#Ctrl&amp;Alt&amp;Delete#</code> - does Ctrl+Alt+Del keystroke combination.</li>
  * <li><code>COMB#Win&amp;D#</code> - does Windows+D keystroke combination. A synonim of <b>COMBINATION</b>.</li>
+ * <li><code>KILL#idea.exe#</code> or <code>TASKKILL#idea.exe#</code> - kills task named "idea.exe".</li>
  * </ul>
  *
  * @author eMeS
- * @version 1.6.
+ * @version 1.7.
  */
 public class MS_ScriptRunner {
 
@@ -122,6 +123,7 @@ public class MS_ScriptRunner {
     private final static int CMD_NR_MUSIC = 26;
     private final static int CMD_NR_COMBINATION = 27;
     private final static int CMD_NR_SAY = 28;
+    private final static int CMD_NR_KILL_TASK = 29;
 
     static {
         COMMANDS.put("TEXT", CMD_NR_WRITE_TEXT);
@@ -158,6 +160,8 @@ public class MS_ScriptRunner {
         COMMANDS.put("COMBINATION", CMD_NR_COMBINATION);
         COMMANDS.put("COMB", CMD_NR_COMBINATION);
         COMMANDS.put("SAY", CMD_NR_SAY);
+        COMMANDS.put("KILL", CMD_NR_KILL_TASK);
+        COMMANDS.put("TASKKILL", CMD_NR_KILL_TASK);
     }
 
     private final static int CMD_SEC_EXECUTE_TEXT = 101;
@@ -182,6 +186,7 @@ public class MS_ScriptRunner {
     private final static int CMD_SEC_COMBINATION = 120;
     private final static int CMD_SEC_SAY = 121;
     private final static int CMD_SEC_MOUSE_WHEEL = 122;
+    private final static int CMD_SEC_KILL_TASK = 123;
 
     private final static char DELIMITER_OF_CMDS = '#';
     private final static char DELIMITER_OF_CMDS_SECOND = ';';
@@ -323,6 +328,10 @@ public class MS_ScriptRunner {
             case CMD_NR_SAY:
                 primaryCommandReading = false; //read text to say
                 secondaryCmd = CMD_SEC_SAY;
+                break;
+            case CMD_NR_KILL_TASK:
+                primaryCommandReading = false; //read task name that will be killed
+                secondaryCmd = CMD_SEC_KILL_TASK;
                 break;
             default:
                 commandNotFoundTryKeyPressing = true;
@@ -516,6 +525,11 @@ public class MS_ScriptRunner {
                 commandParamsAsText = extractCommandContainingVariables(commandParamsAsText);
                 outputMethod.writeString(commandParamsAsText);
                 break;
+            case CMD_SEC_KILL_TASK:
+                commandParamsAsText = "taskkill /F /IM " + commandParamsAsText;
+                if (!MS_FileSystemTools.executeApplication(commandParamsAsText, ""))
+                    throw new ScriptParsingError(String.format(_ERROR_FAILED_TO_KILL_TASK, commandParamsAsText));
+                    break;
             default:
                 commandNotFoundTryKeyPressing = true;
         }

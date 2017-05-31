@@ -17,7 +17,8 @@ eMeS libraries Version 2.0.0
 ========================================================================================================
 * Default methods for all interfaces removed to support Android API <24.
 * Libraries working on Android.
-* MS_Scheduler .
+* Task killing command for script runner.
+* MS_Scheduler to schedule event that will happen in future.
 ========================================================================================================
 eMeS libraries Version 1.9.0
 * Standalone MS_Logger to append log files.

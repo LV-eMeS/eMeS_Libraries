@@ -5,14 +5,14 @@ import lv.emes.libraries.tools.platform.MS_InputOutputMethodDefaults;
 import lv.emes.libraries.tools.platform.MS_ScriptRunner;
 
 /**
- * @version 1.0.
+ * @version 2.0.
  * @author eMeS
  */
 public class MSScriptRunnerExecutable {
 
     public static void main(String[] args) {
         //for testing:
-//        String commandText = "di#1000#" + "wheel#up&30#";
+//        String commandText = "di#1000#" + "kill#iTunes#";
 
         //For building
         String commandText = MS_TextFile.getFileTextAsString(args[0], "");
