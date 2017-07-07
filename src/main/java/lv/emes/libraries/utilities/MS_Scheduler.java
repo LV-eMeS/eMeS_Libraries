@@ -25,7 +25,7 @@ package lv.emes.libraries.utilities;
  * @version 1.0.
  */
 public class MS_Scheduler {
-    //TODO implement this using slep methods and stuff
+    //TODO implement this using sleep methods and stuff
     //TOD rethink, if we need 1 class for both actions - scheduling time and do periodic actions in specific time interval
     //or just to create 2 class with 2 different behavior
 }

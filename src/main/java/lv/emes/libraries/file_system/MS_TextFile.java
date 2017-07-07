@@ -14,22 +14,26 @@ import java.util.List;
 /**
  * Module provides common operations with files and folders.
  * Public methods:
- * -openForReading
- * -close
- * -readln
- * -writeln
- * -write
- * -appendln
- * -append
- * -getFilename
- * -importStringListFromFile
- * -exportStringListToFile
+ * <ul>
+ *     <li>openForReading</li>
+ *     <li>close</li>
+ *     <li>readln</li>
+ *     <li>writeln</li>
+ *     <li>write</li>
+ *     <li>appendln</li>
+ *     <li>append</li>
+ *     <li>importStringListFromFile</li>
+ *     <li>exportStringListToFile</li>
+ *     <li>getFilename</li>
+ * </ul>
  * Static methods:
- * -getProjectDirectory
- * -fileExists
- * -createEmptyFile
- * -getResourceFileTextAsString
- * @version 2.1.
+ * <ul>
+ *     <li>getProjectDirectory</li>
+ *     <li>fileExists</li>
+ *     <li>createEmptyFile</li>
+ *     <li>getResourceFileTextAsString</li>
+ * </ul>
+ * @version 2.2.
  */
 public class MS_TextFile {
     private PrintWriter fFileWriter = null; //main object that will perform line WRITING.
@@ -40,7 +44,6 @@ public class MS_TextFile {
     private FileWriter ffw = null;
     private BufferedWriter fba = null;
     private FileWriter ffa = null;
-    private FileReader ffr = null;
 
     protected String fFilename;
 
@@ -101,7 +104,7 @@ public class MS_TextFile {
     private boolean pCreateFileLinkForReading() {
         if (fFileReader != null) return true;
         try {
-            ffr = new FileReader(fFilename);
+            FileReader ffr = new FileReader(fFilename);
             fFileReader = new BufferedReader(ffr);
             return true;
         } catch (Exception e) {

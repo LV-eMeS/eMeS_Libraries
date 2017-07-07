@@ -2,6 +2,7 @@ package lv.emes.libraries.tools.platform;
 
 import lv.emes.libraries.file_system.MS_FileSystemTools;
 import lv.emes.libraries.file_system.MS_Logger;
+import lv.emes.libraries.file_system.MS_TextFile;
 import lv.emes.libraries.tools.MS_CodingTools;
 import lv.emes.libraries.tools.MS_KeyCodeDictionary;
 import lv.emes.libraries.tools.lists.MS_StringList;
@@ -35,6 +36,14 @@ import static lv.emes.libraries.tools.platform.ScriptParsingError.*;
  * <li>runImplementationSecondary</li></ul>
  * <p>Available commands for script execution:</p>
  * <ul>
+ * <li><code>VARIABLE#username_4_login&amp;Please, enter username of application X to log in!#</code> - does prompting for
+ * user input and informs user with text passed as second parameter.
+ * <br>This will save in <b>userVariables</b> as map with key=username_4_login; value=user input text.
+ * <br>Those variables will be used in <b>TEXT</b> command and recognized by "$" symbols before and after variable name.</li>
+ * <li><code>PASSWORD#password_4_login&amp;Please, enter password of application X to log in!#</code> - does promting for
+ * user secure input (characters will be replaced by *** when inputting)
+ * <br>This will save in <b>userVariables</b> as map with key=username_4_login; value=user input text.
+ * <br>Those variables will be used in <b>TEXT</b> command and recognized by "$" symbols before and after variable name.</li>
  * <li><code>TEXT#A Text to write#</code> - does keystroke execution for every printable key written as second parameter.</li>
  * <li><code>TEXT#User age is: $user_input_age$#</code> - does keystroke execution for text: "User age is: " and
  * variable or password defined in map <b>userVariables</b> with key "$user_input_age$".</li>
@@ -62,14 +71,6 @@ import static lv.emes.libraries.tools.platform.ScriptParsingError.*;
  * <li><code>RELEASE#CTRL#</code> - releases CTRL key (does button up for CTRL key code).</li>
  * <li><code>SS#CTRL#</code> - does HOLD + RELEASE for given key (ctrl in this case).</li>
  * <li><code>SAY#Hello, World!#</code> - prints "Hello, World!" using currently set output method.</li>
- * <li><code>VARIABLE#username_4_login&amp;Please, enter username of application X to log in!#</code> - does promting for
- * user input and informs user with text passed as second parameter.
- * <br>This will save in <b>userVariables</b> as map with key=username_4_login; value=user input text.
- * <br>Those variables will be used in <b>TEXT</b> command and recognized by "$" symbols before and after variable name.</li>
- * <li><code>PASSWORD#password_4_login&amp;Please, enter password of application X to log in!#</code> - does promting for
- * user secure input (characters will be replaced by *** when inputting)
- * <br>This will save in <b>userVariables</b> as map with key=username_4_login; value=user input text.
- * <br>Those variables will be used in <b>TEXT</b> command and recognized by "$" symbols before and after variable name.</li>
  * <li><code>LOGGING#D:/logs/ScriptRunner.log#</code> - enables logging of errors during script execution;
  * all the errors will be logged in file ScriptRunner.log;
  * by default this feature is turned off.</li>
@@ -87,10 +88,13 @@ import static lv.emes.libraries.tools.platform.ScriptParsingError.*;
  * <li><code>COMBINATION#Ctrl&amp;Alt&amp;Delete#</code> - does Ctrl+Alt+Del keystroke combination.</li>
  * <li><code>COMB#Win&amp;D#</code> - does Windows+D keystroke combination. A synonim of <b>COMBINATION</b>.</li>
  * <li><code>KILL#idea.exe#</code> or <code>TASKKILL#idea.exe#</code> - kills task named "idea.exe".</li>
+ * <li><code>WRITELN#D:/file1.txt&amp;Some text#</code> - Creates file "file1.txt" in directory "D:/" and there writes a line "Some text".</li>
+ * <li><code>APPENDLN#D:/file2.txt&amp;Some text#</code> - If doesn't exist, creates file "file2.txt" in directory "D:/" and there writes a line "Some text".
+ * If file exists, it's next line is appended by this text.</li>
  * </ul>
  *
  * @author eMeS
- * @version 1.7.
+ * @version 1.8.
  */
 public class MS_ScriptRunner {
 
@@ -124,6 +128,8 @@ public class MS_ScriptRunner {
     private final static int CMD_NR_COMBINATION = 27;
     private final static int CMD_NR_SAY = 28;
     private final static int CMD_NR_KILL_TASK = 29;
+    private final static int CMD_NR_WRITELN = 30;
+    private final static int CMD_NR_APPENDLN = 31;
 
     static {
         COMMANDS.put("TEXT", CMD_NR_WRITE_TEXT);
@@ -162,9 +168,11 @@ public class MS_ScriptRunner {
         COMMANDS.put("SAY", CMD_NR_SAY);
         COMMANDS.put("KILL", CMD_NR_KILL_TASK);
         COMMANDS.put("TASKKILL", CMD_NR_KILL_TASK);
+        COMMANDS.put("WRITELN", CMD_NR_WRITELN);
+        COMMANDS.put("APPENDLN", CMD_NR_APPENDLN);
     }
 
-    private final static int CMD_SEC_EXECUTE_TEXT = 101;
+    private final static int CMD_SEC_EXECUTE_TEXT_INPUT_SIMULATION = 101;
     private final static int CMD_SEC_RUN_APPLICATION = 102;
     private final static int CMD_SEC_SHOW_WINDOW_OS_WINDOWS = 103;
     private final static int CMD_SEC_HIDE_WINDOW_OS_WINDOWS = 104;
@@ -187,6 +195,8 @@ public class MS_ScriptRunner {
     private final static int CMD_SEC_SAY = 121;
     private final static int CMD_SEC_MOUSE_WHEEL = 122;
     private final static int CMD_SEC_KILL_TASK = 123;
+    private final static int CMD_SEC_WRITELN = 124;
+    private final static int CMD_SEC_APPENDLN = 125;
 
     private final static char DELIMITER_OF_CMDS = '#';
     private final static char DELIMITER_OF_CMDS_SECOND = ';';
@@ -217,6 +227,11 @@ public class MS_ScriptRunner {
         setScriptText(scriptText);
     }
 
+    private void directControlToSecondaryCommand(int cmdCode) {
+        primaryCommandReading = false;
+        secondaryCmd = cmdCode;
+    }
+
     private void runImplementationPrimary(Integer cmdNumber) {
         if (cmdNumber == null) {
             commandNotFoundTryKeyPressing = true;
@@ -224,28 +239,28 @@ public class MS_ScriptRunner {
         }
         switch (cmdNumber) {
             case CMD_NR_WRITE_TEXT:
-                primaryCommandReading = false; //there will be need to read and execute user text keystrokes
-                secondaryCmd = CMD_SEC_EXECUTE_TEXT;
+                //there will be need to read and execute user text keystrokes
+                directControlToSecondaryCommand(CMD_SEC_EXECUTE_TEXT_INPUT_SIMULATION);
                 break;
             case CMD_NR_RUN_APPLICATION:
-                primaryCommandReading = false; //there will be need to read application name
-                secondaryCmd = CMD_SEC_RUN_APPLICATION;
+                //there will be need to read application name
+                directControlToSecondaryCommand(CMD_SEC_RUN_APPLICATION);
                 break;
             case CMD_NR_SHOW_WINDOW_OS_WINDOWS:
-                primaryCommandReading = false; //there will be need to read application name
-                secondaryCmd = CMD_SEC_SHOW_WINDOW_OS_WINDOWS;
+                //there will be need to read application name
+                directControlToSecondaryCommand(CMD_SEC_SHOW_WINDOW_OS_WINDOWS);
                 break;
             case CMD_NR_HIDE_WINDOW_OS_WINDOWS:
-                primaryCommandReading = false; //there will be need to read application name
-                secondaryCmd = CMD_SEC_HIDE_WINDOW_OS_WINDOWS;
+                //there will be need to read application name
+                directControlToSecondaryCommand(CMD_SEC_HIDE_WINDOW_OS_WINDOWS);
                 break;
             case CMD_NR_PAUSE:
-                primaryCommandReading = false; //there will be need to read pause delay as miliseconds
-                secondaryCmd = CMD_SEC_PAUSE;
+                //there will be need to read pause delay as miliseconds
+                directControlToSecondaryCommand(CMD_SEC_PAUSE);
                 break;
             case CMD_NR_SET_DELAY_INTERVAL:
-                primaryCommandReading = false; //there will be need to read delay after each command
-                secondaryCmd = CMD_SEC_SET_DELAY_INTERVAL;
+                //there will be need to read delay after each command
+                directControlToSecondaryCommand(CMD_SEC_SET_DELAY_INTERVAL);
                 break;
             case CMD_NR_MOUSE_LEFT:
                 getInstance().mouseLeftClick();
@@ -266,72 +281,75 @@ public class MS_ScriptRunner {
                 getInstance().mouseRightUp();
                 break;
             case CMD_NR_MOUSE_WHEEL:
-                secondaryCmd = CMD_SEC_MOUSE_WHEEL;
-                primaryCommandReading = false;
+                directControlToSecondaryCommand(CMD_SEC_MOUSE_WHEEL);
                 break;
             case CMD_NR_MOUSE_SET_COORDINATES:
-                primaryCommandReading = false; //read mouse X;Y
-                secondaryCmd = CMD_SEC_MOUSE_SET_COORDINATES;
-                break;
+                directControlToSecondaryCommand(CMD_SEC_MOUSE_SET_COORDINATES);
+                break; //read mouse X;Y
             case CMD_NR_MOUSE_MOVE_FOR_COORDINATES:
-                primaryCommandReading = false; //read mouse X;Y
-                secondaryCmd = CMD_SEC_MOUSE_MOVE_FOR_COORDINATES;
-                break;
+                directControlToSecondaryCommand(CMD_SEC_MOUSE_MOVE_FOR_COORDINATES);
+                break; //read mouse X;Y
             case CMD_NR_PUSH_AND_HOLD_BUTTON:
-                primaryCommandReading = false; //read button to push and hold code
-                secondaryCmd = CMD_SEC_PUSH_AND_HOLD_BUTTON;
+                //read button to push and hold code
+                directControlToSecondaryCommand(CMD_SEC_PUSH_AND_HOLD_BUTTON);
                 break;
             case CMD_NR_RELEASE_HOLD_BUTTON:
-                primaryCommandReading = false; //read button to push and hold code
-                secondaryCmd = CMD_SEC_RELEASE_HOLD_BUTTON;
+                //read button to push and hold code
+                directControlToSecondaryCommand(CMD_SEC_RELEASE_HOLD_BUTTON);
                 break;
             case CMD_NR_HOLD_AND_RELEASE_BUTTON:
-                primaryCommandReading = false;
-                secondaryCmd = CMD_SEC_HOLD_AND_RELEASE_BUTTON;
+                directControlToSecondaryCommand(CMD_SEC_HOLD_AND_RELEASE_BUTTON);
                 break;
             case CMD_NR_VARIABLE_PROMPT:
-                primaryCommandReading = false; //read variable description
-                secondaryCmd = CMD_SEC_VARIABLE_PROMPT;
+                //read variable description
+                directControlToSecondaryCommand(CMD_SEC_VARIABLE_PROMPT);
                 break;
             case CMD_NR_PASSWORD_PROMPT:
-                primaryCommandReading = false; //read password description
-                secondaryCmd = CMD_SEC_PASSWORD_PROMPT;
+                //read password description
+                directControlToSecondaryCommand(CMD_SEC_PASSWORD_PROMPT);
                 break;
             case CMD_NR_SET_LOGGING:
-                primaryCommandReading = false; //read path to logger
-                secondaryCmd = CMD_SEC_SET_LOGGING;
+                //read path to logger
+                directControlToSecondaryCommand(CMD_SEC_SET_LOGGING);
                 break;
             case CMD_NR_SET_VOLUME_TO:
-                primaryCommandReading = false; //read volume parameter
-                secondaryCmd = CMD_SEC_SET_VOLUME_TO;
+                //read volume parameter
+                directControlToSecondaryCommand(CMD_SEC_SET_VOLUME_TO);
                 break;
             case CMD_NR_VOLUME_UP:
-                primaryCommandReading = false; //read volume parameter
-                secondaryCmd = CMD_SEC_VOLUME_UP;
+                //read volume parameter
+                directControlToSecondaryCommand(CMD_SEC_VOLUME_UP);
                 break;
             case CMD_NR_VOLUME_DOWN:
-                primaryCommandReading = false; //read volume parameter
-                secondaryCmd = CMD_SEC_VOLUME_DOWN;
+                //read volume parameter
+                directControlToSecondaryCommand(CMD_SEC_VOLUME_DOWN);
                 break;
             case CMD_NR_MONITOR:
-                primaryCommandReading = false; //read on or off parameter
-                secondaryCmd = CMD_SEC_MONITOR;
+                //read on or off parameter
+                directControlToSecondaryCommand(CMD_SEC_MONITOR);
                 break;
             case CMD_NR_MUSIC:
-                primaryCommandReading = false; //read play, pause, stop, next, prev parameters
-                secondaryCmd = CMD_SEC_MUSIC;
+                //read play, pause, stop, next, prev parameters
+                directControlToSecondaryCommand(CMD_SEC_MUSIC);
                 break;
             case CMD_NR_COMBINATION:
-                primaryCommandReading = false; //read combination keys
-                secondaryCmd = CMD_SEC_COMBINATION;
+                //read combination keys
+                directControlToSecondaryCommand(CMD_SEC_COMBINATION);
                 break;
             case CMD_NR_SAY:
-                primaryCommandReading = false; //read text to say
-                secondaryCmd = CMD_SEC_SAY;
+                //read text to say
+                directControlToSecondaryCommand(CMD_SEC_SAY);
                 break;
             case CMD_NR_KILL_TASK:
-                primaryCommandReading = false; //read task name that will be killed
-                secondaryCmd = CMD_SEC_KILL_TASK;
+                //read task name that will be killed
+                directControlToSecondaryCommand(CMD_SEC_KILL_TASK);
+                break;
+            case CMD_NR_WRITELN:
+                //read filename and text that will be written there
+                directControlToSecondaryCommand(CMD_SEC_WRITELN);
+                break;
+            case CMD_NR_APPENDLN:
+                directControlToSecondaryCommand(CMD_SEC_APPENDLN);
                 break;
             default:
                 commandNotFoundTryKeyPressing = true;
@@ -344,7 +362,7 @@ public class MS_ScriptRunner {
         String tmpStr2;
         Integer volumeLevelParameter;
         switch (secondaryCmd) {
-            case CMD_SEC_EXECUTE_TEXT:
+            case CMD_SEC_EXECUTE_TEXT_INPUT_SIMULATION:
                 commandParamsAsText = extractCommandContainingVariables(commandParamsAsText);
 
                 MS_KeyStrokeExecutor exec = getInstance();
@@ -450,7 +468,7 @@ public class MS_ScriptRunner {
                 tmpStr2 = variableInputMethod.readString(params.get(1));
                 tmpStr = userVariables.put(params.get(0), tmpStr2);
                 if (tmpStr != null)
-                    throw new ScriptParsingError(String.format(_WARNING_USER_VARIABLE_OVERRIDDEN, tmpStr, tmpStr2));
+                    throw new ScriptParsingError(String.format(_WARNING_USER_VARIABLE_OVERRIDDEN, params.get(0), tmpStr, tmpStr2));
                 break;
             case CMD_SEC_PASSWORD_PROMPT:
                 params = new MS_StringList(commandParamsAsText, DELIMITER_OF_PARAMETERS);
@@ -529,7 +547,26 @@ public class MS_ScriptRunner {
                 commandParamsAsText = "taskkill /F /IM " + commandParamsAsText;
                 if (!MS_FileSystemTools.executeApplication(commandParamsAsText, ""))
                     throw new ScriptParsingError(String.format(_ERROR_FAILED_TO_KILL_TASK, commandParamsAsText));
-                    break;
+                break;
+            case CMD_SEC_WRITELN:
+            case CMD_SEC_APPENDLN:
+                commandParamsAsText = extractCommandContainingVariables(commandParamsAsText);
+                params = new MS_StringList(commandParamsAsText, DELIMITER_OF_PARAMETERS);
+                //first parameter is filename, second - text to be written in line of newly created file
+                if (params.count() != 2)
+                    throw new ScriptParsingError(String.format(_ERROR_EXACT_PARAMETER_COUNT, 2));
+                MS_TextFile file = new MS_TextFile(params.get(0));
+
+                //case of writeln or appendl
+                boolean successOfOperation;
+                if (secondaryCmd == CMD_SEC_WRITELN) {
+                    successOfOperation = file.writeln(params.get(1), true);
+                } else {
+                    successOfOperation = file.appendln(params.get(1), true);
+                }
+                if (!successOfOperation) //if didn't succeed to write or append a line to file
+                    throw new ScriptParsingError(String.format(_ERROR_FAILED_TO_WRITE_TO_FILE, params.get(1), params.get(0)));
+                break;
             default:
                 commandNotFoundTryKeyPressing = true;
         }
