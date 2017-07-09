@@ -14,6 +14,7 @@ import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static lv.emes.libraries.tools.platform.MS_KeyStrokeExecutor.getInstance;
 import static lv.emes.libraries.tools.platform.ScriptParsingError.*;
@@ -606,6 +607,7 @@ public class MS_ScriptRunner {
         if (getInstance().isCapsLockToggled())
             getInstance().keyPress("CAPS"); //caps lock during script executing is not needed at all
 
+        AtomicInteger primaryCommandCount = new AtomicInteger(0);
         fCommandList.forEachItem((cmd, index) -> {
             MS_Logger logFile = new MS_Logger(pathToLoggerFile);
             if (isScriptRunningTerminated) {
@@ -625,6 +627,7 @@ public class MS_ScriptRunner {
                     if ((cmd.length() > 0) && (cmd.charAt(0) != '/')) { //ignore commands starting with comment
                         commandNotFoundTryKeyPressing = false;
                         if (primaryCommandReading) {
+                            primaryCommandCount.incrementAndGet();
                             cmd = cmd.toUpperCase(); //whole script is case insensitive ^_^
                             //starting to check for every possible command
                             runImplementationPrimary(COMMANDS.get(cmd));
@@ -640,7 +643,7 @@ public class MS_ScriptRunner {
                     System.out.println(e.toString());
                     primaryCommandReading = true; //if command fails then lets try to read next command as primary command!
                     if (!pathToLoggerFile.equals("")) {
-                        logFile.error(String.format("Command [%d] '%s' failed to execute with message:", index + 1, cmd), e);
+                        logFile.error(String.format("Command (%d) failed to execute. Command text:\n%s", primaryCommandCount.get(), cmd), e);
                         //after this loop continues executing next commands
                     }
                 }

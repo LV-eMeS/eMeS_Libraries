@@ -3,7 +3,8 @@ package lv.emes.libraries.utilities;
 /**
  * An mechanism that allows to do actions in some period of time.
  * Those actions can be either periodic either meant for running once.
- * Precision of this scheduler is designed to be one second, which means that
+ * Precision of this scheduler is designed to be one second, which means that it's meant
+ * to schedule actions that are not urgent in execution perspective, but must always execute.
  * <p>Public methods:
  * <ul>
  * <li></li>
