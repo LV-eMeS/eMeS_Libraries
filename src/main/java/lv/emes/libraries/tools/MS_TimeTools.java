@@ -12,7 +12,7 @@ import java.util.Date;
  * It includes typical modifications and actions with time formats.
  *
  * @author eMeS
- * @version 1.1.
+ * @version 1.2.
  */
 public final class MS_TimeTools {
 
@@ -29,34 +29,46 @@ public final class MS_TimeTools {
     /**
      * Converts date and time to text.
      *
-     * @param aDate a date in format: "dd.MM.yyyy HH:mm:ss:SSS".
+     * @param date a date in format: "dd.MM.yyyy HH:mm:ss:SSS".
      * @return a text representing passed date and time.
      */
-    public static String dateTimeToStr(Date aDate) {
-        SimpleDateFormat format = new SimpleDateFormat(_DATE_TIME_FORMAT);
-        return format.format(aDate);
+    public static String dateTimeToStr(Date date) {
+        SimpleDateFormat formatter = new SimpleDateFormat(_DATE_TIME_FORMAT);
+        return formatter.format(date);
     }
 
     /**
      * Converts time to text.
      *
-     * @param aDate a date in format: "HH:mm:ss:SSS".
+     * @param date a date in format: "HH:mm:ss:SSS".
      * @return a text representing passed time.
      */
-    public static String timeToStr(Date aDate) {
-        SimpleDateFormat format = new SimpleDateFormat(_TIME_FORMAT);
-        return format.format(aDate);
+    public static String timeToStr(Date date) {
+        SimpleDateFormat formatter = new SimpleDateFormat(_TIME_FORMAT);
+        return formatter.format(date);
     }
 
     /**
-     * Converts date without time to text.
+     * Converts date without time part to text.
      *
-     * @param aDate a date in format: "dd.MM.yyyy".
+     * @param date a date in format: "dd.MM.yyyy".
      * @return a text representing passed date.
      */
-    public static String dateToStr(Date aDate) {
-        SimpleDateFormat format = new SimpleDateFormat(_DATE_FORMAT);
-        return format.format(aDate);
+    public static String dateToStr(Date date) {
+        SimpleDateFormat formatter = new SimpleDateFormat(_DATE_FORMAT);
+        return formatter.format(date);
+    }
+
+    /**
+     * Converts date to text in desired format.
+     *
+     * @param date  a date with or without time part.
+     * @param format format for string representation of date.
+     * @return a text representing passed date.
+     */
+    public static String dateTimeToStr(Date date, String format) {
+        SimpleDateFormat formatter = new SimpleDateFormat(format);
+        return formatter.format(date);
     }
 
     /**
@@ -89,7 +101,7 @@ public final class MS_TimeTools {
      * @return a text representing passed time.
      */
     public static String timeToStr(LocalTime time, String format) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(_TIME_FORMAT);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
         return time.format(formatter);
     }
 

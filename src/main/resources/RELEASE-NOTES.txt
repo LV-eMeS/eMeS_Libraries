@@ -1,5 +1,5 @@
 eMeS libraries
-Version 1.9.2
+Version 1.9.3
 Release Notes
 
 INTRODUCTION:
@@ -16,10 +16,11 @@ Changes in versions:
 eMeS libraries Version 2.0.0
 ========================================================================================================
 * Default methods for all interfaces removed to support Android API <24.
-* Libraries working on Android.
+* Libraries fully working at least on Android API 23 or higher.
 * Task killing, write and append file commands for script runner.
 * MS_Scheduler to schedule event that will happen in future.
-* In all the lists breakOngoingForLoop renamed to breakOngoingForLoop
+* In all the eMeS lists breakOngoingForLoop renamed to breakOngoingForLoop.
+* Time tools improved to support standard Date just as it already supports Local date.
 ========================================================================================================
 eMeS libraries Version 1.9.0
 * Standalone MS_Logger to append log files.
