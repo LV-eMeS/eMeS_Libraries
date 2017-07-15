@@ -33,7 +33,9 @@ public interface IPerambulateListActions<T> extends IConcateableList<T> {
 	/**
 	 * Points <b>indexOfCurrent</b> to first element of the list. If list is empty then <b>indexOfCurrent = -1</b>.
 	 */
-	void first();
+	default void first()  {
+		setIndexOfCurrent(0);
+	}
 
 	/**
 	 * Points <b>indexOfCurrent</b> to last element of the list. If list is empty then <b>indexOfCurrent = -1</b>.

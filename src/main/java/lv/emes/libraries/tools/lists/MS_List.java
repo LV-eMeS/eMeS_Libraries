@@ -93,10 +93,10 @@ public class MS_List<T> extends ArrayList<T> implements IPerambulateListActions<
 		return this.get(indexOfCurrent);
 	}
 
-	@Override
-	public void first() {
-		setIndexOfCurrent(0);	
-	}
+//	@Override
+//	public void first() {
+//		setIndexOfCurrent(0);
+//	}
 
 	@Override
 	public void last() {

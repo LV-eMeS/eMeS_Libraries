@@ -281,10 +281,10 @@ public final class MS_StringList implements IListActions<String> {
         return this.get(indexOfCurrent);
     }
 
-    @Override
-    public void first() {
-        setIndexOfCurrent(0);
-    }
+//    @Override
+//    public void first() {
+//        setIndexOfCurrent(0);
+//    }
 
     @Override
     public void last() {
