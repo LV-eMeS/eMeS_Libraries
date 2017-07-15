@@ -154,17 +154,17 @@ public final class MS_StringList implements IListActions<String> {
     }
 
     @Override
-    public void breakDoWithEveryItem() {
-        setBreakDoWithEveryItem(true);
+    public void breakOngoingForLoop() {
+        setBreakOngoingForLoop(true);
     }
 
     @Override
-    public void setBreakDoWithEveryItem(boolean value) {
+    public void setBreakOngoingForLoop(boolean value) {
         flagForLoopBreaking = value;
     }
 
     @Override
-    public boolean getBreakDoWithEveryItem() {
+    public boolean getBreakOngoingForLoop() {
         return flagForLoopBreaking;
     }
 

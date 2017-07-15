@@ -2,7 +2,7 @@ package lv.emes.libraries.tools.lists;
 
 /**
  * Interface defines method <b>forEachItem</b> to loop through every element of list.
- * Loop breaking is also supported by using <b>breakDoWithEveryItem</b>.
+ * Loop breaking is also supported by using <b>breakOngoingForLoop</b>.
  *
  * @param <T> type of list elements.
  * @version 1.4.
@@ -42,16 +42,16 @@ public interface IBaseListWithItems<T> {
 
     /**
      * Does break for method <b>forEachItem</b>.
-     * In other words it is calling <b>setBreakDoWithEveryItem(false)</b>.
+     * In other words it is calling <b>setBreakOngoingForLoop(false)</b>.
      */
-    void breakDoWithEveryItem();
+    void breakOngoingForLoop();
 
     /**
      * Implement setting of flag's for loop breaking value when inside of <b>forEachItem</b> method!
      *
      * @param value if true then loop will be broken and next iteration will not be reached.
      */
-    void setBreakDoWithEveryItem(boolean value);
+    void setBreakOngoingForLoop(boolean value);
 
     /**
      * Flag for <b>forEachItem</b> method that loop must be broken and execution of code must continue
@@ -60,7 +60,7 @@ public interface IBaseListWithItems<T> {
      * @return if true loop will be broken and next iteration will not be executed;
      * if false, loop will continue to next list item.
      */
-    boolean getBreakDoWithEveryItem();
+    boolean getBreakOngoingForLoop();
 
     /**
      * Walks through all the elements in list and does the defined action <b>action</b>.<br>
@@ -72,13 +72,13 @@ public interface IBaseListWithItems<T> {
      * });<br>
      * </code>
      * <p>
-     * Loop is broken if getBreakDoWithEveryItem() returns true.
+     * Loop is broken if getBreakOngoingForLoop() returns true.
      * For example, code below will be executed only with first element even if there is more elements in list.<br>
      * <code>
      * MS_StringList sl = new MS_StringList("One#Two#Three#");<br>
      * sl.forEachItem((str, index) -&gt; {<br>
      * System.out.println(str);<br>
-     * sl.setBreakDoWithEveryItem(true);<br>
+     * sl.setBreakOngoingForLoop(true);<br>
      * });<br>
      * </code>
      * <p>
@@ -90,7 +90,7 @@ public interface IBaseListWithItems<T> {
      * System.out.println(str);<br>
      * if (str.equals("Two")) {<br>
      *  itemFound.set(true);<br>
-     *  sl.breakDoWithEveryItem();<br>
+     *  sl.breakOngoingForLoop();<br>
      *     }<br>
      * });<br>
      * </code>

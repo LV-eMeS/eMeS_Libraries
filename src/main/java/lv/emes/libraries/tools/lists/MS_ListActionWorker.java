@@ -25,12 +25,12 @@ public class MS_ListActionWorker {
 
         if (MS_CodingTools.inRange(startFromIndex, 0, maxIndex) &&
                 MS_CodingTools.inRange(endIndex, startFromIndex, maxIndex)) {
-            list.setBreakDoWithEveryItem(false);
+            list.setBreakOngoingForLoop(false);
             if (action != null)
                 for (int i = startFromIndex; i <= endIndex; i++) {
                     T itm = list.get(i);
                     action.doAction(itm, i);
-                    if (list.getBreakDoWithEveryItem())
+                    if (list.getBreakOngoingForLoop())
                         break;
                 }
         }

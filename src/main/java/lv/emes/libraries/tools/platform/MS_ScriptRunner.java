@@ -612,7 +612,7 @@ public class MS_ScriptRunner {
             MS_Logger logFile = new MS_Logger(pathToLoggerFile);
             if (isScriptRunningTerminated) {
                 logFile.warning("Script running terminated by user's request.");
-                fCommandList.breakDoWithEveryItem();
+                fCommandList.breakOngoingForLoop();
             } else {
                 try {
 //                System.out.println(cmd);
@@ -720,7 +720,7 @@ public class MS_ScriptRunner {
         fScriptTerminationShortcutKeyCombination.forEachItem((key, ind) -> {
             if (!MS_KeyStrokeExecutor.getInstance().isKeyDown(key)) {
                 res.set(false);
-                fScriptTerminationShortcutKeyCombination.breakDoWithEveryItem();
+                fScriptTerminationShortcutKeyCombination.breakOngoingForLoop();
             }
         });
         return res.get();

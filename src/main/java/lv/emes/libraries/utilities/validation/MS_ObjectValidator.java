@@ -141,7 +141,7 @@ public abstract class MS_ObjectValidator<T> {
         validationErrors.forEachItem((error, index) -> {
             if (error.getNumber().equals(errorNumber)) {
                 errorFound.set(true);
-                validationErrors.breakDoWithEveryItem();
+                validationErrors.breakOngoingForLoop();
             }
         });
         return errorFound.get();
@@ -161,7 +161,7 @@ public abstract class MS_ObjectValidator<T> {
         validationErrors.forEachItem((err, index) -> {
             if (err.getNumber().equals(error.getNumber()) && err.getMessage().equals(error.getMessage())) {
                 errorFound.set(true);
-                validationErrors.breakDoWithEveryItem();
+                validationErrors.breakOngoingForLoop();
             }
         });
         return errorFound.get();
@@ -222,7 +222,7 @@ public abstract class MS_ObjectValidator<T> {
             if (possibleError.getNumber().equals(number)) {
                 this.validationErrors.add(possibleError);
                 possibleError.setObject(objectToValidate);
-                possibleValidationErrors.breakDoWithEveryItem();
+                possibleValidationErrors.breakOngoingForLoop();
             }
         });
     }

@@ -165,18 +165,18 @@ public class MSListTest {
         sum = 0;
         indexSum = 0;
         count = 0;
-        assertEquals(false, l.getBreakDoWithEveryItem());
+        assertEquals(false, l.getBreakOngoingForLoop());
         l.forEachItem((i, index) -> {
             sum += i;
             indexSum += index;
             count++;
             if (i == 1)
-                l.breakDoWithEveryItem();
+                l.breakOngoingForLoop();
         });
         assertEquals(18, sum);
         assertEquals(2, count);
         assertEquals(1, indexSum);
-        assertEquals(true, l.getBreakDoWithEveryItem());
+        assertEquals(true, l.getBreakOngoingForLoop());
 
         //test break when loop started from specific index
         sum = 0;
@@ -187,12 +187,12 @@ public class MSListTest {
             indexSum += index;
             count++;
             if (i == 1)
-                l.breakDoWithEveryItem();
+                l.breakOngoingForLoop();
         });
         assertEquals(1, sum);
         assertEquals(1, count);
         assertEquals(1, indexSum);
-        assertEquals(true, l.getBreakDoWithEveryItem());
+        assertEquals(true, l.getBreakOngoingForLoop());
     }
 
     @Test
@@ -204,21 +204,21 @@ public class MSListTest {
         sum = 0;
         indexSum = 0;
         count = 0;
-        assertEquals(false, l.getBreakDoWithEveryItem());
+        assertEquals(false, l.getBreakOngoingForLoop());
         l.forEachItem((i, index) -> {
             sum += i;
             indexSum += index;
             count++;
             //second way to do break
-            l.setBreakDoWithEveryItem(true); //breaks right after first iteration (because if statement is lacking)
+            l.setBreakOngoingForLoop(true); //breaks right after first iteration (because if statement is lacking)
         });
         assertEquals(17, sum);
         assertEquals(1, count);
         assertEquals(0, indexSum);
-        assertEquals(true, l.getBreakDoWithEveryItem());
+        assertEquals(true, l.getBreakOngoingForLoop());
 
         l.forEachItem((i, index) -> {
-            assertEquals(false, l.getBreakDoWithEveryItem());
+            assertEquals(false, l.getBreakOngoingForLoop());
         });
     }
 

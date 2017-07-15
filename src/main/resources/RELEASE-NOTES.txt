@@ -19,6 +19,7 @@ eMeS libraries Version 2.0.0
 * Libraries working on Android.
 * Task killing, write and append file commands for script runner.
 * MS_Scheduler to schedule event that will happen in future.
+* In all the lists breakOngoingForLoop renamed to breakOngoingForLoop
 ========================================================================================================
 eMeS libraries Version 1.9.0
 * Standalone MS_Logger to append log files.
