@@ -169,17 +169,17 @@ public final class MS_StringList implements IListActions<String> {
     }
 
     @Override
-    public void forEachItem(IFuncSomeAction<String> action) {
+    public void forEachItem(IFuncForEachItemLoopAction<String> action) {
         MS_ListActionWorker.forEachItem(this, action);
     }
 
     @Override
-    public void forEachItem(int startFromIndex, IFuncSomeAction<String> action) {
+    public void forEachItem(int startFromIndex, IFuncForEachItemLoopAction<String> action) {
         MS_ListActionWorker.forEachItem(this, startFromIndex, action);
     }
 
     @Override
-    public void forEachItem(int startFromIndex, int endIndex, IFuncSomeAction<String> action) {
+    public void forEachItem(int startFromIndex, int endIndex, IFuncForEachItemLoopAction<String> action) {
         MS_ListActionWorker.forEachItem(this, startFromIndex, endIndex, action);
     }
 

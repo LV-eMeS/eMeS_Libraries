@@ -48,7 +48,7 @@ public abstract class MS_Thread<T extends MS_Thread<T>> implements Runnable, MS_
      * Starts execution of thread by calling inner thread object's method <b>run</b>,
      * which will then call method <b>doOnExecution</b>.
      *
-     * @return reference to an thread itself.
+     * @return reference to a thread itself.
      * @throws IllegalStateException when attempt is made to start thread that is already started.
      */
     public final T start() {
@@ -67,7 +67,7 @@ public abstract class MS_Thread<T extends MS_Thread<T>> implements Runnable, MS_
      * If <b>timeout</b> is set and is greater than 0 then waiting will be performed
      * for specified time in milliseconds, after that thread will be interrupted if it will not finish in that time.
      *
-     * @return reference to thread itself.
+     * @return reference to a thread itself.
      * @throws IllegalStateException when attempt is made to wait for thread that hasn't even started.
      */
     public final T waitFor() throws IllegalStateException {
@@ -86,7 +86,7 @@ public abstract class MS_Thread<T extends MS_Thread<T>> implements Runnable, MS_
     /**
      * Stops thread's work. Thread is interrupted and it's state is changed to interrupted.
      *
-     * @return reference to thread itself.
+     * @return reference to a thread itself.
      * @throws IllegalStateException when attempt is made to stop thread that hasn't even started.
      */
     public final T stop() {
@@ -137,7 +137,7 @@ public abstract class MS_Thread<T extends MS_Thread<T>> implements Runnable, MS_
      * Changes name of thread.
      *
      * @param threadName new name of thread.
-     * @return reference to an thread itself.
+     * @return reference to a thread itself.
      */
     public T withThreadName(String threadName) {
         this.threadName = threadName;
@@ -148,7 +148,7 @@ public abstract class MS_Thread<T extends MS_Thread<T>> implements Runnable, MS_
      * Sets timeout for execution of thread's work.
      *
      * @param timeout time in milliseconds.
-     * @return reference to an thread itself.
+     * @return reference to a thread itself.
      */
     public T withTimeout(long timeout) {
         this.timeout = timeout;

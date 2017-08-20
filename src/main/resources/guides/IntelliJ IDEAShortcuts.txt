@@ -26,5 +26,13 @@ Generate main method: psvm
 Find usages: Alt + F7
 Create method from code fragment: Ctrl + Alt + M
 Recently viewed tabs: Ctrl + E
+When in Terminal using Git commands: {
+	https://stackoverflow.com/questions/741814/move-entire-line-up-and-down-in-vim
+	i - insert mode;
+	dd - cuts line and puts it into register;
+	p - pastes line from register;
+	ddkkp - moves line up;
+	ddp - moves line down
+}
 https://www.jetbrains.com/help/idea/2016.2/keyboard-shortcuts-you-cannot-miss.html
 //------------------------------------------------------------------------------------------------------------------------

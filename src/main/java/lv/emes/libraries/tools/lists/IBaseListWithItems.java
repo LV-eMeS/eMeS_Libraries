@@ -98,7 +98,7 @@ public interface IBaseListWithItems<T> {
      * @param action method that describes the actions that every element must do.
      *               Method's incoming parameters are every item of the list and index of item.
      */
-    void forEachItem(IFuncSomeAction<T> action);
+    void forEachItem(IFuncForEachItemLoopAction<T> action);
 
     /**
      * Loops through list starting from element with specified index <b>startFromIndex</b>.
@@ -106,9 +106,9 @@ public interface IBaseListWithItems<T> {
      * @param startFromIndex 0..count()-1
      * @param action method that describes the actions that every element must do.
      *               Method's incoming parameters are every item of the list and index of item.
-     * @see IBaseListWithItems#forEachItem(IFuncSomeAction)
+     * @see IBaseListWithItems#forEachItem(IFuncForEachItemLoopAction)
      */
-    void forEachItem(int startFromIndex, IFuncSomeAction<T> action);
+    void forEachItem(int startFromIndex, IFuncForEachItemLoopAction<T> action);
 
     /**
      * Loops through list starting from element with specified index <b>startFromIndex</b> till <b>endIndex</b> including it.
@@ -119,7 +119,7 @@ public interface IBaseListWithItems<T> {
      * @param endIndex startFromIndex..count()-1
      * @param action method that describes the actions that every element must do.
      *               Method's incoming parameters are every item of the list and index of item.
-     * @see IBaseListWithItems#forEachItem(IFuncSomeAction)
+     * @see IBaseListWithItems#forEachItem(IFuncForEachItemLoopAction)
      */
-    void forEachItem(int startFromIndex, int endIndex, IFuncSomeAction<T> action);
+    void forEachItem(int startFromIndex, int endIndex, IFuncForEachItemLoopAction<T> action);
 }

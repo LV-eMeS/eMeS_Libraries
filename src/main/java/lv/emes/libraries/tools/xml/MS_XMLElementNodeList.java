@@ -1,7 +1,7 @@
 package lv.emes.libraries.tools.xml;
 
 import lv.emes.libraries.tools.lists.IBaseListWithItems;
-import lv.emes.libraries.tools.lists.IFuncSomeAction;
+import lv.emes.libraries.tools.lists.IFuncForEachItemLoopAction;
 import lv.emes.libraries.tools.lists.MS_ListActionWorker;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -100,17 +100,17 @@ public class MS_XMLElementNodeList implements IBaseListWithItems<MS_XMLElementNo
     }
 
     @Override
-    public void forEachItem(IFuncSomeAction<MS_XMLElementNode> action) {
+    public void forEachItem(IFuncForEachItemLoopAction<MS_XMLElementNode> action) {
         MS_ListActionWorker.forEachItem(this, action);
     }
 
     @Override
-    public void forEachItem(int startFromIndex, IFuncSomeAction<MS_XMLElementNode> action) {
+    public void forEachItem(int startFromIndex, IFuncForEachItemLoopAction<MS_XMLElementNode> action) {
         MS_ListActionWorker.forEachItem(this, startFromIndex, action);
     }
 
     @Override
-    public void forEachItem(int startFromIndex, int endIndex, IFuncSomeAction<MS_XMLElementNode> action) {
+    public void forEachItem(int startFromIndex, int endIndex, IFuncForEachItemLoopAction<MS_XMLElementNode> action) {
         MS_ListActionWorker.forEachItem(this, startFromIndex, endIndex, action);
     }
 }

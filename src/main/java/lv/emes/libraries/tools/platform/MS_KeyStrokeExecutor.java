@@ -33,7 +33,7 @@ public class MS_KeyStrokeExecutor implements IKeyStrokeExecutor {
 	//PUBLIC STRUCTURES, EXCEPTIONS, PROPERTIES AND CONSTANTS
 
 	//PRIVATE VARIABLES
-	private static MS_KeyStrokeExecutor instanceVar = null;
+	private static MS_KeyStrokeExecutor INSTANCE = null;
 	private Robot robot = null;
 
 	//PUBLIC VARIABLES
@@ -55,13 +55,13 @@ public class MS_KeyStrokeExecutor implements IKeyStrokeExecutor {
 	 * @return singletone instance of this object.
 	 */
 	public static MS_KeyStrokeExecutor getInstance() {
-		if (instanceVar == null)
+		if (INSTANCE == null)
 			try {
-				instanceVar = new MS_KeyStrokeExecutor();
+				INSTANCE = new MS_KeyStrokeExecutor();
 			} catch (AWTException e) {
 				e.printStackTrace();
 			}
-		return instanceVar;
+		return INSTANCE;
 	}
 
 	//PRIVATE METHODS

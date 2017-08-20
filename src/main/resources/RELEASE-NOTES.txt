@@ -1,5 +1,5 @@
 eMeS libraries
-Version 1.9.3
+Version 1.9.4
 Release Notes
 
 INTRODUCTION:
@@ -21,6 +21,7 @@ eMeS libraries Version 2.0.0
 * MS_Scheduler to schedule event that will happen in future.
 * In all the eMeS lists breakOngoingForLoop renamed to breakOngoingForLoop.
 * Time tools improved to support standard Date just as it already supports Local date.
+* MS_EqualityCheckBuilder to mock compare object instances of different types, but similar structure.
 ========================================================================================================
 eMeS libraries Version 1.9.0
 * Standalone MS_Logger to append log files.

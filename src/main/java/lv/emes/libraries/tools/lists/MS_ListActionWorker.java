@@ -14,7 +14,7 @@ import lv.emes.libraries.tools.MS_CodingTools;
  */
 public class MS_ListActionWorker {
 
-    public static <T> void forEachItem(IBaseListWithItems<T> list, int startFromIndex, int endIndex, IFuncSomeAction<T> action) {
+    public static <T> void forEachItem(IBaseListWithItems<T> list, int startFromIndex, int endIndex, IFuncForEachItemLoopAction<T> action) {
         //range check for indexes that fits in list size and are correct to perform for loop
         int maxIndex = list.count()-1;
         if (endIndex < startFromIndex) { //make swap
@@ -36,11 +36,11 @@ public class MS_ListActionWorker {
         }
     }
 
-    public static <T> void forEachItem(IBaseListWithItems<T> list, int startFromIndex, IFuncSomeAction<T> action) {
+    public static <T> void forEachItem(IBaseListWithItems<T> list, int startFromIndex, IFuncForEachItemLoopAction<T> action) {
         forEachItem(list, startFromIndex, list.count()-1, action);
     }
 
-    public static <T> void forEachItem(IBaseListWithItems<T> list, IFuncSomeAction<T> action) {
+    public static <T> void forEachItem(IBaseListWithItems<T> list, IFuncForEachItemLoopAction<T> action) {
         forEachItem(list, 0, action);
     }
 }

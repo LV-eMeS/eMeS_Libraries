@@ -61,17 +61,17 @@ public class MS_List<T> extends ArrayList<T> implements IPerambulateListActions<
 	}
 
 	@Override
-	public void forEachItem(IFuncSomeAction<T> action) {
+	public void forEachItem(IFuncForEachItemLoopAction<T> action) {
 		MS_ListActionWorker.forEachItem(this, action);
 	}
 
 	@Override
-	public void forEachItem(int startFromIndex, IFuncSomeAction<T> action) {
+	public void forEachItem(int startFromIndex, IFuncForEachItemLoopAction<T> action) {
 		MS_ListActionWorker.forEachItem(this, startFromIndex, action);
 	}
 
 	@Override
-	public void forEachItem(int startFromIndex, int endIndex, IFuncSomeAction<T> action) {
+	public void forEachItem(int startFromIndex, int endIndex, IFuncForEachItemLoopAction<T> action) {
 		MS_ListActionWorker.forEachItem(this, startFromIndex, endIndex, action);
 	}
 
