@@ -1,5 +1,8 @@
 package lv.emes.libraries.tools;
 
+import lv.emes.libraries.utilities.MS_CodingUtils;
+import lv.emes.libraries.utilities.MS_StringUtils;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -40,7 +43,7 @@ public class MS_KeyCodeDictionary {
         if (text.length() == 1) { //might be a letter or number
             char firstChar = text.charAt(0);
             if (Character.isLetterOrDigit(firstChar))
-                return MS_StringTools.chr(firstChar); //just return ASCII of letter or number!
+                return MS_StringUtils.chr(firstChar); //just return ASCII of letter or number!
         }
         try {
             return keyCodeDict.get(text);
@@ -58,10 +61,10 @@ public class MS_KeyCodeDictionary {
      * @return true if written using combination Shift + <b>aChar</b>. Also returns true if char is capital letter.
      */
     public static boolean needToPushShiftToWriteChar(char aChar) {
-        int ascii = MS_StringTools.ord(aChar);
+        int ascii = MS_StringUtils.ord(aChar);
         return (
             //from ! till +, but excluding apostrophe ('), which is ascii 39
-                MS_CodingTools.inRange(ascii, 33, 38) || MS_CodingTools.inRange(ascii, 40, 43)
+                MS_CodingUtils.inRange(ascii, 33, 38) || MS_CodingUtils.inRange(ascii, 40, 43)
                         || (ascii == 60) //< symbol
                         || (ascii == 62) //> symbol
                         || (ascii == 63) //? symbol
@@ -69,8 +72,8 @@ public class MS_KeyCodeDictionary {
                         || (ascii == 94) //^ symbol
                         || (ascii == 95) //_ symbol
                         || (ascii == 58) //: symbol
-                        || MS_CodingTools.inRange(ascii, 123, 126) // { | } ~ symbols
-                        || MS_CodingTools.inRange(ascii, 65, 90) //Capital letters A..Z
+                        || MS_CodingUtils.inRange(ascii, 123, 126) // { | } ~ symbols
+                        || MS_CodingUtils.inRange(ascii, 65, 90) //Capital letters A..Z
                 );
     }
 

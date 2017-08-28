@@ -1,7 +1,7 @@
 package lv.emes.libraries.file_system;
 
-import lv.emes.libraries.tools.MS_StringTools;
 import lv.emes.libraries.tools.lists.MS_StringList;
+import lv.emes.libraries.utilities.MS_StringUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
@@ -97,7 +97,7 @@ public class MSFileSystemToolsTest {
     @Test
     public void test07FileNamesAndExtensions() {
         String extensionWithDot = ".txt";
-        String withoutExtension = MS_StringTools.replaceInString(tmpFilePath, extensionWithDot, "");
+        String withoutExtension = MS_StringUtils.replaceInString(tmpFilePath, extensionWithDot, "");
 
         assertEquals(tmpFileName, getShortFilename(tmpFilePath));
         assertEquals(withoutExtension, getFilenameWithoutExtension(tmpFilePath));

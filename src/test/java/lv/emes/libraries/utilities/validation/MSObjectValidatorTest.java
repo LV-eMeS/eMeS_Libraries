@@ -1,7 +1,7 @@
 package lv.emes.libraries.utilities.validation;
 
-import lv.emes.libraries.tools.MS_StringTools;
 import lv.emes.libraries.tools.lists.MS_List;
+import lv.emes.libraries.utilities.MS_StringUtils;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -53,7 +53,7 @@ public class MSObjectValidatorTest {
             protected void doValidation(String objectToValidate, MS_List<MS_ValidationError<String>> validationErrorList) {
                 if (objectToValidate.equals(BAD_VALUE))
                     this.addErrorToList(100, objectToValidate);
-                name = MS_StringTools.substring(objectToValidate, 5, 12);
+                name = MS_StringUtils.substring(objectToValidate, 5, 12);
             }
         };
     }

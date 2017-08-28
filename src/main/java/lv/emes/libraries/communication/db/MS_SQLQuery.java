@@ -1,8 +1,8 @@
 package lv.emes.libraries.communication.db;
 
+import lv.emes.libraries.tools.MS_AbstractCompositeText;
+import lv.emes.libraries.tools.MS_LineBuilder;
 import lv.emes.libraries.tools.lists.MS_List;
-import lv.emes.libraries.utilities.MS_AbstractCompositeText;
-import lv.emes.libraries.utilities.MS_LineBuilder;
 
 /**
  * SQL query to operate with data. Currently only SELECT, INSERT, REPLACE, UPDATE and DELETE statements are supported.

@@ -1,6 +1,6 @@
 package lv.emes.libraries.communication.http.html;
 
-import lv.emes.libraries.utilities.MS_LineBuilder;
+import lv.emes.libraries.tools.MS_LineBuilder;
 
 /**
  * HTML page that can be customized. Extending this class there will be possibility to implement such methods as:

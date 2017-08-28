@@ -1,4 +1,4 @@
-package lv.emes.libraries.utilities;
+package lv.emes.libraries.tools;
 
 /**
  * Any text that can be divided into portions which are mutable.

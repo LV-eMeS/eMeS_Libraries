@@ -1,6 +1,7 @@
 package lv.emes.libraries.examples;
 
-import static lv.emes.libraries.tools.MS_CodingTools.*;
+import static lv.emes.libraries.utilities.MS_CodingUtils.inRange;
+import static lv.emes.libraries.utilities.MS_CodingUtils.randomNumber;
 
 public class MSToolsExample {
 

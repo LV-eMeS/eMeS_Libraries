@@ -1,6 +1,6 @@
 package lv.emes.libraries.tools.platform;
 
-import lv.emes.libraries.tools.MS_CodingTools;
+import lv.emes.libraries.utilities.MS_CodingUtils;
 
 import javax.swing.*;
 
@@ -12,12 +12,12 @@ import javax.swing.*;
  */
 public class MS_InputOutputMethodDefaults {
     //some default input methods
-    public static final MS_IFuncStringInputMethod _INPUT_CONSOLE = MS_CodingTools::readStringFromConsole;
-    public static final MS_IFuncStringInputMethod _INPUT_JOPTION_PANE = MS_CodingTools::readStringFromJOptionPane;
+    public static final MS_IFuncStringInputMethod _INPUT_CONSOLE = MS_CodingUtils::readStringFromConsole;
+    public static final MS_IFuncStringInputMethod _INPUT_JOPTION_PANE = MS_CodingUtils::readStringFromJOptionPane;
     //TODO input method for JavaFX
     //TODO input method for Android
     //masked inputs
-    public static final MS_IFuncStringInputMethod _INPUT_JOPTION_PANE_MASKED = MS_CodingTools::readStringFromJPasswordField;
+    public static final MS_IFuncStringInputMethod _INPUT_JOPTION_PANE_MASKED = MS_CodingUtils::readStringFromJPasswordField;
     //TODO input method for JavaFX with input mask *****
     //TODO input method for Android with input mask *****
 

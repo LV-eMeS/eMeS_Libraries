@@ -16,8 +16,8 @@ Copyright [2016] [Māris Salenieks]
         limitations under the License.
  */
 
-import lv.emes.libraries.tools.MS_StringTools;
 import lv.emes.libraries.tools.lists.MS_StringList;
+import lv.emes.libraries.utilities.MS_StringUtils;
 import org.apache.commons.io.FileUtils;
 
 import java.awt.*;
@@ -127,7 +127,7 @@ public class MS_FileSystemTools {
         String batchFilename = getShortFilename(fileName);
 
         //if pathToBach have spaces, use exec application
-        if (MS_StringTools.textContains(batchFilename, ' ')) {
+        if (MS_StringUtils.textContains(batchFilename, ' ')) {
             if (params.equals(""))
                 return _executeRuntimeEXE(fileName);
             else
@@ -285,10 +285,10 @@ public class MS_FileSystemTools {
      * @return only extension of file with dot. Like ".file".
      */
     public static String getFileExtensionWithDot(String aFilename) {
-        String inversedFilename = MS_StringTools.getInversedText(aFilename);
-        int positionOfDot = MS_StringTools.pos(inversedFilename, ".");
-        String res = MS_StringTools.substring(inversedFilename, 0, positionOfDot + 1);
-        res = MS_StringTools.getInversedText(res);
+        String inversedFilename = MS_StringUtils.getInversedText(aFilename);
+        int positionOfDot = MS_StringUtils.pos(inversedFilename, ".");
+        String res = MS_StringUtils.substring(inversedFilename, 0, positionOfDot + 1);
+        res = MS_StringUtils.getInversedText(res);
         return res;
     }
 
@@ -298,7 +298,7 @@ public class MS_FileSystemTools {
      */
     public static String getFileExtensionWithoutDot(String aFilename) {
         String res = getFileExtensionWithDot(aFilename);
-        return MS_StringTools.getSubstring(res, 1, aFilename.length() - 1);
+        return MS_StringUtils.getSubstring(res, 1, aFilename.length() - 1);
     }
 
     /**

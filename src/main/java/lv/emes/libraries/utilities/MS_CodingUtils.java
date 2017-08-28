@@ -1,4 +1,4 @@
-package lv.emes.libraries.tools;
+package lv.emes.libraries.utilities;
 
 import javax.swing.*;
 import javax.swing.event.AncestorEvent;
@@ -17,9 +17,9 @@ import java.util.Random;
  *
  * @version 2.1.
  */
-public final class MS_CodingTools {
+public final class MS_CodingUtils {
 
-    private MS_CodingTools() {
+    private MS_CodingUtils() {
     }
 
     public static final String getSystemUserName = System.getProperty("user.name");

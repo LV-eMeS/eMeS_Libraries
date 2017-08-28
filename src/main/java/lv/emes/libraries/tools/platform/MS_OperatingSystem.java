@@ -1,7 +1,7 @@
 package lv.emes.libraries.tools.platform;
 
-import lv.emes.libraries.tools.MS_StringTools;
-import lv.emes.libraries.tools.MS_CodingTools;
+import lv.emes.libraries.utilities.MS_CodingUtils;
+import lv.emes.libraries.utilities.MS_StringUtils;
 
 /** 
  * An recognizable and commonly used OS token between eMeS libraries.
@@ -33,20 +33,20 @@ public class MS_OperatingSystem {
 
 	//CONSTRUCTORS
 	public MS_OperatingSystem() {
-		fullOSName = MS_CodingTools.getSystemOS;
-		if (MS_StringTools.textContains(fullOSName, "windows", false)) {
+		fullOSName = MS_CodingUtils.getSystemOS;
+		if (MS_StringUtils.textContains(fullOSName, "windows", false)) {
 			shortOSName = _OS_WINDOWS;
 			osID = _OS_WINDOWS_ID;
 		}
-		else if (MS_StringTools.textContains(fullOSName, "buntu", false)) {
+		else if (MS_StringUtils.textContains(fullOSName, "buntu", false)) {
 			shortOSName = _OS_UNIX;
 			osID = _OS_UNIX_ID;
 		}
-		else if (MS_StringTools.textContains(fullOSName, "droid", false)) {
+		else if (MS_StringUtils.textContains(fullOSName, "droid", false)) {
 			shortOSName = _OS_ANDROID;
 			osID = _OS_ANDROID_ID;
 		}
-		else if (MS_StringTools.textContains(fullOSName, "mac", false)) {
+		else if (MS_StringUtils.textContains(fullOSName, "mac", false)) {
 			shortOSName = _OS_MAC;
 			osID = _OS_MAC_ID;
 		}

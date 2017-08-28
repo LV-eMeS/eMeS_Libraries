@@ -1,4 +1,4 @@
-package lv.emes.libraries.utilities;
+package lv.emes.libraries.tools;
 
 /**
  * In order to use builder pattern following approach is performed:

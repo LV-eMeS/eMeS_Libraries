@@ -1,6 +1,6 @@
 package lv.emes.libraries.communication.cryptography;
 
-import lv.emes.libraries.tools.MS_CodingTools;
+import lv.emes.libraries.utilities.MS_CodingUtils;
 import org.apache.commons.codec.binary.Base64;
 
 import javax.crypto.SecretKey;
@@ -68,7 +68,7 @@ public class MS_Hash {
      * @return empty string in case if <b>aTextToHash</b> is empty or if <b>aKeyLength</b> is not in interval [256..2048].
      */
     public static String getHash(String aTextToHash, int aKeyLength) {    	
-    	if (! MS_CodingTools.inRange(aKeyLength, 256, 2048) ) return "";
+    	if (! MS_CodingUtils.inRange(aKeyLength, 256, 2048) ) return "";
     	// store the salt with the password
     	return hash(aTextToHash, _DEFAULT_SALT, aKeyLength);
     }
@@ -92,7 +92,7 @@ public class MS_Hash {
      * @return empty string in case if <b>aTextToHash</b> is empty or if <b>aSalt</b> is empty, or if <b>aKeyLength</b> is not in interval [256..2048].
      */
     public static String getHash(String aTextToHash, String aSalt, int aKeyLength) {    	
-    	if (! MS_CodingTools.inRange(aKeyLength, 256, 2048) ) return "";
+    	if (! MS_CodingUtils.inRange(aKeyLength, 256, 2048) ) return "";
     	byte [] salt = aSalt.getBytes();
     	return hash(aTextToHash, salt, aKeyLength);
     }

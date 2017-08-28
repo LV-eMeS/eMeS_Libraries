@@ -1,6 +1,6 @@
-package lv.emes.libraries.utilities;
+package lv.emes.libraries.tools;
 
-import lv.emes.libraries.tools.MS_StringTools;
+import lv.emes.libraries.utilities.MS_StringUtils;
 
 /**
  * String builder that is designed only to append lines.
@@ -28,7 +28,7 @@ public class MS_LineBuilder {
     public MS_LineBuilder add(String str) {
         if (!str.isEmpty())
             sb.append(str);
-        sb.append(MS_StringTools._LINE_BRAKE);
+        sb.append(MS_StringUtils._LINE_BRAKE);
         return this;
     }
 

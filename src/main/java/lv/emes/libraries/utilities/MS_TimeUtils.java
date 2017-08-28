@@ -1,4 +1,4 @@
-package lv.emes.libraries.tools;
+package lv.emes.libraries.utilities;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -14,7 +14,7 @@ import java.util.Date;
  * @author eMeS
  * @version 1.2.
  */
-public final class MS_TimeTools {
+public final class MS_TimeUtils {
 
     public static final String _DATE_TIME_FORMAT = "dd.MM.yyyy HH:mm:ss:SSS";
     public static final String _TIME_FORMAT = "HH:mm:ss:SSS";
@@ -23,7 +23,7 @@ public final class MS_TimeTools {
     public static final String _DATE_FORMAT_EN = "yyyy-MM-dd";
     public static final String _TIME_FORMAT_EN = "HH:mm:ss,SSS";
 
-    private MS_TimeTools() {
+    private MS_TimeUtils() {
     }
 
     /**

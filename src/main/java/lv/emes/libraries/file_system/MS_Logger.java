@@ -1,9 +1,10 @@
 package lv.emes.libraries.file_system;
 
-import lv.emes.libraries.tools.MS_TimeTools;
+import lv.emes.libraries.utilities.MS_TimeUtils;
+
 import java.time.LocalDateTime;
 
-import static lv.emes.libraries.tools.MS_StringTools._LINE_BRAKE;
+import static lv.emes.libraries.utilities.MS_StringUtils._LINE_BRAKE;
 
 /**
  * A text file writer that just appends specific file with specifically formatted text.
@@ -47,7 +48,7 @@ public class MS_Logger {
 
     private void pAppendLineWithLeadingDate(String text) {
         LocalDateTime time = LocalDateTime.now();
-        pAppendLineWithPrefix(MS_TimeTools.dateTimeToStr(time, MS_TimeTools._DATE_TIME_FORMAT_EN), text);
+        pAppendLineWithPrefix(MS_TimeUtils.dateTimeToStr(time, MS_TimeUtils._DATE_TIME_FORMAT_EN), text);
     }
 
     /**

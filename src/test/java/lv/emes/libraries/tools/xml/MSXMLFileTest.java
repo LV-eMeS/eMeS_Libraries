@@ -18,7 +18,7 @@ import java.io.IOException;
 
 import static lv.emes.libraries.file_system.MS_FileSystemTools.deleteFile;
 import static lv.emes.libraries.file_system.MS_FileSystemTools.getTmpDirectory;
-import static lv.emes.libraries.tools.MS_StringTools.getTabSpace;
+import static lv.emes.libraries.utilities.MS_StringUtils.getTabSpace;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 

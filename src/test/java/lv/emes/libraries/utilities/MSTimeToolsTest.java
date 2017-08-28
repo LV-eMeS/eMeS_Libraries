@@ -1,4 +1,4 @@
-package lv.emes.libraries.tools;
+package lv.emes.libraries.utilities;
 
 import org.junit.Test;
 
@@ -8,7 +8,7 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.Date;
 
-import static lv.emes.libraries.tools.MS_TimeTools.*;
+import static lv.emes.libraries.utilities.MS_TimeUtils.*;
 import static org.junit.Assert.assertEquals;
 
 public class MSTimeToolsTest {

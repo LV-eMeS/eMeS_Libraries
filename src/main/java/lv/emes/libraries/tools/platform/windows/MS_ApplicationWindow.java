@@ -2,7 +2,7 @@ package lv.emes.libraries.tools.platform.windows;
 
 import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.WinDef;
-import lv.emes.libraries.tools.MS_StringTools;
+import lv.emes.libraries.utilities.MS_StringUtils;
 
 import static com.sun.jna.platform.win32.WinUser.*;
 
@@ -40,7 +40,7 @@ public class MS_ApplicationWindow {
             while (hWndTemp != null) {
                 User32.INSTANCE.GetWindowText(hWndTemp, cTitletemp, TEXT_LEN);
                 sTitleTemp = new String(cTitletemp).toUpperCase();
-                if (MS_StringTools.textContains(sTitleTemp, appName))
+                if (MS_StringUtils.textContains(sTitleTemp, appName))
                     break;
                 //if didn't found a match, lets go to next window
                 hWndTemp = User32.INSTANCE.GetWindow(hWndTemp, new WinDef.DWORD(GW_HWNDNEXT));

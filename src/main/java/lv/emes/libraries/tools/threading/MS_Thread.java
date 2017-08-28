@@ -1,6 +1,6 @@
-package lv.emes.libraries.tools;
+package lv.emes.libraries.tools.threading;
 
-import lv.emes.libraries.utilities.MS_IBuilder;
+import lv.emes.libraries.tools.MS_IBuilder;
 
 /**
  * A class that combines together Runnable and thread.

@@ -1,13 +1,11 @@
 package lv.emes.libraries.tools.lists;
 
-import lv.emes.libraries.tools.MS_CodingTools;
+import lv.emes.libraries.utilities.MS_CodingUtils;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MSListTest {
@@ -253,7 +251,7 @@ public class MSListTest {
         assertTrue(booleans.get(0));
         assertFalse(booleans.get(1));
 
-        MS_List<Object> numbers = MS_List.newInstance(MS_CodingTools.getArray(1, 3L, 5.0f, 2.17355767892d));
+        MS_List<Object> numbers = MS_List.newInstance(MS_CodingUtils.getArray(1, 3L, 5.0f, 2.17355767892d));
         assertEquals(4, numbers.count());
         assertEquals(Integer.class, numbers.get(0).getClass());
         assertEquals(Long.class, numbers.get(1).getClass());

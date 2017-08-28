@@ -1,4 +1,4 @@
-package lv.emes.libraries.tools;
+package lv.emes.libraries.utilities;
 
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -7,9 +7,8 @@ import org.junit.runners.MethodSorters;
 import java.util.Collections;
 import java.util.EnumSet;
 
-import static lv.emes.libraries.tools.MS_StringTools.*;
+import static lv.emes.libraries.utilities.MS_StringUtils.*;
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertEquals;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MSStringToolsTest {
@@ -110,7 +109,7 @@ public class MSStringToolsTest {
 		assertEquals("", getSubstring("a", 0, 0));
 		assertEquals("", getSubstring("a", 1, 1));
 		assertEquals(_TAB_SPACE, getTabSpace(1));
-		assertEquals(_TAB_SPACE + _TAB_SPACE, MS_StringTools.getTabSpace(2));
+		assertEquals(_TAB_SPACE + _TAB_SPACE, MS_StringUtils.getTabSpace(2));
 		assertEquals(_TAB_SPACE + _TAB_SPACE + _TAB_SPACE, getTabSpace(3));
 		assertEquals("", getTabSpace(-33));
 		assertEquals("", getTabSpace(0));

@@ -5,7 +5,7 @@ import lv.emes.libraries.communication.tcp_ip.client.MS_ClientCommand;
 import lv.emes.libraries.communication.tcp_ip.client.MS_TcpIPClient;
 import lv.emes.libraries.file_system.MS_BinaryTools;
 import lv.emes.libraries.file_system.MS_FileSystemTools;
-import lv.emes.libraries.tools.MS_CodingTools;
+import lv.emes.libraries.utilities.MS_CodingUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
@@ -47,7 +47,7 @@ public class MSTpcIPServerTest {
     }
 
     private static void doSleepForXTimes(int times) {
-        MS_CodingTools.sleep(times * DEFAULT_SLEEP_TIME);
+        MS_CodingUtils.sleep(times * DEFAULT_SLEEP_TIME);
     }
 
     @BeforeClass

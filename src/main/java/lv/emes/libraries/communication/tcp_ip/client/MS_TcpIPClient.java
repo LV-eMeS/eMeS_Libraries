@@ -1,9 +1,9 @@
 package lv.emes.libraries.communication.tcp_ip.client;
 
 import lv.emes.libraries.communication.tcp_ip.MS_ClientServerConstants;
-import lv.emes.libraries.tools.MS_CodingTools;
 import lv.emes.libraries.tools.lists.MS_List;
 import lv.emes.libraries.tools.lists.MS_StringList;
+import lv.emes.libraries.utilities.MS_CodingUtils;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -175,10 +175,10 @@ public class MS_TcpIPClient extends MS_TcpIPClientCore {
 	 */
 	@Override
 	protected final void onSuccessfulConnect() {
-		this.addDataToContainer(MS_CodingTools.getSystemOS);
-		this.addDataToContainer(MS_CodingTools.getSystemUserName);
-		this.addDataToContainer(MS_CodingTools.getSystemUserCurrentWorkingDir);
-		this.addDataToContainer(MS_CodingTools.getSystemUserHomeDir);
+		this.addDataToContainer(MS_CodingUtils.getSystemOS);
+		this.addDataToContainer(MS_CodingUtils.getSystemUserName);
+		this.addDataToContainer(MS_CodingUtils.getSystemUserCurrentWorkingDir);
+		this.addDataToContainer(MS_CodingUtils.getSystemUserHomeDir);
 		this.cmdToServer(MS_ClientServerConstants._INFO_ABOUT_NEW_CLIENT);
 	}
 }

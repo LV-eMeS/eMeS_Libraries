@@ -75,7 +75,7 @@ abstract class MS_TcpIPServerCore extends MS_TcpIPAbstract {
         try {
             this.getClientByID(clientID).getOut().writeUTF(msg);
         } catch (IOException e) {
-//			log.error(String.format("Couldn't write UTF-8 message to client. \n. @writeln(%s, %d)", MS_StringTools.eMeSSubstring(msg, 1, 50) + "...", clientID));
+//			log.error(String.format("Couldn't write UTF-8 message to client. \n. @writeln(%s, %d)", MS_StringUtils.eMeSSubstring(msg, 1, 50) + "...", clientID));
         }
     }
 

@@ -1,6 +1,6 @@
 package lv.emes.libraries.examples;
 
-import lv.emes.libraries.utilities.MS_ProbabilityEvent;
+import lv.emes.libraries.tools.MS_ProbabilityEvent;
 
 public class MSProbabilityEventExample {
 

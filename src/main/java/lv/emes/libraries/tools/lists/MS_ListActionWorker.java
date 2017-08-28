@@ -1,6 +1,6 @@
 package lv.emes.libraries.tools.lists;
 
-import lv.emes.libraries.tools.MS_CodingTools;
+import lv.emes.libraries.utilities.MS_CodingUtils;
 
 /**
  * Meant for replacing default methods of eMeS list interfaces for easier code reuse.
@@ -23,8 +23,8 @@ public class MS_ListActionWorker {
             endIndex = swapper;
         }
 
-        if (MS_CodingTools.inRange(startFromIndex, 0, maxIndex) &&
-                MS_CodingTools.inRange(endIndex, startFromIndex, maxIndex)) {
+        if (MS_CodingUtils.inRange(startFromIndex, 0, maxIndex) &&
+                MS_CodingUtils.inRange(endIndex, startFromIndex, maxIndex)) {
             list.setBreakOngoingForLoop(false);
             if (action != null)
                 for (int i = startFromIndex; i <= endIndex; i++) {

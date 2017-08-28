@@ -1,6 +1,6 @@
 package lv.emes.libraries.tools.lists;
 
-import lv.emes.libraries.tools.MS_CodingTools;
+import lv.emes.libraries.utilities.MS_CodingUtils;
 
 /** 
  * Random item list is like bag where you can put different items which are identified as integers.
@@ -118,7 +118,7 @@ public class MS_RandomItemList {
 	public void shuffle() {
 		if (items != null) {
 			for (int i = items.length - 1; i > 0; i--) {
-				int index = MS_CodingTools.randomNumber(0, totalItemCount-1);
+				int index = MS_CodingUtils.randomNumber(0, totalItemCount-1);
 				// Simple swap
 				int a = items[index];
 				items[index] = items[i];
@@ -133,7 +133,7 @@ public class MS_RandomItemList {
 	 */
 	public int getItem() {
 		if (items != null)
-			return items[MS_CodingTools.randomNumber(0, totalItemCount-1)];
+			return items[MS_CodingUtils.randomNumber(0, totalItemCount-1)];
 		else
 			return _EMPTY_ITEM;
 	}

@@ -1,5 +1,6 @@
-package lv.emes.libraries.tools;
+package lv.emes.libraries.tools.threading;
 
+import lv.emes.libraries.utilities.MS_CodingUtils;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
@@ -18,7 +19,7 @@ public class MSThreadTest {
                 .start();
 
         //check that Thread is running for a while
-        MS_CodingTools.sleep(100);
+        MS_CodingUtils.sleep(100);
         assertTrue(thread.isStarted());
         assertFalse(thread.isInterrupted());
         assertFalse(thread.isWorkCompleted());

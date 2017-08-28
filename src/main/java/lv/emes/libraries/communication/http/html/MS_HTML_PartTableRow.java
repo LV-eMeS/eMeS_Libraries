@@ -1,7 +1,7 @@
 package lv.emes.libraries.communication.http.html;
 
+import lv.emes.libraries.tools.MS_LineBuilder;
 import lv.emes.libraries.tools.lists.MS_List;
-import lv.emes.libraries.utilities.MS_LineBuilder;
 
 /**
  * HTML part for table column design.

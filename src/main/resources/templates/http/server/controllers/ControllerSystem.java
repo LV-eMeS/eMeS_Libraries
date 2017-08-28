@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import lv.emes.libraries.utilities.MS_LineBuilder;
+import lv.emes.libraries.tools.MS_LineBuilder;
 
 /**
  * All the methods that are used as system tools for Web application.

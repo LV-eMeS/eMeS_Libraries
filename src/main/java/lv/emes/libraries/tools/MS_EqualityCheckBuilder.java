@@ -1,4 +1,4 @@
-package lv.emes.libraries.utilities;
+package lv.emes.libraries.tools;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.junit.Assert;

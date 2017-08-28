@@ -1,7 +1,7 @@
 package lv.emes.libraries.communication.http.html;
 
-import lv.emes.libraries.utilities.MS_AbstractCompositeText;
-import lv.emes.libraries.utilities.MS_LineBuilder;
+import lv.emes.libraries.tools.MS_AbstractCompositeText;
+import lv.emes.libraries.tools.MS_LineBuilder;
 
 /**
  * HTML part for web page.

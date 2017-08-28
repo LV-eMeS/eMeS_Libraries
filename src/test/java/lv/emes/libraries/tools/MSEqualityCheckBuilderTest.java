@@ -1,4 +1,4 @@
-package lv.emes.libraries.utilities;
+package lv.emes.libraries.tools;
 
 import org.junit.Test;
 

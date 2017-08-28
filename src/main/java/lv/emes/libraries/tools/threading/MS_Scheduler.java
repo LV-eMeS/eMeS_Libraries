@@ -1,4 +1,4 @@
-package lv.emes.libraries.utilities;
+package lv.emes.libraries.tools.threading;
 
 /**
  * An mechanism that allows to do actions in some period of time.
