@@ -5,7 +5,7 @@ import lv.emes.libraries.tools.platform.MS_InputOutputMethodDefaults;
 import lv.emes.libraries.tools.platform.MS_ScriptRunner;
 
 /**
- * @version 2.1.
+ * @version 2.2.
  * @author eMeS
  */
 public class MSScriptRunnerExecutable {
@@ -13,7 +13,7 @@ public class MSScriptRunnerExecutable {
     public static void main(String[] args) {
         String commandText = "";
         //for testing:
-//        commandText = "variable#test&Input test!#";
+//        commandText = "mute#";
 //        commandText = commandText + "appendln#DD:/tmp/$test$.txt&Line 1#" + "appendln#D:/tmp/f.txt&Line 2 + $test$#";
 
         //For building

@@ -80,6 +80,7 @@ import static lv.emes.libraries.tools.platform.ScriptParsingError.*;
  * <li><code>VOLUME#22000#</code> - sets system volume to 22000.</li>
  * <li><code>VOLU#1000#</code> - increases system volume by 1000.</li>
  * <li><code>VOLD#1000#</code> - decreases system volume by 1000.</li>
+ * <li><code>MUTE#</code> - toggles system mute volume (either mutes all the sounds, either toggles mute).</li>
  * <li><code>MONITOR#ON#</code> - switches on monitor.</li>
  * <li><code>MONITOR#OFF#</code> - switches off monitor.</li>
  * <li><code>MUSIC#NEXT#</code> - plays next media track.</li>
@@ -124,13 +125,14 @@ public class MS_ScriptRunner {
     private final static int CMD_NR_SET_VOLUME_TO = 22;
     private final static int CMD_NR_VOLUME_UP = 23;
     private final static int CMD_NR_VOLUME_DOWN = 24;
-    private final static int CMD_NR_MONITOR = 25;
-    private final static int CMD_NR_MUSIC = 26;
-    private final static int CMD_NR_COMBINATION = 27;
-    private final static int CMD_NR_SAY = 28;
-    private final static int CMD_NR_KILL_TASK = 29;
-    private final static int CMD_NR_WRITELN = 30;
-    private final static int CMD_NR_APPENDLN = 31;
+    private final static int CMD_NR_MUTE = 25;
+    private final static int CMD_NR_MONITOR = 26;
+    private final static int CMD_NR_MUSIC = 27;
+    private final static int CMD_NR_COMBINATION = 28;
+    private final static int CMD_NR_SAY = 29;
+    private final static int CMD_NR_KILL_TASK = 30;
+    private final static int CMD_NR_WRITELN = 31;
+    private final static int CMD_NR_APPENDLN = 32;
 
     static {
         COMMANDS.put("TEXT", CMD_NR_WRITE_TEXT);
@@ -161,6 +163,7 @@ public class MS_ScriptRunner {
         COMMANDS.put("VOLUME", CMD_NR_SET_VOLUME_TO); //synonym
         COMMANDS.put("VOLU", CMD_NR_VOLUME_UP);
         COMMANDS.put("VOLD", CMD_NR_VOLUME_DOWN);
+        COMMANDS.put("MUTE", CMD_NR_MUTE);
         COMMANDS.put("MONITOR", CMD_NR_MONITOR); //monitor on or off
         COMMANDS.put("MUSIC", CMD_NR_MUSIC); //music play/pause/stop, previous/next track
         COMMANDS.put("MEDIA", CMD_NR_MUSIC); //synonym
@@ -190,14 +193,15 @@ public class MS_ScriptRunner {
     private final static int CMD_SEC_SET_VOLUME_TO = 115;
     private final static int CMD_SEC_VOLUME_UP = 116;
     private final static int CMD_SEC_VOLUME_DOWN = 117;
-    private final static int CMD_SEC_MONITOR = 118;
-    private final static int CMD_SEC_MUSIC = 119;
-    private final static int CMD_SEC_COMBINATION = 120;
-    private final static int CMD_SEC_SAY = 121;
-    private final static int CMD_SEC_MOUSE_WHEEL = 122;
-    private final static int CMD_SEC_KILL_TASK = 123;
-    private final static int CMD_SEC_WRITELN = 124;
-    private final static int CMD_SEC_APPENDLN = 125;
+    private final static int CMD_SEC_MUTE = 118; //TODO if there will be modes for mute, like just mute, toggle or unmute
+    private final static int CMD_SEC_MONITOR = 119;
+    private final static int CMD_SEC_MUSIC = 120;
+    private final static int CMD_SEC_COMBINATION = 121;
+    private final static int CMD_SEC_SAY = 122;
+    private final static int CMD_SEC_MOUSE_WHEEL = 123;
+    private final static int CMD_SEC_KILL_TASK = 124;
+    private final static int CMD_SEC_WRITELN = 125;
+    private final static int CMD_SEC_APPENDLN = 126;
 
     private final static char DELIMITER_OF_CMDS = '#';
     private final static char DELIMITER_OF_CMDS_SECOND = ';';
@@ -233,7 +237,7 @@ public class MS_ScriptRunner {
         secondaryCmd = cmdCode;
     }
 
-    private void runImplementationPrimary(Integer cmdNumber) {
+    private void runImplementationPrimary(Integer cmdNumber) throws IncompatibleOSException {
         if (cmdNumber == null) {
             commandNotFoundTryKeyPressing = true;
             return;
@@ -324,6 +328,10 @@ public class MS_ScriptRunner {
             case CMD_NR_VOLUME_DOWN:
                 //read volume parameter
                 directControlToSecondaryCommand(CMD_SEC_VOLUME_DOWN);
+                break;
+            case CMD_NR_MUTE:
+                //toggle mute here
+                MS_WindowsAPIManager.muteVolume();
                 break;
             case CMD_NR_MONITOR:
                 //read on or off parameter

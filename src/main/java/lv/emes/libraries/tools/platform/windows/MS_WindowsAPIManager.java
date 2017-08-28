@@ -82,6 +82,17 @@ public final class MS_WindowsAPIManager {
     }
 
     /**
+     * Toggles system sound mute state.
+     * <br><u>Warning</u>: Windows only function.
+     * @throws IncompatibleOSException if trying to use this method in different OS than Windows.
+     */
+    public static void muteVolume() throws IncompatibleOSException {
+        checkOSAndThrowExceptionIfIncompatible();
+        String parameters = "mutesysvolume 2"; //the “2” argument tells nircmd to toggle mute
+        MS_FileSystemTools.executeApplication(getNircmdFileName(), parameters);
+    }
+
+    /**
      * Turns monitor on or off depending on presented parameter <b>state</b>.
      * @param state case insensitive "ON" or "OFF".
      * @throws IncompatibleOSException if trying to use this method in different OS than Windows.
