@@ -27,7 +27,7 @@ import java.util.List;
  * .append(domainObj.getSomeLocalDate(), dtoObj.getSomeLocalDate())
  * .append( //custom method to compare two objects
  * domainObj.getSomeCustomObject(), dtoObj.getSomeCustomObject(),
- * (domainCustomObject, dtoCustomObject) -> {
+ * (domainCustomObject, dtoCustomObject) -&gt; {
  * return new MS_EqualityCheckBuilder(false)
  * .append(domainCustomObject.getSomeInt(), dtoCustomObject.getSomeInt())
  * .areEqual();
@@ -35,21 +35,21 @@ import java.util.List;
  * )
  * .appendLists( //custom method to compare two lists
  * domainObj.getSomeListOfObjects(), dtoObj.getSomeListOfObjects(),
- * (domainListElement, dtoListElement) -> {
+ * (domainListElement, dtoListElement) -&gt; {
  * return new MS_EqualityCheckBuilder(false)
  * .append(domainListElement.getSomeInt(), dtoListElement.getSomeInt())
  * .areEqual();
  * }
  * );
  * assertTrue(checkThatDomainAndDTO.areEqual());
- * </pre>
  * </code>
+ * </pre>
  * <p><u>Example of use (<b>With</b> interruption)</u>:<br>
  * <pre>
  * <code>
  * MS_EqualityCheckBuilder notEqualBuilder = new MS_EqualityCheckBuilder(true)
  * .append(new Object(), new Object(),
- * (firstObj, secondObj) -> {
+ * (firstObj, secondObj) -&gt; {
  * return false; //mock object comparison failure
  * }
  * );
@@ -57,8 +57,8 @@ import java.util.List;
  * //that is because we defined it to be so by using IComparisonAlgorithm
  * notEqualBuilder.append(true, true); //this will not even execute because of AssertionError
  * assertTrue(checkThatDomainAndDTO.areEqual());
- * </pre>
  * </code>
+ * </pre>
  *
  * @author eMeS
  * @see AssertionError
@@ -139,7 +139,7 @@ public class MS_EqualityCheckBuilder extends EqualsBuilder {
      * @param <S>                 type of objects in second list.
      * @return true if first list is equal to second list or both are null;
      * false if first list's contents differs from second list's contents or one of them is null.
-     * @see MS_EqualityCheckBuilder#append(F, S, IComparisonAlgorithm)
+     * @see MS_EqualityCheckBuilder#append(Object, Object, IComparisonAlgorithm)
      */
     public <F, S> MS_EqualityCheckBuilder appendLists(List<F> f, List<S> s, IComparisonAlgorithm<F, S> comparisonAlgorithm) {
         if (needToPerformComparisonAfterNullChecks(f, s)) {
@@ -329,7 +329,7 @@ public class MS_EqualityCheckBuilder extends EqualsBuilder {
     }
 
     /**
-     * A synonym of {@link EqualsBuilder#isEquals()EqualsBuilder::isEquals}
+     * A synonym of {@link EqualsBuilder#isEquals() EqualsBuilder::isEquals}
      *
      * @return true if the fields that have been checked are all equal.
      */
