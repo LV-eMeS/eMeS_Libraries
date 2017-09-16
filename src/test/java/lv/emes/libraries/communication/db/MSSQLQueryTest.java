@@ -1,6 +1,8 @@
 package lv.emes.libraries.communication.db;
 
-import org.junit.*;
+import org.junit.Before;
+import org.junit.FixMethodOrder;
+import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
 import static org.junit.Assert.assertEquals;
@@ -11,6 +13,7 @@ import static org.junit.Assert.assertEquals;
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MSSQLQueryTest {
+
     private MS_SQLQuery sql = null;
     private final String tableName = "tabula";
     private final String field1 = "?";

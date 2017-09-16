@@ -4,9 +4,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import static lv.emes.libraries.utilities.MS_CodingUtils.inRange;
+
 /** 
  * Purpose of this class is to make lists of different objects. It's possible to perambulate list using methods from interface <b>IPerambulateListActions</b>.
- * @version 1.5.
+ * @version 1.6.
  * @see IPerambulateListActions
  */
 public class MS_List<T> extends ArrayList<T> implements IPerambulateListActions<T> {
@@ -17,11 +18,11 @@ public class MS_List<T> extends ArrayList<T> implements IPerambulateListActions<
 	 */
 	public int indexOfCurrent = -1;
 	
-	//PRIVĀTĀS METODES
+	//PRIVATE METHODS
 	private boolean listIsEmptyOrIndexNotInRange(int aIndex) {
 		return (count() == 0) || ! inRange(aIndex, 0, this.count()-1);
 	}
-	//PUBLISKĀS METODES
+	//PUBLIC METHODS
 
 	/**
 	 * Converts array to list.
@@ -46,6 +47,11 @@ public class MS_List<T> extends ArrayList<T> implements IPerambulateListActions<
 	}
 
 	@Override
+	public T get(Integer aIndex) {
+		return super.get(aIndex);
+	}
+
+	@Override
 	public void breakOngoingForLoop() {
 		setBreakOngoingForLoop(true);
 	}
@@ -61,17 +67,17 @@ public class MS_List<T> extends ArrayList<T> implements IPerambulateListActions<
 	}
 
 	@Override
-	public void forEachItem(IFuncForEachItemLoopAction<T> action) {
+	public void forEachItem(IFuncForEachItemLoopAction<T, Integer> action) {
 		MS_ListActionWorker.forEachItem(this, action);
 	}
 
 	@Override
-	public void forEachItem(int startFromIndex, IFuncForEachItemLoopAction<T> action) {
+	public void forEachItem(Integer startFromIndex, IFuncForEachItemLoopAction<T, Integer> action) {
 		MS_ListActionWorker.forEachItem(this, startFromIndex, action);
 	}
 
 	@Override
-	public void forEachItem(int startFromIndex, int endIndex, IFuncForEachItemLoopAction<T> action) {
+	public void forEachItem(Integer startFromIndex, Integer endIndex, IFuncForEachItemLoopAction<T, Integer> action) {
 		MS_ListActionWorker.forEachItem(this, startFromIndex, endIndex, action);
 	}
 
@@ -81,11 +87,11 @@ public class MS_List<T> extends ArrayList<T> implements IPerambulateListActions<
 	}
 
 	@Override
-	public void setIndexOfCurrent(int aIndexOfCurrent) {
-		if (listIsEmptyOrIndexNotInRange(aIndexOfCurrent))
-			indexOfCurrent = -1;
+	public void setIndexOfCurrent(int indexOfCurrent) {
+		if (listIsEmptyOrIndexNotInRange(indexOfCurrent))
+			this.indexOfCurrent = -1;
 		else 
-			indexOfCurrent = aIndexOfCurrent;
+			this.indexOfCurrent = indexOfCurrent;
 	}
 
 	@Override
@@ -130,7 +136,7 @@ public class MS_List<T> extends ArrayList<T> implements IPerambulateListActions<
 	}
 
 	@Override
-	public void concatenate(IConcateableList<T> otherList) {
+	public void concatenate(IContactableList<T, Integer> otherList) {
 		otherList.forEachItem((item, index) -> {
 			this.add(item);
 		});

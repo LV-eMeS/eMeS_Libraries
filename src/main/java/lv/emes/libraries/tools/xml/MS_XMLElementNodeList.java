@@ -18,7 +18,7 @@ import org.w3c.dom.NodeList;
  * @version 1.3.
  * @see MS_XMLElementNode
  */
-public class MS_XMLElementNodeList implements IBaseListWithItems<MS_XMLElementNode> {
+public class MS_XMLElementNodeList implements IBaseListWithItems<MS_XMLElementNode, Integer> {
     boolean flagForLoopBreaking;
     private static final String MESSAGE_FOR_NODE_NOT_FOUND_EXCEPTION = "Node with index (%d) didn't found in list";
 
@@ -80,7 +80,7 @@ public class MS_XMLElementNodeList implements IBaseListWithItems<MS_XMLElementNo
     }
 
     @Override
-    public MS_XMLElementNode get(int aIndex) {
+    public MS_XMLElementNode get(Integer aIndex) {
         return getNode(aIndex);
     }
 
@@ -100,17 +100,17 @@ public class MS_XMLElementNodeList implements IBaseListWithItems<MS_XMLElementNo
     }
 
     @Override
-    public void forEachItem(IFuncForEachItemLoopAction<MS_XMLElementNode> action) {
+    public void forEachItem(IFuncForEachItemLoopAction<MS_XMLElementNode, Integer> action) {
         MS_ListActionWorker.forEachItem(this, action);
     }
 
     @Override
-    public void forEachItem(int startFromIndex, IFuncForEachItemLoopAction<MS_XMLElementNode> action) {
+    public void forEachItem(Integer startFromIndex, IFuncForEachItemLoopAction<MS_XMLElementNode, Integer> action) {
         MS_ListActionWorker.forEachItem(this, startFromIndex, action);
     }
 
     @Override
-    public void forEachItem(int startFromIndex, int endIndex, IFuncForEachItemLoopAction<MS_XMLElementNode> action) {
+    public void forEachItem(Integer startFromIndex, Integer endIndex, IFuncForEachItemLoopAction<MS_XMLElementNode, Integer> action) {
         MS_ListActionWorker.forEachItem(this, startFromIndex, endIndex, action);
     }
 }

@@ -14,7 +14,7 @@ import static lv.emes.libraries.utilities.MS_CodingUtils.inRange;
  * <br><u>Note</u>: those delimiters shouldn't be changed unless they are often used in text which operated with this list.
  * <br><u>Note</u>: class is in it's final implementation state. If there is need for overriding this, use <b>MS_List</b> instead!
  *
- * @version 2.5.
+ * @version 2.6.
  * @see MS_List
  */
 public final class MS_StringList implements IListActions<String> {
@@ -58,7 +58,7 @@ public final class MS_StringList implements IListActions<String> {
      * Creates an String object list from String, which has all the elements delimited with <b>aDelimiter</b>.
      * It also sets a new value of <b>delimiter</b>.
      *
-     * @param aString = "a#B#C3#"
+     * @param aString    = "a#B#C3#"
      * @param aDelimiter a delimiter.
      */
     public MS_StringList(String aString, char aDelimiter) {
@@ -67,6 +67,7 @@ public final class MS_StringList implements IListActions<String> {
 
     /**
      * Creates empty list with no loading from string and sets delimiter to presented <b>aDelimiter</b>.
+     *
      * @param aDelimiter a delimiter.
      */
     public MS_StringList(char aDelimiter) {
@@ -128,29 +129,29 @@ public final class MS_StringList implements IListActions<String> {
     //OBJEKTA METODES
     //------------------------------------------------------------------------------------------------------------------------
     @Override
-    public void add(String aItem) {
-        if (aItem == null) aItem = "";
-        fList.add(aItem);
+    public void add(String item) {
+        if (item == null) item = "";
+        fList.add(item);
     }
 
     @Override
-    public void insert(int aIndex, String aItem) {
-        if (aItem == null) aItem = "";
-        fList.add(aIndex, aItem);
+    public void insert(int index, String item) {
+        if (item == null) item = "";
+        fList.add(index, item);
     }
 
     /**
      * Gets element by index.
      *
-     * @param aIndex index of element in the list.
-     * @return element with index <b>aIndex</b> or empty String if element not found in the list.
+     * @param index index of element in the list (starting with 0).
+     * @return element with index <b>index</b> or empty String if element not found in the list.
      */
     @Override
-    public String get(int aIndex) {
-        if (this.listIsEmptyOrIndexNotInRange(aIndex))
+    public String get(Integer index) {
+        if (this.listIsEmptyOrIndexNotInRange(index))
             return "";
         else
-            return fList.get(aIndex);
+            return fList.get(index);
     }
 
     @Override
@@ -169,67 +170,72 @@ public final class MS_StringList implements IListActions<String> {
     }
 
     @Override
-    public void forEachItem(IFuncForEachItemLoopAction<String> action) {
+    public void forEachItem(IFuncForEachItemLoopAction<String, Integer> action) {
         MS_ListActionWorker.forEachItem(this, action);
     }
 
     @Override
-    public void forEachItem(int startFromIndex, IFuncForEachItemLoopAction<String> action) {
+    public void forEachItem(Integer startFromIndex, IFuncForEachItemLoopAction<String, Integer> action) {
         MS_ListActionWorker.forEachItem(this, startFromIndex, action);
     }
 
     @Override
-    public void forEachItem(int startFromIndex, int endIndex, IFuncForEachItemLoopAction<String> action) {
+    public void forEachItem(Integer startFromIndex, Integer endIndex, IFuncForEachItemLoopAction<String, Integer> action) {
         MS_ListActionWorker.forEachItem(this, startFromIndex, endIndex, action);
     }
 
-    public int getAsInteger(int aIndex) {
+    public int getAsInteger(int index) {
         try {
-            return Integer.parseInt(get(aIndex));
+            return Integer.parseInt(get(index));
         } catch (NumberFormatException exc) {
             return 0;
         }
     }
 
     @Override
-    public int getIndex(String aItem) {
+    public int getIndex(String item) {
         for (int i = 0; i < count(); i++) {
             String el = get(i);
-            if (el.equals(aItem))
+            if (el.equals(item))
                 return i;
         }
         return -1;
     }
 
     @Override
-    public void edit(int aIndex, String aNewItem) {
-        if (!listIsEmptyOrIndexNotInRange(aIndex)) {
-            remove(aIndex);
-            insert(aIndex, aNewItem);
+    public boolean contains(String item) {
+        return getIndex(item) >= 0;
+    }
+
+    @Override
+    public void edit(int index, String aNewItem) {
+        if (!listIsEmptyOrIndexNotInRange(index)) {
+            remove(index);
+            insert(index, aNewItem);
         }
     }
 
     @Override
-    public int remove(int aIndex) {
-        if (this.listIsEmptyOrIndexNotInRange(aIndex))
+    public int remove(int index) {
+        if (this.listIsEmptyOrIndexNotInRange(index))
             return -1;
         else {
-            fList.remove(aIndex);
-            return aIndex;
+            fList.remove(index);
+            return index;
         }
     }
 
     @Override
-    public int remove(String aItem) {
-        int elemToRemove = getIndex(aItem);
-        if (elemToRemove!=-1)
+    public int remove(String item) {
+        int elemToRemove = getIndex(item);
+        if (elemToRemove != -1)
             return remove(elemToRemove);
         return elemToRemove;
     }
 
     @Override
     public boolean removeLast() {
-        return remove(this.count()-1) != -1;
+        return remove(this.count() - 1) != -1;
     }
 
     @Override
@@ -264,11 +270,11 @@ public final class MS_StringList implements IListActions<String> {
     }
 
     @Override
-    public void setIndexOfCurrent(int aIndexOfCurrent) {
-        if (listIsEmptyOrIndexNotInRange(aIndexOfCurrent))
-            indexOfCurrent = -1;
+    public void setIndexOfCurrent(int indexOfCurrent) {
+        if (listIsEmptyOrIndexNotInRange(indexOfCurrent))
+            this.indexOfCurrent = -1;
         else
-            indexOfCurrent = aIndexOfCurrent;
+            this.indexOfCurrent = indexOfCurrent;
     }
 
     /**
@@ -370,9 +376,9 @@ public final class MS_StringList implements IListActions<String> {
                 res.append(pAddSecDelim(str));
                 res.append(delimiter);
             }
-            res.append(pAddSecDelim(fList.get(fList.size()-1))); //appending last element without separator
+            res.append(pAddSecDelim(fList.get(fList.size() - 1))); //appending last element without separator
         } else if (fList.size() == 1) { //only last element and no delimiters at all
-            res.append(pAddSecDelim(fList.get(fList.size()-1)));
+            res.append(pAddSecDelim(fList.get(fList.size() - 1)));
         }
         return res.toString();
     }
@@ -422,7 +428,7 @@ public final class MS_StringList implements IListActions<String> {
      * Loads elements from delimited String type text to this kind of list.
      * Every pattern in text <b>aString</b> that ends with element <b>aDelimiter</b> becomes to a new element of this list.
      *
-     * @param aString text that is properly delimited with <b>aDelimiter</b>.
+     * @param aString    text that is properly delimited with <b>aDelimiter</b>.
      * @param aDelimiter a delimiter.
      */
     public void fromString(String aString, char aDelimiter) {
@@ -457,8 +463,8 @@ public final class MS_StringList implements IListActions<String> {
         } //while cikla beigas
     }
 
-    private boolean listIsEmptyOrIndexNotInRange(int aIndex) {
-        return (count() == 0) || !inRange(aIndex, 0, this.count() - 1);
+    private boolean listIsEmptyOrIndexNotInRange(int index) {
+        return (count() == 0) || !inRange(index, 0, this.count() - 1);
     }
 
     /**
@@ -495,6 +501,7 @@ public final class MS_StringList implements IListActions<String> {
 
     /**
      * Converts this list to array of strings.
+     *
      * @return an array containing all the list elements.
      */
     public String[] toArray() {
@@ -536,7 +543,7 @@ public final class MS_StringList implements IListActions<String> {
     }
 
     @Override
-    public void concatenate(IConcateableList<String> otherList) {
+    public void concatenate(IContactableList<String, Integer> otherList) {
         otherList.forEachItem((item, index) -> {
             this.add(item);
         });

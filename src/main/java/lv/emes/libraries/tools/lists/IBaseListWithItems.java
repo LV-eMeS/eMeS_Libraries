@@ -1,15 +1,17 @@
 package lv.emes.libraries.tools.lists;
 
 /**
- * Interface defines method <b>forEachItem</b> to loop through every element of list.
+ * Interface defines method <b>forEachItem</b> to loop through every item in list.
  * Loop breaking is also supported by using <b>breakOngoingForLoop</b>.
  *
- * @param <T> type of list elements.
- * @version 1.4.
+ * @param <T> type of list items.
+ * @param <I> type of list item index.
+ * @version 1.5.
  */
-public interface IBaseListWithItems<T> {
+public interface IBaseListWithItems<T, I> {
+
     /**
-     * @return count of elements in list. [0..+]
+     * @return count of items in list. [0..+]
      */
     int count();
 
@@ -33,12 +35,12 @@ public interface IBaseListWithItems<T> {
     //------------------------------------------------------------------------------------------------------------------------
 
     /**
-     * Gets element by index.
+     * Gets item by index.
      *
-     * @param aIndex index of element in the list.
-     * @return element of type T.
+     * @param index index of item in the list.
+     * @return item of type T or null if such item couldn't be found in the list.
      */
-    T get(int aIndex);
+    T get(I index);
 
     /**
      * Does break for method <b>forEachItem</b>.
@@ -63,7 +65,7 @@ public interface IBaseListWithItems<T> {
     boolean getBreakOngoingForLoop();
 
     /**
-     * Walks through all the elements in list and does the defined action <b>action</b>.<br>
+     * Walks through all the items in list and does the defined action <b>action</b>.<br>
      * <code>
      * MS_StringList sl = new MS_StringList("One#Two#");<br>
      * sl.forEachItem((s, index) -&gt; {<br>
@@ -73,7 +75,7 @@ public interface IBaseListWithItems<T> {
      * </code>
      * <p>
      * Loop is broken if getBreakOngoingForLoop() returns true.
-     * For example, code below will be executed only with first element even if there is more elements in list.<br>
+     * For example, code below will be executed only with first item even if there is more items in list.<br>
      * <code>
      * MS_StringList sl = new MS_StringList("One#Two#Three#");<br>
      * sl.forEachItem((str, index) -&gt; {<br>
@@ -95,31 +97,31 @@ public interface IBaseListWithItems<T> {
      * });<br>
      * </code>
      *
-     * @param action method that describes the actions that every element must do.
+     * @param action method that describes the actions that every item must do.
      *               Method's incoming parameters are every item of the list and index of item.
      */
-    void forEachItem(IFuncForEachItemLoopAction<T> action);
+    void forEachItem(IFuncForEachItemLoopAction<T, I> action);
 
     /**
-     * Loops through list starting from element with specified index <b>startFromIndex</b>.
-     * <br><u>Note</u>: if presented index is not in the bounds of list element count this method will do nothing.
+     * Loops through list starting from item with specified index <b>startFromIndex</b>.
+     * <br><u>Note</u>: if presented index is not in the bounds of list item count this method will do nothing.
      * @param startFromIndex 0..count()-1
-     * @param action method that describes the actions that every element must do.
+     * @param action method that describes the actions that every item must do.
      *               Method's incoming parameters are every item of the list and index of item.
      * @see IBaseListWithItems#forEachItem(IFuncForEachItemLoopAction)
      */
-    void forEachItem(int startFromIndex, IFuncForEachItemLoopAction<T> action);
+    void forEachItem(I startFromIndex, IFuncForEachItemLoopAction<T, I> action);
 
     /**
-     * Loops through list starting from element with specified index <b>startFromIndex</b> till <b>endIndex</b> including it.
-     * <br><u>Note</u>: if presented <b>startFromIndex</b> is not in the bounds of list element count this method will do nothing.
-     * <br><u>Note</u>: if presented <b>endIndex</b> is not in the bounds of list element count this method will do nothing.
+     * Loops through list starting from item with specified index <b>startFromIndex</b> till <b>endIndex</b> including it.
+     * <br><u>Note</u>: if presented <b>startFromIndex</b> is not in the bounds of list item count this method will do nothing.
+     * <br><u>Note</u>: if presented <b>endIndex</b> is not in the bounds of list item count this method will do nothing.
      * <br><u>Note</u>: if presented <b>endIndex</b> is less than <b>startFromIndex</b> indexes will switch places.
      * @param startFromIndex 0..count()-1
      * @param endIndex startFromIndex..count()-1
-     * @param action method that describes the actions that every element must do.
+     * @param action method that describes the actions that every item must do.
      *               Method's incoming parameters are every item of the list and index of item.
      * @see IBaseListWithItems#forEachItem(IFuncForEachItemLoopAction)
      */
-    void forEachItem(int startFromIndex, int endIndex, IFuncForEachItemLoopAction<T> action);
+    void forEachItem(I startFromIndex, I endIndex, IFuncForEachItemLoopAction<T, I> action);
 }

@@ -2,17 +2,20 @@ package lv.emes.libraries.tools.lists;
 
 /**
  * Interface defines method for lists to enable concatenation with different list of elements with same type.
- * Method:<br>
- * -concatenate;
+ * <p>Method:
+ * <ul>
+ * <li>concatenate</li>
+ * </ul>
  *
  * @param <T> type of list elements.
- * @version 1.0.
+ * @param <I> type of list element index.
+ * @version 1.1.
  */
-public interface IConcateableList<T> extends IBaseListWithItems<T> {
+public interface IContactableList<T, I> extends IBaseListWithItems<T, I> {
     /**
      * Concatenates this list with other list <b>otherList</b> by appending other list's content right after
      * last element of this list.
      * @param otherList list that will be appended to this list.
      */
-    void concatenate(IConcateableList<T> otherList);
+    void concatenate(IContactableList<T, I> otherList);
 }

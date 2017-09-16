@@ -1,17 +1,20 @@
 package lv.emes.libraries.tools.lists;
 /**
  * Interface defines methods for list that can be perambulated.
- * Methods:<br>
- *     -first;
- *     -next;
- *     -prev;
- *     -last
- *     -currentIndexInsideTheList;
- *     -current
+ * <p>Methods:
+ * <ul>
+ * <li>first</li>
+ * <li>next</li>
+ * <li>prev</li>
+ * <li>last</li>
+ * <li>currentIndexInsideTheList</li>
+ * <li>current</li>
+ * </ul>
  * @param <T> type of list elements.
- * @version 1.3.
+ * @version 1.4.
  */
-public interface IPerambulateListActions<T> extends IConcateableList<T> {
+public interface IPerambulateListActions<T> extends IContactableList<T, Integer> {
+
 	/**
 	 * Index of current element. Returns -1 when reached end of list.
 	 * @return [-1..count-1] Value depends on use of <b>first</b>, <b>next</b>, <b>prev</b> and <b>last</b>.

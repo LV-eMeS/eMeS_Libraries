@@ -10,13 +10,13 @@ import lv.emes.libraries.utilities.MS_CodingUtils;
  * </ul>
  *
  * @author eMeS
- * @version 1.0.
+ * @version 1.1.
  */
 public class MS_ListActionWorker {
 
-    public static <T> void forEachItem(IBaseListWithItems<T> list, int startFromIndex, int endIndex, IFuncForEachItemLoopAction<T> action) {
+    public static <T> void forEachItem(IBaseListWithItems<T, Integer> list, int startFromIndex, int endIndex, IFuncForEachItemLoopAction<T, Integer> action) {
         //range check for indexes that fits in list size and are correct to perform for loop
-        int maxIndex = list.count()-1;
+        int maxIndex = list.count() - 1;
         if (endIndex < startFromIndex) { //make swap
             int swapper = startFromIndex;
             startFromIndex = endIndex;
@@ -36,11 +36,11 @@ public class MS_ListActionWorker {
         }
     }
 
-    public static <T> void forEachItem(IBaseListWithItems<T> list, int startFromIndex, IFuncForEachItemLoopAction<T> action) {
-        forEachItem(list, startFromIndex, list.count()-1, action);
+    public static <T> void forEachItem(IBaseListWithItems<T, Integer> list, int startFromIndex, IFuncForEachItemLoopAction<T, Integer> action) {
+        forEachItem(list, startFromIndex, list.count() - 1, action);
     }
 
-    public static <T> void forEachItem(IBaseListWithItems<T> list, IFuncForEachItemLoopAction<T> action) {
+    public static <T> void forEachItem(IBaseListWithItems<T, Integer> list, IFuncForEachItemLoopAction<T, Integer> action) {
         forEachItem(list, 0, action);
     }
 }
