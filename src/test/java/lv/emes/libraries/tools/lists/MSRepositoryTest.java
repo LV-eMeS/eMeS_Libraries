@@ -45,8 +45,17 @@ public class MSRepositoryTest {
         repository1.put("", "");
     }
 
+    @Test
+    public void test02AutoInitialization() {
+        repository1 = new MS_RepositoryForTest(PROJECT_NAME1, CATEGORY_NAME1, true);
+        //at this point no exception occurs because auto initialization is made
+        repository1.put("", "");
+        repository1.remove(""); //lets remove this item, so it doesn't affect next tests
+        initedRepos.clear();
+    }
+
     @Test(expected = UnsupportedOperationException.class)
-    public void test02ExceptionLoop() {
+    public void test03ExceptionLoop() {
         repository1 = new MS_RepositoryForTest(PROJECT_NAME1, CATEGORY_NAME1);
         repository1.init(); //this time initialize
         repository1.forEachItem("", "", (a, i) -> {
@@ -78,8 +87,8 @@ public class MSRepositoryTest {
         new MS_EqualityCheckBuilder(true).append(environment, repository1, REPOSITORY_DATA_COMPARE);
 
         //DATA till here: [ITEM_IDS,ITEMS] = {[0,1,2][3,3,3]}
-        String removedValue = repository1.remove(ITEM_IDS[1]);
-        assertEquals(ITEMS[3], removedValue);
+        boolean isRemoved = repository1.remove(ITEM_IDS[1]);
+        assertTrue(isRemoved);
         assertNull(repository1.get(ITEM_IDS[1])); //item with such ID cannot be found anymore
         assertEquals(2, repository1.length());
         assertEquals(2, environment.count());
@@ -94,7 +103,7 @@ public class MSRepositoryTest {
         repository1.put(ITEM_IDS[1], ITEMS[1]);
 
         //DATA till here: [ITEM_IDS,ITEMS] = {[0,1,2][3,1,3]}
-        repository2 = new MS_RepositoryForTest(PROJECT_NAME1, CATEGORY_NAME1); //new repository object
+        repository2 = new MS_RepositoryForTest(PROJECT_NAME1, CATEGORY_NAME1); //new repository object with same location
         assertTrue(repository2.isInitialized());
         assertEquals(ITEMS[1], repository2.get(ITEM_IDS[1]));
     }
@@ -139,6 +148,12 @@ public class MSRepositoryTest {
             repositoryLabel = categoryName.charAt(0);
         }
 
+        public MS_RepositoryForTest(String projectName, String categoryName, boolean autoInitialize) {
+            this(projectName, categoryName);
+            if (autoInitialize)
+                init();
+        }
+
         @Override
         public void add(String identifier, String item) {
             environment.add(itemToString(identifier, item));
@@ -165,18 +180,15 @@ public class MSRepositoryTest {
         }
 
         @Override
-        public String doRemove(String identifier) {
-            final String[] res = {null};
+        public void doRemove(String identifier) {
             environment.forEachItem((item, i) -> {
                 MS_StringList data = new MS_StringList(item, DATA_DELIMITER);
                 if (data.get(0).charAt(0) == repositoryLabel)
                     if (data.get(1).equals(identifier)) {
-                        res[0] = data.get(2);
                         environment.remove(i);
                         environment.breakOngoingForLoop();
                     }
             });
-            return res[0];
         }
 
         @Override

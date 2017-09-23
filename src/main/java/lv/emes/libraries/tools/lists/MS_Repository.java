@@ -1,6 +1,7 @@
 package lv.emes.libraries.tools.lists;
 
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -49,15 +50,31 @@ public abstract class MS_Repository<T, ID> implements IStorageOperations<T, ID>,
 
     private boolean flagForLoopBreaking;
 
+    /**
+     * @param repositoryRoot         root location of repository.
+     * @param repositoryCategoryName specific category which helps to located this repository in repository root.
+     */
     public MS_Repository(String repositoryRoot, String repositoryCategoryName) {
+        this(repositoryRoot, repositoryCategoryName, false);
+    }
+
+    /**
+     * @param repositoryRoot         root location of repository.
+     * @param repositoryCategoryName specific category which helps to located this repository in repository root.
+     * @param autoInitialize         if true then repository will be initialized.
+     */
+    public MS_Repository(String repositoryRoot, String repositoryCategoryName, boolean autoInitialize) {
         this.repositoryRoot = repositoryRoot;
         this.repositoryCategoryName = repositoryCategoryName;
+        if (autoInitialize)
+            init();
     }
 
     //PROTECTED METHODS
 
     /**
      * Check, if repository for <b>repositoryRoot</b> and <b>repositoryCategoryName</b> is initialized.
+     *
      * @return true if repository is ready and can be accessed, false otherwise
      */
     protected abstract boolean isInitialized();
@@ -68,35 +85,40 @@ public abstract class MS_Repository<T, ID> implements IStorageOperations<T, ID>,
     protected abstract void doInitialize();
 
     /**
-     * Adds an item to repository, but item can be added only if another item with such ID doesn't exist.
-     * This method is used only in <b>put</b> method and shouldn't used anywhere else.
+     * Adds an item to repository.
+     * This method is used only in <b>put</b> method and shouldn't be used anywhere else.
+     * In <b>put</b> check for existing item with such <b>identifier</b> is made and in case
+     * item exists, it is removed first before adding new one.
+     *
      * @param identifier an item identifier.
-     * @param item an item that will be added to repository.
+     * @param item       an item that will be added to repository.
      */
     protected abstract void add(ID identifier, T item);
 
     /**
      * Removes / deletes item from the repository and returns its value.
+     *
      * @param identifier an item identifier.
-     * @return value of removed item or null if item couldn't be found.
      */
-    protected abstract T doRemove(ID identifier);
+    protected abstract void doRemove(ID identifier);
 
     /**
      * Looks for specific item in repository.
+     *
      * @param identifier an item identifier.
      * @return value of item or null if item couldn't be found.
      */
     protected abstract T doFind(ID identifier);
 
     /**
-     * @return all the item values mapped by ID.
-     * <p><u>Note</u>: that is recommended to use LinkedHashMap implementation here to preserve item order.
+     * @return all the item values mapped by ID. If repository have no items then empty map is returned.
+     * <p><u>Note</u>: that is recommended to use {@link LinkedHashMap} implementation here to preserve item order.
      */
     protected abstract Map<ID, T> doFindAll();
 
     /**
      * Counts exisitng items in repository.
+     *
      * @return 0..count of items.
      */
     protected abstract int doGetSize();
@@ -116,7 +138,7 @@ public abstract class MS_Repository<T, ID> implements IStorageOperations<T, ID>,
     @Override
     public final T put(ID identifier, T item) {
         checkAndThrowNotInitializedException();
-        T previous = get(identifier);
+        T previous = doFind(identifier);
         if (previous != null)
             remove(identifier);
         add(identifier, item);
@@ -124,9 +146,14 @@ public abstract class MS_Repository<T, ID> implements IStorageOperations<T, ID>,
     }
 
     @Override
-    public final T remove(ID identifier) {
+    public final boolean remove(ID identifier) {
         checkAndThrowNotInitializedException();
-        return doRemove(identifier);
+        if (doFind(identifier) == null)
+            return false;
+        else {
+            doRemove(identifier);
+            return true;
+        }
     }
 
     @Override
@@ -167,9 +194,9 @@ public abstract class MS_Repository<T, ID> implements IStorageOperations<T, ID>,
     }
 
     @Override
-    public final T get(ID itemId) {
+    public final T get(ID identifier) {
         checkAndThrowNotInitializedException();
-        return this.find(itemId);
+        return this.doFind(identifier);
     }
 
     @Override
@@ -213,8 +240,10 @@ public abstract class MS_Repository<T, ID> implements IStorageOperations<T, ID>,
     }
 
     private void checkAndThrowNotInitializedException() {
-        if (!isInitialized())
+        if (!isInitialized()) {
             throw new UnsupportedOperationException("Cannot perform operation. Repository must be initialized first.");
+        }
+
     }
 
     // *** Getters and setters

@@ -27,9 +27,9 @@ public interface IStorageOperations<T, ID> {
     /**
      * Removes item with ID <b>identifier</b> from the storage.
      * @param identifier an item identifier.
-     * @return removed item or null if there is no such item in storage.
+     * @return true if there were such item in storage, false if nothing was removed because there didn't exist such item.
      */
-    T remove(ID identifier);
+    boolean remove(ID identifier);
 
     /**
      * Looks for item with presented identifier <b>identifier</b>.
