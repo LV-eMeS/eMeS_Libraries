@@ -35,6 +35,5 @@ public class MSCryptographyUtilsTest {
 		String encText = MS_CryptographyUtils.encrypt(TEXT, KEY, MAC_KEY);
 		String encText2 = MS_CryptographyUtils.encrypt(TEXT, KEY, MAC_KEY);
 		Assert.assertNotEquals(encText, encText2);
-
 	}
 }

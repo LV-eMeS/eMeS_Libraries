@@ -5,10 +5,18 @@ import lv.emes.libraries.utilities.MS_StringUtils;
 /**
  * String builder that is designed only to append lines.
  *
+ * <p>Methods:
+ * <ul>
+ * <li>add</li>
+ * <li>append</li>
+ * <li>getStringBuilder</li>
+ * </ul>
+ *
  * @author eMeS
  * @version 1.1.
  */
 public class MS_LineBuilder {
+
     public StringBuilder getStringBuilder() {
         return sb;
     }

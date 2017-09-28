@@ -18,6 +18,7 @@ import java.util.Map;
  * <li>find</li>
  * <li>findAll</li>
  * <li>forEachItem</li>
+ * <li>removeAll</li>
  * <li>count</li>
  * <li>length</li>
  * <li>setBreakOngoingForLoop</li>
@@ -33,6 +34,7 @@ import java.util.Map;
  * <li>doFind</li>
  * <li>doFindAll</li>
  * <li>doGetSize</li>
+ * <li>doRemoveAll</li>
  * </ul>
  * <p>Getters:
  * <ul>
@@ -41,7 +43,7 @@ import java.util.Map;
  * </ul>
  *
  * @author eMeS
- * @version 1.0.
+ * @version 1.1.
  */
 public abstract class MS_Repository<T, ID> implements IStorageOperations<T, ID>, IBaseListWithItems<T, ID> {
 
@@ -117,6 +119,15 @@ public abstract class MS_Repository<T, ID> implements IStorageOperations<T, ID>,
     protected abstract Map<ID, T> doFindAll();
 
     /**
+     * Removes all the items from the repository.
+     * By default <b>doRemove</b> calls are made by this method.
+     * If more effective algorithm can be performed to remove all the items, override this method (without calling super)!
+     */
+    protected void doRemoveAll() {
+        doFindAll().forEach((id, item) -> doRemove(id));
+    }
+
+    /**
      * Counts exisitng items in repository.
      *
      * @return 0..count of items.
@@ -162,16 +173,15 @@ public abstract class MS_Repository<T, ID> implements IStorageOperations<T, ID>,
         return doFind(identifier);
     }
 
-    /**
-     * Gathers all the existing repository items to list in specific order.
-     * This method should be optimized as much as it's possible and should be working faster
-     * than calling <b>find</b> method <b>size</b> times.
-     *
-     * @return list of existing items in repository.
-     */
     public final Map<ID, T> findAll() {
         checkAndThrowNotInitializedException();
         return doFindAll();
+    }
+
+    @Override
+    public final void removeAll() {
+        checkAndThrowNotInitializedException();
+        doRemoveAll();
     }
 
     @Override
@@ -200,12 +210,12 @@ public abstract class MS_Repository<T, ID> implements IStorageOperations<T, ID>,
     }
 
     @Override
-    public void forEachItem(ID startFromIndex, IFuncForEachItemLoopAction<T, ID> action) {
+    public final void forEachItem(ID startFromIndex, IFuncForEachItemLoopAction<T, ID> action) {
         throwLoopingException();
     }
 
     @Override
-    public void forEachItem(ID startFromIndex, ID endIndex, IFuncForEachItemLoopAction<T, ID> action) {
+    public final void forEachItem(ID startFromIndex, ID endIndex, IFuncForEachItemLoopAction<T, ID> action) {
         throwLoopingException();
     }
 

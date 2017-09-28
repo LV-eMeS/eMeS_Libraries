@@ -30,7 +30,7 @@ import lv.emes.libraries.tools.MS_IBuilder;
  * </ul>
  *
  * @author eMeS
- * @version 1.0.
+ * @version 1.1.
  */
 public abstract class MS_Thread<T extends MS_Thread<T>> implements Runnable, MS_IBuilder<T> {
 
@@ -43,6 +43,7 @@ public abstract class MS_Thread<T extends MS_Thread<T>> implements Runnable, MS_
     private boolean interrupted = false;
     private boolean workCompleted = false;
     private boolean started = false;
+    private IFuncOnSomeException onRuntimeException = null;
 
     /**
      * Starts execution of thread by calling inner thread object's method <b>run</b>,
@@ -54,16 +55,16 @@ public abstract class MS_Thread<T extends MS_Thread<T>> implements Runnable, MS_
     public final T start() {
         if (started)
             throw new IllegalStateException(THREAD_IS_STARTED);
-        thread = new Thread(this, threadName);
-        thread.start();
         interrupted = false;
         workCompleted = false;
         started = true;
+        thread = new Thread(this, threadName);
+        thread.start();
         return getThis();
     }
 
     /**
-     * Makes current thread wait for execution of this thread.
+     * Makes current thread (the one, which called this method) wait for execution of this thread.
      * If <b>timeout</b> is set and is greater than 0 then waiting will be performed
      * for specified time in milliseconds, after that thread will be interrupted if it will not finish in that time.
      *
@@ -77,7 +78,7 @@ public abstract class MS_Thread<T extends MS_Thread<T>> implements Runnable, MS_
             thread.join(timeout);
             interrupted = !workCompleted;
         } catch (InterruptedException e) {
-            interrupted = true;
+            interrupted = true; //this actually should never happen, because by design it happens on run method
         }
         started = false;
         return getThis();
@@ -103,8 +104,26 @@ public abstract class MS_Thread<T extends MS_Thread<T>> implements Runnable, MS_
      * All the actions that needs to be performed while thread is running.
      * When this method will finish it's work without throwing an exception the status
      * will be changed to "isWorkCompleted".
+     * @throws InterruptedException if some method in <b>doOnExecution</b> method throws an InterruptedException
+     * it can be send directly to this thread's handler to make thread's state as interrupted without throwing
+     * RuntimeException.
+     * @throws RuntimeException if some actions in this method throws some unchecked exception, it is handled as
+     * <b>onRuntimeException</b> event.
+     * @see MS_Thread#withActionOnRuntimeException(IFuncOnSomeException)
      */
-    protected abstract void doOnExecution();
+    protected abstract void doOnExecution() throws InterruptedException, RuntimeException;
+
+    /**
+     * Invoked on thread's run method:
+     * <ul>
+     *     <li>after successful execution;</li>
+     *     <li>after execution that was interrupted;</li>
+     *     <li>but NOT in case if <b>doOnExecution</b> thrown RuntimeException.</li>
+     * </ul>
+     * <p>Useful for internal actions that checks, if work is completed and / or if thread's work is interrupted.
+     * Override only if necessary!
+     */
+    protected void doAfterExecution(){}
 
     @Override
     public final void run() {
@@ -112,12 +131,21 @@ public abstract class MS_Thread<T extends MS_Thread<T>> implements Runnable, MS_
             doOnExecution();
             started = false;
             workCompleted = true;
-        } catch (Exception e) {
+        } catch (InterruptedException ie) {
+            workCompleted = false;
             interrupted = true;
             started = false;
-            throw new RuntimeException(e);
+        } catch (RuntimeException e) { //any other exception that wasn't handled in doOnExecution method
+            workCompleted = false;
+            interrupted = true;
+            started = false;
+            if (onRuntimeException != null)
+                onRuntimeException.doOnError(e);
         }
+        doAfterExecution();
     }
+
+    //Setters (builder pattern) and Getters
 
     /**
      * @return defined thread name or "MS_Thread" if name is not set.
@@ -152,6 +180,16 @@ public abstract class MS_Thread<T extends MS_Thread<T>> implements Runnable, MS_
      */
     public T withTimeout(long timeout) {
         this.timeout = timeout;
+        return getThis();
+    }
+
+    /**
+     * @param action an preferable lambda expression defining actions to be performed when method
+     *              <b>doOnExecution</b> raises some unchecked exception.
+     * @return reference to a thread itself.
+     */
+    public T withActionOnRuntimeException(IFuncOnSomeException action) {
+        this.onRuntimeException = action;
         return getThis();
     }
 

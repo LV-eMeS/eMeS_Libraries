@@ -11,7 +11,7 @@ import static lv.emes.libraries.file_system.MS_FileSystemTools.SLASH;
  * @param <T> type of items that will be stored in file repository
  *           (for example, text files, images, videos, etc.).
  * @author eMeS
- * @version 1.0.
+ * @version 1.1.
  */
 public abstract class MS_FileRepository<T> extends MS_Repository<T, String> {
 

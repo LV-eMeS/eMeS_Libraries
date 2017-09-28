@@ -5,13 +5,17 @@ import lv.emes.libraries.utilities.MS_CodingUtils;
 /**
  * Sometimes we need to test, if some event with defined probability happens. 
  * This is easy way to define events and handle their happening with some probability.
- * -happened
- * -setProbability
+ * <p>Methods:
+ * <ul>
+ * <li>happened</li>
+ * <li>setProbability</li>
+ * </ul>
  * @author eMeS
  * @version 1.1.
  * @see lv.emes.libraries.examples.MSProbabilityEventExample
  */
 public class MS_ProbabilityEvent {
+
 	private Double probability = 0d;
 	private Double currentProgress = 0d;
 	
@@ -77,18 +81,16 @@ public class MS_ProbabilityEvent {
 	 * @return probability of event to happen with precision of 2 decimals.
 	 */
 	public int getProbabilityAsPercent() {
-		double percent = MS_CodingUtils.round(probability, 2).doubleValue() * 100;
-		int res = (int) percent;
-		return res;
+		double percent = MS_CodingUtils.round(probability, 2) * 100;
+		return (int) percent;
 	}
 
 	/**
 	 * @return percentage of event made so far rounded to precision of 2 decimals.
 	 */
 	public int getCurrentProgressAsPercent() {
-		double percent = MS_CodingUtils.round(currentProgress, 2).doubleValue() * 100;
-		int res = (int) percent;
-		return res;
+		double percent = MS_CodingUtils.round(currentProgress, 2) * 100;
+		return (int) percent;
 	}
 	
 	/**

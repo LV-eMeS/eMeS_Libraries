@@ -142,4 +142,45 @@ public class MS_TestUtils {
             ongStub = ongStub.thenReturn((T) rowValues[i]);
         }
     }
+
+    public static class CheckedException extends Exception {
+        private static final long serialVersionUID = 1886903532036673010L;
+
+        public CheckedException() {
+            super();
+        }
+
+        public CheckedException(String msg) {
+            super(msg);
+        }
+        public CheckedException(Throwable cause) {
+            super(cause);
+        }
+    }
+
+    public static class UnCheckedException1 extends RuntimeException {
+        private static final long serialVersionUID = 1886903532036673011L;
+        public UnCheckedException1() {
+            super();
+        }
+        public UnCheckedException1(String msg) {
+            super(msg);
+        }
+        public UnCheckedException1(Throwable cause) {
+            super(cause);
+        }
+    }
+
+    public static class UnCheckedException2 extends RuntimeException {
+        private static final long serialVersionUID = 1886903532036673012L;
+        public UnCheckedException2() {
+            super();
+        }
+        public UnCheckedException2(String msg) {
+            super(msg);
+        }
+        public UnCheckedException2(Throwable cause) {
+            super(cause);
+        }
+    }
 }

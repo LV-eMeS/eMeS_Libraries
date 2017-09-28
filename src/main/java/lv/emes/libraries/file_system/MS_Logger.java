@@ -1,6 +1,6 @@
 package lv.emes.libraries.file_system;
 
-import lv.emes.libraries.utilities.MS_TimeUtils;
+import lv.emes.libraries.utilities.MS_DateTimeUtils;
 
 import java.time.LocalDateTime;
 
@@ -48,7 +48,7 @@ public class MS_Logger {
 
     private void pAppendLineWithLeadingDate(String text) {
         LocalDateTime time = LocalDateTime.now();
-        pAppendLineWithPrefix(MS_TimeUtils.dateTimeToStr(time, MS_TimeUtils._DATE_TIME_FORMAT_EN), text);
+        pAppendLineWithPrefix(MS_DateTimeUtils.dateTimeToStr(time, MS_DateTimeUtils._CUSTOM_DATE_TIME_FORMAT_EN), text);
     }
 
     /**

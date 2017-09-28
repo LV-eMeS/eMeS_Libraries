@@ -5,7 +5,7 @@ package lv.emes.libraries.tools.threading;
  * Set it to define what happens if some error occurs.
  * @author eMeS
  */
-//@FunctionalInterface
+@FunctionalInterface
 public interface IFuncOnSomeException {
     void doOnError(Exception exception);
 }

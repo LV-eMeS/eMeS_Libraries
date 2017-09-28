@@ -8,7 +8,9 @@ import org.apache.log4j.Logger;
  * Log file is created after first call of get logger method.
  * <br><u>Warning</u>: this logger isn't thread safe as it wraps original logger and statically binds it to this class.
  * <p>Methods:
- * -getLogger
+ * <ul>
+ * <li>getLogger</li>
+ * </ul>
  * @version 1.2.
  * @author eMeS
  * @see lv.emes.libraries.examples.LoggerExample

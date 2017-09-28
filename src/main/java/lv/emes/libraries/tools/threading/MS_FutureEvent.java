@@ -1,7 +1,7 @@
 package lv.emes.libraries.tools.threading;
 
 /**
- * A thread event that is going to happen after some short time measured in milliseconds.
+ * An event in new thread that is going to happen after some short time measured in milliseconds.
  * Most common use cases are user actions or operation with GUI that has to be done in some
  * known time.
  * <p>Class is made so that it could be easily used like builder and there is no need to create
@@ -9,17 +9,17 @@ package lv.emes.libraries.tools.threading;
  * Just create new instance, use setters to configure time till execution and action on execution!
  * Optionally actions on exceptions can be set to define, what will happen if exception occurs
  * during event execution.
- * <p>Public methods:
- * <ul>
- * <li>schedule</li>
- * </ul>
  * <p>Setters:
  * <ul>
  * <li>withTimeTillExecution</li>
  * <li>withTimeout</li>
  * <li>withAction</li>
  * <li>withActionOnInterruptedException</li>
- * <li>withActionOnGeneralException</li>
+ * <li>withActionOnException</li>
+ * </ul>
+ * <p>Public methods:
+ * <ul>
+ * <li>schedule</li>
  * </ul>
  *
  * @author eMeS
@@ -55,6 +55,7 @@ public class MS_FutureEvent {
 
     /**
      * Sets actions that has to be performed on this event.
+     *
      * @param action an preferable lambda expression defining actions to be performed on execution.
      * @return reference to an event itself.
      */
@@ -78,46 +79,99 @@ public class MS_FutureEvent {
      *               exception while executing event's action.
      * @return reference to an event itself.
      */
-    public MS_FutureEvent withActionOnGeneralException(IFuncOnSomeException action) {
-        worker.onExecution = action;
+    public MS_FutureEvent withActionOnException(IFuncOnSomeException action) {
+        worker.actionOnException = action;
+        return this;
+    }
+
+    /**
+     * @param name new name of the thread.
+     * @return reference to an event itself.
+     */
+    public MS_FutureEvent withThreadName(String name) {
+        worker.withThreadName(name);
         return this;
     }
 
     /**
      * Creates new thread and starts time countdown till event execution then executes event.
+     *
+     * @return reference to an event itself.
      */
-    public void schedule() {
+    public MS_FutureEvent schedule() {
+        if (worker.getTimeout() > 0) {
+            new InterrupterThread(worker)
+                    .withTimeout(worker.getTimeout()) //time till thread interruption
+                    .start();
+        }
         worker.start();
+        return this;
+    }
+
+    /**
+     * Stops event if its not started yet.
+     * Due to this termination InterruptedException may arise.
+     * @return reference to an event itself.
+     */
+    public MS_FutureEvent terminate() {
+        worker.stop();
+        return this;
     }
 
     private static class WorkerThread extends MS_Thread<WorkerThread> {
 
         private long executeAfter = 0;
         private IFuncEvent actionOnExecution = null;
-        private IFuncOnInterruptedException onInterruption = null;
-        private IFuncOnSomeException onExecution = null;
+        private IFuncOnSomeException actionOnException = null;
+        IFuncOnInterruptedException onInterruption = null;
 
         @Override
-        protected void doOnExecution() {
-            try {
-                Thread.sleep(executeAfter);
-                // essence of this kind of event is to run actual action only after sleep
-                if (actionOnExecution != null) {
-                    try {
-                        actionOnExecution.execute();
-                    } catch (Exception e) {
-                        if (onExecution != null)
-                            onExecution.doOnError(e);
-                    }
+        protected void doOnExecution() throws InterruptedException {
+            Thread.sleep(executeAfter);
+            // essence of this kind of event is to run actual action only after sleep
+            if (actionOnExecution != null) {
+                try {
+                    actionOnExecution.execute();
+                } catch (Exception e) {
+                    if (actionOnException != null)
+                        actionOnException.doOnError(e);
                 }
-            } catch (InterruptedException e) {
+            }
+        }
+
+        @Override
+        protected void doAfterExecution() {
+            if (this.isInterrupted()) {
                 if (onInterruption != null)
-                    onInterruption.doOnError(e);
+                    onInterruption.execute();
             }
         }
 
         @Override
         public WorkerThread getThis() {
+            return this;
+        }
+    }
+
+    private static class InterrupterThread extends MS_Thread<InterrupterThread> {
+
+        private WorkerThread threadToInterrupt;
+
+        InterrupterThread(WorkerThread threadToInterrupt) {
+            this.threadToInterrupt = threadToInterrupt;
+        }
+
+        @Override
+        protected void doOnExecution() throws InterruptedException {
+            Thread.sleep(this.getTimeout());
+            //when time ends do interruption if thread is still active
+            if (threadToInterrupt.isStarted() && !threadToInterrupt.isWorkCompleted()) {
+                threadToInterrupt.stop();
+            }
+        }
+
+        @Override
+        public InterrupterThread getThis() {
             return this;
         }
     }

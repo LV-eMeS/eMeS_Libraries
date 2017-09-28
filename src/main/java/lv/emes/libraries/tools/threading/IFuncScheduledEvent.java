@@ -1,5 +1,7 @@
 package lv.emes.libraries.tools.threading;
 
+import java.time.ZonedDateTime;
+
 /**
  * This functional interface is meant for some event execution.
  * In execution time there might occur some error, but its catching and handling should be left
@@ -8,6 +10,6 @@ package lv.emes.libraries.tools.threading;
  * @author eMeS
  */
 @FunctionalInterface
-public interface IFuncEvent {
-    void execute() throws Exception;
+public interface IFuncScheduledEvent {
+    void execute(ZonedDateTime eventExecutionTime) throws Exception;
 }

@@ -79,6 +79,16 @@ public class MSFileRepositoryTest {
         assertEquals(ITEMS[1], repository2.find(ITEM_IDS[1]));
     }
 
+    @Test
+    public void test04RemoveAllRepositoryItems() {
+        repository2 = new MS_FileRepositoryForTest(PROJECT_NAME, CATEGORY_NAME2);
+        assertEquals(1, repository2.size());
+        repository2.removeAll();
+        assertEquals(0, repository2.size());
+        assertTrue(repository2.isInitialized());
+        assertTrue(MS_FileSystemTools.directoryExists(PROJECT_NAME + "/" + CATEGORY_NAME2));
+    }
+
     /**
      * A class that operates with files containing just 1 string line.
      */
@@ -124,6 +134,12 @@ public class MSFileRepositoryTest {
         @Override
         protected int doGetSize() {
             return MS_FileSystemTools.getDirectoryFileList_Shortnames(getPathToRepository()).size();
+        }
+
+        @Override
+        public void doRemoveAll() {
+            MS_FileSystemTools.deleteDirectory(getPathToRepository());
+            doInitialize(); //create directory afterwards
         }
     }
 }

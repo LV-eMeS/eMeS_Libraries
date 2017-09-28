@@ -3,24 +3,32 @@ package lv.emes.libraries.gui;
 /** 
  * There is infinite count of different screen types that GUI can show. This class represent common attributes for them all platform independently.
  * <p>Public methods:
- * -show
- * -hide
- * -close
- * -showPreviousScreen
- * -showNextScreen
- * -previousScreen
- * -nextScreen
+ * <ul>
+ * <li>show</li>
+ * <li>close</li>
+ * <li>showPreviousScreen</li>
+ * <li>showNextScreen</li>
+ * <li>previousScreen</li>
+ * <li>nextScreen</li>
+ * </ul>
  * <p>Protected methods:
- * -initialize
- * -finalize
+ * <ul>
+ * <li>doShow</li>
+ * <li>doClose</li>
+ * </ul>
  * <p>Properties:
- * -onShow
- * -onHide
- * -onClose
+ * <ul>
+ * <li>onShow</li>
+ * <li>onClose</li>
+ * </ul>
  * <p>Setters and getters:
- * -setPreviousScreen
- * -setNextScreen
- * @version 1.1.
+ * <ul>
+ * <li>setPreviousScreen</li>
+ * <li>setNextScreen</li>
+ * <li>getPreviousScreen</li>
+ * <li>getNextScreen</li>
+ * </ul>
+ * @version 1.2.
  * @author eMeS
  */
 public abstract class MS_CustomGUIScreen {
@@ -48,17 +56,12 @@ public abstract class MS_CustomGUIScreen {
 	//PUBLIC VARIABLES
 	/**
 	 * Define behavior when screen shows up!<br>
-	 * = (screen) -&gt; {methods after <b>initialize()</b>, but before <b>show()</b>};
+	 * = (screen) -&gt; {actions to do after <b>show()</b>};
 	 */
 	public IFuncOnGUIScreenEvent onShow;
 	/**
-	 * Define behavior when screen is hidden, e.g., controls shift to another screen, but this is running background.<br>
-	 * = (screen) -&gt; {methods after <b>hide()</b>};
-	 */
-	public IFuncOnGUIScreenEvent onHide;
-	/**
 	 * Define behavior when screen is closed for good. You can free variables here, etc.<br>
-	 * = (screen) -&gt; {methods after <b>close()</b>, but before <b>finalize()</b>};
+	 * = (screen) -&gt; {actions to do before <b>close()</b>};
 	 */
 	public IFuncOnGUIScreenEvent onClose;
 
@@ -80,46 +83,51 @@ public abstract class MS_CustomGUIScreen {
 
 	//PUBLIC METHODS
 	/**
-	 * Can be overridden to define actions before showing this kind of screen.
+	 * Does all the actions to fulfill screen showing and keeping on top till it's closed.
 	 */
-	protected void initialize() {}
+	protected abstract void doShow();
 
     /**
-	 * Can be overridden to define actions when this kind of screen is finishing its work (closing).
+	 * Does all the necessary actions in order to close the screen and finish its work.
 	 */
-	protected void finalize() {}
+	protected abstract void doClose();
 
-    public void show() {
-		this.initialize();
+    /**
+     * Shows the screen.
+     * <br>When screen is shown <b>onShow</b> method is called.
+     */
+    public final void show() {
+		this.doShow();
 		if (onShow != null)
 			onShow.doOnEvent(this);
 	}
-	public void hide() {
-		if (onHide != null)
-			onHide.doOnEvent(this);
-	}
 
-    public void close() {
+    /**
+     * Closes the screen. For some GUI screens this method isn't applicable, so it's doing nothing or throws some
+     * exception.
+     * <br>Before closing <b>onClose</b> method is called.
+     */
+    public final void close() {
 		if (onClose != null)
 			onClose.doOnEvent(this);
-		this.finalize();
+		this.doClose();
 	}
 
     /**
 	 * Hides current screen and shows defined previous screen. If previous screen is null then nothing happens.
 	 */
-	public void showPreviousScreen() {
+	public final void showPreviousScreen() {
 		if (previousScreen != null) {
-			this.hide();
+			this.close();
 			this.previousScreen.show();
 		}
 	}
 	/**
 	 * Hides current screen and shows defined next screen. If next screen is null then nothing happens.
 	 */
-	public void showNextScreen() {
+	public final void showNextScreen() {
 		if (nextScreen != null) {
-			this.hide();
+			this.close();
 			this.nextScreen.show();
 		}
 	}
@@ -127,14 +135,14 @@ public abstract class MS_CustomGUIScreen {
 	 * A synonym for <b>showPreviousScreen</b>.
 	 * @see #showPreviousScreen
 	 */
-	public void previousScreen() {
+	public final void previousScreen() {
 		this.showPreviousScreen();
 	}
 	/**
 	 * A synonym for <b>showNextScreen</b>.
 	 * @see #showNextScreen
 	 */
-	public void nextScreen() {
+	public final void nextScreen() {
 		this.showNextScreen();
 	}
 	
@@ -144,6 +152,14 @@ public abstract class MS_CustomGUIScreen {
 	}
 	public void setNextScreen(MS_CustomGUIScreen screen) {
 		nextScreen = screen;
+	}
+
+	public MS_CustomGUIScreen getPreviousScreen() {
+		return previousScreen;
+	}
+
+	public MS_CustomGUIScreen getNextScreen() {
+		return nextScreen;
 	}
 
 	public int getType() {

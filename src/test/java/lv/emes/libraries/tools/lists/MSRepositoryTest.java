@@ -139,7 +139,17 @@ public class MSRepositoryTest {
         new MS_EqualityCheckBuilder(true).append(environment, repository2, REPOSITORY_DATA_COMPARE);
     }
 
-    private static final class MS_RepositoryForTest extends MS_Repository<String, String> {
+    @Test
+    public void test22RemoveAllRepositoryItems() { //DATA till here: {[1][1]} {[0,1,2][0,1,3]}
+        repository2 = new MS_RepositoryForTest(PROJECT_NAME2, CATEGORY_NAME2);
+        assertTrue(repository2.isInitialized());
+        assertEquals(3, repository2.length());
+        repository2.removeAll();
+        assertEquals(0, repository2.length());
+        assertTrue(repository2.isInitialized()); //it's still initialized
+    }
+
+        private static final class MS_RepositoryForTest extends MS_Repository<String, String> {
 
         private char repositoryLabel; //repository content will look like: repositoryLabel|identifier|item
 
@@ -226,6 +236,10 @@ public class MSRepositoryTest {
                     item;
         }
 
+        @Override
+        public void doRemoveAll() {
+            super.doRemoveAll(); //do nothing more than using parent implementation
+        }
     }
 
     private static final MS_EqualityCheckBuilder.IComparisonAlgorithm

@@ -7,7 +7,6 @@ package lv.emes.libraries.tools;
  * <ul>
  * <li>prepareContent</li>
  * </ul>
- *
  * <p>Public methods:
  * <ul>
  * <li>resetContent</li>

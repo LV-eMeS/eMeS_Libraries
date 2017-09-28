@@ -3,19 +3,22 @@ package lv.emes.libraries.tools.lists;
 import lv.emes.libraries.utilities.MS_CodingUtils;
 
 /** 
- * Random item list is like bag where you can put different items which are identified as integers.
- * <br>The list has a size. The bigger size is, the more items will be stored with method <b>storeItem</b>, for example, 
+ * Random item list is like bag where you can put different items which are identified as unique integers.
+ * <br>The list has a size. The bigger size is, the more items will be stored with method <b>storeItem</b>, for example,
  * by storing "carrots" with probability 20% in list of 50 items you actually will store 10 carrots so when trying to <b>getItem</b> from
  * the list there will be small chance to get a carrot, because there will be 40 empty values in the list.
  * <br>Purpose of this kind of list is to fill it with different kind of items that could be found with some probability.
  * <p>Public methods:
- * -storeItem 
- * -getItem
- * -shuffle
+ * <ul>
+ * <li>storeItem</li>
+ * <li>getItem</li>
+ * <li>shuffle</li>
+ * </ul>
  * @version 1.0.
  * @see lv.emes.libraries.examples.MSRandomItemListExample
  */
 public class MS_RandomItemList {
+
 	//PUBLIC STRUCTURES, EXCEPTIONS, PROPERTIES AND CONSTANTS
 	public static final int _EMPTY_ITEM = 0;
 	public static final int _SMALL_LIST = 100;
