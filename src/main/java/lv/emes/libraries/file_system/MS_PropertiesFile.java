@@ -11,6 +11,7 @@ import java.util.Properties;
  * @version 1.1.
  */
 public class MS_PropertiesFile extends Properties {
+
 	private static final long serialVersionUID = -7488390805687561806L;
 	/**
 	 * Loads all properties from file with specified path.

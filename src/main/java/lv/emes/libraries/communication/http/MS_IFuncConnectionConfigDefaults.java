@@ -7,6 +7,7 @@ package lv.emes.libraries.communication.http;
  * @version 1.0.
  */
 public class MS_IFuncConnectionConfigDefaults {
+
     //some default input methods
     private static final int DEFAULT_TIMEOUT_MILISECONDS = 10000;
     /**

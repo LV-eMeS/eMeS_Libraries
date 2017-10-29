@@ -15,6 +15,7 @@ import lv.emes.libraries.utilities.MS_StringUtils;
  * @author eMeS
  */
 public class MS_OperatingSystem {
+
 	//PUBLIC STRUCTURES, EXCEPTIONS, PROPERTIES AND CONSTANTS
 	public final static String _OS_WINDOWS = "Windows";
 	public final static String _OS_UNIX = "Unix";

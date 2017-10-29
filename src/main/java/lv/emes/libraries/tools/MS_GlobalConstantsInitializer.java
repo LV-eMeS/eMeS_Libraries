@@ -30,6 +30,7 @@ import java.io.IOException;
  * @author eMeS
  */
 public abstract class MS_GlobalConstantsInitializer {
+
 	/**
 	 * Path to properties file.
 	 */
