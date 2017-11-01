@@ -1,5 +1,5 @@
 eMeS libraries
-Version 1.9.8
+Version 2.0.0
 Release Notes
 
 INTRODUCTION:
@@ -15,6 +15,7 @@ Changes in versions:
 ========================================================================================================
 eMeS libraries Version 2.1.0
 ========================================================================================================
+* Database JDBC wrapper upgrades.
 * MS_Scheduler for periodic actions.
 ========================================================================================================
 eMeS libraries Version 2.0.0

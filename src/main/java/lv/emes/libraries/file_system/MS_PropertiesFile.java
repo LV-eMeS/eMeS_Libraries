@@ -1,14 +1,12 @@
 package lv.emes.libraries.file_system;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.Properties;
 
 /** 
  * Can be used to work with .properties files. 
  * You can either read properties from files or write new properties, or even rewrite existing properties.
- * @version 1.1.
+ * @version 1.2.
  */
 public class MS_PropertiesFile extends Properties {
 
@@ -19,8 +17,8 @@ public class MS_PropertiesFile extends Properties {
 	 * @throws IOException if file not found or cannot be read
 	 */
 	public void load(String aPropertyFilename) throws IOException {
-		FileInputStream in = new FileInputStream(aPropertyFilename);
-		this.load(in);
+		InputStream in = new FileInputStream(aPropertyFilename);
+		this.load(new InputStreamReader(in, "UTF-8"));
 		in.close();
 	}
 	

@@ -136,13 +136,13 @@ public class MSFileSystemToolsTest {
         MS_TextFile.createEmptyFile(file2);
         MS_TextFile.createEmptyFile(file3);
 
-        MS_StringList test = getDirectoryFileList(tmpDirPath);
+        MS_StringList test;
+        test = getDirectoryFileList(tmpDirPath);
         assertEquals(3, test.count());
         assertEquals(file1, test.get(0));
         assertEquals(file2, test.get(1));
         assertEquals(file3, test.get(2));
 
-        test.clear();
         test = getDirectoryFileList_Shortnames(tmpDirPath);
         assertEquals(3, test.count());
         assertEquals(getShortFilename(file1), test.get(0));
@@ -152,6 +152,16 @@ public class MSFileSystemToolsTest {
         test = getDirectoryFileList_Directories(tmpDirPath);
         assertEquals(1, test.count());
         assertEquals(childDirectory, test.get(0));
+
+        String invalidDirName = "not a directory";
+        test = getDirectoryFileList(invalidDirName);
+        assertEquals(0, test.count());
+
+        test = getDirectoryFileList_Shortnames(invalidDirName);
+        assertEquals(0, test.count());
+
+        test = getDirectoryFileList_Directories(invalidDirName);
+        assertEquals(0, test.count());
     }
 
     @Test

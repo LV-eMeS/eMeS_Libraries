@@ -32,27 +32,28 @@ import java.util.List;
  * Different transformations and actions related with OS file system.
  * <p>Static methods:
  * <ul>
- *     <li>executeApplication</li>
- *     <li>getTmpDirectory</li>
- *     <li>getProjectDirectory</li>
- *     <li>fileExists</li>
- *     <li>directoryExists</li>
- *     <li>createEmptyFile</li>
- *     <li>createNewDirectory</li>
- *     <li>deleteFile</li>
- *     <li>deleteDirectory</li>
- *     <li>directoryUp</li>
- *     <li>getDirectoryFileList_Shortnames</li>
- *     <li>getDirectoryFileList_Directories</li>
- *     <li>getFilenameWithoutExtension</li>
- *     <li>getFileExtensionWithDot</li>
- *     <li>getFileExtensionWithoutDot</li>
- *     <li>getDirectoryOfFile</li>
- *     <li>getShortFilename</li>
- *     <li>replaceBackslash</li>
- *     <li>extractResourceToTmpFolder</li>
+ * <li>executeApplication</li>
+ * <li>getTmpDirectory</li>
+ * <li>getProjectDirectory</li>
+ * <li>fileExists</li>
+ * <li>directoryExists</li>
+ * <li>createEmptyFile</li>
+ * <li>createNewDirectory</li>
+ * <li>deleteFile</li>
+ * <li>deleteDirectory</li>
+ * <li>directoryUp</li>
+ * <li>getDirectoryFileList_Shortnames</li>
+ * <li>getDirectoryFileList_Directories</li>
+ * <li>getFilenameWithoutExtension</li>
+ * <li>getFileExtensionWithDot</li>
+ * <li>getFileExtensionWithoutDot</li>
+ * <li>getDirectoryOfFile</li>
+ * <li>getShortFilename</li>
+ * <li>replaceBackslash</li>
+ * <li>extractResourceToTmpFolder</li>
  * </ul>
- * @version 1.7.
+ *
+ * @version 1.8.
  */
 public class MS_FileSystemTools {
     public static final String CURRENT_DIRECTORY = "./";
@@ -361,7 +362,8 @@ public class MS_FileSystemTools {
      * Moves a file to another location or simply renames it.
      * It overwrites file existing in destination.
      * If destination directory doesn't exist, creates it.
-     * @param filename path and name of file that needs to be moved.
+     *
+     * @param filename     path and name of file that needs to be moved.
      * @param destFilename new path and new filename of file.
      * @return true if moved successfully, false, if error in moving process or destination file exists.
      */
@@ -372,8 +374,9 @@ public class MS_FileSystemTools {
     /**
      * Moves a file to another location or simply renames it.
      * If destination directory doesn't exist, creates it.
-     * @param filename path and name of file that needs to be moved.
-     * @param destFilename new path and new filename of file.
+     *
+     * @param filename      path and name of file that needs to be moved.
+     * @param destFilename  new path and new filename of file.
      * @param overwriteDest if true then attempts to overwrite existing file in destination path.
      *                      If false then obviously it will rename file only if destination file doesn't exist.
      * @return true if moved successfully.
@@ -405,6 +408,7 @@ public class MS_FileSystemTools {
 
     /**
      * Retrieves all the files and folders located in directory <b>pathToDir</b>.
+     *
      * @param pathToDir path to directory in which files are located.
      * @return list of filename with full file paths.
      */
@@ -412,16 +416,18 @@ public class MS_FileSystemTools {
         MS_StringList res = new MS_StringList();
         File dir = new File(pathToDir);
         File[] filesList = dir.listFiles();
-        for (File file : filesList) {
-            if (file.isFile()) {
-                res.add(replaceBackslash(file.getAbsolutePath()));
+        if (filesList != null)
+            for (File file : filesList) {
+                if (file.isFile()) {
+                    res.add(replaceBackslash(file.getAbsolutePath()));
+                }
             }
-        }
         return res;
     }
 
     /**
      * Retrieves all the files located in directory <b>pathToDir</b>.
+     *
      * @param pathToDir path to directory in which files are located.
      * @return list of short filenames.
      */
@@ -429,16 +435,18 @@ public class MS_FileSystemTools {
         MS_StringList res = new MS_StringList();
         File dir = new File(pathToDir);
         File[] filesList = dir.listFiles();
-        for (File file : filesList) {
-            if (file.isFile()) {
-                res.add(replaceBackslash(file.getName()));
+        if (filesList != null)
+            for (File file : filesList) {
+                if (file.isFile()) {
+                    res.add(replaceBackslash(file.getName()));
+                }
             }
-        }
         return res;
     }
 
     /**
      * Retrieves all the directories located in directory <b>pathToDir</b>.
+     *
      * @param pathToDir path to directory in which files are located.
      * @return list of short directory names.
      */
@@ -446,11 +454,12 @@ public class MS_FileSystemTools {
         MS_StringList res = new MS_StringList();
         File dir = new File(pathToDir);
         File[] filesList = dir.listFiles();
-        for (File file : filesList) {
-            if (file.isDirectory()) {
-                res.add(replaceBackslash(file.getName()));
+        if (filesList != null)
+            for (File file : filesList) {
+                if (file.isDirectory()) {
+                    res.add(replaceBackslash(file.getName()));
+                }
             }
-        }
         return res;
     }
 
@@ -489,7 +498,7 @@ public class MS_FileSystemTools {
         String fullFilename = tmpDir + fileName;
 
         //now the caching part - looking for
-        if (! alwaysExtractResourceFile) {
+        if (!alwaysExtractResourceFile) {
             if (fileExists(fullFilename))
                 return fullFilename;
         }
