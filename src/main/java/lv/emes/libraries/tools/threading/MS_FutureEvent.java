@@ -94,6 +94,20 @@ public class MS_FutureEvent {
     }
 
     /**
+     * @return defined thread name or "MS_FutureEvent" if name is not set.
+     */
+    public String getThreadName() {
+        return worker.getThreadName();
+    }
+
+    /**
+     * @return true if event happened, e.g. thread's work is completed or it's interrupted.
+     */
+    public boolean isFinished() {
+        return worker.isWorkCompleted() || worker.isInterrupted();
+    }
+
+    /**
      * Creates new thread and starts time countdown till event execution then executes event.
      *
      * @return reference to an event itself.

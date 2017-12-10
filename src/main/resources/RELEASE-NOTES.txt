@@ -1,9 +1,9 @@
 eMeS libraries
-Version 2.0.0
+Version 2.0.1
 Release Notes
 
 INTRODUCTION:
-Project consists of different solutions to make programmer's life easier.
+Project consists of different solutions to make developer's life easier.
 Creator of project: Māris Salenieks
 Contacts: maris.salenieks@gmail.com
 
@@ -17,6 +17,8 @@ eMeS libraries Version 2.1.0
 ========================================================================================================
 * Database JDBC wrapper upgrades.
 * MS_Scheduler for periodic actions.
+* MS_MultiLogger to log events to different repositories simultaneously.
+* CSV file reader functionality.
 ========================================================================================================
 eMeS libraries Version 2.0.0
 ========================================================================================================

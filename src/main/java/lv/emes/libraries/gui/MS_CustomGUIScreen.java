@@ -6,10 +6,6 @@ package lv.emes.libraries.gui;
  * <ul>
  * <li>show</li>
  * <li>close</li>
- * <li>showPreviousScreen</li>
- * <li>showNextScreen</li>
- * <li>previousScreen</li>
- * <li>nextScreen</li>
  * </ul>
  * <p>Protected methods:
  * <ul>
@@ -23,17 +19,13 @@ package lv.emes.libraries.gui;
  * </ul>
  * <p>Setters and getters:
  * <ul>
- * <li>setPreviousScreen</li>
- * <li>setNextScreen</li>
- * <li>getPreviousScreen</li>
- * <li>getNextScreen</li>
+ * <li>getType</li>
  * </ul>
  * @version 1.2.
  * @author eMeS
  */
 public abstract class MS_CustomGUIScreen {
 
-	//PUBLIC STRUCTURES, EXCEPTIONS, PROPERTIES AND CONSTANTS	
 	public static final int _UNKNOWN_SCREEN = 0;
 	public static final int _HELLO_SCREEN = 1;
 	public static final int _GOODBYE_SCREEN = 2;
@@ -48,12 +40,8 @@ public abstract class MS_CustomGUIScreen {
 	public static final int _MESSAGE_SCREEN = 102;
 	public static final int _DIALOG = 103;
 
-	//PRIVATE VARIABLES
-	private MS_CustomGUIScreen previousScreen;
-	private MS_CustomGUIScreen nextScreen;
 	private int type;
 
-	//PUBLIC VARIABLES
 	/**
 	 * Define behavior when screen shows up!<br>
 	 * = (screen) -&gt; {actions to do after <b>show()</b>};
@@ -65,7 +53,6 @@ public abstract class MS_CustomGUIScreen {
 	 */
 	public IFuncOnGUIScreenEvent onClose;
 
-	//CONSTRUCTORS
 	/**
 	 * Creates screen with defined type of screen. 
 	 * Type must be specified, to determine, which type screen is running when using this interface from many inherited classes.
@@ -74,14 +61,7 @@ public abstract class MS_CustomGUIScreen {
 	public MS_CustomGUIScreen(int type) {
 		this.type = type;
 	}
-	
-	//STATIC CONSTRUCTORS
 
-	//PRIVATE METHODS
-
-	//PROTECTED METHODS
-
-	//PUBLIC METHODS
 	/**
 	 * Does all the actions to fulfill screen showing and keeping on top till it's closed.
 	 */
@@ -112,59 +92,8 @@ public abstract class MS_CustomGUIScreen {
 			onClose.doOnEvent(this);
 		this.doClose();
 	}
-
-    /**
-	 * Hides current screen and shows defined previous screen. If previous screen is null then nothing happens.
-	 */
-	public final void showPreviousScreen() {
-		if (previousScreen != null) {
-			this.close();
-			this.previousScreen.show();
-		}
-	}
-	/**
-	 * Hides current screen and shows defined next screen. If next screen is null then nothing happens.
-	 */
-	public final void showNextScreen() {
-		if (nextScreen != null) {
-			this.close();
-			this.nextScreen.show();
-		}
-	}
-	/**
-	 * A synonym for <b>showPreviousScreen</b>.
-	 * @see #showPreviousScreen
-	 */
-	public final void previousScreen() {
-		this.showPreviousScreen();
-	}
-	/**
-	 * A synonym for <b>showNextScreen</b>.
-	 * @see #showNextScreen
-	 */
-	public final void nextScreen() {
-		this.showNextScreen();
-	}
 	
-	//getters and setters
-	public void setPreviousScreen(MS_CustomGUIScreen screen) {
-		previousScreen = screen;
-	}
-	public void setNextScreen(MS_CustomGUIScreen screen) {
-		nextScreen = screen;
-	}
-
-	public MS_CustomGUIScreen getPreviousScreen() {
-		return previousScreen;
-	}
-
-	public MS_CustomGUIScreen getNextScreen() {
-		return nextScreen;
-	}
-
 	public int getType() {
 		return type;
 	}
-
-	//STATIC METHODS
 }

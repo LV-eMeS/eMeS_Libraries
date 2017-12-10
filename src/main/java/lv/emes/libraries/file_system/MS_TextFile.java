@@ -89,7 +89,7 @@ public class MS_TextFile {
         if (fFileReader != null) {
             try {
                 fFileReader.close();
-            } catch (IOException e) {
+            } catch (IOException ignored) {
             } finally {
                 fFileReader = null;
             }

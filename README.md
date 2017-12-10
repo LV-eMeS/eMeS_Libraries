@@ -1,5 +1,5 @@
 # eMeS_Libraries
-Project consists of different solutions to make programmer's life easier.
+Project consists of different solutions to make developer's life easier.
 
 Creator of project: **Māris Salenieks**
 
@@ -11,20 +11,21 @@ Prerequisites:
 
  Installation:
  
- Add this to the main gradle file: 
+ Add this code to the main gradle file: 
  ```gradle
- 	allprojects {
-		repositories {
-			...
-			maven { url 'https://jitpack.io' }
-		}
+allprojects {
+	repositories {
+		...
+	    maven { url 'https://jitpack.io' }
 	}
+}
 ```
 
-Add this to your project gradle file:
+And this code to same project gradle file:
 ```gradle
-	dependencies {
-	        compile "com.github.LV-eMeS:eMeS_Libraries:v1.9.4"
-	}
-
+dependencies {
+     ...
+     compile "com.github.LV-eMeS:eMeS_Libraries:v2.0.0"
+     ...
+ }
 ```

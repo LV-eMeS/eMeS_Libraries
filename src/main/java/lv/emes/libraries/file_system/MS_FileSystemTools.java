@@ -16,6 +16,7 @@ Copyright [2016] [Māris Salenieks]
         limitations under the License.
  */
 
+import au.com.bytecode.opencsv.CSVReader;
 import lv.emes.libraries.tools.lists.MS_StringList;
 import lv.emes.libraries.utilities.MS_StringUtils;
 import org.apache.commons.io.FileUtils;
@@ -26,6 +27,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -467,7 +469,9 @@ public class MS_FileSystemTools {
      * Looks for resource in JAR file, extracts it in temporary directory if resource exists and
      * returns the full path to a file.
      *
-     * @param pathToResource            path to resource file.
+     * @param pathToResource            path to resource file looking from resources folder root (but not including it in path name).
+     *                                  <b>Example:</b> File can be found in classpath src/main/resources/texts/file.txt
+     *                                  <br>in this case <b>pathToResource = texts/file.txt</b>.
      * @param dirInTempDirectory        in which directory of temporary folder file should be extracted.
      *                                  <br><u>Note</u>: Folder can be presented also as: "folder/subFolder/subSubFolder/".
      *                                  <br><u>Note</u>: Also can be null.
@@ -514,5 +518,73 @@ public class MS_FileSystemTools {
         }
 
         return (tempFile.toString());
+    }
+
+    /**
+     * Opens <b>elementSeparator</b> separated UTF-8 encoded file, reads its content and stores in list of String array with element size matching
+     * element count in each of read lines.
+     *
+     * @param pathToFile       full CSV filename.
+     * @param elementSeparator the delimiter to use for separating entries (elements).
+     * @param quoteChar        the character to use for quoted elements (mostly apostrophe ' is used).
+     *                         Those quotes are removed when reading entry value, leaving element plain without quotes
+     * @return list of String array or empty list if file is empty.
+     * @throws IOException <ul>
+     *                     <li>if the file does not exist, is a directory rather than a regular file, or for some other reason cannot be opened for reading;</li>
+     *                     <li>if bad things happen during the read;</li>
+     *                     <li>if the file closing fails.</li>
+     *                     </ul>
+     */
+    public static List<String[]> loadCSVFile(String pathToFile, char elementSeparator, char quoteChar) throws IOException {
+        List<String[]> fileContent = new ArrayList<>();
+        File readerFile;
+        CSVReader reader = null;
+        String[] line; //all the CSV values for single line of file
+
+        try {
+            readerFile = new File(pathToFile);
+            reader = new CSVReader(
+                    new InputStreamReader(new FileInputStream(readerFile.getAbsolutePath()), "UTF-8"),
+                    elementSeparator, quoteChar, 0);
+            while ((line = reader.readNext()) != null) fileContent.add(line);
+            return fileContent;
+        } finally {
+            if (reader != null) {
+                reader.close();
+            }
+        }
+    }
+
+    /**
+     * Opens <b>elementSeparator</b> separated UTF-8 encoded file, reads its content and stores in list of String array with element size matching
+     * element count in each of read lines.
+     *
+     * @param pathToFile       full CSV filename.
+     * @param elementSeparator the delimiter to use for separating entries (elements).
+     * @return list of String array or empty list if file is empty.
+     * @throws IOException <ul>
+     *                     <li>if the file does not exist, is a directory rather than a regular file, or for some other reason cannot be opened for reading;</li>
+     *                     <li>if bad things happen during the read;</li>
+     *                     <li>if the file closing fails.</li>
+     *                     </ul>
+     */
+    public static List<String[]> loadCSVFile(String pathToFile, char elementSeparator) throws IOException {
+        return loadCSVFile(pathToFile, elementSeparator, '\0');
+    }
+
+    /**
+     * Opens comma separated UTF-8 encoded file, reads its content and stores in list of String array with element size matching
+     * element count in each of read lines.
+     *
+     * @param pathToFile       full CSV filename.
+     * @return list of String array or empty list if file is empty.
+     * @throws IOException <ul>
+     *                     <li>if the file does not exist, is a directory rather than a regular file, or for some other reason cannot be opened for reading;</li>
+     *                     <li>if bad things happen during the read;</li>
+     *                     <li>if the file closing fails.</li>
+     *                     </ul>
+     */
+    public static List<String[]> loadCSVFile(String pathToFile) throws IOException {
+        return loadCSVFile(pathToFile, ',', '\0');
     }
 }

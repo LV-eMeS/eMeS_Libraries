@@ -42,8 +42,7 @@ public class MS_Logger {
     }
 
     private void pAppendLine(String text) {
-        actualFile.appendln(text);
-        actualFile.close();
+        actualFile.appendln(text, true);
     }
 
     private void pAppendLineWithLeadingDate(String text) {
