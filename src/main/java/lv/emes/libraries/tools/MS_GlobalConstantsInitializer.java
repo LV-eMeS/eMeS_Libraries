@@ -1,6 +1,7 @@
 package lv.emes.libraries.tools;
 
 import lv.emes.libraries.file_system.MS_PropertiesFile;
+import lv.emes.libraries.tools.logging.MS_Log4Java;
 
 import java.io.IOException;
 

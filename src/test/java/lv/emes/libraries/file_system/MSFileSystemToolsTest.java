@@ -1,5 +1,6 @@
 package lv.emes.libraries.file_system;
 
+import lv.emes.libraries.testdata.TestData;
 import lv.emes.libraries.tools.lists.MS_StringList;
 import lv.emes.libraries.utilities.MS_StringUtils;
 import org.junit.AfterClass;
@@ -25,10 +26,10 @@ public class MSFileSystemToolsTest {
     private final static String CSV_CHAMELEON_SEPARATED = "chameleonSeparated.csv";
     private static String tmpFileName = "eMeS_Testing_File_System_Tools.txt";
     private static String tmpFileName2 = "eMeS_Testing_File_System_Tools2.txt";
-    private static String tmpFilePath = getTmpDirectory() + tmpFileName;
-    private static String tmpFilePath2 = getTmpDirectory() + tmpFileName2;
+    private static String tmpFilePath = TestData.TEMP_DIR + tmpFileName;
+    private static String tmpFilePath2 = TestData.TEMP_DIR + tmpFileName2;
     private static String tmpDirName = "eMeS_Testing_File_System_Tools/";
-    private static String tmpDirPath = getTmpDirectory() + tmpDirName;
+    private static String tmpDirPath = TestData.TEMP_DIR + tmpDirName;
     private static String childDirectory = "child directory";
     private static Boolean tmpFileStillExists = false;
 

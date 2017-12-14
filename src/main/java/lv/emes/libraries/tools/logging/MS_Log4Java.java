@@ -1,4 +1,4 @@
-package lv.emes.libraries.tools;
+package lv.emes.libraries.tools.logging;
 
 import org.apache.log4j.Logger;
 

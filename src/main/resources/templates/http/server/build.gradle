@@ -1,6 +1,6 @@
 buildscript {
     ext {
-        eMeS_LibrariesVersion = "v1.4.5" //input current version here!
+        eMeS_LibrariesVersion = "v2.0.0" //input current version here!
         springBootVersion = "1.4.3.RELEASE"
     }
     repositories {

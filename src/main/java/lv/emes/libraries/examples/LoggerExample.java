@@ -1,6 +1,6 @@
 package lv.emes.libraries.examples;
 
-import lv.emes.libraries.tools.MS_Log4Java;
+import lv.emes.libraries.tools.logging.MS_Log4Java;
 
 /** 
  * An example of log4j usage.

@@ -1,7 +1,7 @@
 package lv.emes.libraries.examples;
 
 import lv.emes.libraries.file_system.MS_FileSystemTools;
-import lv.emes.libraries.file_system.MS_Logger;
+import lv.emes.libraries.tools.logging.MS_FileLogger;
 import lv.emes.libraries.tools.threading.MS_Scheduler;
 import lv.emes.libraries.utilities.MS_DateTimeUtils;
 
@@ -14,7 +14,7 @@ import lv.emes.libraries.utilities.MS_DateTimeUtils;
 public class MSSchedulerExample {
 
     private static final String FILENAME = "D:\\tmp\\MSSchedulerExample.txt";
-    private static MS_Logger LOG = new MS_Logger(FILENAME);
+    private static MS_FileLogger LOG = new MS_FileLogger(FILENAME);
 
     public static void main(String[] args) {
         LOG.info("Scheduler started.");

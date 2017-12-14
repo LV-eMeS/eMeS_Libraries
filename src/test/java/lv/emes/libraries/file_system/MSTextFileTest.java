@@ -1,5 +1,6 @@
 package lv.emes.libraries.file_system;
 
+import lv.emes.libraries.testdata.TestData;
 import lv.emes.libraries.tools.lists.MS_StringList;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -15,6 +16,7 @@ import static org.junit.Assert.*;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MSTextFileTest {
+
     private final static String TEST_DIR = "src/test/resources/";
     private final static String FIRST_FILE = TEST_DIR + "MSTextFileTest.txt";
     private final static String FILE_AS_RESOURCE = "sampleTextFile4Testing.txt";
@@ -27,7 +29,7 @@ public class MSTextFileTest {
     private final static String TEXT6 = "А эта будет третья строка."; //RU
     private final static String TEXT7_AS_RESOURCE = "2 rows";
     private final static String TEXT8_AS_RESOURCE = "in this file.";
-    private final static String MISSING_DIRECTORY_NAME = getTmpDirectory() + "test09CreateFileInNonExistingDirectory/Directory/";
+    private final static String MISSING_DIRECTORY_NAME = TestData.TEMP_DIR + "test09CreateFileInNonExistingDirectory/Directory/";
     private final static String FILENAME_FOR_MISSING_DIR = "test09CreateFileInNonExistingDirectory.txt";
 
     @BeforeClass

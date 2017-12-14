@@ -1,10 +1,10 @@
 package lv.emes.libraries.tools.platform;
 
 import lv.emes.libraries.file_system.MS_FileSystemTools;
-import lv.emes.libraries.file_system.MS_Logger;
 import lv.emes.libraries.file_system.MS_TextFile;
 import lv.emes.libraries.tools.MS_KeyCodeDictionary;
 import lv.emes.libraries.tools.lists.MS_StringList;
+import lv.emes.libraries.tools.logging.MS_FileLogger;
 import lv.emes.libraries.tools.platform.windows.MS_ApplicationWindow;
 import lv.emes.libraries.tools.platform.windows.MS_WindowsAPIManager;
 import lv.emes.libraries.tools.platform.windows.MediaEventTypeEnum;
@@ -617,7 +617,7 @@ public class MS_ScriptRunner {
 
         AtomicInteger primaryCommandCount = new AtomicInteger(0);
         fCommandList.forEachItem((cmd, index) -> {
-            MS_Logger logFile = new MS_Logger(pathToLoggerFile);
+            MS_FileLogger logFile = new MS_FileLogger(pathToLoggerFile);
             if (isScriptRunningTerminated) {
                 logFile.warning("Script running terminated by user's request.");
                 fCommandList.breakOngoingForLoop();

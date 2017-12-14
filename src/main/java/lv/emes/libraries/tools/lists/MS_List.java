@@ -2,12 +2,14 @@ package lv.emes.libraries.tools.lists;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import static lv.emes.libraries.utilities.MS_CodingUtils.inRange;
 
 /** 
- * Purpose of this class is to make lists of different objects. It's possible to perambulate list using methods from interface <b>IPerambulateListActions</b>.
- * @version 1.6.
+ * Purpose of this class is to make lists of different objects.
+ * It's possible to perambulate list using methods from interface <b>IPerambulateListActions</b>.
+ * @version 2.0.
  * @see IPerambulateListActions
  */
 public class MS_List<T> extends ArrayList<T> implements IPerambulateListActions<T> {
@@ -25,7 +27,7 @@ public class MS_List<T> extends ArrayList<T> implements IPerambulateListActions<
 	//PUBLIC METHODS
 
 	/**
-	 * Converts array to list.
+	 * Converts array to eMeS list.
 	 * @param aArray array with T type of objects that will fill the list.
 	 * @param <T> type of objects that list will contain.
 	 * @return list of objects.
@@ -33,6 +35,18 @@ public class MS_List<T> extends ArrayList<T> implements IPerambulateListActions<
 	public static <T> MS_List<T> newInstance(T[] aArray) {
 		MS_List<T> res = new MS_List<>();
 		Collections.addAll(res, aArray);
+		return res;
+	}
+
+	/**
+	 * Converts list to eMeS list.
+	 * @param list a list with T type of objects that will fill the eMeS list.
+	 * @param <T> type of objects that list will contain.
+	 * @return list of objects.
+	 */
+	public static <T> MS_List<T> newInstance(List<T> list) {
+		MS_List<T> res = new MS_List<>();
+		if (list != null) res.addAll(list);
 		return res;
 	}
 	

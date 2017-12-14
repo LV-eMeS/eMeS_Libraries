@@ -1,24 +1,27 @@
 package lv.emes.libraries.file_system;
 
+import lv.emes.libraries.testdata.TestData;
 import lv.emes.libraries.tools.lists.MS_List;
+import lv.emes.libraries.tools.logging.MS_FileLogger;
 import lv.emes.libraries.tools.threading.MS_FutureEvent;
 import lv.emes.libraries.utilities.MS_CodingUtils;
 import org.junit.*;
 import org.junit.runners.MethodSorters;
 
-import static lv.emes.libraries.file_system.MS_FileSystemTools.*;
+import static lv.emes.libraries.file_system.MS_FileSystemTools.deleteDirectory;
+import static lv.emes.libraries.file_system.MS_FileSystemTools.directoryUp;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MSFileWriteConcurrencyTest {
 
-    private final static String FILE_NAME = getTmpDirectory() + "MSFileWriteConcurrencyTest/MSFileWriteConcurrencyTest.log";
+    private final static String FILE_NAME = TestData.TEMP_DIR + "MSFileWriteConcurrencyTest/MSFileWriteConcurrencyTest.log";
     private final static int THREAD_COUNT = 20;
     private final static int WAITING_TIMEOUT = 2000;
     private final static int MAX_WAITING_TIMES = 4; //after double timeout all threads must finish their work for sure
 
-    private static MS_List<MS_Logger> loggersForTest = new MS_List<>();
+    private static MS_List<MS_FileLogger> loggersForTest = new MS_List<>();
     private MS_List<MS_FutureEvent> threads = new MS_List<>();
     private static Boolean exceptionOnThreadLevel = false;
     private static Boolean interruptedExceptionOnThreadLevel = false;
@@ -28,7 +31,7 @@ public class MSFileWriteConcurrencyTest {
     @BeforeClass
     public static void initiate() {
         for (int i = 0; i < THREAD_COUNT; i++) {
-            loggersForTest.add(new MS_Logger(FILE_NAME));
+            loggersForTest.add(new MS_FileLogger(FILE_NAME));
         }
     }
 

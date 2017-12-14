@@ -2,6 +2,7 @@ package lv.emes.libraries.tools.xml;
 
 import lv.emes.libraries.file_system.MS_BinaryTools;
 import lv.emes.libraries.file_system.MS_TextFile;
+import lv.emes.libraries.testdata.TestData;
 import lv.emes.libraries.tools.lists.MS_StringList;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -17,16 +18,15 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 
 import static lv.emes.libraries.file_system.MS_FileSystemTools.deleteFile;
-import static lv.emes.libraries.file_system.MS_FileSystemTools.getTmpDirectory;
 import static lv.emes.libraries.utilities.MS_StringUtils.getTabSpace;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MSXMLFileTest {
-    private static final String PATH_TO_XML_FILE = getTmpDirectory() + "MSXMLFileTest.xml";
-    private static final String PATH_TO_XML_FILE2 = getTmpDirectory() + "MSXMLFileTest2.xml";
-    private static final String PATH_TO_XML_FILE3 = getTmpDirectory() + "MSXMLFileTest3.xml";
+    private static final String PATH_TO_XML_FILE = TestData.TEMP_DIR + "MSXMLFileTest.xml";
+    private static final String PATH_TO_XML_FILE2 = TestData.TEMP_DIR + "MSXMLFileTest2.xml";
+    private static final String PATH_TO_XML_FILE3 = TestData.TEMP_DIR + "MSXMLFileTest3.xml";
     private static MS_StringList FOOD_NAME_LIST = null;
     private static MS_XML file1;
     private static MS_XML file2;

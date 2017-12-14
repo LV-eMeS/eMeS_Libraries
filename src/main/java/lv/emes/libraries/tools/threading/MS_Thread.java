@@ -1,6 +1,7 @@
 package lv.emes.libraries.tools.threading;
 
 import lv.emes.libraries.tools.MS_IBuilder;
+import lv.emes.libraries.tools.lists.MS_List;
 
 /**
  * A class that combines together Runnable and thread.
@@ -104,11 +105,12 @@ public abstract class MS_Thread<T extends MS_Thread<T>> implements Runnable, MS_
      * All the actions that needs to be performed while thread is running.
      * When this method will finish it's work without throwing an exception the status
      * will be changed to "isWorkCompleted".
+     *
      * @throws InterruptedException if some method in <b>doOnExecution</b> method throws an InterruptedException
-     * it can be send directly to this thread's handler to make thread's state as interrupted without throwing
-     * RuntimeException.
-     * @throws RuntimeException if some actions in this method throws some unchecked exception, it is handled as
-     * <b>onRuntimeException</b> event.
+     *                              it can be send directly to this thread's handler to make thread's state as interrupted without throwing
+     *                              RuntimeException.
+     * @throws RuntimeException     if some actions in this method throws some unchecked exception, it is handled as
+     *                              <b>onRuntimeException</b> event.
      * @see MS_Thread#withActionOnRuntimeException(IFuncOnSomeException)
      */
     protected abstract void doOnExecution() throws InterruptedException, RuntimeException;
@@ -116,14 +118,15 @@ public abstract class MS_Thread<T extends MS_Thread<T>> implements Runnable, MS_
     /**
      * Invoked on thread's run method:
      * <ul>
-     *     <li>after successful execution;</li>
-     *     <li>after execution that was interrupted;</li>
-     *     <li>but NOT in case if <b>doOnExecution</b> thrown RuntimeException.</li>
+     * <li>after successful execution;</li>
+     * <li>after execution that was interrupted;</li>
+     * <li>but NOT in case if <b>doOnExecution</b> thrown RuntimeException.</li>
      * </ul>
      * <p>Useful for internal actions that checks, if work is completed and / or if thread's work is interrupted.
      * Override only if necessary!
      */
-    protected void doAfterExecution(){}
+    protected void doAfterExecution() {
+    }
 
     @Override
     public final void run() {
@@ -185,7 +188,7 @@ public abstract class MS_Thread<T extends MS_Thread<T>> implements Runnable, MS_
 
     /**
      * @param action an preferable lambda expression defining actions to be performed when method
-     *              <b>doOnExecution</b> raises some unchecked exception.
+     *               <b>doOnExecution</b> raises some unchecked exception.
      * @return reference to a thread itself.
      */
     public T withActionOnRuntimeException(IFuncOnSomeException action) {
@@ -219,5 +222,17 @@ public abstract class MS_Thread<T extends MS_Thread<T>> implements Runnable, MS_
      */
     public boolean isStarted() {
         return started;
+    }
+
+    /**
+     * @param name name of threads that we are looking for (there can be running many threads with same name).
+     * @return all the threads by given name.
+     */
+    public static MS_List<Thread> getThreadsByName(String name) {
+        MS_List<Thread> res = new MS_List<>();
+        Thread.getAllStackTraces().forEach((thread, traceEl) -> {
+            if (name.equals(thread.getName())) res.add(thread);
+        });
+        return res;
     }
 }

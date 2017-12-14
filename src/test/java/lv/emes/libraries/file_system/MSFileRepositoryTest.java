@@ -1,5 +1,6 @@
 package lv.emes.libraries.file_system;
 
+import lv.emes.libraries.testdata.TestData;
 import lv.emes.libraries.tools.lists.MS_StringList;
 import org.junit.AfterClass;
 import org.junit.FixMethodOrder;
@@ -18,7 +19,7 @@ import static org.junit.Assert.*;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MSFileRepositoryTest {
 
-    private static final String PROJECT_NAME = MS_FileSystemTools.getTmpDirectory() + "eMeS_Libraries";
+    private static final String PROJECT_NAME = TestData.TEMP_DIR + "eMeS_Libraries";
     private static final String CATEGORY_NAME1 = "MSFileRepositoryTest";
     private static final String CATEGORY_NAME2 = "MSFileRepositoryTest2";
     private static final String[] ITEM_IDS = {"First.txt", "Second.txt", "Third.txt"};

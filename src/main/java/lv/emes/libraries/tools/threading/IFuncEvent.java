@@ -9,5 +9,6 @@ package lv.emes.libraries.tools.threading;
  */
 @FunctionalInterface
 public interface IFuncEvent {
+
     void execute() throws Exception;
 }
