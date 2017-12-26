@@ -64,7 +64,7 @@ public class MS_MultiLogger implements ILoggingOperations {
                 new MS_FutureEvent()
                         .withThreadName("MS_MultiLogger_" + i)
                         .withActionOnException((e) -> MS_Log4Java.getLogger(MS_MultiLogger.class)
-                                .error("Event logging to repository with index [" + i + "] have been terminated due to an exception", e))
+                                .error("Event logging to repository with index [" + i + "] have been failed due to an exception", e))
                         .withTimeout(5000)
                         .withActionOnInterruptedException(() -> MS_Log4Java.getLogger(MS_MultiLogger.class)
                                 .warn("Event logging to repository with index [" + i + "] have been interrupted"))

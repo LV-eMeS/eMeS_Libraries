@@ -10,21 +10,133 @@ import java.net.URLEncoder;
 import java.util.Map;
 
 /**
+ * Inspired from <a href="http://stackoverflow.com/questions/2938502/sending-post-data-in-android">Stackoverflow</a>.
  * This class can be used while working with HTTP requests.
  * <p>Static methods:
  * <ul>
  * <li>get</li>
  * <li>post</li>
+ * <li>put</li>
+ * <li>delete</li>
  * </ul>
  *
  * @author eMeS
- * @version 1.2.
+ * @version 2.0.
  */
-//http://stackoverflow.com/questions/2938502/sending-post-data-in-android
 public class MS_HttpClient {
 
-    private static String getPostDataString(Map<String, String> params) throws UnsupportedEncodingException {
-        if (params == null) //if no parameters is assigned then there is no need to build parameters as string
+    /**
+     * Does HTTP "GET" request to presented URL <b>requestURL</b> altogether with presented parameters <b>params</b>.
+     *
+     * @param requestURL an URL to HTTP server.
+     * @param params     map of parameters to pass for this URL.
+     * @param connConfig initial configuration of connection.
+     * @return HTTP response from server.
+     */
+    public static MS_HttpRequestResult get(String requestURL, Map<String, String> params, MS_IFuncConnectionConfig connConfig) {
+        URL url;
+        MS_HttpRequestResult res = new MS_HttpRequestResult();
+        try {
+            if (params != null)
+                requestURL += "?" + formParamURL(params);
+            url = new URL(requestURL);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            connConfig.initializeConnection(conn);
+            res.connection = conn;
+            res.reponseCode = conn.getResponseCode();
+            InputStream in = new BufferedInputStream(conn.getInputStream());
+            res.message = MS_BinaryTools.inputToUTF8(in);
+        } catch (IOException e) {
+            res.message = "";
+            res.exception = e;
+        }
+        return res;
+    }
+
+    /**
+     * Does HTTP "GET" request to presented URL <b>requestURL</b> altogether with presented parameters <b>params</b>.
+     *
+     * @param requestURL an URL to HTTP server.
+     * @param params     map of parameters to pass for this URL.
+     * @return HTTP response from server.
+     */
+    public static MS_HttpRequestResult get(String requestURL, Map<String, String> params) {
+        return get(requestURL, params, MS_IFuncConnectionConfigDefaults.DEFAULT_CONFIG_FOR_CONNECTION);
+    }
+
+    /**
+     * Does HTTP "POST" request to presented URL <b>requestURL</b> altogether with presented parameters <b>params</b>.
+     *
+     * @param requestURL an URL to HTTP server.
+     * @param params     map of parameters to pass for this URL.
+     * @param connConfig initial configuration of connection.
+     * @return HTTP response from server.
+     */
+    public static MS_HttpRequestResult post(String requestURL, Map<String, String> params, MS_IFuncConnectionConfig connConfig) {
+        return httpRequest("POST", requestURL, params, connConfig);
+    }
+
+    /**
+     * Does HTTP "POST" request to presented URL <b>requestURL</b> altogether with presented parameters <b>params</b>.
+     *
+     * @param requestURL an URL to HTTP server.
+     * @param params     map of parameters to pass for this URL.
+     * @return HTTP response from server.
+     */
+    public static MS_HttpRequestResult post(String requestURL, Map<String, String> params) {
+        return post(requestURL, params, MS_IFuncConnectionConfigDefaults.DEFAULT_CONFIG_FOR_CONNECTION);
+    }
+
+    /**
+     * Does HTTP "PUT" request to presented URL <b>requestURL</b> altogether with presented parameters <b>params</b>.
+     *
+     * @param requestURL an URL to HTTP server.
+     * @param params     map of parameters to pass for this URL.
+     * @param connConfig initial configuration of connection.
+     * @return HTTP response from server.
+     */
+    public static MS_HttpRequestResult put(String requestURL, Map<String, String> params, MS_IFuncConnectionConfig connConfig) {
+        return httpRequest("PUT", requestURL, params, connConfig);
+    }
+
+    /**
+     * Does HTTP "PUT" request to presented URL <b>requestURL</b> altogether with presented parameters <b>params</b>.
+     *
+     * @param requestURL an URL to HTTP server.
+     * @param params     map of parameters to pass for this URL.
+     * @return HTTP response from server.
+     */
+    public static MS_HttpRequestResult put(String requestURL, Map<String, String> params) {
+        return put(requestURL, params, MS_IFuncConnectionConfigDefaults.DEFAULT_CONFIG_FOR_CONNECTION);
+    }
+
+    /**
+     * Does HTTP "DELETE" request to presented URL <b>requestURL</b> altogether with presented parameters <b>params</b>.
+     *
+     * @param requestURL an URL to HTTP server.
+     * @param params     map of parameters to pass for this URL.
+     * @param connConfig initial configuration of connection.
+     * @return HTTP response from server.
+     */
+    public static MS_HttpRequestResult delete(String requestURL, Map<String, String> params, MS_IFuncConnectionConfig connConfig) {
+        return httpRequest("DELETE", requestURL, params, connConfig);
+    }
+
+    /**
+     * Does HTTP "DELETE" request to presented URL <b>requestURL</b> altogether with presented parameters <b>params</b>.
+     *
+     * @param requestURL an URL to HTTP server.
+     * @param params     map of parameters to pass for this URL.
+     * @return HTTP response from server.
+     */
+    public static MS_HttpRequestResult delete(String requestURL, Map<String, String> params) {
+        return delete(requestURL, params, MS_IFuncConnectionConfigDefaults.DEFAULT_CONFIG_FOR_CONNECTION);
+    }
+
+    //*** PRIVATE METHODS ***
+
+    private static String formParamURL(Map<String, String> params) throws UnsupportedEncodingException {
+        if (params == null) //if no parameters are assigned then there is no need to build parameters as string
             return "";
 
         StringBuilder result = new StringBuilder();
@@ -43,55 +155,8 @@ public class MS_HttpClient {
         return result.toString();
     }
 
-    /**
-     * Does HTTP method "GET" to presented URL <b>requestURL</b> with presented parameters <b>postDataParams</b>.
-     *
-     * @param requestURL     an URL to HTTP server.
-     * @param postDataParams map of parameters to pass for this URL.
-     * @param connConfig     initial configuration of connection.
-     * @return HTTP response from server.
-     */
-    public static MS_RequestResult get(String requestURL, Map<String, String> postDataParams, MS_IFuncConnectionConfig connConfig) {
-        URL url;
-        MS_RequestResult res = new MS_RequestResult();
-        try {
-            if (postDataParams != null)
-                requestURL += "?" + getPostDataString(postDataParams);
-            url = new URL(requestURL);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            connConfig.initializeConnection(conn);
-            res.connection = conn;
-            res.reponseCode = conn.getResponseCode();
-            InputStream in = new BufferedInputStream(conn.getInputStream());
-            res.message = MS_BinaryTools.inputToUTF8(in);
-        } catch (IOException e) {
-            res.message = "";
-            res.exception = e;
-        }
-        return res;
-    }
-
-    /**
-     * Does HTTP method "GET" to presented URL <b>requestURL</b> with presented parameters <b>postDataParams</b>.
-     *
-     * @param requestURL     an URL to HTTP server.
-     * @param postDataParams map of parameters to pass for this URL.
-     * @return HTTP response from server.
-     */
-    public static MS_RequestResult get(String requestURL, Map<String, String> postDataParams) {
-        return get(requestURL, postDataParams, MS_IFuncConnectionConfigDefaults.DEFAULT_CONFIG_FOR_CONNECTION);
-    }
-
-    /**
-     * Does HTTP method "POST" to presented URL <b>requestURL</b> with presented parameters <b>postDataParams</b>.
-     *
-     * @param requestURL     an URL to HTTP server.
-     * @param postDataParams map of parameters to pass for this URL.
-     * @param connConfig     initial configuration of connection.
-     * @return HTTP response from server.
-     */
-    public static MS_RequestResult post(String requestURL, Map<String, String> postDataParams, MS_IFuncConnectionConfig connConfig) {
-        MS_RequestResult res = new MS_RequestResult();
+    private static MS_HttpRequestResult httpRequest(String method, String requestURL, Map<String, String> params, MS_IFuncConnectionConfig connConfig) {
+        MS_HttpRequestResult res = new MS_HttpRequestResult();
         URL url;
         StringBuilder response = new StringBuilder();
 
@@ -100,12 +165,12 @@ public class MS_HttpClient {
 
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             connConfig.initializeConnection(conn);
-            conn.setRequestMethod("POST");
+            conn.setRequestMethod(method);
 
             OutputStream os = conn.getOutputStream();
             BufferedWriter writer = new BufferedWriter(
                     new OutputStreamWriter(os, "UTF-8"));
-            writer.write(getPostDataString(postDataParams));
+            writer.write(formParamURL(params));
 
             writer.flush();
             writer.close();
@@ -132,16 +197,5 @@ public class MS_HttpClient {
         if (res.message == null)
             res.message = response.toString();
         return res;
-    }
-
-    /**
-     * Does HTTP method "POST" to presented URL <b>requestURL</b> with presented parameters <b>postDataParams</b>.
-     *
-     * @param requestURL     an URL to HTTP server.
-     * @param postDataParams map of parameters to pass for this URL.
-     * @return HTTP response from server.
-     */
-    public static MS_RequestResult post(String requestURL, Map<String, String> postDataParams) {
-        return post(requestURL, postDataParams, MS_IFuncConnectionConfigDefaults.DEFAULT_CONFIG_FOR_CONNECTION);
     }
 }

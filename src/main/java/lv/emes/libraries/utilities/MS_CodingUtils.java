@@ -10,12 +10,14 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 /**
- * Module is designed to combine different common programming actions.
+ * Module is designed to combine different common quick coding operations.
  *
- * @version 2.1.
+ * @version 2.2.
  */
 public final class MS_CodingUtils {
 
@@ -204,5 +206,19 @@ public final class MS_CodingUtils {
      */
     public static Object[] getArray(Object... objects) {
         return objects;
+    }
+
+    /**
+     * Creates map with just one entry.
+     * @param key key of entry.
+     * @param value value of entry.
+     * @param <K> type of key.
+     * @param <V> type of value.
+     * @return new map with presented key and value.
+     */
+    public static <K, V> Map<K, V> newSingletonMap(K key, V value) {
+        Map<K, V> res = new HashMap<>();
+        res.put(key, value);
+        return res;
     }
 }

@@ -156,6 +156,7 @@ public class MS_BinaryTools {
      * @return true if file is binary file; false, if not or file not found.
      */
     public static boolean isBinaryFile(String filename) {
+        //FIXME fix mimemagic issue with stack overflowing
         String mimeType = "";
         try {
             mimeType = Magic.getMagicMatch(new File(filename), true).getMimeType();
