@@ -9,26 +9,25 @@ import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static lv.emes.libraries.communication.CommunicationConstants.TESTING_SERVER_HOSTAME;
-import static lv.emes.libraries.communication.CommunicationConstants.TESTING_SERVER_PORT_STRING;
 import static lv.emes.libraries.communication.http.MS_HttpClient.get;
 import static lv.emes.libraries.communication.http.MS_HttpClient.post;
-import static org.junit.Assert.assertEquals;
+import static lv.emes.libraries.testdata.TestData.*;
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertNotEquals;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MSHttpClientTest {
-    private static final String URL_STRING_GET = "http://"+ TESTING_SERVER_HOSTAME+TESTING_SERVER_PORT_STRING +"/Test/test_get.php";
-    private static final String URL_STRING_POST = "http://"+TESTING_SERVER_HOSTAME+TESTING_SERVER_PORT_STRING+"/Test/test_post.php";
-    private static final String URL_STRING_NO_PARAMS = "http://"+TESTING_SERVER_HOSTAME+TESTING_SERVER_PORT_STRING+"/Test/test_no_params.php";
-    private static final String URL_STRING_WRONG_URL = "http://"+ TESTING_SERVER_HOSTAME+TESTING_SERVER_PORT_STRING +"/Test/no_file_is_added.php";
+    private static final String URL_STRING_GET = HTTP_PREFIX + TESTING_SERVER_HOSTAME + TESTING_WEB_SERVER_PORT_STRING + "/Test/test_get.php";
+    private static final String URL_STRING_POST = HTTP_PREFIX + TESTING_SERVER_HOSTAME + TESTING_WEB_SERVER_PORT_STRING + "/Test/test_post.php";
+    private static final String URL_STRING_NO_PARAMS = HTTP_PREFIX + TESTING_SERVER_HOSTAME + TESTING_WEB_SERVER_PORT_STRING + "/Test/test_no_params.php";
+    private static final String URL_STRING_WRONG_URL = HTTP_PREFIX + TESTING_SERVER_HOSTAME + TESTING_WEB_SERVER_PORT_STRING + "/Test/no_file_is_added.php";
     private static final String URL_STRING_UNREACHABLE_HOST = "http://111.111.111.111/Test/no_file_is_added.php";
     private static final String TEST_PARAMETER_NAME = "test";
     private static final String TEST_PARAMETER_VALUE = "vards";
     private static final String TEST_NO_PARAMETER_VALUE = TEST_PARAMETER_NAME;
 
     private static Map<String, String> params;
-    private static MS_RequestResult response;
+    private static MS_HttpRequestResult response;
 
     @BeforeClass
     //Before even start testing do some preparations!

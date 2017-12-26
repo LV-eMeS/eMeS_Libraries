@@ -48,8 +48,8 @@ public class MSFileRepositoryTest {
         repository1.put(ITEM_IDS[0], ITEMS[0]);
         assertEquals(1, repository1.size());
         assertEquals(ITEMS[0], repository1.get(ITEM_IDS[0]));
-        assertTrue(repository1.remove(ITEM_IDS[0]));
-        assertFalse(repository1.remove(ITEM_IDS[0])); //same item cannot be removed again
+        repository1.remove(ITEM_IDS[0]);
+        repository1.remove(ITEM_IDS[0]); //same item cannot be removed again
         assertEquals(0, repository1.size());
     }
 
@@ -100,7 +100,7 @@ public class MSFileRepositoryTest {
         }
 
         @Override
-        protected void add(String identifier, String item) {
+        protected void doAdd(String identifier, String item) {
             MS_TextFile file = new MS_TextFile(getPathToRepository() + identifier);
             file.writeln(item, true);
         }

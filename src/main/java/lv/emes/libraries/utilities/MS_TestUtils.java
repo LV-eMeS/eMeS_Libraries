@@ -1,5 +1,6 @@
 package lv.emes.libraries.utilities;
 
+import lv.emes.libraries.tools.MS_EqualityCheckBuilder;
 import org.mockito.Mockito;
 import org.mockito.stubbing.OngoingStubbing;
 
@@ -153,6 +154,7 @@ public class MS_TestUtils {
         public CheckedException(String msg) {
             super(msg);
         }
+
         public CheckedException(Throwable cause) {
             super(cause);
         }
@@ -160,27 +162,55 @@ public class MS_TestUtils {
 
     public static class UnCheckedException1 extends RuntimeException {
         private static final long serialVersionUID = 1886903532036673011L;
+
         public UnCheckedException1() {
             super();
         }
+
         public UnCheckedException1(String msg) {
             super(msg);
         }
+
         public UnCheckedException1(Throwable cause) {
             super(cause);
         }
     }
 
+    /**
+     * Runtime exception with custom equals method that checks for message equality and cause in 1 further level of deepness.
+     */
     public static class UnCheckedException2 extends RuntimeException {
-        private static final long serialVersionUID = 1886903532036673012L;
+        static final long serialVersionUID = 1886903532036673012L;
+
         public UnCheckedException2() {
             super();
         }
+
         public UnCheckedException2(String msg) {
             super(msg);
         }
+
         public UnCheckedException2(Throwable cause) {
             super(cause);
+        }
+
+        @Override
+        public boolean equals(Object another) {
+            return this == another || another != null
+                    && getClass() == another.getClass()
+                    && new MS_EqualityCheckBuilder()
+                    .append(this,
+                            another, (thi, ano) -> {
+                                UnCheckedException2 anoth = (UnCheckedException2) ano;
+                                return new MS_EqualityCheckBuilder()
+                                        .append(thi.getMessage(), anoth.getMessage())
+                                        .append(thi.getCause(), anoth.getCause(),
+                                                (thiCause, anoCause) -> new MS_EqualityCheckBuilder()
+                                                        .append(thiCause.getMessage(), anoCause.getMessage())
+                                                        .areEqual())
+                                        .areEqual();
+                            }).areEqual();
+
         }
     }
 }

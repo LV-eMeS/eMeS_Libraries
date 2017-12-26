@@ -12,6 +12,7 @@ import java.util.Map;
  * <p>Public methods:
  * <ul>
  * <li>init</li>
+ * <li>add</li>
  * <li>put</li>
  * <li>remove</li>
  * <li>get</li>
@@ -29,7 +30,7 @@ import java.util.Map;
  * <ul>
  * <li>isInitialized</li>
  * <li>doInitialize</li>
- * <li>add</li>
+ * <li>doAdd</li>
  * <li>doRemove</li>
  * <li>doFind</li>
  * <li>doFindAll</li>
@@ -42,17 +43,20 @@ import java.util.Map;
  * <li>getRepositoryCategoryName</li>
  * </ul>
  *
+ * @param <T>  type of items.
+ * @param <ID> type of item identifiers.
  * @author eMeS
- * @version 1.1.
+ * @version 2.0.
  */
-public abstract class MS_Repository<T, ID> implements IStorageOperations<T, ID>, IBaseListWithItems<T, ID> {
+public abstract class MS_Repository<T, ID> implements IRepositoryOperations<T, ID>, IBaseListWithItems<T, ID> {
 
     private String repositoryRoot;
     private String repositoryCategoryName;
-
     private boolean flagForLoopBreaking;
 
     /**
+     * Constructs instance of repository without initialization.
+     *
      * @param repositoryRoot         root location of repository.
      * @param repositoryCategoryName specific category which helps to located this repository in repository root.
      */
@@ -61,6 +65,8 @@ public abstract class MS_Repository<T, ID> implements IStorageOperations<T, ID>,
     }
 
     /**
+     * Constructs instance of repository and initializes it if <b>autoInitialize</b> is set to true.
+     *
      * @param repositoryRoot         root location of repository.
      * @param repositoryCategoryName specific category which helps to located this repository in repository root.
      * @param autoInitialize         if true then repository will be initialized.
@@ -88,14 +94,16 @@ public abstract class MS_Repository<T, ID> implements IStorageOperations<T, ID>,
 
     /**
      * Adds an item to repository.
-     * This method is used only in <b>put</b> method and shouldn't be used anywhere else.
-     * In <b>put</b> check for existing item with such <b>identifier</b> is made and in case
-     * item exists, it is removed first before adding new one.
+     * This method is used only in <b>add</b> and <b>put</b> methods and shouldn't be used anywhere else.
+     * <p>In <b>add</b> check for existing item with such <b>identifier</b> is made and in case
+     * item exists, do nothing!
+     * <p>In <b>put</b> check for existing item with such <b>identifier</b> is made and in case
+     * item exists, remove first before adding new one!
      *
      * @param identifier an item identifier.
      * @param item       an item that will be added to repository.
      */
-    protected abstract void add(ID identifier, T item);
+    protected abstract void doAdd(ID identifier, T item);
 
     /**
      * Removes / deletes item from the repository and returns its value.
@@ -147,7 +155,15 @@ public abstract class MS_Repository<T, ID> implements IStorageOperations<T, ID>,
     }
 
     @Override
-    public final T put(ID identifier, T item) {
+    public void add(ID identifier, T item) throws UnsupportedOperationException, RepositoryDataExchangeException {
+        checkAndThrowNotInitializedException();
+        T previous = doFind(identifier);
+        if (previous == null)
+        doAdd(identifier, item);
+    }
+
+    @Override
+    public T put(ID identifier, T item) throws UnsupportedOperationException, RepositoryDataExchangeException {
         checkAndThrowNotInitializedException();
         T previous = doFind(identifier);
         if (previous != null)
@@ -157,41 +173,38 @@ public abstract class MS_Repository<T, ID> implements IStorageOperations<T, ID>,
     }
 
     @Override
-    public final boolean remove(ID identifier) {
+    public void remove(ID identifier) throws UnsupportedOperationException, RepositoryDataExchangeException {
         checkAndThrowNotInitializedException();
-        if (doFind(identifier) == null)
-            return false;
-        else {
+        if (doFind(identifier) != null) {
             doRemove(identifier);
-            return true;
         }
     }
 
     @Override
-    public final T find(ID identifier) {
+    public T find(ID identifier) throws UnsupportedOperationException, RepositoryDataExchangeException {
         checkAndThrowNotInitializedException();
         return doFind(identifier);
     }
 
-    public final Map<ID, T> findAll() {
+    public Map<ID, T> findAll() throws UnsupportedOperationException, RepositoryDataExchangeException {
         checkAndThrowNotInitializedException();
         return doFindAll();
     }
 
     @Override
-    public final void removeAll() {
+    public void removeAll() throws UnsupportedOperationException, RepositoryDataExchangeException {
         checkAndThrowNotInitializedException();
         doRemoveAll();
     }
 
     @Override
-    public final int size() {
+    public int size() {
         checkAndThrowNotInitializedException();
         return doGetSize();
     }
 
     @Override
-    public final void forEachItem(IFuncForEachItemLoopAction<T, ID> action) {
+    public void forEachItem(IFuncForEachItemLoopAction<T, ID> action) {
         checkAndThrowNotInitializedException();
         Map<ID, T> allTheItems = findAll();
         if (allTheItems != null) {
@@ -204,18 +217,29 @@ public abstract class MS_Repository<T, ID> implements IStorageOperations<T, ID>,
     }
 
     @Override
-    public final T get(ID identifier) {
+    public T get(ID identifier) {
         checkAndThrowNotInitializedException();
-        return this.doFind(identifier);
+        return doFind(identifier);
     }
 
+    /**
+     * <u><b>Unsupported for any of repositories.</b></u>
+     * @param startFromIndex ignored.
+     * @param action ignored.
+     */
     @Override
-    public final void forEachItem(ID startFromIndex, IFuncForEachItemLoopAction<T, ID> action) {
+    public void forEachItem(ID startFromIndex, IFuncForEachItemLoopAction<T, ID> action) {
         throwLoopingException();
     }
 
+    /**
+     * <u><b>Unsupported for any of repositories.</b></u>
+     * @param startFromIndex ignored.
+     * @param endIndex ignored.
+     * @param action ignored.
+     */
     @Override
-    public final void forEachItem(ID startFromIndex, ID endIndex, IFuncForEachItemLoopAction<T, ID> action) {
+    public void forEachItem(ID startFromIndex, ID endIndex, IFuncForEachItemLoopAction<T, ID> action) {
         throwLoopingException();
     }
 
@@ -253,7 +277,6 @@ public abstract class MS_Repository<T, ID> implements IStorageOperations<T, ID>,
         if (!isInitialized()) {
             throw new UnsupportedOperationException("Cannot perform operation. Repository must be initialized first.");
         }
-
     }
 
     // *** Getters and setters

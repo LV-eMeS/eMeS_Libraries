@@ -1,12 +1,12 @@
 package lv.emes.libraries.tools;
 
+import lv.emes.libraries.utilities.MS_TestUtils;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * Unit test for MS_EqualityCheckBuilder utility.
@@ -152,6 +152,44 @@ public class MSEqualityCheckBuilderTest {
                 .append(new boolean[]{}, new boolean[]{})
         ;
         assertTrue(builder.areEqual());
+    }
+
+    @Test
+    public void testCutomExceptionEqualityWorks() {
+        Exception exc1;
+        Exception exc2;
+
+        exc1 = new MS_TestUtils.UnCheckedException2();
+        exc2 = new MS_TestUtils.UnCheckedException2();
+        assertEquals(exc1, exc2);
+
+        exc1 = new MS_TestUtils.UnCheckedException2("");
+        exc2 = new MS_TestUtils.UnCheckedException2();
+        assertNotEquals(exc1, exc2);
+
+        exc1 = new MS_TestUtils.UnCheckedException2();
+        exc2 = new MS_TestUtils.UnCheckedException2((String) null);
+        assertEquals(exc1, exc2);
+
+        exc1 = new MS_TestUtils.UnCheckedException2();
+        exc2 = new MS_TestUtils.UnCheckedException1();
+        assertNotEquals(exc1, exc2);
+
+        exc1 = new MS_TestUtils.UnCheckedException2(new RuntimeException());
+        exc2 = new MS_TestUtils.UnCheckedException2(new RuntimeException());
+        assertEquals(exc1, exc2);
+
+        exc1 = new MS_TestUtils.UnCheckedException2(new RuntimeException());
+        exc2 = new MS_TestUtils.UnCheckedException2();
+        assertNotEquals(exc1, exc2);
+
+        exc1 = new MS_TestUtils.UnCheckedException2(new RuntimeException("test"));
+        exc2 = new MS_TestUtils.UnCheckedException2(new RuntimeException("test"));
+        assertEquals(exc1, exc2);
+
+        exc1 = new MS_TestUtils.UnCheckedException2(new RuntimeException("test"));
+        exc2 = new MS_TestUtils.UnCheckedException2(new RuntimeException(""));
+        assertNotEquals(exc1, exc2);
     }
 
     private MS_EqualityCheckBuilder buildLists(List<Integer> integers, List<Long> longs, boolean mandatoryEquality) {

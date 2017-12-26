@@ -1,5 +1,7 @@
 package lv.emes.libraries.tools.logging;
 
+import lv.emes.libraries.utilities.MS_CodingUtils;
+
 import java.time.ZonedDateTime;
 
 /**
@@ -79,7 +81,11 @@ public class MS_LoggingEvent {
      * @return reference to logging event itself.
      */
     public MS_LoggingEvent withTime(ZonedDateTime time) {
-        this.time = time;
+        if (time == null)
+            time = ZonedDateTime.now();
+        //to make this time more like ID by making it more unique from another times generated in same way
+        //this doesn't change actual value, because ZonedDateTime.now() precision is till milliseconds
+        this.time = time.plusNanos(MS_CodingUtils.randomNumber(1, 4444));
         return this;
     }
 
@@ -118,5 +124,37 @@ public class MS_LoggingEvent {
     public MS_LoggingEvent withError(Exception error) {
         this.error = error;
         return this;
+    }
+
+    @Override
+    public String toString() {
+        return "MS_LoggingEvent{" +
+                "time=" + time +
+                ", type=" + type +
+                ", message='" + message + '\'' +
+                ", error=" + error +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        MS_LoggingEvent that = (MS_LoggingEvent) o;
+
+        if (time != null ? !time.equals(that.time) : that.time != null) return false;
+        if (type != that.type) return false;
+        if (message != null ? !message.equals(that.message) : that.message != null) return false;
+        return error != null ? error.equals(that.error) : that.error == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = time != null ? time.hashCode() : 0;
+        result = 31 * result + (type != null ? type.hashCode() : 0);
+        result = 31 * result + (message != null ? message.hashCode() : 0);
+        result = 31 * result + (error != null ? error.hashCode() : 0);
+        return result;
     }
 }

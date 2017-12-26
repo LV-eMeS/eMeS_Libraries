@@ -1,6 +1,6 @@
 package lv.emes.libraries.communication.db;
 
-import lv.emes.libraries.communication.CommunicationConstants;
+import lv.emes.libraries.testdata.TestData;
 import lv.emes.libraries.tools.lists.MS_List;
 import org.junit.*;
 import org.junit.runners.MethodSorters;
@@ -19,7 +19,7 @@ public class MSMySQLDatabaseTest {
     @BeforeClass
     //Before even start testing do some preparations!
     public static void initTestPreConditions() throws SQLException, ClassNotFoundException {
-        db.hostname = CommunicationConstants.TESTING_SERVER_HOSTAME;
+        db.hostname = TestData.TESTING_SERVER_HOSTAME;
         db.dbName = "test";
         db.userName = "test_user";
         db.password = "test_user";

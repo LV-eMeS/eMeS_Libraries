@@ -87,8 +87,7 @@ public class MSRepositoryTest {
         new MS_EqualityCheckBuilder(true).append(environment, repository1, REPOSITORY_DATA_COMPARE);
 
         //DATA till here: [ITEM_IDS,ITEMS] = {[0,1,2][3,3,3]}
-        boolean isRemoved = repository1.remove(ITEM_IDS[1]);
-        assertTrue(isRemoved);
+        repository1.remove(ITEM_IDS[1]);
         assertNull(repository1.get(ITEM_IDS[1])); //item with such ID cannot be found anymore
         assertEquals(2, repository1.length());
         assertEquals(2, environment.count());
@@ -165,7 +164,7 @@ public class MSRepositoryTest {
         }
 
         @Override
-        public void add(String identifier, String item) {
+        public void doAdd(String identifier, String item) {
             environment.add(itemToString(identifier, item));
         }
 

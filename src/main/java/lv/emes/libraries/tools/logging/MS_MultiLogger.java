@@ -60,16 +60,21 @@ public class MS_MultiLogger implements ILoggingOperations {
 
     private void logEventMessageToAllRepos(String message, Exception error, LoggingEventTypeEnum eventType) {
         ZonedDateTime timeNow = ZonedDateTime.now();
+        MS_LoggingEvent event = new MS_LoggingEvent()
+                .withTime(timeNow)
+                .withType(eventType)
+                .withMessage(message)
+                .withError(error);
+
         config.getRepositories().forEachItem((repo, i) ->
                 new MS_FutureEvent()
                         .withThreadName("MS_MultiLogger_" + i)
                         .withActionOnException((e) -> MS_Log4Java.getLogger(MS_MultiLogger.class)
-                                .error("Event logging to repository with index [" + i + "] have been terminated due to an exception", e))
+                                .error("Event logging to repository with index [" + i + "] have been failed due to an exception", e))
                         .withTimeout(5000)
                         .withActionOnInterruptedException(() -> MS_Log4Java.getLogger(MS_MultiLogger.class)
                                 .warn("Event logging to repository with index [" + i + "] have been interrupted"))
-                        .withAction(() -> repo.logEvent(new MS_LoggingEvent().withTime(timeNow)
-                                .withType(eventType).withMessage(message).withError(error)))
+                        .withAction(() -> repo.logEvent(event))
                         .schedule()
         );
     }
