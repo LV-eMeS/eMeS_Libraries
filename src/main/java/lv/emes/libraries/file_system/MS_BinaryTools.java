@@ -1,6 +1,6 @@
 package lv.emes.libraries.file_system;
 
-import net.sf.jmimemagic.Magic;
+import lv.emes.libraries.patches.jmimemagic.MimeMagic;
 import net.sf.jmimemagic.MagicException;
 import net.sf.jmimemagic.MagicMatchNotFoundException;
 import net.sf.jmimemagic.MagicParseException;
@@ -12,9 +12,9 @@ import java.io.*;
 /**
  * Module consists of methods for binary file I/O.
  * It is mainly used to perform DB operations with binary file exchange.
- * It can also be used in various cases while doing file exchange.
+ * It can also be used in various cases while doing file / stream data exchange.
  *
- * @version 1.7.
+ * @version 2.0.
  */
 public class MS_BinaryTools {
     /**
@@ -42,8 +42,7 @@ public class MS_BinaryTools {
      */
     public static FileInputStream readFile(String aFileName) throws FileNotFoundException {
         File file = new File(aFileName);
-        FileInputStream inputStream = new FileInputStream(file);
-        return inputStream;
+        return new FileInputStream(file);
     }
 
     /**
@@ -151,17 +150,27 @@ public class MS_BinaryTools {
 
 
     /**
-     * Checks whether file with file name <b>filename</b> is binary file.
+     * Checks whether file with file name <b>filename</b> is binary file (text file is not considered as binary file).
+     * Basically this method is checking if file MIME type is not a text.
+     * <p><u>Warning</u>: This method doesn't support archive or video file checking.
+     * When ran against such files it will delay while reading file content
+     * and in any case it will end up with {@link MagicMatchNotFoundException}.
+     *
      * @param filename path to file.
-     * @return true if file is binary file; false, if not or file not found.
+     * @return true if file is binary file; false, if not or file not found, or it's impossible to detect,
+     * whether it is or not a binary file.
+     * @throws MagicMatchNotFoundException if file exists, but jMimeMagic cannot determine actual MIME type of file
+     *                                     or file is too heavy to process.
      */
-    public static boolean isBinaryFile(String filename) {
+    public static boolean isBinaryFile(String filename) throws MagicMatchNotFoundException {
         String mimeType = "";
         try {
-            mimeType = Magic.getMagicMatch(new File(filename), true).getMimeType();
-        } catch (MagicMatchNotFoundException | MagicException | MagicParseException e) {
+            mimeType = MimeMagic.getMagicMatch(new File(filename), true).getMimeType();
+            return !mimeType.startsWith("text");
+        } catch (MagicException | MagicParseException e) {
             return false;
+        } catch (OutOfMemoryError e) {
+            throw new MagicMatchNotFoundException("Magic match not found due to lack heap space");
         }
-        return !mimeType.startsWith("text");
     }
 }

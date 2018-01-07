@@ -1,10 +1,12 @@
 package lv.emes.libraries.communication.tcp_ip.server;
 
+import lv.emes.libraries.communication.MS_TakenPorts;
 import lv.emes.libraries.communication.tcp_ip.MS_ClientServerConstants;
 import lv.emes.libraries.communication.tcp_ip.client.MS_ClientCommand;
 import lv.emes.libraries.communication.tcp_ip.client.MS_TcpIPClient;
 import lv.emes.libraries.file_system.MS_BinaryTools;
 import lv.emes.libraries.file_system.MS_FileSystemTools;
+import lv.emes.libraries.testdata.TestData;
 import lv.emes.libraries.utilities.MS_CodingUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -20,7 +22,8 @@ import static org.junit.Assert.assertTrue;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MSTpcIPServerTest {
-    private static final int PORT = 12343;
+
+    private static final int PORT = MS_TakenPorts._DEFAULT_PORT_FOR_TESTING;
     private static final int DEFAULT_SLEEP_TIME = 150;
     private static MS_TcpIPServer server;
     private static MS_TcpIPClient client1;
@@ -38,9 +41,9 @@ public class MSTpcIPServerTest {
     private static final String TEXT4 = "I am the mighty server!";
     private static final String TEXT5 = "";
 
-    private static final String BINARY_SOURCE_FILE = "test_pic.png";
-    private static final String BINARY_DEST_FILE_CLIENT = "src/test/resources/test_pic_back_from_server.png";
-    private static final String BINARY_DEST_FILE_SERVER = "src/test/resources/test_pic_back.png";
+    private static final String BINARY_SOURCE_FILE = TestData.TEST_FILE_IMAGE;
+    private static final String BINARY_DEST_FILE_CLIENT = TestData.TEST_RESOURCES_DIR + "test_pic_back_from_server.png";
+    private static final String BINARY_DEST_FILE_SERVER = TestData.TEST_RESOURCES_DIR + "test_pic_back.png";
 
     private int getServerConnectionCount() {
         return server.getClients().size();

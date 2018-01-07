@@ -18,7 +18,9 @@ eMeS libraries Version 2.1.0
 * Database JDBC wrapper upgrades.
 * MS_Scheduler for periodic actions.
 * MS_MultiLogger to log events to different repositories simultaneously.
+* Remote logging repository to log events to a remote server.
 * CSV file reader functionality.
+* In MS_BinaryTools isBinaryFile method fix regarding MIME type checks with jMimeMagic utility.
 ========================================================================================================
 eMeS libraries Version 2.0.0
 ========================================================================================================
