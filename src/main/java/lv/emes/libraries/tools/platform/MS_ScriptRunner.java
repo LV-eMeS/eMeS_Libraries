@@ -237,7 +237,7 @@ public class MS_ScriptRunner {
         secondaryCmd = cmdCode;
     }
 
-    private void runImplementationPrimary(Integer cmdNumber) throws IncompatibleOSException {
+    private void runImplementationPrimary(Integer cmdNumber) throws MS_IncompatibleOSException {
         if (cmdNumber == null) {
             commandNotFoundTryKeyPressing = true;
             return;

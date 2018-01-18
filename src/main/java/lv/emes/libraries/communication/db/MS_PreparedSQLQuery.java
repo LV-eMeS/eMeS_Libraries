@@ -4,37 +4,22 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.math.BigDecimal;
 import java.net.URL;
-import java.sql.Array;
-import java.sql.Blob;
-import java.sql.Clob;
-import java.sql.Connection;
-import java.sql.Date;
-import java.sql.NClob;
-import java.sql.ParameterMetaData;
-import java.sql.PreparedStatement;
-import java.sql.Ref;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.RowId;
-import java.sql.SQLException;
-import java.sql.SQLWarning;
-import java.sql.SQLXML;
-import java.sql.Time;
-import java.sql.Timestamp;
+import java.sql.*;
 import java.util.Calendar;
 
 /** 
- * This is a mock prepared statement that is commonly used together with MS_JDBCDatabase.
+ * This is a wrapped prepared statement that is commonly used together with MS_AbstractJDBCDatabase.
  * <p>Public methods are just like java.sql.PreparedStatement.
- * <p>Properties:
+ * <p>Protected properties:
  * <ul>
  * <li>onSQLException</li>
  * </ul>
- * @version 1.1.
+ * @version 2.0.
  * @author eMeS
- * @see MS_JDBCDatabase
+ * @see MS_AbstractJDBCDatabase
  */
 public class MS_PreparedSQLQuery implements PreparedStatement {
+
 	/**
 	 * Set this to handle this kind of error when trying to do DB operations such as:<br>
 	 * * Trying to communicate with DB which connection is lost;<br>
@@ -42,7 +27,7 @@ public class MS_PreparedSQLQuery implements PreparedStatement {
 	 * * If Trying to set wrong parameter of statement.
 	 * <p><code>(exception) -&gt; {error handling methods};</code>
 	 */
-	public IFuncOnSQLException onSQLException = (exception) -> {};
+	IFuncOnSQLException onSQLException = (exception) -> {};
 	
 	private PreparedStatement actualStatement;
 

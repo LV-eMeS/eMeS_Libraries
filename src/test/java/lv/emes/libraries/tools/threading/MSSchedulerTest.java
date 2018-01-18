@@ -52,13 +52,13 @@ public class MSSchedulerTest {
         assertEquals(2, executionTimes);
     }
 
-    @Test(expected = MS_TestUtils.CheckedException.class)
+    @Test(expected = MS_TestUtils.MS_CheckedException.class)
     public void test02ActionOnException() throws Exception {
         MS_Scheduler scheduler = new MS_Scheduler()
                 .withTriggerTime(timeFuture)
                 .withAction((time) -> {
                     executionTimes++;
-                    throw new MS_TestUtils.CheckedException("Exception in scheduler's action");
+                    throw new MS_TestUtils.MS_CheckedException("Exception in scheduler's action");
                 })
                 .withActionOnException((e, time) -> occurredException = e)
                 .schedule();
@@ -133,7 +133,7 @@ public class MSSchedulerTest {
 
         scheduler.waitFor(DEFAULT_SLEEPING_TIME);
         if (timeCheck == null) {
-            throw new MS_TestUtils.UnCheckedException1("Event didn't manage to execute in default sleeping time.");
+            throw new MS_TestUtils.MS_UnCheckedException1("Event didn't manage to execute in default sleeping time.");
         } else {
             long timeDifference = timeCheck.toInstant().toEpochMilli() - timeFuture.toInstant().toEpochMilli();
             assertTrue(String.format("Execution time (%d milliseconds) slightly differs from configured",

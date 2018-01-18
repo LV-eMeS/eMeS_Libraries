@@ -1,5 +1,6 @@
 package lv.emes.libraries.utilities;
 
+import lv.emes.libraries.communication.db.MS_ResultSetExtractingUtils;
 import lv.emes.libraries.communication.db.MS_TableRecord;
 import lv.emes.libraries.tools.lists.MS_List;
 import org.junit.Test;
@@ -19,7 +20,7 @@ import static org.junit.Assert.assertNotNull;
 public class MSTestUtilsTest {
 
     @Test
-    public void testResultSetMocking() throws SQLException {
+    public void testResultSetMocking() throws Exception {
         ResultSet rs;
         Map<String, Object[]> table = new HashMap<>();
 
@@ -35,7 +36,7 @@ public class MSTestUtilsTest {
 
         //Mock result set so that it will return 1 record
         rs = MS_TestUtils.mockResultSetForTable(table, 1);
-        TableToMock extractedObject = new TableToMock(rs);
+        TableToMock extractedObject = MS_ResultSetExtractingUtils.extractRecord(rs, TableToMock.class);
 
         assertNotNull(extractedObject);
         assertEquals(firstRecord, extractedObject);
@@ -43,7 +44,7 @@ public class MSTestUtilsTest {
         //Mock result set so that it will return 3 records
         MS_List<TableToMock> extractedObjects;
         rs = MS_TestUtils.mockResultSetForTable(table, 3);
-        extractedObjects = TableToMock.newTable(rs, TableToMock.class);
+        extractedObjects = MS_ResultSetExtractingUtils.extractList(rs, TableToMock.class);
         assertEquals(3, extractedObjects.count());
         assertEquals(firstRecord, extractedObjects.get(0));
         assertEquals(secondRecord, extractedObjects.get(1));
@@ -51,12 +52,12 @@ public class MSTestUtilsTest {
 
         //test fourth record that has only one field
         rs = MS_TestUtils.mockResultSetForTable(table, 4);
-        extractedObjects = TableToMock.newTable(rs, TableToMock.class);
+        extractedObjects = MS_ResultSetExtractingUtils.extractList(rs, TableToMock.class);
         assertEquals(4, extractedObjects.count());
         assertEquals(fourthRecord.name, extractedObjects.get(3).name);
     }
 
-    public static class TableToMock extends MS_TableRecord {
+    public static class TableToMock implements MS_TableRecord {
         String name;
         String surname;
         int age;
@@ -76,15 +77,8 @@ public class MSTestUtilsTest {
             return this;
         }
 
-        public TableToMock() {
-        }
-
-        public TableToMock(ResultSet rs) {
-            super(rs);
-        }
-
         @Override
-        protected void initColumns(ResultSet rs) throws SQLException {
+        public void initColumns(ResultSet rs) throws SQLException {
             name = rs.getString("name");
             surname = rs.getString("surname");
             age = rs.getInt("age");

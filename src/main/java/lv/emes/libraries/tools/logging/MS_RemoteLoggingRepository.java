@@ -5,7 +5,7 @@ import com.cedarsoftware.util.io.JsonWriter;
 import lv.emes.libraries.communication.http.MS_HttpClient;
 import lv.emes.libraries.communication.http.MS_HttpRequestResult;
 import lv.emes.libraries.tools.lists.MS_Repository;
-import lv.emes.libraries.tools.lists.RepositoryDataExchangeException;
+import lv.emes.libraries.tools.lists.MS_RepositoryDataExchangeException;
 import lv.emes.libraries.utilities.MS_CodingUtils;
 
 import java.time.ZonedDateTime;
@@ -61,7 +61,7 @@ public class MS_RemoteLoggingRepository extends MS_Repository<MS_LoggingEvent, Z
         if (httpResult.getReponseCode() == 400) { //this is the case when server responds with status
             MS_Log4Java.getLogger(MS_RemoteLoggingRepository.class)
                     .error("Serialization error while performing add(" + identifier + ", item). Item data:\n" + item, httpResult.getException());
-            throw new RepositoryDataExchangeException("Serialization error happened while trying to log new event");
+            throw new MS_RepositoryDataExchangeException("Serialization error happened while trying to log new event");
         }
 
         checkResponseAndThrowExceptionIfNeeded(httpResult, "Log new event operation failed with HTTP status code " +
@@ -82,7 +82,7 @@ public class MS_RemoteLoggingRepository extends MS_Repository<MS_LoggingEvent, Z
             String message = "Deserialization error while trying to convert found logged events in JSON format to Java objects.";
             String detailedMessage = " JSON:\n" + httpResult.getMessage();
             MS_Log4Java.getLogger(MS_RemoteLoggingRepository.class).error(message + detailedMessage, e);
-            throw new RepositoryDataExchangeException(message, e);
+            throw new MS_RepositoryDataExchangeException(message, e);
         }
     }
 
@@ -105,7 +105,7 @@ public class MS_RemoteLoggingRepository extends MS_Repository<MS_LoggingEvent, Z
     }
 
     @Override
-    public MS_LoggingEvent find(ZonedDateTime identifier) throws UnsupportedOperationException, RepositoryDataExchangeException {
+    public MS_LoggingEvent find(ZonedDateTime identifier) throws UnsupportedOperationException, MS_RepositoryDataExchangeException {
         throw new UnsupportedOperationException("Finding single event operation is not supported for Remote logging repository");
     }
 
@@ -116,7 +116,7 @@ public class MS_RemoteLoggingRepository extends MS_Repository<MS_LoggingEvent, Z
     }
 
     @Override
-    public void remove(ZonedDateTime identifier) throws UnsupportedOperationException, RepositoryDataExchangeException {
+    public void remove(ZonedDateTime identifier) throws UnsupportedOperationException, MS_RepositoryDataExchangeException {
         throw new UnsupportedOperationException("Removing single event operation is not supported for Remote logging repository");
     }
 
@@ -171,7 +171,7 @@ public class MS_RemoteLoggingRepository extends MS_Repository<MS_LoggingEvent, Z
         if (httpResult.getReponseCode() != 200) {
             MS_Log4Java.getLogger(MS_RemoteLoggingRepository.class)
                     .error(message + ". Message:\n" + httpResult.getMessage(), httpResult.getException());
-            throw new RepositoryDataExchangeException(message, httpResult.getException());
+            throw new MS_RepositoryDataExchangeException(message, httpResult.getException());
         }
     }
 }

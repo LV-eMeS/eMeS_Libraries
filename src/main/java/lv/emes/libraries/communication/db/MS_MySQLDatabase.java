@@ -1,5 +1,6 @@
 package lv.emes.libraries.communication.db;
 
+import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
@@ -9,28 +10,35 @@ import java.sql.SQLException;
  * @author eMeS
  * @version 2.0.
  */
-public class MS_MySQLDatabase extends MS_JDBCDatabase {
+public class MS_MySQLDatabase extends MS_AbstractJDBCDatabase {
+
     public static final int _DEFAULT_PORT = 3306;
 
+    public MS_MySQLDatabase(MS_DBParameters connParams) {
+        super(connParams);
+    }
+
     @Override
-    public void connect() throws ClassNotFoundException, SQLException {
-        if (this.isConnectionInitializationNeeded()) {
-            if (port == 0) port = _DEFAULT_PORT;
+    public void initialize() throws ClassNotFoundException, NullPointerException {
+        super.initialize();
+        if (connParams.getPort() == 0)
+            connParams.withPort(_DEFAULT_PORT);
 
-            String connStringDatabaseName;
-            if (dbName.equals("")) {
-                connStringDatabaseName = "";
-            } else {
-                //if path to host is defined then it will be written right after hostname
-                connStringDatabaseName = "/" + dbName;
-            }
-
-            Class.forName("com.mysql.jdbc.Driver");
-            // Create connection
-            connectionString = String.format("jdbc:mysql://%s:%d%s", this.hostname, this.port, connStringDatabaseName);
-            conn = DriverManager.getConnection(this.connectionString, this.userName, this.password);
-            conn.setAutoCommit(false);
+        String connStringDatabaseName;
+        if (connParams.getDbName().equals("")) {
+            connStringDatabaseName = "";
+        } else {
+            //if path to host is defined then it will be written right after hostname
+            connStringDatabaseName = "/" + connParams.getDbName();
         }
-            conn = DriverManager.getConnection(this.connectionString, this.userName, this.password);
+
+        Class.forName("com.mysql.jdbc.Driver");
+        // Create connection
+        connectionString = String.format("jdbc:mysql://%s:%d%s", connParams.getHostname(), connParams.getPort(), connStringDatabaseName);
+    }
+
+    @Override
+    protected Connection getConnectionFromDriver() throws SQLException {
+        return DriverManager.getConnection(this.connectionString, connParams.getUserName(), connParams.getPassword());
     }
 }

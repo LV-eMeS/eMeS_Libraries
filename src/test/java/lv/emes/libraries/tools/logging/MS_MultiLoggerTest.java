@@ -105,7 +105,7 @@ public class MS_MultiLoggerTest {
     public void test03Error() {
         String errorEvent = "Testing error";
         String errorMessage = "Checked exception error message";
-        logger.error(errorEvent, new MS_TestUtils.CheckedException(errorMessage));
+        logger.error(errorEvent, new MS_TestUtils.MS_CheckedException(errorMessage));
         //here we check only in-memory loggers, so it will go faster
         MS_CodingUtils.sleep(TIME_FOR_LOGGERS_TO_EXECUTE / 2);
 
@@ -115,8 +115,8 @@ public class MS_MultiLoggerTest {
         assertEquals(LoggingEventTypeEnum.ERROR, loggedEvent2.getType());
         assertEquals(errorEvent, loggedEvent1.getMessage());
         assertEquals(errorEvent, loggedEvent2.getMessage());
-        assertEquals(MS_TestUtils.CheckedException.class, loggedEvent1.getError().getClass());
-        assertEquals(MS_TestUtils.CheckedException.class, loggedEvent2.getError().getClass());
+        assertEquals(MS_TestUtils.MS_CheckedException.class, loggedEvent1.getError().getClass());
+        assertEquals(MS_TestUtils.MS_CheckedException.class, loggedEvent2.getError().getClass());
         assertEquals(errorMessage, loggedEvent1.getError().getMessage());
         assertEquals(errorMessage, loggedEvent2.getError().getMessage());
         //check if time is equal for both loggers, cause time should be taken

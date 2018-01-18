@@ -155,7 +155,7 @@ public abstract class MS_Repository<T, ID> implements IRepositoryOperations<T, I
     }
 
     @Override
-    public void add(ID identifier, T item) throws UnsupportedOperationException, RepositoryDataExchangeException {
+    public void add(ID identifier, T item) throws UnsupportedOperationException, MS_RepositoryDataExchangeException {
         checkAndThrowNotInitializedException();
         T previous = doFind(identifier);
         if (previous == null)
@@ -163,7 +163,7 @@ public abstract class MS_Repository<T, ID> implements IRepositoryOperations<T, I
     }
 
     @Override
-    public T put(ID identifier, T item) throws UnsupportedOperationException, RepositoryDataExchangeException {
+    public T put(ID identifier, T item) throws UnsupportedOperationException, MS_RepositoryDataExchangeException {
         checkAndThrowNotInitializedException();
         T previous = doFind(identifier);
         if (previous != null)
@@ -173,7 +173,7 @@ public abstract class MS_Repository<T, ID> implements IRepositoryOperations<T, I
     }
 
     @Override
-    public void remove(ID identifier) throws UnsupportedOperationException, RepositoryDataExchangeException {
+    public void remove(ID identifier) throws UnsupportedOperationException, MS_RepositoryDataExchangeException {
         checkAndThrowNotInitializedException();
         if (doFind(identifier) != null) {
             doRemove(identifier);
@@ -181,18 +181,18 @@ public abstract class MS_Repository<T, ID> implements IRepositoryOperations<T, I
     }
 
     @Override
-    public T find(ID identifier) throws UnsupportedOperationException, RepositoryDataExchangeException {
+    public T find(ID identifier) throws UnsupportedOperationException, MS_RepositoryDataExchangeException {
         checkAndThrowNotInitializedException();
         return doFind(identifier);
     }
 
-    public Map<ID, T> findAll() throws UnsupportedOperationException, RepositoryDataExchangeException {
+    public Map<ID, T> findAll() throws UnsupportedOperationException, MS_RepositoryDataExchangeException {
         checkAndThrowNotInitializedException();
         return doFindAll();
     }
 
     @Override
-    public void removeAll() throws UnsupportedOperationException, RepositoryDataExchangeException {
+    public void removeAll() throws UnsupportedOperationException, MS_RepositoryDataExchangeException {
         checkAndThrowNotInitializedException();
         doRemoveAll();
     }

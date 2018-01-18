@@ -7,12 +7,12 @@ package lv.emes.libraries.tools.lists;
  * @author eMeS
  * @version 1.0.
  */
-public class RepositoryDataExchangeException extends RuntimeException {
+public class MS_RepositoryDataExchangeException extends RuntimeException {
 
     /**
      * Default constructor.
      */
-    public RepositoryDataExchangeException() {
+    public MS_RepositoryDataExchangeException() {
         super();
     }
 
@@ -21,7 +21,7 @@ public class RepositoryDataExchangeException extends RuntimeException {
      *
      * @param message the error message for this exception.
      */
-    public RepositoryDataExchangeException(String message) {
+    public MS_RepositoryDataExchangeException(String message) {
         super(message);
     }
 
@@ -30,7 +30,7 @@ public class RepositoryDataExchangeException extends RuntimeException {
      *
      * @param cause the throwable on which we'll base this exception.
      */
-    public RepositoryDataExchangeException(Throwable cause) {
+    public MS_RepositoryDataExchangeException(Throwable cause) {
         super(cause);
     }
 
@@ -40,7 +40,7 @@ public class RepositoryDataExchangeException extends RuntimeException {
      * @param message the message.
      * @param cause   the target Throwable.
      */
-    public RepositoryDataExchangeException(String message, Throwable cause) {
+    public MS_RepositoryDataExchangeException(String message, Throwable cause) {
         super(message, cause);
     }
 }

@@ -5,8 +5,9 @@ package lv.emes.libraries.tools.platform;
  * @author eMeS
  * @version 1.0.
  */
-public class IncompatibleOSException extends Exception {
-    public IncompatibleOSException(String message) {
+public class MS_IncompatibleOSException extends Exception {
+
+    public MS_IncompatibleOSException(String message) {
         super(message);
     }
 }

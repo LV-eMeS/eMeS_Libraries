@@ -14,196 +14,220 @@ import static org.junit.Assert.assertTrue;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MSMySQLDatabaseTest {
-    private static MS_JDBCDatabase db = new MS_MySQLDatabase();
+
+    private static MS_JDBCDatabase db;
 
     @BeforeClass
     //Before even start testing do some preparations!
     public static void initTestPreConditions() throws SQLException, ClassNotFoundException {
-        db.hostname = TestData.TESTING_SERVER_HOSTAME;
-        db.dbName = "test";
-        db.userName = "test_user";
-        db.password = "test_user";
-        db.port = 3306;
-        db.onDBConnectionError = Exception::printStackTrace;
-        db.onDBStatementError = Exception::printStackTrace;
-        db.connect();
+        db = new MS_MySQLDatabase(new MS_DBParameters()
+                .withHostname(TestData.TESTING_SERVER_HOSTAME)
+                .withDbName("test")
+                .withUserName("test_user")
+                .withPassword("test_user")
+                .withPort(3306)
+        );
+        db.initialize();
+
+        assertTrue(db.isOnline());
     }
 
     @AfterClass
     //After all tests perform actions that cleans everything up!
     public static void finalizeTestConditions() {
-        db.disconnect();
+        db.unlink();
     }
 
     @Before
     //Before every test do initial setup!
-    public void setUpForEachTest() {
-        MS_PreparedSQLQuery st = db.prepareSQLQuery("insert into tests(id, name, count) values (1, 'test1', 33)");
-        db.commitStatement(st);
-        st = db.prepareSQLQuery("insert into tests(id, name, count) values (2, 'test2', 22)");
-        db.commitStatement(st);
-        st = db.prepareSQLQuery("insert into tests(id, name, count) values (3, 'test3', 11)");
-        db.commitStatement(st);
+    public void setUpForEachTest() throws Exception {
+        try (MS_ConnectionSession con = db.getConnectionSession()) {
+            MS_PreparedSQLQuery st = con.prepareQuery("insert into tests(id, name, count) values (1, 'test1', 33)");
+            con.executeQuery(st);
+            st = con.prepareQuery("insert into tests(id, name, count) values (2, 'test2', 22)");
+            con.executeQuery(st);
+            st = con.prepareQuery("insert into tests(id, name, count) values (3, 'test3', 11)");
+            con.executeQuery(st);
+
+            con.finishWork();
+        }
     }
 
     @After
     //After every test tear down this mess!
-    public void tearDownForEachTest() {
-        MS_PreparedSQLQuery st = db.prepareSQLQuery("delete from tests");
-        db.commitStatement(st);
-    }
-
-    @Test
-    public void test01GetCellValuesByName() throws SQLException {
-        MS_PreparedSQLQuery st;
-        String query = "select * from tests";
-        st = db.prepareSQLQuery(query);
-        ResultSet rs = db.getQueryResult(st);
-        assertTrue(rs.next());
-        assertEquals("1", rs.getString("id"));
-        assertEquals(1, rs.getInt("id"));
-        assertEquals("test1", rs.getString("name"));
-        assertEquals(33, rs.getInt("count"));
-
-        assertTrue(rs.next()); //second record
-        assertEquals(22, rs.getInt("count"));
-        assertEquals("test2", rs.getString("name"));
-        assertEquals(2, rs.getInt("id"));
-
-        assertTrue(rs.next()); //third record
-        assertEquals(11, rs.getInt(3));
-        assertEquals("test3", rs.getString(2));
-        assertEquals(3, rs.getInt(1));
-    }
-
-    @Test
-    public void test02GetSecondRecord() throws SQLException {
-        MS_PreparedSQLQuery st;
-        String query = "select * from tests where id=2";
-        st = db.prepareSQLQuery(query);
-        ResultSet rs = db.getQueryResult(st);
-        assertTrue(rs.next());
-        assertEquals(2, rs.getInt(1));
-        assertEquals("test2", rs.getString(2));
-        assertEquals("22", rs.getString(3));
-        assertEquals(22, rs.getInt(3));
-    }
-
-    @Test
-    public void test03QueryWithParams() throws SQLException {
-        MS_PreparedSQLQuery st;
-        String query = "select * from tests where id=?";
-        ResultSet rs;
-
-        st = db.prepareSQLQuery(query);
-        st.setInt(1, 3);
-        rs = db.getQueryResult(st);
-        assertTrue(rs.next());
-        assertEquals("3", rs.getString(1));
-        assertEquals("test3", rs.getString(2));
-        assertEquals(11, rs.getInt(3));
-    }
-
-    @Test
-    public void test04Editing() throws SQLException {
-        MS_PreparedSQLQuery st;
-        String query = "update tests set name='Osvald' where id=1";
-        ResultSet rs;
-
-        st = db.prepareSQLQuery(query);
-        db.commitStatement(st);
-
-        //now to look at the changes!
-        query = "select * from tests where id=1";
-        st = db.prepareSQLQuery(query);
-        rs = db.getQueryResult(st);
-        assertTrue(rs.next());
-        assertEquals("Osvald", rs.getString(2));
-        assertEquals(33, rs.getInt(3));
-    }
-
-    @Test
-    public void test05SelectAll() throws SQLException {
-        MS_PreparedSQLQuery st;
-        String query = "select * from tests";
-        ResultSet rs;
-
-        st = db.prepareSQLQuery(query);
-        rs = db.getQueryResult(st);
-        int i = 0;
-        while (rs.next()) {
-            i++;
-            assertEquals(i, rs.getInt(1));
-            assertEquals("test" + i, rs.getString(2));
-        }
-        assertEquals(3, i);
-    }
-
-    @Test
-    public void test06TableRecordTest() throws SQLException {
-        MS_PreparedSQLQuery st;
-        String query = "select * from tests";
-        ResultSet rs;
-
-        st = db.prepareSQLQuery(query);
-        rs = db.getQueryResult(st);
-
-        MS_List<Table_tests_Row> testsTable = Table_tests_Row.newTable(rs, Table_tests_Row.class);
-        assertEquals(3, testsTable.count());
-        for (int i = 0; i < testsTable.count(); i++) {
-            assertEquals(i+1, testsTable.get(i).id);
-            assertEquals("test" + (i+1), testsTable.get(i).name);
+    public void tearDownForEachTest() throws Exception {
+        try (MS_ConnectionSession con = db.getConnectionSession()) {
+            MS_PreparedSQLQuery st = con.prepareQuery("delete from tests");
+            con.executeQuery(st);
         }
     }
 
     @Test
-    public void test07TableUniqueRecordTest() throws SQLException {
-        MS_PreparedSQLQuery st;
-        String query = "select * from tests";
-        ResultSet rs;
+    public void test01GetCellValuesByName() throws Exception {
+        try (MS_ConnectionSession con = db.getConnectionSession()) {
+            MS_PreparedSQLQuery st;
+            String query = "select * from tests";
+            st = con.prepareQuery(query);
+            ResultSet rs = con.getQueryResult(st);
+            assertTrue(rs.next());
+            assertEquals("1", rs.getString("id"));
+            assertEquals(1, rs.getInt("id"));
+            assertEquals("test1", rs.getString("name"));
+            assertEquals(33, rs.getInt("count"));
 
-        st = db.prepareSQLQuery(query);
-        rs = db.getQueryResult(st);
+            assertTrue(rs.next()); //second record
+            assertEquals(22, rs.getInt("count"));
+            assertEquals("test2", rs.getString("name"));
+            assertEquals(2, rs.getInt("id"));
 
-        Map<Integer, Table_tests_Row> testsTable = Table_tests_Row.newTableWithUniqueKey(rs, Table_tests_Row.class);
-        assertEquals(3, testsTable.size());
-        assertEquals("test1", testsTable.get(1).name);
-        assertEquals("test2", testsTable.get(2).name);
-        assertEquals("test3", testsTable.get(3).name);
-        assertEquals(33, testsTable.get(1).count);
-        assertEquals(2, testsTable.get(2).id);
-        assertEquals(11, testsTable.get(3).count);
+            assertTrue(rs.next()); //third record
+            assertEquals(11, rs.getInt(3));
+            assertEquals("test3", rs.getString(2));
+            assertEquals(3, rs.getInt(1));
+        }
     }
 
     @Test
-    public void test08GetCount() throws SQLException {
-        MS_PreparedSQLQuery st;
-        String query = "select count(*) from tests";
-        ResultSet rs;
-
-        st = db.prepareSQLQuery(query);
-        rs = db.getQueryResult(st);
-
-        assertEquals(3, new MS_TableRecordCount(rs).getCount());
+    public void test02GetSecondRecord() throws Exception {
+        try (MS_ConnectionSession con = db.getConnectionSession()) {
+            MS_PreparedSQLQuery st;
+            String query = "select * from tests where id=2";
+            st = con.prepareQuery(query);
+            ResultSet rs = con.getQueryResult(st);
+            assertTrue(rs.next());
+            assertEquals(2, rs.getInt(1));
+            assertEquals("test2", rs.getString(2));
+            assertEquals("22", rs.getString(3));
+            assertEquals(22, rs.getInt(3));
+        }
     }
 
-    private static class Table_tests_Row extends MS_TableUniqueRecord {
+    @Test
+    public void test03QueryWithParams() throws Exception {
+        try (MS_ConnectionSession con = db.getConnectionSession()) {
+            MS_PreparedSQLQuery st;
+            String query = "select * from tests where id=?";
+            ResultSet rs;
+
+            st = con.prepareQuery(query);
+            st.setInt(1, 3);
+            rs = con.getQueryResult(st);
+            assertTrue(rs.next());
+            assertEquals("3", rs.getString(1));
+            assertEquals("test3", rs.getString(2));
+            assertEquals(11, rs.getInt(3));
+        }
+    }
+
+    @Test
+    public void test04Editing() throws Exception {
+        try (MS_ConnectionSession con = db.getConnectionSession()) {
+            MS_PreparedSQLQuery st;
+            String query = "update tests set name='Osvald' where id=1";
+            ResultSet rs;
+
+            st = con.prepareQuery(query);
+            con.executeQuery(st);
+
+            //now to look at the changes!
+            query = "select * from tests where id=1";
+            st = con.prepareQuery(query);
+            rs = con.getQueryResult(st);
+            assertTrue(rs.next());
+            assertEquals("Osvald", rs.getString(2));
+            assertEquals(33, rs.getInt(3));
+        }
+    }
+
+    @Test
+    public void test05SelectAll() throws Exception {
+        try (MS_ConnectionSession con = db.getConnectionSession()) {
+            MS_PreparedSQLQuery st;
+            String query = "select * from tests";
+            ResultSet rs;
+
+            st = con.prepareQuery(query);
+            rs = con.getQueryResult(st);
+            int i = 0;
+            while (rs.next()) {
+                i++;
+                assertEquals(i, rs.getInt(1));
+                assertEquals("test" + i, rs.getString(2));
+            }
+            assertEquals(3, i);
+        }
+    }
+
+    @Test
+    public void test06TableRecordTest() throws Exception {
+        try (MS_ConnectionSession con = db.getConnectionSession()) {
+            MS_PreparedSQLQuery st;
+            String query = "select * from tests";
+            ResultSet rs;
+
+            st = con.prepareQuery(query);
+            rs = con.getQueryResult(st);
+
+            MS_List<Table_tests_Row> testsTable = MS_ResultSetExtractingUtils.extractList(rs, Table_tests_Row.class);
+            assertEquals(3, testsTable.count());
+            for (int i = 0; i < testsTable.count(); i++) {
+                assertEquals(i + 1, testsTable.get(i).id);
+                assertEquals("test" + (i + 1), testsTable.get(i).name);
+            }
+        }
+    }
+
+    @Test
+    public void test07TableUniqueRecordTest() throws Exception {
+        try (MS_ConnectionSession con = db.getConnectionSession()) {
+            MS_PreparedSQLQuery st;
+            String query = "select * from tests";
+            ResultSet rs;
+
+            st = con.prepareQuery(query);
+            rs = con.getQueryResult(st);
+
+
+            Map<Integer, Table_tests_Row> testsTable = MS_ResultSetExtractingUtils.extractMap(rs, Table_tests_Row.class);
+            assertEquals(3, testsTable.size());
+            assertEquals("test1", testsTable.get(1).name);
+            assertEquals("test2", testsTable.get(2).name);
+            assertEquals("test3", testsTable.get(3).name);
+            assertEquals(33, testsTable.get(1).count);
+            assertEquals(2, testsTable.get(2).id);
+            assertEquals(11, testsTable.get(3).count);
+        }
+    }
+
+    @Test
+    public void test08GetCount() throws Exception {
+        try (MS_ConnectionSession con = db.getConnectionSession()) {
+            MS_PreparedSQLQuery st;
+            String query = "select count(*) from tests";
+            ResultSet rs;
+
+            st = con.prepareQuery(query);
+            rs = con.getQueryResult(st);
+
+            assertEquals(3, MS_ResultSetExtractingUtils.extractRecord(rs, MS_TableRecordCount.class).getCount());
+        }
+    }
+
+    private static class Table_tests_Row implements MS_TableUniqueRecord<Integer> {
         int id;
         String name;
         int count;
 
-        public Table_tests_Row(ResultSet rs) {
-            super(rs);
+        public Table_tests_Row() {
         }
 
-        @SuppressWarnings("unchecked")
         @Override
-        protected Integer getUniqueFieldValue() {
+        public Integer getUniqueFieldValue() {
             return id;
         }
 
         @Override
-        protected void initColumns(ResultSet rs) throws SQLException {
+        public void initColumns(ResultSet rs) throws SQLException {
             id = rs.getInt("id");
             name = rs.getString("name");
             count = rs.getInt("count");

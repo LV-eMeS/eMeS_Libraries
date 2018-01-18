@@ -144,34 +144,34 @@ public class MS_TestUtils {
         }
     }
 
-    public static class CheckedException extends Exception {
+    public static class MS_CheckedException extends Exception {
         private static final long serialVersionUID = 1886903532036673010L;
 
-        public CheckedException() {
+        public MS_CheckedException() {
             super();
         }
 
-        public CheckedException(String msg) {
+        public MS_CheckedException(String msg) {
             super(msg);
         }
 
-        public CheckedException(Throwable cause) {
+        public MS_CheckedException(Throwable cause) {
             super(cause);
         }
     }
 
-    public static class UnCheckedException1 extends RuntimeException {
+    public static class MS_UnCheckedException1 extends RuntimeException {
         private static final long serialVersionUID = 1886903532036673011L;
 
-        public UnCheckedException1() {
+        public MS_UnCheckedException1() {
             super();
         }
 
-        public UnCheckedException1(String msg) {
+        public MS_UnCheckedException1(String msg) {
             super(msg);
         }
 
-        public UnCheckedException1(Throwable cause) {
+        public MS_UnCheckedException1(Throwable cause) {
             super(cause);
         }
     }
@@ -179,18 +179,18 @@ public class MS_TestUtils {
     /**
      * Runtime exception with custom equals method that checks for message equality and cause in 1 further level of deepness.
      */
-    public static class UnCheckedException2 extends RuntimeException {
+    public static class MS_UnCheckedException2 extends RuntimeException {
         static final long serialVersionUID = 1886903532036673012L;
 
-        public UnCheckedException2() {
+        public MS_UnCheckedException2() {
             super();
         }
 
-        public UnCheckedException2(String msg) {
+        public MS_UnCheckedException2(String msg) {
             super(msg);
         }
 
-        public UnCheckedException2(Throwable cause) {
+        public MS_UnCheckedException2(Throwable cause) {
             super(cause);
         }
 
@@ -201,7 +201,7 @@ public class MS_TestUtils {
                     && new MS_EqualityCheckBuilder()
                     .append(this,
                             another, (thi, ano) -> {
-                                UnCheckedException2 anoth = (UnCheckedException2) ano;
+                                MS_UnCheckedException2 anoth = (MS_UnCheckedException2) ano;
                                 return new MS_EqualityCheckBuilder()
                                         .append(thi.getMessage(), anoth.getMessage())
                                         .append(thi.getCause(), anoth.getCause(),

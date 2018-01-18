@@ -5,16 +5,16 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 /**
  * @author eMeS
- * @version 1.0.
+ * @version 2.0.
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MSSQLQueryTest {
 
-    private MS_SQLQuery sql = null;
+    private MS_SQLQuery sql;
     private final String tableName = "tabula";
     private final String field1 = "?";
     private final String field2 = "kabacis";
@@ -62,21 +62,21 @@ public class MSSQLQueryTest {
         assertEquals("REPLACE INTO tabula VALUES(soda);", sql.toString());
     }
 
-    @Test
+    @Test(expected = MS_BadSQLSyntaxException.class)
     public void test07ReplaceNoValuesNoTable() {
         sql.replaceInto();
-        assertEquals("REPLACE INTO VALUES();", sql.toString());
+        assertNotEquals("REPLACE INTO VALUES();", sql.toString());
     }
 
     @Test
     public void test08Update2Fields() {
-        sql.update().table(tableName).setNewValue("field1", field1).setNewValue("field2", field2);
+        sql.update().table(tableName).field("field1", field1).field("field2", field2);
         assertEquals("UPDATE tabula SET field1 = ?, field2 = kabacis;", sql.toString());
     }
 
     @Test
     public void test09Update1Field() {
-        sql.update().table(tableName).setNewValue("field1", field1);
+        sql.update().table(tableName).field("field1", field1);
         assertEquals("UPDATE tabula SET field1 = ?;", sql.toString());
     }
 
@@ -148,5 +148,14 @@ public class MSSQLQueryTest {
                 " LEFT JOIN user_types t ON (u.type_id = t.id)" +
                 " INNER JOIN user_z_types z ON (t.z_type_id = z.id)" +
                 ";", sql.toString());
+    }
+
+    @Test
+    public void test21InsertValues2Parameters() {
+        sql.resetContent().insertInto().table(tableName)
+                .field("id", null)
+                .field("counter", "123")
+                .field("text_field3", "check");
+        assertEquals("INSERT INTO tabula(id, counter, text_field3) VALUES(null, 123, check);", sql.toString());
     }
 }

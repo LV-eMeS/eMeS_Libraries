@@ -28,9 +28,9 @@ public interface IRepositoryOperations<T, ID> {
      * @param item       an item that will be added to repository.
      * @throws UnsupportedOperationException   if this operation is not supported for this kind of repository or some
      *                                         specific conditions in order to operate within this repository isn't met.
-     * @throws RepositoryDataExchangeException if something repository-specific happens while performing data exchange.
+     * @throws MS_RepositoryDataExchangeException if something repository-specific happens while performing data exchange.
      */
-    void add(ID identifier, T item) throws UnsupportedOperationException, RepositoryDataExchangeException;
+    void add(ID identifier, T item) throws UnsupportedOperationException, MS_RepositoryDataExchangeException;
 
     /**
      * Adds or replaces existing item in the repository with an another item.
@@ -40,9 +40,9 @@ public interface IRepositoryOperations<T, ID> {
      * @return previous item or null if there were no such item in repository with such identifier yet.
      * @throws UnsupportedOperationException   if this operation is not supported for this kind of repository or some
      *                                         specific conditions in order to operate within this repository isn't met.
-     * @throws RepositoryDataExchangeException if something repository-specific happens while performing data exchange.
+     * @throws MS_RepositoryDataExchangeException if something repository-specific happens while performing data exchange.
      */
-    T put(ID identifier, T item) throws UnsupportedOperationException, RepositoryDataExchangeException;
+    T put(ID identifier, T item) throws UnsupportedOperationException, MS_RepositoryDataExchangeException;
 
     /**
      * Removes item with ID <b>identifier</b> from the repository.
@@ -50,9 +50,9 @@ public interface IRepositoryOperations<T, ID> {
      * @param identifier an item identifier.
      * @throws UnsupportedOperationException   if this operation is not supported for this kind of repository or some
      *                                         specific conditions in order to operate within this repository isn't met.
-     * @throws RepositoryDataExchangeException if something repository-specific happens while performing data exchange.
+     * @throws MS_RepositoryDataExchangeException if something repository-specific happens while performing data exchange.
      */
-    void remove(ID identifier) throws UnsupportedOperationException, RepositoryDataExchangeException;
+    void remove(ID identifier) throws UnsupportedOperationException, MS_RepositoryDataExchangeException;
 
     /**
      * Looks for item with presented identifier <b>identifier</b>.
@@ -61,9 +61,9 @@ public interface IRepositoryOperations<T, ID> {
      * @return an existing item or null if such item couldn't be found in the repository.
      * @throws UnsupportedOperationException   if this operation is not supported for this kind of repository or some
      *                                         specific conditions in order to operate within this repository isn't met.
-     * @throws RepositoryDataExchangeException if something repository-specific happens while performing data exchange.
+     * @throws MS_RepositoryDataExchangeException if something repository-specific happens while performing data exchange.
      */
-    T find(ID identifier) throws UnsupportedOperationException, RepositoryDataExchangeException;
+    T find(ID identifier) throws UnsupportedOperationException, MS_RepositoryDataExchangeException;
 
     /**
      * Gathers all the existing repository items to list in specific order.
@@ -73,16 +73,16 @@ public interface IRepositoryOperations<T, ID> {
      * @return list of existing items in repository.
      * @throws UnsupportedOperationException   if this operation is not supported for this kind of repository or some
      *                                         specific conditions in order to operate within this repository isn't met.
-     * @throws RepositoryDataExchangeException if something repository-specific happens while performing data exchange.
+     * @throws MS_RepositoryDataExchangeException if something repository-specific happens while performing data exchange.
      */
-    Map<ID, T> findAll() throws UnsupportedOperationException, RepositoryDataExchangeException;
+    Map<ID, T> findAll() throws UnsupportedOperationException, MS_RepositoryDataExchangeException;
 
     /**
      * Empties the repository by cleaning all the data from it.
      *
      * @throws UnsupportedOperationException   if this operation is not supported for this kind of repository or some
      *                                         specific conditions in order to operate within this repository isn't met.
-     * @throws RepositoryDataExchangeException if something repository-specific happens while performing data exchange.
+     * @throws MS_RepositoryDataExchangeException if something repository-specific happens while performing data exchange.
      */
-    void removeAll() throws UnsupportedOperationException, RepositoryDataExchangeException;
+    void removeAll() throws UnsupportedOperationException, MS_RepositoryDataExchangeException;
 }

@@ -159,36 +159,36 @@ public class MSEqualityCheckBuilderTest {
         Exception exc1;
         Exception exc2;
 
-        exc1 = new MS_TestUtils.UnCheckedException2();
-        exc2 = new MS_TestUtils.UnCheckedException2();
+        exc1 = new MS_TestUtils.MS_UnCheckedException2();
+        exc2 = new MS_TestUtils.MS_UnCheckedException2();
         assertEquals(exc1, exc2);
 
-        exc1 = new MS_TestUtils.UnCheckedException2("");
-        exc2 = new MS_TestUtils.UnCheckedException2();
+        exc1 = new MS_TestUtils.MS_UnCheckedException2("");
+        exc2 = new MS_TestUtils.MS_UnCheckedException2();
         assertNotEquals(exc1, exc2);
 
-        exc1 = new MS_TestUtils.UnCheckedException2();
-        exc2 = new MS_TestUtils.UnCheckedException2((String) null);
+        exc1 = new MS_TestUtils.MS_UnCheckedException2();
+        exc2 = new MS_TestUtils.MS_UnCheckedException2((String) null);
         assertEquals(exc1, exc2);
 
-        exc1 = new MS_TestUtils.UnCheckedException2();
-        exc2 = new MS_TestUtils.UnCheckedException1();
+        exc1 = new MS_TestUtils.MS_UnCheckedException2();
+        exc2 = new MS_TestUtils.MS_UnCheckedException1();
         assertNotEquals(exc1, exc2);
 
-        exc1 = new MS_TestUtils.UnCheckedException2(new RuntimeException());
-        exc2 = new MS_TestUtils.UnCheckedException2(new RuntimeException());
+        exc1 = new MS_TestUtils.MS_UnCheckedException2(new RuntimeException());
+        exc2 = new MS_TestUtils.MS_UnCheckedException2(new RuntimeException());
         assertEquals(exc1, exc2);
 
-        exc1 = new MS_TestUtils.UnCheckedException2(new RuntimeException());
-        exc2 = new MS_TestUtils.UnCheckedException2();
+        exc1 = new MS_TestUtils.MS_UnCheckedException2(new RuntimeException());
+        exc2 = new MS_TestUtils.MS_UnCheckedException2();
         assertNotEquals(exc1, exc2);
 
-        exc1 = new MS_TestUtils.UnCheckedException2(new RuntimeException("test"));
-        exc2 = new MS_TestUtils.UnCheckedException2(new RuntimeException("test"));
+        exc1 = new MS_TestUtils.MS_UnCheckedException2(new RuntimeException("test"));
+        exc2 = new MS_TestUtils.MS_UnCheckedException2(new RuntimeException("test"));
         assertEquals(exc1, exc2);
 
-        exc1 = new MS_TestUtils.UnCheckedException2(new RuntimeException("test"));
-        exc2 = new MS_TestUtils.UnCheckedException2(new RuntimeException(""));
+        exc1 = new MS_TestUtils.MS_UnCheckedException2(new RuntimeException("test"));
+        exc2 = new MS_TestUtils.MS_UnCheckedException2(new RuntimeException(""));
         assertNotEquals(exc1, exc2);
     }
 

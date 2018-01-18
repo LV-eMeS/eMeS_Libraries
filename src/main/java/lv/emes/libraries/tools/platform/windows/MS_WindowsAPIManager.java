@@ -1,7 +1,7 @@
 package lv.emes.libraries.tools.platform.windows;
 
 import lv.emes.libraries.file_system.MS_FileSystemTools;
-import lv.emes.libraries.tools.platform.IncompatibleOSException;
+import lv.emes.libraries.tools.platform.MS_IncompatibleOSException;
 import lv.emes.libraries.tools.platform.MS_OperatingSystem;
 import lv.emes.libraries.tools.platform.MS_PlatformIndependentTools;
 
@@ -26,9 +26,9 @@ public final class MS_WindowsAPIManager {
     private static final String TEMP_DIRECTORY_FOR_VOLUME_MANAGER = "eMeS_SystemVolumeManager";
 
     //PRIVATE METHODS
-    private static void checkOSAndThrowExceptionIfIncompatible() throws IncompatibleOSException {
+    private static void checkOSAndThrowExceptionIfIncompatible() throws MS_IncompatibleOSException {
         if (MS_PlatformIndependentTools.getOS().getOSID() != MS_OperatingSystem._OS_WINDOWS_ID)
-            throw new IncompatibleOSException("Cannot change Windows system volume in different operating system.");
+            throw new MS_IncompatibleOSException("Cannot change Windows system volume in different operating system.");
     }
 
     //PUBLIC METHODS
@@ -48,9 +48,9 @@ public final class MS_WindowsAPIManager {
      * Turns system value up by <b>level</b> specified.
      * Windows only function.
      * @param level nircmd.exe parameter that matches volume level. Recommended: 1000-5000.
-     * @throws IncompatibleOSException if trying to use this method in different OS than Windows.
+     * @throws MS_IncompatibleOSException if trying to use this method in different OS than Windows.
      */
-    public static void volumeUp(Integer level) throws IncompatibleOSException {
+    public static void volumeUp(Integer level) throws MS_IncompatibleOSException {
         checkOSAndThrowExceptionIfIncompatible();
         String parameters = "changesysvolume " + level;
         MS_FileSystemTools.executeApplication(getNircmdFileName(), parameters);
@@ -60,9 +60,9 @@ public final class MS_WindowsAPIManager {
      * Turns system value down by <b>level</b> specified.
      * <br><u>Warning</u>: Windows only function.
      * @param level nircmd.exe parameter that matches volume level. Recommended: 1000-5000.
-     * @throws IncompatibleOSException if trying to use this method in different OS than Windows.
+     * @throws MS_IncompatibleOSException if trying to use this method in different OS than Windows.
      */
-    public static void volumeDown(Integer level) throws IncompatibleOSException {
+    public static void volumeDown(Integer level) throws MS_IncompatibleOSException {
         checkOSAndThrowExceptionIfIncompatible();
         level = level * -1;
         String parameters = "changesysvolume " + level;
@@ -73,9 +73,9 @@ public final class MS_WindowsAPIManager {
      * Sets system value to <b>level</b> specified.
      * <br><u>Warning</u>: Windows only function.
      * @param level nircmd.exe parameter that matches volume level. Recommended: 1000-40000.
-     * @throws IncompatibleOSException if trying to use this method in different OS than Windows.
+     * @throws MS_IncompatibleOSException if trying to use this method in different OS than Windows.
      */
-    public static void setVolume(Integer level) throws IncompatibleOSException {
+    public static void setVolume(Integer level) throws MS_IncompatibleOSException {
         checkOSAndThrowExceptionIfIncompatible();
         String parameters = "setsysvolume " + level;
         MS_FileSystemTools.executeApplication(getNircmdFileName(), parameters);
@@ -84,9 +84,9 @@ public final class MS_WindowsAPIManager {
     /**
      * Toggles system sound mute state.
      * <br><u>Warning</u>: Windows only function.
-     * @throws IncompatibleOSException if trying to use this method in different OS than Windows.
+     * @throws MS_IncompatibleOSException if trying to use this method in different OS than Windows.
      */
-    public static void muteVolume() throws IncompatibleOSException {
+    public static void muteVolume() throws MS_IncompatibleOSException {
         checkOSAndThrowExceptionIfIncompatible();
         String parameters = "mutesysvolume 2"; //the “2” argument tells nircmd to toggle mute
         MS_FileSystemTools.executeApplication(getNircmdFileName(), parameters);
@@ -95,9 +95,9 @@ public final class MS_WindowsAPIManager {
     /**
      * Turns monitor on or off depending on presented parameter <b>state</b>.
      * @param state case insensitive "ON" or "OFF".
-     * @throws IncompatibleOSException if trying to use this method in different OS than Windows.
+     * @throws MS_IncompatibleOSException if trying to use this method in different OS than Windows.
      */
-    public static void turnMonitor(String state) throws IncompatibleOSException {
+    public static void turnMonitor(String state) throws MS_IncompatibleOSException {
         checkOSAndThrowExceptionIfIncompatible();
         String parameters = "cmdwait 100 monitor " + state;
         MS_FileSystemTools.executeApplication(getNircmdFileName(), parameters);

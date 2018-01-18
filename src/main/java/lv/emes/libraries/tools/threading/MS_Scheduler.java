@@ -154,15 +154,6 @@ public class MS_Scheduler {
 
     //PRIVATE METHODS
     private void filterSchedulesForFutureOnly(Map<ZonedDateTime, MS_FutureEvent> schedules) {
-//        //sort schedules from past to future
-//        schedules.sort((timeCurrent, timeInList) -> {
-//            if (timeCurrent.isBefore(timeInList))
-//                return -1;
-//            else if (timeCurrent.isAfter(timeInList))
-//                return 1;
-//            else
-//                return 0;
-//        });
 
         //delete ones that are in past already
         schedules.entrySet().removeIf(entry -> entry.getKey().isBefore(timeSchedulerStarted));
