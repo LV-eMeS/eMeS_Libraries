@@ -1,14 +1,14 @@
 package lv.emes.libraries.tools.logging;
 
 import com.cedarsoftware.util.io.JsonReader;
-import com.cedarsoftware.util.io.JsonWriter;
 import lv.emes.libraries.communication.http.MS_HttpClient;
 import lv.emes.libraries.communication.http.MS_HttpRequestResult;
+import lv.emes.libraries.tools.MS_ObjectWrapperHelper;
 import lv.emes.libraries.tools.lists.MS_Repository;
 import lv.emes.libraries.tools.lists.MS_RepositoryDataExchangeException;
-import lv.emes.libraries.utilities.MS_CodingUtils;
 
 import java.time.ZonedDateTime;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -55,8 +55,16 @@ public class MS_RemoteLoggingRepository extends MS_Repository<MS_LoggingEvent, Z
         if (item == null || LoggingEventTypeEnum.UNSPECIFIED.equals(item.getType()))
             return; //do nothing for lines, because it doesn't make sense to store them as items with IDs
 
+        //serialize event and send it to remote logging server
+        MS_SerializedLoggingEvent serializedEvent = MS_ObjectWrapperHelper.wrap(item, MS_SerializedLoggingEvent.class);
+        Map<String, String> headers = new HashMap<>();
+        headers.put("type", serializedEvent.getType());
+        headers.put("time", serializedEvent.getTime());
+        headers.put("message", serializedEvent.getMessage());
+        headers.put("error", serializedEvent.getError());
+
         String url = getRemoteServerBasePath(serverProperties) + serverProperties.getEndpointLogEvent();
-        MS_HttpRequestResult httpResult = MS_HttpClient.post(url, MS_CodingUtils.newSingletonMap("event", JsonWriter.objectToJson(item)));
+        MS_HttpRequestResult httpResult = MS_HttpClient.post(url, headers);
 
         if (httpResult.getReponseCode() == 400) { //this is the case when server responds with status
             MS_Log4Java.getLogger(MS_RemoteLoggingRepository.class)
@@ -76,8 +84,11 @@ public class MS_RemoteLoggingRepository extends MS_Repository<MS_LoggingEvent, Z
         checkResponseAndThrowExceptionIfNeeded(httpResult, "Finding all events failed with HTTP status code " +
                 httpResult.getReponseCode());
         try {
-            Object res = JsonReader.jsonToJava(httpResult.getMessage());
-            return (Map<ZonedDateTime, MS_LoggingEvent>) res;
+            Map<ZonedDateTime, MS_LoggingEvent> res = new HashMap<>();
+            Map<ZonedDateTime, MS_SerializedLoggingEvent> serializedEvents =
+                    (Map<ZonedDateTime, MS_SerializedLoggingEvent> ) JsonReader.jsonToJava(httpResult.getMessage());
+            serializedEvents.forEach((key, value) -> res.put(key, value.getWrappedObject()));
+            return res;
         } catch (Exception e) { //most probably cast exception, but shouldn't happen unless somebody doesn't understand, how to use this
             String message = "Deserialization error while trying to convert found logged events in JSON format to Java objects.";
             String detailedMessage = " JSON:\n" + httpResult.getMessage();

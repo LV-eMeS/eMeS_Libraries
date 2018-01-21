@@ -30,19 +30,20 @@ public class MS_RemoteLoggingRepositoryTest {
     @BeforeClass
     public static void initialize() {
         repository = new MS_RemoteLoggingRepository(PRODUCT_OWNER, PRODUCT_NAME,
-                new LoggingRemoteServerProperties().withHost(TestData.HTTP_PREFIX + TestData.TESTING_SERVER_HOSTAME));
+//                new LoggingRemoteServerProperties().withHost(TestData.HTTP_PREFIX + TestData.TESTING_SERVER_HOSTAME));
+                new LoggingRemoteServerProperties().withHost(TestData.HTTP_PREFIX + "localhost"));
         loggedEvents = new MS_InMemoryLoggingRepository();
         MS_MultiLoggingSetup setup = new MS_MultiLoggingSetup().withRepository(loggedEvents).withRepository(repository);
         MS_MultiLogger logger = new MS_MultiLogger(setup);
 
         //do some initial logging to both remote and in-memory repositories
-        logger.info("Starting remote logging repository test");
-        logger.warning("Those logging events will be stored to real logging server");
-        logger.error("Tests will fail in initialization part if server will be unreachable");
-        logger.error("Lines as delimiters are not supported for remote logging repository",
-                new MS_TestUtils.UnCheckedException2("Those lines will be ignored there"));
+        logger.info("Info: Starting remote logging repository test");
+        logger.warning("Warning: Those logging events will be stored to real logging server");
+        logger.error("Error: Tests will fail in initialization part if server will be unreachable");
+        logger.error("Error: Lines as delimiters are not supported for remote logging repository",
+                new MS_TestUtils.MS_UnCheckedException2("Those lines will be ignored there"));
         logger.line();
-        MS_CodingUtils.sleep(1000); //lets give some meaningful time for logging server to take requests
+        MS_CodingUtils.sleep(3000); //lets give some meaningful time for logging server to take requests
     }
 
     @Test
@@ -58,12 +59,12 @@ public class MS_RemoteLoggingRepositoryTest {
         assertEquals(PRODUCT_NAME, repository.getRepositoryCategoryName());
     }
 
-    @Ignore
     @Test
     public void test03FindAllEvents() {
         Map<ZonedDateTime, MS_LoggingEvent> events = repository.findAll();
         loggedEvents.getEventList().forEach(event -> {
-            assertEquals(event, events.get(event.getTime()));
+            if (!event.getType().equals(LoggingEventTypeEnum.UNSPECIFIED))
+                assertEquals(event, events.get(event.getTime()));
         });
     }
 

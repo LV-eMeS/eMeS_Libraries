@@ -7,7 +7,7 @@ import java.lang.reflect.InvocationTargetException;
  * <p>Static methods:
  * <ul>
  * <li>getWrappedObject</li>
- * <li>unwrap</li>
+ * <li>wrap</li>
  * </ul>
  *
  * @author eMeS
@@ -20,17 +20,18 @@ public class MS_ObjectWrapperHelper {
 
     /**
      * Helper method to always retrieve already wrapped object.
+     * This method should be used only in class, which implements {@link MS_IObjectWrapper}.
      *
      * @param wrapper              a wrapper, who calls this method in {@link MS_IObjectWrapper#getWrappedObject()} like:
      *                             <code>return MS_ObjectWrapperHelper.getWrappedObject(this, wrappedObject);</code>
-     * @param wrappedObjectCurrent current value of wrapped object. This will be either null, if {@link MS_IObjectWrapper#wrap()}
+     * @param wrappedObjectCurrent current value of wrapped object. This will be either null, if {@link MS_IObjectWrapper#unwrap()}
      *                             method isn't called yet, either reference to already wrapped object.
      * @param <T>                  type of object to get.
      * @return wrapped object that is bind to <b>wrapper</b>.
      */
     public static <T> T getWrappedObject(MS_IObjectWrapper<T> wrapper, T wrappedObjectCurrent) {
         T res = wrappedObjectCurrent;
-        if (wrappedObjectCurrent == null) res = wrapper.wrap();
+        if (wrappedObjectCurrent == null) res = wrapper.unwrap();
         return res;
     }
 
@@ -39,23 +40,21 @@ public class MS_ObjectWrapperHelper {
      * wrapped into wrapper altogether with rest of data.
      * <p><u>Warning</u>: in order to create new instance of wrapper, wrapper must have a non-argument constructor.
      *
-     * @param object       object to wrap into wrapper.
+     * @param object       object to unwrap into wrapper.
      * @param wrapperClass class of wrapper.
-     * @param <T>          type of object to wrap.
+     * @param <T>          type of object to unwrap.
      * @param <W>          type of wrapper itself.
      * @return new instance of wrapper filled with wrapping object and all needed data.
      * @throws MS_BadSetupException if contract about non-argument constructor is violated.
      */
-    public static <T, W extends MS_IObjectWrapper<T>>
-    MS_IObjectWrapper<T> unwrap(T object, Class<W> wrapperClass) throws MS_BadSetupException {
-
-        MS_IObjectWrapper<T> res;
+    public static <T, W extends MS_IObjectWrapper<T>> W wrap(T object, Class<W> wrapperClass) throws MS_BadSetupException {
+        W res;
         try {
             res = wrapperClass.getConstructor().newInstance();
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             throw new MS_BadSetupException(e);
         }
-        res.unwrap(object);
+        res.wrap(object);
         return res;
     }
 }
