@@ -177,9 +177,9 @@ public class MS_SQLQuery extends MS_AbstractCompositeText {
 
     /**
      * Indicates that this will be DELETE query.
-     * <p>query.deleteFrom().table(myTable).where("counter > 4");
+     * <p>query.deleteFrom().table(myTable).where("counter &gt; 4");
      * <br>will make query to be like this:
-     * <br>DELETE FROM myTable WHERE counter > 4;
+     * <br>DELETE FROM myTable WHERE counter &gt; 4;
      *
      * @return reference to this query itself.
      */

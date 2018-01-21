@@ -19,6 +19,7 @@ import static org.junit.Assert.*;
  * @version 1.0.
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@Ignore
 public class MS_RemoteLoggingRepositoryTest {
 
     private static final String PRODUCT_OWNER = "eMeS";

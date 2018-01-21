@@ -12,7 +12,7 @@ import java.time.Duration;
  * <li>withUserName</li>
  * <li>withPassword</li>
  * <li>withPort</li>
- * <p>
+ * </ul><ul>
  * <li>getHostname</li>
  * <li>getDbName</li>
  * <li>getUserName</li>
