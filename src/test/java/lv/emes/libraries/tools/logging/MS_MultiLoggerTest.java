@@ -28,7 +28,7 @@ public class MS_MultiLoggerTest {
     private static final String TEST_TEMP_DIR_PATH = TestData.TEMP_DIR + "MS_MultiLoggerTest/";
     private static final String FILE_LOGGER_PATH = TEST_TEMP_DIR_PATH + "fileLogger.log";
     private final static String DELIMITER_LINE = "###";
-    private final static long TIME_FOR_LOGGERS_TO_EXECUTE = 100;
+    private final static long TIME_FOR_LOGGERS_TO_EXECUTE = 150;
 
     private MS_MultiLogger logger;
     private MS_InMemoryLoggingRepository inMemoryLogger1;

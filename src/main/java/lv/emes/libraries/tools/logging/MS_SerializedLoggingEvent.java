@@ -4,9 +4,9 @@ import com.cedarsoftware.util.io.JsonReader;
 import com.cedarsoftware.util.io.JsonWriter;
 import lv.emes.libraries.tools.MS_IObjectWrapper;
 import lv.emes.libraries.tools.MS_ObjectWrapperHelper;
+import lv.emes.libraries.utilities.MS_DateTimeUtils;
 import lv.emes.libraries.utilities.MS_StringUtils;
 
-import java.time.ZonedDateTime;
 import java.util.Objects;
 
 /**
@@ -106,7 +106,7 @@ public class MS_SerializedLoggingEvent implements MS_IObjectWrapper<MS_LoggingEv
 
     @Override
     public void wrap(MS_LoggingEvent event) {
-        time = JsonWriter.objectToJson(event.getTime());
+        time = MS_DateTimeUtils.formatDateTime(event.getTime(), MS_DateTimeUtils._DATE_TIME_FORMAT_NANOSEC_ZONE_OFFSET);
         error = JsonWriter.objectToJson(event.getError());
         type = event.getType().name();
         message = event.getMessage();
@@ -116,8 +116,8 @@ public class MS_SerializedLoggingEvent implements MS_IObjectWrapper<MS_LoggingEv
     @Override
     public MS_LoggingEvent unwrap() {
         return wrappedObject = new MS_LoggingEvent()
-                .withTime((ZonedDateTime) JsonReader.jsonToJava(time))
-                .withError((Exception) JsonReader.jsonToJava(error))
+                .withTime(time == null ? null : MS_DateTimeUtils.formatDateTime(time, MS_DateTimeUtils._DATE_TIME_FORMAT_NANOSEC_ZONE_OFFSET))
+                .withError(error == null ? null : (Exception) JsonReader.jsonToJava(error))
                 .withType(LoggingEventTypeEnum.valueOf(type))
                 .withMessage(message)
                 ;

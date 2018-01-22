@@ -7,6 +7,7 @@ import lv.emes.libraries.tools.MS_ObjectWrapperHelper;
 import lv.emes.libraries.tools.lists.MS_Repository;
 import lv.emes.libraries.tools.lists.MS_RepositoryDataExchangeException;
 
+import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,7 +19,7 @@ import java.util.Map;
  * @author eMeS
  * @version 1.0.
  */
-public class MS_RemoteLoggingRepository extends MS_Repository<MS_LoggingEvent, ZonedDateTime> implements MS_LoggingRepository {
+public class MS_RemoteLoggingRepository extends MS_Repository<MS_LoggingEvent, Instant> implements MS_LoggingRepository {
 
     private LoggingRemoteServerProperties serverProperties;
 
@@ -40,7 +41,7 @@ public class MS_RemoteLoggingRepository extends MS_Repository<MS_LoggingEvent, Z
 
     @Override
     public void logEvent(MS_LoggingEvent event) {
-        add(event.getTime(), event);
+        add(event.getTime().toInstant(), event);
     }
 
     @Override
@@ -51,7 +52,7 @@ public class MS_RemoteLoggingRepository extends MS_Repository<MS_LoggingEvent, Z
     }
 
     @Override
-    protected void doAdd(ZonedDateTime identifier, MS_LoggingEvent item) {
+    protected void doAdd(Instant identifier, MS_LoggingEvent item) {
         if (item == null || LoggingEventTypeEnum.UNSPECIFIED.equals(item.getType()))
             return; //do nothing for lines, because it doesn't make sense to store them as items with IDs
 
@@ -78,16 +79,16 @@ public class MS_RemoteLoggingRepository extends MS_Repository<MS_LoggingEvent, Z
 
     @Override
     @SuppressWarnings("unchecked")
-    protected Map<ZonedDateTime, MS_LoggingEvent> doFindAll() {
+    protected Map<Instant, MS_LoggingEvent> doFindAll() {
         String url = getRemoteServerBasePath(serverProperties) + serverProperties.getEndpointGetAllEvents();
         MS_HttpRequestResult httpResult = MS_HttpClient.get(url, null);
         checkResponseAndThrowExceptionIfNeeded(httpResult, "Finding all events failed with HTTP status code " +
                 httpResult.getReponseCode());
         try {
-            Map<ZonedDateTime, MS_LoggingEvent> res = new HashMap<>();
+            Map<Instant, MS_LoggingEvent> res = new HashMap<>();
             Map<ZonedDateTime, MS_SerializedLoggingEvent> serializedEvents =
-                    (Map<ZonedDateTime, MS_SerializedLoggingEvent> ) JsonReader.jsonToJava(httpResult.getMessage());
-            serializedEvents.forEach((key, value) -> res.put(key, value.getWrappedObject()));
+                    (Map<ZonedDateTime, MS_SerializedLoggingEvent>) JsonReader.jsonToJava(httpResult.getMessage());
+            serializedEvents.forEach((key, value) -> res.put(key.toInstant(), value.getWrappedObject()));
             return res;
         } catch (Exception e) { //most probably cast exception, but shouldn't happen unless somebody doesn't understand, how to use this
             String message = "Deserialization error while trying to convert found logged events in JSON format to Java objects.";
@@ -116,23 +117,23 @@ public class MS_RemoteLoggingRepository extends MS_Repository<MS_LoggingEvent, Z
     }
 
     @Override
-    public MS_LoggingEvent find(ZonedDateTime identifier) throws UnsupportedOperationException, MS_RepositoryDataExchangeException {
+    public MS_LoggingEvent find(Instant identifier) throws UnsupportedOperationException, MS_RepositoryDataExchangeException {
         throw new UnsupportedOperationException("Finding single event operation is not supported for Remote logging repository");
     }
 
     @Override
-    protected MS_LoggingEvent doFind(ZonedDateTime identifier) {
+    protected MS_LoggingEvent doFind(Instant identifier) {
         //nothing to do here
         return null;
     }
 
     @Override
-    public void remove(ZonedDateTime identifier) throws UnsupportedOperationException, MS_RepositoryDataExchangeException {
+    public void remove(Instant identifier) throws UnsupportedOperationException, MS_RepositoryDataExchangeException {
         throw new UnsupportedOperationException("Removing single event operation is not supported for Remote logging repository");
     }
 
     @Override
-    protected void doRemove(ZonedDateTime identifier) {
+    protected void doRemove(Instant identifier) {
         //nothing to do here
     }
 

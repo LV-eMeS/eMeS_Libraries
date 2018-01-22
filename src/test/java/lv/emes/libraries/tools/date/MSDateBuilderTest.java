@@ -83,31 +83,31 @@ public class MSDateBuilderTest {
     @Test
     public void test02ReferenceDateGiven() {
         final ZonedDateTime REFERENCE_DATE = MS_DateTimeUtils.formatDateTime("2017-10-08T15:05:00",
-                MS_DateTimeUtils._DATE_TIME_FORMAT_WITHOUT_MILLISEC_AND_ZONE);
+                MS_DateTimeUtils._DATE_TIME_FORMAT_SECONDS);
         MS_DateBuilder builder;
         String expected;
         String actual;
 
         builder = new MS_DateBuilder(REFERENCE_DATE).withPrefix("before").withQuantity(2).withTimeUnit("hours")
-                .withFormat(MS_DateTimeUtils._DATE_TIME_FORMAT_WITHOUT_MILLISEC_AND_ZONE).build();
+                .withFormat(MS_DateTimeUtils._DATE_TIME_FORMAT_SECONDS).build();
         expected = "2017-10-08T13:05:00";
         actual = builder.string();
         assertEquals(expected, actual);
 
         builder = new MS_DateBuilder(REFERENCE_DATE).withPrefix("after").withQuantity(30).withTimeUnit("seconds")
-                .withFormat(MS_DateTimeUtils._DATE_TIME_FORMAT_WITHOUT_MILLISEC_AND_ZONE).build();
+                .withFormat(MS_DateTimeUtils._DATE_TIME_FORMAT_SECONDS).build();
         expected = "2017-10-08T15:05:30";
         actual = builder.string();
         assertEquals(expected, actual);
 
         builder = new MS_DateBuilder(REFERENCE_DATE).fromText("yesterday")
-                .withFormat(MS_DateTimeUtils._DATE_TIME_FORMAT_WITHOUT_MILLISEC_AND_ZONE).build();
+                .withFormat(MS_DateTimeUtils._DATE_TIME_FORMAT_SECONDS).build();
         expected = "2017-10-07T15:05:00";
         actual = builder.string();
         assertEquals(expected, actual);
 
         builder = new MS_DateBuilder(REFERENCE_DATE).fromText("tomorrow")
-                .withFormat(MS_DateTimeUtils._DATE_TIME_FORMAT_WITHOUT_MILLISEC_AND_ZONE).build();
+                .withFormat(MS_DateTimeUtils._DATE_TIME_FORMAT_SECONDS).build();
         expected = "2017-10-09T15:05:00";
         actual = builder.string();
         assertEquals(expected, actual);

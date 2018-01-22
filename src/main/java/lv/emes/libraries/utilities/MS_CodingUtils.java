@@ -1,5 +1,7 @@
 package lv.emes.libraries.utilities;
 
+import org.apache.commons.lang.StringUtils;
+
 import javax.swing.*;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
@@ -52,10 +54,10 @@ public final class MS_CodingUtils {
     /**
      * Checks if number <b>aNumber</b> is in interval [<b>aRangeMin</b>, <b>aRangeMax</b>].
      *
-     * @param aNumber   = 5
-     * @param aRangeMin = 1
-     * @param aRangeMax = 5
-     * @return true
+     * @param aNumber   [5]
+     * @param aRangeMin = [1]
+     * @param aRangeMax = [5]
+     * @return [true]
      */
     public static boolean inRange(int aNumber, int aRangeMin, int aRangeMax) {
         return Math.min(aRangeMin, aRangeMax) <= aNumber && Math.max(aRangeMin, aRangeMax) >= aNumber;
@@ -84,8 +86,7 @@ public final class MS_CodingUtils {
     public static void sleep(long miliseconds) {
         try {
             Thread.sleep(miliseconds);
-        } catch (InterruptedException e) {
-            return;
+        } catch (InterruptedException ignored) {
         }
     }
 
@@ -105,7 +106,7 @@ public final class MS_CodingUtils {
      * @param bool a boolean which we have to inverse.
      * @return boolean with opposite value of passed boolean.
      */
-    public static Boolean inverseBoolean(Boolean bool) {
+    public static boolean inverseBoolean(boolean bool) {
         return !bool;
     }
 
@@ -141,8 +142,9 @@ public final class MS_CodingUtils {
 
     /**
      * Helper method to show input dialog of desired input text field type.
+     *
      * @param inputTextField pre configured text field object (may be text or password field).
-     * @param askText text which will be printed to pane label when dialog appears.
+     * @param askText        text which will be printed to pane label when dialog appears.
      * @return user input line.
      */
     private static String readStringFromUserInput(String askText, JTextField inputTextField) {
@@ -157,10 +159,14 @@ public final class MS_CodingUtils {
                 component.requestFocusInWindow();
                 component.removeAncestorListener(this);
             }
+
             @Override
-            public void ancestorRemoved(AncestorEvent event) {}
+            public void ancestorRemoved(AncestorEvent event) {
+            }
+
             @Override
-            public void ancestorMoved(AncestorEvent event) {}
+            public void ancestorMoved(AncestorEvent event) {
+            }
         });
         panel.add(label);
         panel.add(inputTextField);
@@ -189,13 +195,50 @@ public final class MS_CodingUtils {
         return readStringFromUserInput(askText, new JPasswordField(10));
     }
 
-    public static Double round(double value, int places) {
-        if (places < 0) throw new IllegalArgumentException();
-
+    public static double round(double value, int precision) {
+        if (precision < 0) throw new IllegalArgumentException();
 
         BigDecimal bd = new BigDecimal(value);
-        bd = bd.setScale(places, RoundingMode.HALF_UP);
+        bd = bd.setScale(precision, RoundingMode.HALF_UP);
         return bd.doubleValue();
+    }
+
+    /**
+     * This function removes fractional part for negative and positive numbers.
+     *
+     * @param value [1.234] [-1.567] [9.999999999999999999999999999999999999999999999999999]
+     * @return [1.0] [-1.0] [9.0]
+     */
+    public static long truncate(Double value) {
+        return new Long(StringUtils.substringBefore(value.toString(), "."));
+    }
+
+    /**
+     * This function removes integer part from <b>value</b> leaving only fractional part.
+     * To assure that, while performing subtracting operation between 2 double values, actual fractional part will
+     * not get malformed, <b>precision</b> is applied to this method.
+     * It should be closest number, of how long fractional part will be.
+     *
+     * @param value [3.14] [-10.1] [0.0]
+     * @param precision [2] [1] [0] <u>Note</u>: in case rounding is necessary while getting fractional part,
+     *                  rounding down is performed.
+     * @return [0.14000000000000012] [-0.1] [0.0]
+     */
+    public static double fractionalPart(double value, int precision) {
+        boolean negative = false;
+        double res;
+
+        if (value < 0) {
+            negative = true;
+            value = -value;
+        }
+
+        BigDecimal valueWrapper = new BigDecimal(value).setScale(precision, RoundingMode.HALF_DOWN);
+        valueWrapper = valueWrapper.subtract(new BigDecimal(truncate(value)));
+        res = valueWrapper.doubleValue();
+        if (negative)
+            res = -res;
+        return res;
     }
 
     /**
@@ -204,16 +247,17 @@ public final class MS_CodingUtils {
      * @param objects all the objects that will be included to result array.
      * @return an array of objects.
      */
-    public static Object[] getArray(Object... objects) {
+    public static Object[] newArray(Object... objects) {
         return objects;
     }
 
     /**
-     * Creates map with just one entry.
-     * @param key key of entry.
+     * Creates hash map with just one entry.
+     *
+     * @param key   key of entry.
      * @param value value of entry.
-     * @param <K> type of key.
-     * @param <V> type of value.
+     * @param <K>   type of key.
+     * @param <V>   type of value.
      * @return new map with presented key and value.
      */
     public static <K, V> Map<K, V> newSingletonMap(K key, V value) {

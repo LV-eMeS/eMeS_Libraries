@@ -23,8 +23,6 @@ public class MS_SQLQuery extends MS_AbstractCompositeText {
     //delete from notes where id = ?
 
     public static final String _QPARAM = "?";
-    public static final Character _SINGLE_QUOTE = '\'';
-    public static final String _SINGLE_QUOTE_2X = "''";
 
     /**
      * Extracts parameter value to be inserted directly as field value in {@link MS_SQLQuery#field(String, String)}
@@ -34,8 +32,7 @@ public class MS_SQLQuery extends MS_AbstractCompositeText {
      * @return parameter value quoted with single quote.
      */
     public static String toSQLText(String parameterValue) {
-        parameterValue = MS_StringUtils.replaceInString(parameterValue, _SINGLE_QUOTE.toString(), _SINGLE_QUOTE_2X);
-        return _SINGLE_QUOTE + parameterValue + _SINGLE_QUOTE;
+        return MS_StringUtils.toQuotedText(parameterValue);
     }
 
     private static final String TABLE_NAME_IS_NOT_PROVIDED = "Table name is not provided";

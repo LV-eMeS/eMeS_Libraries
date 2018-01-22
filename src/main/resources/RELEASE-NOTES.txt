@@ -1,5 +1,5 @@
 eMeS libraries
-Version 2.0.2
+Version 2.0.3
 Release Notes
 
 INTRODUCTION:
@@ -21,6 +21,7 @@ eMeS libraries Version 2.1.0
 * Remote logging repository to log events to a remote server.
 * CSV file reader functionality.
 * In MS_BinaryTools isBinaryFile method fix regarding MIME type checks with jMimeMagic utility.
+* Truncate and fractionalPart methods implemented in MS_CodingUtils.
 ========================================================================================================
 eMeS libraries Version 2.0.0
 ========================================================================================================

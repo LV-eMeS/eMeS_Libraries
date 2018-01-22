@@ -5,21 +5,21 @@ import lv.emes.libraries.utilities.MS_CodingUtils;
 import lv.emes.libraries.utilities.MS_TestUtils;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
+import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author eMeS
  * @version 1.0.
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-@Ignore
 public class MS_RemoteLoggingRepositoryTest {
 
     private static final String PRODUCT_OWNER = "eMeS";
@@ -31,8 +31,7 @@ public class MS_RemoteLoggingRepositoryTest {
     @BeforeClass
     public static void initialize() {
         repository = new MS_RemoteLoggingRepository(PRODUCT_OWNER, PRODUCT_NAME,
-//                new LoggingRemoteServerProperties().withHost(TestData.HTTP_PREFIX + TestData.TESTING_SERVER_HOSTAME));
-                new LoggingRemoteServerProperties().withHost(TestData.HTTP_PREFIX + "localhost"));
+                new LoggingRemoteServerProperties().withHost(TestData.HTTP_PREFIX + TestData.TESTING_SERVER_HOSTAME));
         loggedEvents = new MS_InMemoryLoggingRepository();
         MS_MultiLoggingSetup setup = new MS_MultiLoggingSetup().withRepository(loggedEvents).withRepository(repository);
         MS_MultiLogger logger = new MS_MultiLogger(setup);
@@ -44,7 +43,7 @@ public class MS_RemoteLoggingRepositoryTest {
         logger.error("Error: Lines as delimiters are not supported for remote logging repository",
                 new MS_TestUtils.MS_UnCheckedException2("Those lines will be ignored there"));
         logger.line();
-        MS_CodingUtils.sleep(3000); //lets give some meaningful time for logging server to take requests
+        MS_CodingUtils.sleep(2000); //lets give some meaningful time for logging server to take requests
     }
 
     @Test
@@ -62,14 +61,16 @@ public class MS_RemoteLoggingRepositoryTest {
 
     @Test
     public void test03FindAllEvents() {
-        Map<ZonedDateTime, MS_LoggingEvent> events = repository.findAll();
-        loggedEvents.getEventList().forEach(event -> {
+        Map<Instant, MS_LoggingEvent> events = repository.findAll();
+        loggedEvents.getEventList().forEachItem((event, i) -> {
             if (!event.getType().equals(LoggingEventTypeEnum.UNSPECIFIED))
-                assertEquals(event, events.get(event.getTime()));
+                assertEquals("Not found item at index: " + i
+                                + "\nExpected items:\n" + loggedEvents.getEventList().toString()
+                                + "\nActual items:\n" + events.values().toString() + "\n"
+                        , event, events.get(event.getTime().toInstant()));
         });
     }
 
-    @Ignore
     @Test
     public void test04RemoveAll() {
         repository.removeAll();
@@ -78,12 +79,12 @@ public class MS_RemoteLoggingRepositoryTest {
 
     @Test(expected = UnsupportedOperationException.class)
     public void test10FindOneUnsupported() {
-        repository.find(ZonedDateTime.now());
+        repository.find(ZonedDateTime.now().toInstant());
     }
 
     @Test(expected = UnsupportedOperationException.class)
     public void test11RemoveUnsupported() {
-        repository.remove(ZonedDateTime.now());
+        repository.remove(ZonedDateTime.now().toInstant());
     }
 
     @Test(expected = UnsupportedOperationException.class)

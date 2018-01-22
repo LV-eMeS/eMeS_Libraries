@@ -54,9 +54,8 @@ public final class MS_StringUtils {
     public static final String _LINE_BRAKE = _CARRIAGE_RETURN + _LINE_FEED; //Windows style line breaks
     public static final String _TAB_SPACE = "\t";
     public static final char[] _PUNCTUATION_CHARS = {'.', ',', '!', '?', ';', ':', '/', '\\'};
-//    public static final String _NUMBERS = "0123456789";
-//    public static final String _SMALL_LETTERS = "abcdefghijklmnopqrstuvwxyz";
-//    public static final String _BIG_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    public static final Character _SINGLE_QUOTE = '\'';
+    public static final String _SINGLE_QUOTE_2X = "''";
 
     //small types
     public enum TNotificationLang {
@@ -186,15 +185,18 @@ public final class MS_StringUtils {
     }
 
     /**
-     * Checks, whether text <b>aSmallString</b> is a part of some bigger text <b>aBigString</b>.
+     * Checks, whether text <b>smallString</b> is a part of some bigger text <b>bigString</b>.
      * <p>This function is case sensitive.
      *
-     * @param aBigString   text that will be tested.
-     * @param aSmallString pattern to find in text.
-     * @return true if <b>aBigString</b> contains <b>aSmallString</b>, otherwise returns false.
+     * @param bigString   text that will be tested.
+     * @param smallString pattern to find in text.
+     * @return true if <b>bigString</b> contains <b>smallString</b>, otherwise returns false.
      */
-    public static boolean isSubstring(String aSmallString, String aBigString) {
-        return aBigString.contains(aSmallString);
+    public static boolean isSubstring(String smallString, String bigString) {
+        if (smallString == null && bigString == null) return true;
+        else if (bigString != null && smallString == null) return false;
+        else if (bigString == null) return false;
+        return bigString.contains(smallString);
     }
 
     /**
@@ -544,5 +546,16 @@ public final class MS_StringUtils {
      */
     public static String[] getStringArray(String... strings) {
         return strings;
+    }
+
+    /**
+     * Adds single quote characters before and after presented string <b>value</b>.
+     * Single quotation marks inside presented string (like this: <b>'</b>) are escaped with extra single quotation mark (like this: <b>''</b>).
+     * @param value preferable value without any quotation.
+     * @return value quoted with single quotes from both sides.
+     */
+    public static String toQuotedText(String value) {
+        value = MS_StringUtils.replaceInString(value, _SINGLE_QUOTE.toString(), _SINGLE_QUOTE_2X);
+        return _SINGLE_QUOTE + value + _SINGLE_QUOTE;
     }
 }

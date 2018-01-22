@@ -17,13 +17,15 @@ import java.util.Date;
 public final class MS_DateTimeUtils {
 
     //Fully supported formats
-    public static final String _DATE_TIME_FORMAT_WITH_MILLISEC_AND_ZONE = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX";
-    public static final String _DATE_TIME_FORMAT_WITHOUT_MILLISEC = "yyyy-MM-dd'T'HH:mm:ssXXX";
-    public static final String _DATE_TIME_FORMAT_WITHOUT_MILLISEC_AND_ZONE = "yyyy-MM-dd'T'HH:mm:ss";
+    public static final String _DATE_TIME_FORMAT_NANOSEC_ZONE_OFFSET_ID = "yyyy-MM-dd'T'HH:mm:ss.SSSSSSSSSXXX'['VV']'";
+    public static final String _DATE_TIME_FORMAT_NANOSEC_ZONE_OFFSET = "yyyy-MM-dd'T'HH:mm:ss.SSSSSSSSSXXX";
+    public static final String _DATE_TIME_FORMAT_MILLISEC_ZONE_OFFSET = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX";
+    public static final String _DATE_TIME_FORMAT_SECONDS_ZONE_OFFSET = "yyyy-MM-dd'T'HH:mm:ssXXX";
+    public static final String _DATE_TIME_FORMAT_SECONDS = "yyyy-MM-dd'T'HH:mm:ss";
     public static final String _DATE_FORMAT_DATE_ONLY = "yyyy-MM-dd";
     public static final String _TIME_FORMAT_TIME_ONLY = "HH:mm:ss";
     public static final String _CUSTOM_DATE_TIME_FORMAT_LV = "dd.MM.yyyy HH:mm:ss:SSS";
-    public static final String _DEFAULT_DATE_TIME_FORMAT = _DATE_TIME_FORMAT_WITHOUT_MILLISEC;
+    public static final String _DEFAULT_DATE_TIME_FORMAT = _DATE_TIME_FORMAT_SECONDS_ZONE_OFFSET;
     //Custom formats
     public static final String _CUSTOM_TIME_FORMAT_LV = "HH:mm:ss:SSS";
     public static final String _CUSTOM_DATE_FORMAT_LV = "dd.MM.yyyy";
@@ -175,6 +177,7 @@ public final class MS_DateTimeUtils {
      * @return string type representation of given date.
      */
     public static String formatDateTime(ZonedDateTime dateTime, String format) {
+        if (dateTime == null || format == null) return null;
         DateTimeFormatter formatter = java.time.format.DateTimeFormatter.ofPattern(format);
         return dateTime.format(formatter);
     }
@@ -188,11 +191,14 @@ public final class MS_DateTimeUtils {
      * @param dateTime date as string represented in presented format date time format.
      * @param format   one of supported date formats:
      *                 <ul>
-     *                 <li>{@link MS_DateTimeUtils#_DATE_TIME_FORMAT_WITH_MILLISEC_AND_ZONE};</li>
-     *                 <li>{@link MS_DateTimeUtils#_DATE_TIME_FORMAT_WITHOUT_MILLISEC};</li>
-     *                 <li>{@link MS_DateTimeUtils#_DATE_TIME_FORMAT_WITHOUT_MILLISEC_AND_ZONE};</li>
+     *                 <li>{@link MS_DateTimeUtils#_DATE_TIME_FORMAT_MILLISEC_ZONE_OFFSET};</li>
+     *                 <li>{@link MS_DateTimeUtils#_DATE_TIME_FORMAT_SECONDS_ZONE_OFFSET};</li>
+     *                 <li>{@link MS_DateTimeUtils#_DATE_TIME_FORMAT_NANOSEC_ZONE_OFFSET};</li>
+     *                 <li>{@link MS_DateTimeUtils#_DATE_TIME_FORMAT_NANOSEC_ZONE_OFFSET_ID} - this might return wrong offset;</li>
+     *                 <li>{@link MS_DateTimeUtils#_DATE_TIME_FORMAT_SECONDS};</li>
      *                 <li>{@link MS_DateTimeUtils#_DATE_FORMAT_DATE_ONLY};</li>
-     *                 <li>{@link MS_DateTimeUtils#_TIME_FORMAT_TIME_ONLY}.</li>
+     *                 <li>{@link MS_DateTimeUtils#_TIME_FORMAT_TIME_ONLY};</li>
+     *                 <li>{@link MS_DateTimeUtils#_CUSTOM_DATE_TIME_FORMAT_LV}.</li>
      *                 </ul>
      * @return ZonedDateTime object.
      * @throws IllegalArgumentException in case <b>format</b> is illegal.
@@ -200,10 +206,12 @@ public final class MS_DateTimeUtils {
      */
     public static ZonedDateTime formatDateTime(String dateTime, String format) throws IllegalArgumentException, DateTimeParseException {
         switch (format) {
-            case _DATE_TIME_FORMAT_WITH_MILLISEC_AND_ZONE:
-            case _DATE_TIME_FORMAT_WITHOUT_MILLISEC:
+            case _DATE_TIME_FORMAT_MILLISEC_ZONE_OFFSET:
+            case _DATE_TIME_FORMAT_SECONDS_ZONE_OFFSET:
+            case _DATE_TIME_FORMAT_NANOSEC_ZONE_OFFSET:
+            case _DATE_TIME_FORMAT_NANOSEC_ZONE_OFFSET_ID:
                 return ZonedDateTime.parse(dateTime);
-            case _DATE_TIME_FORMAT_WITHOUT_MILLISEC_AND_ZONE:
+            case _DATE_TIME_FORMAT_SECONDS:
                 LocalDateTime localDateTime = LocalDateTime.parse(dateTime);
                 return ZonedDateTime.of(localDateTime, ZoneId.systemDefault()).withFixedOffsetZone();
             case _DATE_FORMAT_DATE_ONLY:
@@ -229,14 +237,23 @@ public final class MS_DateTimeUtils {
     }
 
     /**
-     * Returns zone as text from date time object.
+     * Returns zone offset as text from date time object.
      *
      * @param dateTime zoned date time object.
      * @return +03:00 for Europe/Helsinki.
      */
-    public static String getZoneText(ZonedDateTime dateTime) {
+    public static String getZoneOffsetText(ZonedDateTime dateTime) {
         ZoneRules zoneRules = dateTime.getZone().getRules();
         return zoneRules.getOffset(dateTime.toInstant()).getId();
     }
 
+    /**
+     * Returns zone offset as text from date time object.
+     *
+     * @param dateTime zoned date time object.
+     * @return +03:00 for Europe/Helsinki.
+     */
+    public static String getZoneIdText(ZonedDateTime dateTime) {
+        return dateTime.getZone().getId();
+    }
 }

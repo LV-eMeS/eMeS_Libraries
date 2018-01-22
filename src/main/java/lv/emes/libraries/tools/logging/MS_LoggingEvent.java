@@ -85,7 +85,10 @@ public class MS_LoggingEvent {
             time = ZonedDateTime.now();
         //to make this time more like ID by making it more unique from another times generated in same way
         //this doesn't change actual value, because ZonedDateTime.now() precision is till milliseconds
-        this.time = time.plusNanos(MS_CodingUtils.randomNumber(1, 4444));
+        //if this action is already done for presented time, don't increase nanoseconds anymore
+        if (MS_CodingUtils.fractionalPart((double) time.getNano() / 10000, 9) == 0)
+            time = time.plusNanos(MS_CodingUtils.randomNumber(1, 4444));
+        this.time = time;
         return this;
     }
 
@@ -143,15 +146,14 @@ public class MS_LoggingEvent {
 
         MS_LoggingEvent that = (MS_LoggingEvent) o;
 
-        if (time != null ? !time.equals(that.time) : that.time != null) return false;
-        if (type != that.type) return false;
-        if (message != null ? !message.equals(that.message) : that.message != null) return false;
-        return error != null ? error.equals(that.error) : that.error == null;
+        return (time != null ? time.toInstant().equals(that.time.toInstant()) : that.time == null)
+                && type == that.type && (message != null ? message.equals(that.message) : that.message == null)
+                && (error != null ? error.equals(that.error) : that.error == null);
     }
 
     @Override
     public int hashCode() {
-        int result = time != null ? time.hashCode() : 0;
+        int result = time != null ? time.toInstant().hashCode() : 0;
         result = 31 * result + (type != null ? type.hashCode() : 0);
         result = 31 * result + (message != null ? message.hashCode() : 0);
         result = 31 * result + (error != null ? error.hashCode() : 0);
