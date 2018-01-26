@@ -290,16 +290,16 @@ public final class MS_StringUtils {
     }
 
     /**
-     * Replaces part <b>aPattern</b> of text <b>aStr</b> with string <b>aReplaceWith</b>.
+     * Replaces part <b>pattern</b> of text <b>targetString</b> with string <b>replaceWith</b>.
      * Always ignores case.
      *
-     * @param aStr         "ABCDEFG"
-     * @param aPattern     "CD"
-     * @param aReplaceWith "XY"
+     * @param targetString         "ABCDEFG"
+     * @param pattern     "CD"
+     * @param replaceWith "XY"
      * @return "ABXYEFG"
      */
-    public static String replaceInString(String aStr, String aPattern, String aReplaceWith) {
-        return replaceInString(aStr, aPattern, aReplaceWith, false);
+    public static String replaceInString(String targetString, String pattern, String replaceWith) {
+        return replaceInString(targetString, pattern, replaceWith, false);
     }
 
     /**

@@ -58,8 +58,8 @@ public final class MS_StringList implements IListActions<String> {
      * Creates an String object list from String, which has all the elements delimited with <b>aDelimiter</b>.
      * It also sets a new value of <b>delimiter</b>.
      *
-     * @param aString    = "a#B#C3#"
-     * @param aDelimiter a delimiter.
+     * @param aString    ["a#B#C3#"].
+     * @param aDelimiter a delimiter ['#'].
      */
     public MS_StringList(String aString, char aDelimiter) {
         this.fromString(aString, aDelimiter);

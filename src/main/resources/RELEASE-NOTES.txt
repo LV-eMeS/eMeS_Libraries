@@ -1,5 +1,5 @@
 eMeS libraries
-Version 2.0.3
+Version 2.0.5
 Release Notes
 
 INTRODUCTION:
@@ -22,6 +22,8 @@ eMeS libraries Version 2.1.0
 * CSV file reader functionality.
 * In MS_BinaryTools isBinaryFile method fix regarding MIME type checks with jMimeMagic utility.
 * Truncate and fractionalPart methods implemented in MS_CodingUtils.
+* Significant improvements in MS_SQLQueryBuilder so that it's methods and their signatures would be
+  more close to SQL constructions.
 ========================================================================================================
 eMeS libraries Version 2.0.0
 ========================================================================================================

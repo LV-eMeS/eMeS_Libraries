@@ -36,7 +36,7 @@ import java.time.LocalDateTime;
  * </ul>
  *
  * @author eMeS
- * @version 2.0.
+ * @version 2.1.
  */
 public class MS_ConnectionSession implements AutoCloseable {
 
@@ -63,18 +63,18 @@ public class MS_ConnectionSession implements AutoCloseable {
     }
 
     /**
-     * Prepares statement for given SQL query. Exception handling is done silently (you don't need to handle those exceptions every time,
+     * Prepares statement for given SQL query.
      * just set common error handling operations of {@link MS_JDBCDatabase}).
      * <p><code>
-     * PreparedStatement stmt = prepareQuery(Select * from table where id=?);<br>
+     * PreparedStatement stmt = conn.prepareQuery(Select * from table where id=?);<br>
      * stmt.setInt(1, id);<br>
-     * ResultSet getQueryResult(stmt);<br>
+     * ResultSet rs = getQueryResult(stmt);<br>
      * </code>
      * OR<br>
-     * <code>commitStatement(stmt); //if making changes in DB</code>
+     * <code>conn.executeQuery.(stmt); //if making changes in DB</code>
      *
-     * @param sql an SQL statement that may contain one or more '?' IN parameter placeholders
-     * @return a new default <code>MS_PreparedSQLQuery</code> object containing the pre-compiled SQL statement
+     * @param sql an SQL statement that may contain one or more '?' IN parameter placeholders.
+     * @return a new <code>MS_PreparedSQLQuery</code> object containing the pre-compiled SQL statement.
      */
     public MS_PreparedSQLQuery prepareQuery(String sql) {
         try {
@@ -85,6 +85,23 @@ public class MS_ConnectionSession implements AutoCloseable {
             errors.add(e);
             return null;
         }
+    }
+
+    /**
+     * Prepares statement for given SQL query builder.
+     * <p><code>
+     * PreparedStatement stmt = conn.prepareQuery(new MS_SQLQueryBuilder().select().all().from("table").where().fieldEquals("id", _QPARAM));<br>
+     * stmt.setInt(1, id);<br>
+     * ResultSet rs = getQueryResult(stmt);<br>
+     * </code>
+     * OR<br>
+     * <code>conn.executeQuery.(stmt); //if making changes in DB</code>
+     *
+     * @param query a SQL builder that may contain one or more '?' IN parameter placeholders.
+     * @return a new <code>MS_PreparedSQLQuery</code> object containing the pre-compiled SQL statement.
+     */
+    public MS_PreparedSQLQuery prepareQuery(MS_SQLQueryBuilder query) {
+        return prepareQuery(query.build());
     }
 
     /**

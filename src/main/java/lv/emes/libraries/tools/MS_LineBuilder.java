@@ -13,18 +13,18 @@ import lv.emes.libraries.utilities.MS_StringUtils;
  * </ul>
  *
  * @author eMeS
- * @version 1.1.
+ * @version 2.0.
  */
 public class MS_LineBuilder {
-
-    public StringBuilder getStringBuilder() {
-        return sb;
-    }
 
     private StringBuilder sb;
 
     public MS_LineBuilder() {
         sb = new StringBuilder();
+    }
+
+    public StringBuilder getStringBuilder() {
+        return sb;
     }
 
     /**

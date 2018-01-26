@@ -17,6 +17,7 @@ package lv.emes.libraries.tools;
  * @version 1.1.
  */
 public abstract class MS_AbstractCompositeText {
+
     private MS_LineBuilder fBuilder;
     private boolean contentReady = false;
 
