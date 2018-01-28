@@ -1,10 +1,12 @@
 package lv.emes.libraries.tools.logging;
 
 import lv.emes.libraries.testdata.TestData;
+import lv.emes.libraries.tools.lists.MS_RepositoryDataExchangeException;
 import lv.emes.libraries.utilities.MS_CodingUtils;
 import lv.emes.libraries.utilities.MS_TestUtils;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
@@ -13,6 +15,7 @@ import java.time.ZonedDateTime;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -24,6 +27,7 @@ public class MS_RemoteLoggingRepositoryTest {
 
     private static final String PRODUCT_OWNER = "eMeS";
     private static final String PRODUCT_NAME = "Testing";
+    private static final String SECRET_KEY = "Testing eMeS remote logging repository 2018...";
 
     private static MS_RemoteLoggingRepository repository;
     private static MS_InMemoryLoggingRepository loggedEvents;
@@ -31,7 +35,9 @@ public class MS_RemoteLoggingRepositoryTest {
     @BeforeClass
     public static void initialize() {
         repository = new MS_RemoteLoggingRepository(PRODUCT_OWNER, PRODUCT_NAME,
-                new LoggingRemoteServerProperties().withHost(TestData.HTTP_PREFIX + TestData.TESTING_SERVER_HOSTAME));
+                new LoggingRemoteServerProperties()
+                        .withHost(TestData.HTTP_PREFIX + TestData.TESTING_SERVER_HOSTAME)
+                        .withSecret(SECRET_KEY));
         loggedEvents = new MS_InMemoryLoggingRepository();
         MS_MultiLoggingSetup setup = new MS_MultiLoggingSetup().withRepository(loggedEvents).withRepository(repository);
         MS_MultiLogger logger = new MS_MultiLogger(setup);
@@ -100,5 +106,40 @@ public class MS_RemoteLoggingRepositoryTest {
     @Test(expected = UnsupportedOperationException.class)
     public void test14GetCountUnsupported() {
         repository.count();
+    }
+
+    @Ignore
+    @Test(expected = MS_RepositoryDataExchangeException.class)
+    public void test15InvalidSecret() {
+        MS_RemoteLoggingRepository repository = new MS_RemoteLoggingRepository(PRODUCT_OWNER, PRODUCT_NAME,
+                new LoggingRemoteServerProperties()
+                        .withHost(TestData.HTTP_PREFIX + TestData.TESTING_SERVER_HOSTAME)
+                        .withSecret("Invalid secret"));
+
+        boolean requestPassed = true;
+        MS_LoggingEvent event = new MS_LoggingEvent().withTime(ZonedDateTime.now()).withType(LoggingEventTypeEnum.INFO)
+                .withMessage("This message will not reach repository");
+        try {
+            repository.add(event.getTime().toInstant(), event);
+        } catch (MS_RepositoryDataExchangeException e) {
+            requestPassed = false;
+        }
+        assertFalse(requestPassed);
+        requestPassed = true;
+
+        try {
+            repository.findAll();
+        } catch (MS_RepositoryDataExchangeException e) {
+            requestPassed = false;
+        }
+        assertFalse(requestPassed);
+        requestPassed = true;
+
+        try {
+            repository.removeAll();
+        } catch (MS_RepositoryDataExchangeException e) {
+            requestPassed = false;
+        }
+        assertFalse(requestPassed);
     }
 }

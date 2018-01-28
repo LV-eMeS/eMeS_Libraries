@@ -151,18 +151,43 @@ public class MS_HttpClient {
     }
 
     /**
+     * Does HTTP "DELETE" request to presented URL <b>requestURL</b> altogether with presented parameters <b>params</b>
+     * and connection configuration <b>connConfig</b>.
+     *
+     * @param requestURL an URL to HTTP server.
+     * @param params     map of parameters to pass for this URL.
+     * @param connConfig initial configuration of connection.
+     * @return HTTP response from server.
+     */
+    public static MS_HttpRequestResult delete(String requestURL, Map<String, String> params, MS_IFuncConnectionConfig connConfig) {
+        return httpRequest("DELETE", requestURL, params, connConfig);
+    }
+
+    /**
      * Does HTTP "DELETE" request to presented URL <b>requestURL</b> altogether with presented parameters <b>params</b>.
+     *
+     * @param requestURL an URL to HTTP server.
+     * @param params     map of parameters to pass for this URL.
+     * @return HTTP response from server.
+     */
+    public static MS_HttpRequestResult delete(String requestURL, Map<String, String> params) {
+        return delete(requestURL, params, MS_IFuncConnectionConfigDefaults.DEFAULT_CONFIG_FOR_CONNECTION);
+    }
+
+    /**
+     * Does HTTP "DELETE" request to presented URL <b>requestURL</b>
+     * altogether with presented connection configuration <b>connConfig</b>.
      *
      * @param requestURL an URL to HTTP server.
      * @param connConfig initial configuration of connection.
      * @return HTTP response from server.
      */
     public static MS_HttpRequestResult delete(String requestURL, MS_IFuncConnectionConfig connConfig) {
-        return httpRequest("DELETE", requestURL, null, connConfig);
+        return delete(requestURL, null, connConfig);
     }
 
     /**
-     * Does HTTP "DELETE" request to presented URL <b>requestURL</b> altogether with presented parameters <b>params</b>.
+     * Does HTTP "DELETE" request to presented URL <b>requestURL</b>.
      *
      * @param requestURL an URL to HTTP server.
      * @return HTTP response from server.

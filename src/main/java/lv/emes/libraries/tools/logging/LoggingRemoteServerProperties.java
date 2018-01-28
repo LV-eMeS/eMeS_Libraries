@@ -17,6 +17,7 @@ import lv.emes.libraries.communication.MS_TakenPorts;
  * <li>getEndpointGetSingleEvent</li>
  * <li>getEndpointGetAllEvents</li>
  * <li>getEndpointClearAllEvents</li>
+ * <li>getSecret</li>
  * <li>withHost</li>
  * <li>withPort</li>
  * <li>withEndpointRootName</li>
@@ -24,6 +25,7 @@ import lv.emes.libraries.communication.MS_TakenPorts;
  * <li>withEndpointGetSingleEvent</li>
  * <li>withEndpointGetAllEvents</li>
  * <li>withEndpointClearAllEvents</li>
+ * <li>withSecret</li>
  * </ul>
  *
  * @author eMeS
@@ -31,8 +33,14 @@ import lv.emes.libraries.communication.MS_TakenPorts;
  */
 public class LoggingRemoteServerProperties {
 
+    /**
+     * Secret key to be used in order to encrypt secret coming altogether with logging event to authorize logging.
+     */
+    public static final String SECRET_TO_ENCRYPT_SECRET = "Default remote logger secret 2018";
+
     private String host;
     private int port = MS_TakenPorts._REMOTE_LOGGING_SERVER_PORT;
+    private String secret = SECRET_TO_ENCRYPT_SECRET;
     private String endpointRootName = "RemoteLogger";
     private String endpointStatus = "status";
     private String endpointLogEvent = "event";
@@ -65,6 +73,10 @@ public class LoggingRemoteServerProperties {
 
     public String getEndpointStatus() {
         return endpointStatus;
+    }
+
+    public String getSecret() {
+        return secret;
     }
 
     /**
@@ -106,7 +118,7 @@ public class LoggingRemoteServerProperties {
      * Sets root name for HTTP requests to endpoints.
      *
      * @param status name of endpoint to get status of server (X) [GET endpointRootName/X].
-     *                         <p><b>DEFAULT</b>: "status"
+     *               <p><b>DEFAULT</b>: "status"
      * @return reference to properties.
      */
     public LoggingRemoteServerProperties withEndpointStatus(String status) {
@@ -145,12 +157,30 @@ public class LoggingRemoteServerProperties {
      * Sets endpoint name to clear / delete all existing events in repository.
      *
      * @param endpointDeleteAllEvents name of endpoint (X) [DELETE endpointRootName/productOwner/productName/X].
-     *                             <p><b>DEFAULT</b>: "clear"
+     *                                <p><b>DEFAULT</b>: "clear"
      * @return reference to properties.
      */
     public LoggingRemoteServerProperties withEndpointClearAllEvents(String endpointDeleteAllEvents) {
         if (endpointDeleteAllEvents != null && !endpointDeleteAllEvents.equals(""))
             this.endpointClearAllEvents = endpointDeleteAllEvents;
+        return this;
+    }
+
+    /**
+     * Sets value of the secret that in combination with <b>productOwner</b> and <b>productName</b> gives
+     * access to read and write events to repository.
+     *
+     * @param secret secret value that is saved to Remote server on very first request that is made for
+     *               specific <b>productOwner</b> and <b>productName</b>.
+     *               For further requests check is made against this <b>secret</b> value and in case of mismatch
+     *               of the value that is provided and the one that is stored in Remote server's repository,
+     *               authorization error (HTTP: 401) occurs.
+     *               <p><b>DEFAULT</b>: "Default secret 123"
+     * @return reference to properties.
+     */
+    public LoggingRemoteServerProperties withSecret(String secret) {
+        if (secret != null && !secret.equals(""))
+            this.secret = secret;
         return this;
     }
 }

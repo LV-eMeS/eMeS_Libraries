@@ -1,12 +1,15 @@
 package lv.emes.libraries.tools.logging;
 
 import com.cedarsoftware.util.io.JsonReader;
+import lv.emes.libraries.communication.cryptography.MS_CryptographyUtils;
 import lv.emes.libraries.communication.http.MS_HttpClient;
 import lv.emes.libraries.communication.http.MS_HttpRequestResult;
 import lv.emes.libraries.tools.MS_ObjectWrapperHelper;
 import lv.emes.libraries.tools.lists.MS_Repository;
 import lv.emes.libraries.tools.lists.MS_RepositoryDataExchangeException;
+import lv.emes.libraries.utilities.MS_CodingUtils;
 
+import java.security.GeneralSecurityException;
 import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
@@ -63,11 +66,12 @@ public class MS_RemoteLoggingRepository extends MS_Repository<MS_LoggingEvent, I
         headers.put("time", serializedEvent.getTime());
         headers.put("message", serializedEvent.getMessage());
         headers.put("error", serializedEvent.getError());
+        headers.put("secret", getEncryptedSecret(serverProperties));
 
         String url = getRemoteServerBasePath(serverProperties) + serverProperties.getEndpointLogEvent();
         MS_HttpRequestResult httpResult = MS_HttpClient.post(url, headers);
 
-        if (httpResult.getReponseCode() == 400) { //this is the case when server responds with status
+        if (httpResult.getReponseCode() == 400) {
             MS_Log4Java.getLogger(MS_RemoteLoggingRepository.class)
                     .error("Serialization error while performing add(" + identifier + ", item). Item data:\n" + item, httpResult.getException());
             throw new MS_RepositoryDataExchangeException("Serialization error happened while trying to log new event");
@@ -81,7 +85,7 @@ public class MS_RemoteLoggingRepository extends MS_Repository<MS_LoggingEvent, I
     @SuppressWarnings("unchecked")
     protected Map<Instant, MS_LoggingEvent> doFindAll() {
         String url = getRemoteServerBasePath(serverProperties) + serverProperties.getEndpointGetAllEvents();
-        MS_HttpRequestResult httpResult = MS_HttpClient.get(url, null);
+        MS_HttpRequestResult httpResult = MS_HttpClient.get(url, MS_CodingUtils.newSingletonMap("secret", getEncryptedSecret(serverProperties)));
         checkResponseAndThrowExceptionIfNeeded(httpResult, "Finding all events failed with HTTP status code " +
                 httpResult.getReponseCode());
         try {
@@ -101,7 +105,7 @@ public class MS_RemoteLoggingRepository extends MS_Repository<MS_LoggingEvent, I
     @Override
     protected void doRemoveAll() {
         String url = getRemoteServerBasePath(serverProperties) + serverProperties.getEndpointClearAllEvents();
-        MS_HttpRequestResult httpResult = MS_HttpClient.delete(url);
+        MS_HttpRequestResult httpResult = MS_HttpClient.delete(url, MS_CodingUtils.newSingletonMap("secret", getEncryptedSecret(serverProperties)));
         checkResponseAndThrowExceptionIfNeeded(httpResult, "Removing all events failed with HTTP status code " +
                 httpResult.getReponseCode());
     }
@@ -179,8 +183,21 @@ public class MS_RemoteLoggingRepository extends MS_Repository<MS_LoggingEvent, I
         return getRemoteServerRoot(props) + this.getProductOwner() + "/" + this.getProductName() + "/";
     }
 
+    private String getEncryptedSecret(LoggingRemoteServerProperties props) {
+        try {
+            return MS_CryptographyUtils.encrypt(props.getSecret(), LoggingRemoteServerProperties.SECRET_TO_ENCRYPT_SECRET);
+        } catch (GeneralSecurityException e) {
+            throw new MS_RepositoryDataExchangeException("Failed to encrypt secret for this logging product", e);
+        }
+    }
+
     private void checkResponseAndThrowExceptionIfNeeded(MS_HttpRequestResult httpResult, String message) {
-        if (httpResult.getReponseCode() != 200) {
+        if (httpResult.getReponseCode() == 401) {
+            MS_Log4Java.getLogger(MS_RemoteLoggingRepository.class)
+                    .error("Authentication error while performing repository operation.", httpResult.getException());
+            throw new MS_RepositoryDataExchangeException("Authentication error happened while performing repository operation.\n" +
+                    "Secret key is unique for every concrete product and is set for the first time some event is logged for this product.");
+        } else if (httpResult.getReponseCode() != 200) {
             MS_Log4Java.getLogger(MS_RemoteLoggingRepository.class)
                     .error(message + ". Message:\n" + httpResult.getMessage(), httpResult.getException());
             throw new MS_RepositoryDataExchangeException(message, httpResult.getException());

@@ -1,16 +1,11 @@
 package lv.emes.libraries.communication.cryptography;
 
-import javax.crypto.Cipher;
-import javax.crypto.Mac;
-import javax.crypto.SecretKeyFactory;
+import javax.crypto.*;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
-import java.security.GeneralSecurityException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
+import java.security.*;
 import java.security.spec.InvalidKeySpecException;
 import java.util.Arrays;
 import java.util.Base64;
@@ -18,31 +13,57 @@ import java.util.Base64;
 /**
  * Class for encryption/decryption processes.
  * http://netnix.org/2015/04/19/aes-encryption-with-hmac-integrity-in-java/
+ * @author eMeS
+ * @version 1.1.
  */
-//TODO improve this class and work on appropriate Exception throwing
 public class MS_CryptographyUtils {
 
     private final static Integer keyLength = 128;
     private final static Integer hmacKeyLength = 160;
     private final static Integer iterations = 9876;
+    private final static String DEFAULT_HMAC_KEY = "Netnix.org/2015/04/1";
 
     /**
-     * Method encrypts provided text with such secret key and HMAC secret key
-     *
-     * @param text    text to be encrypted
-     * @param encKey  secret key
-     * @param hmacKey HMAC secret key
-     * @return encrypted text
-     * @throws Exception when any problem occurs during encryption.
+     * Encrypts provided text <b>text</b> using AES algorithm and encryption key <b>secretKey</b>
+     * and {@link MS_CryptographyUtils#DEFAULT_HMAC_KEY}.
+     * @param text text to encrypt.
+     * @param secretKey secret key to encrypt <b>text</b>.
+     * @return encrypted text.
+     * @throws GeneralSecurityException when any problem occurs during encryption.
      */
-    public static String encrypt(String text, String encKey, String hmacKey) throws Exception {
+    public static String encrypt(String text, String secretKey) throws GeneralSecurityException {
+        return encrypt(text, secretKey, DEFAULT_HMAC_KEY);
+    }
+
+    /**
+     * Decrypts provided encrypted text <b>encryptedText</b> using AES algorithm and encryption key <b>secretKey</b>
+     * and {@link MS_CryptographyUtils#DEFAULT_HMAC_KEY}.
+     * @param encryptedText     encrypted text.
+     * @param secretKey  secret key.
+     * @return decrypted text.
+     * @throws GeneralSecurityException when HMAC secret key is incorrect.
+     */
+    public static String decrypt(String encryptedText, String secretKey) throws GeneralSecurityException {
+        return decrypt(encryptedText, secretKey, DEFAULT_HMAC_KEY);
+    }
+
+    /**
+     * Method encrypts provided text with such secret key and HMAC secret key.
+     *
+     * @param text    text to be encrypted.
+     * @param secretKey  secret key.
+     * @param hmacKey HMAC secret key.
+     * @return encrypted text.
+     * @throws GeneralSecurityException when any problem occurs during encryption.
+     */
+    public static String encrypt(String text, String secretKey, String hmacKey) throws GeneralSecurityException {
         SecureRandom r = SecureRandom.getInstance("SHA1PRNG");
 
         // Generate 160 bit Salt for Encryption Key
         byte[] esalt = new byte[20];
         r.nextBytes(esalt);
         // Generate 128 bit Encryption Key
-        byte[] dek = deriveKey(encKey, esalt, iterations, keyLength);
+        byte[] dek = deriveKey(secretKey, esalt, iterations, keyLength);
 
         // Perform Encryption
         SecretKeySpec eks = new SecretKeySpec(dek, "AES");
@@ -74,17 +95,17 @@ public class MS_CryptographyUtils {
     }
 
     /**
-     * Method decrypts provided encrypted text with such secret key and HMAC secret key
+     * Method decrypts provided encrypted text with such secret key and HMAC secret key.
      *
-     * @param eos     enrypted text
-     * @param encKey  secret key
-     * @param hmacKey HMAC secret key
-     * @return decrypted text
+     * @param encryptedText     encrypted text.
+     * @param secretKey  secret key.
+     * @param hmacKey HMAC secret key.
+     * @return decrypted text.
      * @throws GeneralSecurityException when HMAC secret key is incorrect.
      */
-    public static String decrypt(String eos, String encKey, String hmacKey) throws GeneralSecurityException {
+    public static String decrypt(String encryptedText, String secretKey, String hmacKey) throws GeneralSecurityException {
         // Recover our Byte Array by Base64 Decoding
-        byte[] os = Base64.getDecoder().decode(eos);
+        byte[] os = Base64.getDecoder().decode(encryptedText);
 
         // Check Minimum Length (ESALT (20) + HSALT (20) + HMAC (32))
         if (os.length > 72) {
@@ -107,7 +128,7 @@ public class MS_CryptographyUtils {
             if (MessageDigest.isEqual(hmac, chmac)) {
                 // HMAC Verification Passed
                 // Regenerate Encryption Key using Recovered Salt (esalt)
-                byte[] dek = deriveKey(encKey, esalt, iterations, keyLength);
+                byte[] dek = deriveKey(secretKey, esalt, iterations, keyLength);
 
                 // Perform Decryption
                 SecretKeySpec eks = new SecretKeySpec(dek, "AES");
@@ -119,7 +140,7 @@ public class MS_CryptographyUtils {
                 return new String(s, StandardCharsets.UTF_8);
             }
         }
-        throw new GeneralSecurityException("Provided text (" + os + ") for decryption has wrong length");
+        throw new GeneralSecurityException("Provided text (" + Arrays.toString(os) + ") for decryption has wrong length");
     }
 
     /**

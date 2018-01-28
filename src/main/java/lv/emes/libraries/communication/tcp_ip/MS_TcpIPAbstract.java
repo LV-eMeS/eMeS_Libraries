@@ -16,12 +16,12 @@ public abstract class MS_TcpIPAbstract implements Runnable {
 	 * Set this to handle this kind of error when trying to read message sent by communication partner!
 	 * <p>(exception) -&gt; {};
 	 */
-	public IFuncOnUTFDataFormatException onUTFDataFormatException = (exception) -> {exception.printStackTrace();};
+	public IFuncOnUTFDataFormatException onUTFDataFormatException = Throwable::printStackTrace;
 	/**
 	 * Set this to handle this kind of error when trying to read message sent by communication partner!
 	 * <p>(exception) -&gt; {};
 	 */
-	public IFuncOnIOException onIOException = (exception) -> {exception.printStackTrace();};
+	public IFuncOnIOException onIOException = Throwable::printStackTrace;
 
 	//PRIVĀTIE MAINĪGIE
 	protected boolean isActive = false; 

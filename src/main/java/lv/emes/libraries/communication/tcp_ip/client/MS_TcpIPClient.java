@@ -35,12 +35,11 @@ public class MS_TcpIPClient extends MS_TcpIPClientCore {
      * <p>() -&gt; {some action};
      */
     public IFuncOnServerGoingDown onServerGoingDown = null;
-    //PRIVĀTIE MAINĪGIE
-    private MS_List<MS_ClientCommand> commandList = new MS_List<MS_ClientCommand>();
+    //PRIVATE VARIABLES
+    private MS_List<MS_ClientCommand> commandList = new MS_List<>();
     private MS_StringList dataContainer = new MS_StringList();
     private int id = 0;
 
-    //PUBLIC VARIABLES
     //CONTRUCTORS
 
     /**
@@ -67,9 +66,7 @@ public class MS_TcpIPClient extends MS_TcpIPClientCore {
         this.registerNewCommand(tmp);
     }
 
-    //STATISKIE KONSTRUKTORI
-    //PRIVĀTĀS METODES
-    //PUBLISKĀS METODES
+    //PUBLIC METHODS
     @Override
     protected void onIncomingServerMessage(String message, DataOutputStream out) {
         //Every time server sends a message client reads it.
