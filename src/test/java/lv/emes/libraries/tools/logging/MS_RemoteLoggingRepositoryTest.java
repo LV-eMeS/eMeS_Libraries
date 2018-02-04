@@ -1,7 +1,7 @@
 package lv.emes.libraries.tools.logging;
 
 import lv.emes.libraries.testdata.TestData;
-import lv.emes.libraries.tools.lists.MS_RepositoryDataExchangeException;
+import lv.emes.libraries.storage.MS_RepositoryDataExchangeException;
 import lv.emes.libraries.utilities.MS_CodingUtils;
 import lv.emes.libraries.utilities.MS_TestUtils;
 import org.junit.BeforeClass;
@@ -109,7 +109,7 @@ public class MS_RemoteLoggingRepositoryTest {
     }
 
     @Ignore
-    @Test(expected = MS_RepositoryDataExchangeException.class)
+    @Test
     public void test15InvalidSecret() {
         MS_RemoteLoggingRepository repository = new MS_RemoteLoggingRepository(PRODUCT_OWNER, PRODUCT_NAME,
                 new LoggingRemoteServerProperties()

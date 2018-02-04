@@ -1,4 +1,4 @@
-package lv.emes.libraries.tools.lists;
+package lv.emes.libraries.storage;
 
 /**
  * An exception that indicates that there are problems accessing some repository or doing manipulations with

@@ -1,6 +1,8 @@
-package lv.emes.libraries.tools.lists;
+package lv.emes.libraries.storage;
 
 import lv.emes.libraries.tools.MS_EqualityCheckBuilder;
+import lv.emes.libraries.tools.lists.MS_List;
+import lv.emes.libraries.tools.lists.MS_StringList;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;

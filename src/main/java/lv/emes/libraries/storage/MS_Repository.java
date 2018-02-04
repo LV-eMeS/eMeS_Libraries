@@ -1,4 +1,7 @@
-package lv.emes.libraries.tools.lists;
+package lv.emes.libraries.storage;
+
+import lv.emes.libraries.tools.lists.IBaseListWithItems;
+import lv.emes.libraries.tools.lists.IFuncForEachItemLoopAction;
 
 import java.util.Iterator;
 import java.util.LinkedHashMap;

@@ -5,8 +5,8 @@ import lv.emes.libraries.communication.cryptography.MS_CryptographyUtils;
 import lv.emes.libraries.communication.http.MS_HttpClient;
 import lv.emes.libraries.communication.http.MS_HttpRequestResult;
 import lv.emes.libraries.tools.MS_ObjectWrapperHelper;
-import lv.emes.libraries.tools.lists.MS_Repository;
-import lv.emes.libraries.tools.lists.MS_RepositoryDataExchangeException;
+import lv.emes.libraries.storage.MS_Repository;
+import lv.emes.libraries.storage.MS_RepositoryDataExchangeException;
 import lv.emes.libraries.utilities.MS_CodingUtils;
 
 import java.security.GeneralSecurityException;

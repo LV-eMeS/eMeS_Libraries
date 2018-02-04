@@ -1,6 +1,6 @@
 package lv.emes.libraries.file_system;
 
-import lv.emes.libraries.tools.lists.MS_Repository;
+import lv.emes.libraries.storage.MS_Repository;
 
 import static lv.emes.libraries.file_system.MS_FileSystemTools.SLASH;
 

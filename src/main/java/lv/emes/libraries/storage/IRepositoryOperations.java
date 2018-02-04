@@ -1,4 +1,4 @@
-package lv.emes.libraries.tools.lists;
+package lv.emes.libraries.storage;
 
 import java.util.Map;
 
