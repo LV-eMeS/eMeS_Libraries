@@ -1,19 +1,18 @@
 package lv.emes.libraries.communication.http;
 
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.conn.ConnectTimeoutException;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
-import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static lv.emes.libraries.communication.http.MS_HttpClient.get;
-import static lv.emes.libraries.communication.http.MS_HttpClient.post;
+import static lv.emes.libraries.communication.http.MS_HttpClient.*;
 import static lv.emes.libraries.testdata.TestData.*;
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertNotEquals;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MSHttpClientTest {
@@ -25,8 +24,11 @@ public class MSHttpClientTest {
     private static final String TEST_PARAMETER_NAME = "test";
     private static final String TEST_PARAMETER_VALUE = "vards";
     private static final String TEST_NO_PARAMETER_VALUE = TEST_PARAMETER_NAME;
+    private static final String TEST_HEADER_NAME = "header1";
+    private static final String TEST_HEADER_VALUE = "header value";
 
     private static Map<String, String> params;
+    private static Map<String, String> headers;
     private static MS_HttpRequestResult response;
 
     @BeforeClass
@@ -34,6 +36,9 @@ public class MSHttpClientTest {
     public static void initTestPreConditions() {
         params = new HashMap<>();
         params.put(TEST_PARAMETER_NAME, TEST_PARAMETER_VALUE);
+
+        headers = new HashMap<>();
+        headers.put(TEST_HEADER_NAME, TEST_HEADER_VALUE);
     }
 
     @Test
@@ -41,11 +46,15 @@ public class MSHttpClientTest {
         response = get(URL_STRING_GET, params);
         assertEquals(200, response.reponseCode);
         assertEquals(TEST_PARAMETER_VALUE, response.message);
+
+        response = get(URL_STRING_GET, params, headers); //test that header passing will not break the request itself
+        assertEquals(200, response.reponseCode);
+        assertEquals(TEST_PARAMETER_VALUE, response.message);
     }
 
     @Test
     public void test02PostWithTestVariable() {
-        response = post(URL_STRING_POST, params);
+        response = post(URL_STRING_POST, params, null);
         assertEquals(200, response.reponseCode);
         assertEquals(TEST_PARAMETER_VALUE, response.message);
     }
@@ -59,7 +68,7 @@ public class MSHttpClientTest {
 
     @Test
     public void test04PostWithoutParameters() {
-        response = post(URL_STRING_NO_PARAMS, params);
+        response = post(URL_STRING_NO_PARAMS, params, null);
         assertEquals(200, response.reponseCode);
         assertEquals(TEST_NO_PARAMETER_VALUE, response.message);
     }
@@ -72,7 +81,7 @@ public class MSHttpClientTest {
 
     @Test
     public void test06PostWithEmptyParameters() {
-        response = post(URL_STRING_GET, null);
+        response = post(URL_STRING_GET, null, null);
         assertNotEquals(TEST_NO_PARAMETER_VALUE, response.message);
     }
 
@@ -80,32 +89,35 @@ public class MSHttpClientTest {
     public void test07GetWrongURLScriptFilename() {
         response = get(URL_STRING_WRONG_URL, null);
         assertEquals(404, response.reponseCode);
-        assertEquals("", response.message);
-        assertEquals(FileNotFoundException.class, response.exception.getClass());
     }
 
     @Test
     public void test08PostWrongURLScriptFilename() {
-        response = post(URL_STRING_WRONG_URL, null);
+        response = post(URL_STRING_WRONG_URL, null, null);
         assertEquals(404, response.reponseCode);
-        assertEquals("", response.message);
     }
 
     @Test
-    public void test09Timeout() {
-        MS_IFuncConnectionConfig config = (cn) -> {
-            cn.setConnectTimeout(1);
-            cn.setReadTimeout(1);
-        };
-        response = get(URL_STRING_UNREACHABLE_HOST, null, config);
-        assertEquals(java.net.SocketTimeoutException.class, response.exception.getClass());
+    public void test09PutWrongURLScriptFilename() {
+        response = put(URL_STRING_WRONG_URL, null, null);
+        assertEquals(404, response.reponseCode);
+    }
 
-        config = (cn) -> {
-            cn.setConnectTimeout(1);
-            cn.setReadTimeout(1);
-            cn.setDoOutput(true);
-        };
-        response = post(URL_STRING_UNREACHABLE_HOST, null, config);
-        assertEquals(java.net.SocketTimeoutException.class, response.exception.getClass());
+    @Test
+    public void test10DeleteWrongURLScriptFilename() {
+        response = delete(URL_STRING_WRONG_URL, null, null);
+        assertEquals(404, response.reponseCode);
+    }
+
+    @Test
+    public void test00Timeout() {
+        RequestConfig config = RequestConfig.custom()
+                .setConnectTimeout(1).setConnectionRequestTimeout(1).setSocketTimeout(1)
+                .build();
+        response = get(URL_STRING_UNREACHABLE_HOST, null, null, config);
+        assertEquals(ConnectTimeoutException.class, response.exception.getClass());
+
+        response = post(URL_STRING_UNREACHABLE_HOST, null, null, config);
+        assertEquals(ConnectTimeoutException.class, response.exception.getClass());
     }
 }

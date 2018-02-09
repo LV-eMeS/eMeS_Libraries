@@ -11,9 +11,11 @@ import lv.emes.libraries.utilities.MS_StringUtils;
  * or {@link MS_SQLQueryBuilder#append(String)} methods.
  *
  * @author eMeS
- * @version 2.0.
+ * @version 2.1.
  */
 public class MS_SQLQueryBuilder extends MS_LineBuilder {
+
+    //TODO document this whole class methods
 
     public static final String _QPARAM = "?";
     public static final String _SP = " "; //space
@@ -101,8 +103,8 @@ public class MS_SQLQueryBuilder extends MS_LineBuilder {
         return beginOperation(false).appendInternal(fieldName).endOperation(Oper.FIELD);
     }
 
-    public MS_SQLQueryBuilder value(String fieldName) {
-        return field(fieldName);
+    public MS_SQLQueryBuilder value(String value) {
+        return field(value);
     }
 
     public MS_SQLQueryBuilder value(String fieldName, String fieldValue) {

@@ -1,5 +1,5 @@
 eMeS libraries
-Version 2.0.5
+Version 2.0.6
 Release Notes
 
 INTRODUCTION:
@@ -24,6 +24,7 @@ eMeS libraries Version 2.1.0
 * Truncate and fractionalPart methods implemented in MS_CodingUtils.
 * Significant improvements in MS_SQLQueryBuilder so that it's methods and their signatures would be
   more close to SQL constructions.
+* HttpClient improvements by using Apache HTTP components under the hood.
 ========================================================================================================
 eMeS libraries Version 2.0.0
 ========================================================================================================

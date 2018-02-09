@@ -4,10 +4,9 @@ import com.cedarsoftware.util.io.JsonReader;
 import lv.emes.libraries.communication.cryptography.MS_CryptographyUtils;
 import lv.emes.libraries.communication.http.MS_HttpClient;
 import lv.emes.libraries.communication.http.MS_HttpRequestResult;
-import lv.emes.libraries.tools.MS_ObjectWrapperHelper;
 import lv.emes.libraries.storage.MS_Repository;
 import lv.emes.libraries.storage.MS_RepositoryDataExchangeException;
-import lv.emes.libraries.utilities.MS_CodingUtils;
+import lv.emes.libraries.tools.MS_ObjectWrapperHelper;
 
 import java.security.GeneralSecurityException;
 import java.time.Instant;
@@ -23,6 +22,8 @@ import java.util.Map;
  * @version 1.0.
  */
 public class MS_RemoteLoggingRepository extends MS_Repository<MS_LoggingEvent, Instant> implements MS_LoggingRepository {
+
+    public static int MAX_SECRET_LENGTH = 250;
 
     private LoggingRemoteServerProperties serverProperties;
 
@@ -61,15 +62,15 @@ public class MS_RemoteLoggingRepository extends MS_Repository<MS_LoggingEvent, I
 
         //serialize event and send it to remote logging server
         MS_SerializedLoggingEvent serializedEvent = MS_ObjectWrapperHelper.wrap(item, MS_SerializedLoggingEvent.class);
-        Map<String, String> headers = new HashMap<>();
-        headers.put("type", serializedEvent.getType());
-        headers.put("time", serializedEvent.getTime());
-        headers.put("message", serializedEvent.getMessage());
-        headers.put("error", serializedEvent.getError());
-        headers.put("secret", getEncryptedSecret(serverProperties));
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("type", serializedEvent.getType());
+        parameters.put("time", serializedEvent.getTime());
+        parameters.put("message", serializedEvent.getMessage());
+        parameters.put("error", serializedEvent.getError());
 
         String url = getRemoteServerBasePath(serverProperties) + serverProperties.getEndpointLogEvent();
-        MS_HttpRequestResult httpResult = MS_HttpClient.post(url, headers);
+//        MS_HttpRequestResult httpResult = MS_HttpClient.post(url, parameters, MS_CodingUtils.newSingletonMap("Authorization", getEncryptedSecret(serverProperties)));
+        MS_HttpRequestResult httpResult = MS_HttpClient.post(url, parameters, null);
 
         if (httpResult.getReponseCode() == 400) {
             MS_Log4Java.getLogger(MS_RemoteLoggingRepository.class)
@@ -85,7 +86,8 @@ public class MS_RemoteLoggingRepository extends MS_Repository<MS_LoggingEvent, I
     @SuppressWarnings("unchecked")
     protected Map<Instant, MS_LoggingEvent> doFindAll() {
         String url = getRemoteServerBasePath(serverProperties) + serverProperties.getEndpointGetAllEvents();
-        MS_HttpRequestResult httpResult = MS_HttpClient.get(url, MS_CodingUtils.newSingletonMap("secret", getEncryptedSecret(serverProperties)));
+        MS_HttpRequestResult httpResult = MS_HttpClient.get(url, null, null);
+//        MS_HttpRequestResult httpResult = MS_HttpClient.get(url, null, MS_CodingUtils.newSingletonMap("Authorization", getEncryptedSecret(serverProperties)));
         checkResponseAndThrowExceptionIfNeeded(httpResult, "Finding all events failed with HTTP status code " +
                 httpResult.getReponseCode());
         try {
@@ -105,7 +107,8 @@ public class MS_RemoteLoggingRepository extends MS_Repository<MS_LoggingEvent, I
     @Override
     protected void doRemoveAll() {
         String url = getRemoteServerBasePath(serverProperties) + serverProperties.getEndpointClearAllEvents();
-        MS_HttpRequestResult httpResult = MS_HttpClient.delete(url, MS_CodingUtils.newSingletonMap("secret", getEncryptedSecret(serverProperties)));
+        MS_HttpRequestResult httpResult = MS_HttpClient.delete(url, (Map)null);
+//        MS_HttpRequestResult httpResult = MS_HttpClient.delete(url, MS_CodingUtils.newSingletonMap("Authorization", getEncryptedSecret(serverProperties)));
         checkResponseAndThrowExceptionIfNeeded(httpResult, "Removing all events failed with HTTP status code " +
                 httpResult.getReponseCode());
     }
@@ -185,6 +188,8 @@ public class MS_RemoteLoggingRepository extends MS_Repository<MS_LoggingEvent, I
 
     private String getEncryptedSecret(LoggingRemoteServerProperties props) {
         try {
+            if (props.getSecret().length() > MAX_SECRET_LENGTH)
+                throw new MS_RepositoryDataExchangeException("Failed to encrypt secret for this logging product - length of secret exceeds 255 characters");
             return MS_CryptographyUtils.encrypt(props.getSecret(), LoggingRemoteServerProperties.SECRET_TO_ENCRYPT_SECRET);
         } catch (GeneralSecurityException e) {
             throw new MS_RepositoryDataExchangeException("Failed to encrypt secret for this logging product", e);

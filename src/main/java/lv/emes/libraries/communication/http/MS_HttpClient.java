@@ -1,17 +1,33 @@
 package lv.emes.libraries.communication.http;
 
 import lv.emes.libraries.file_system.MS_BinaryTools;
+import org.apache.http.Header;
+import org.apache.http.HttpEntity;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.*;
+import org.apache.http.conn.HttpHostConnectException;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
 
-import javax.net.ssl.HttpsURLConnection;
-import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.SocketTimeoutException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
- * Inspired from <a href="http://stackoverflow.com/questions/2938502/sending-post-data-in-android">Stackoverflow</a>.
  * This class can be used while working with HTTP requests.
+ * Under the hood it's using
+ * <a href="http://hc.apache.org/httpcomponents-client-4.3.x/quickstart.html">Apache HTTP components</a>.
+ * <p>Good examples of Apache HTTP components use are provided by
+ * <a href="http://www.baeldung.com/httpclient-guide">Baeldung</a>, but this class is something different.
  * <p>Static methods:
  * <ul>
  * <li>get</li>
@@ -21,126 +37,166 @@ import java.util.Map;
  * </ul>
  *
  * @author eMeS
- * @version 2.0.
+ * @version 2.1.
  */
 public class MS_HttpClient {
 
     /**
-     * Does HTTP "GET" request to presented URL <b>requestURL</b> altogether with presented parameters <b>params</b>.
+     * Does HTTP "GET" request.
      *
      * @param requestURL an URL to HTTP server.
      * @param params     map of parameters to pass for this URL.
-     * @param connConfig initial configuration of connection.
+     * @param headers    map of key-value headers to pass for this request.
+     * @param connConfig  initial configuration of connection. For most of the cases that's enough just to set timeouts.
+     *                    For that {@link MS_IFuncConnectionConfigDefaults#DEFAULT_CONFIG_FOR_CONNECTION} can be used as well.
      * @return HTTP response from server.
      */
-    public static MS_HttpRequestResult get(String requestURL, Map<String, String> params, MS_IFuncConnectionConfig connConfig) {
-        URL url;
-        MS_HttpRequestResult res = new MS_HttpRequestResult();
-        try {
+    public static MS_HttpRequestResult get(String requestURL, Map<String, String> params,
+                                           Map<String, String> headers, RequestConfig connConfig) {
+        IFuncHttpRequestCreator newRequest = () -> {
+            String url = requestURL;
             if (params != null)
-                requestURL += "?" + formParamURL(params);
-            url = new URL(requestURL);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            connConfig.initializeConnection(conn);
-            res.connection = conn;
-            res.reponseCode = conn.getResponseCode();
-            InputStream in = new BufferedInputStream(conn.getInputStream());
-            res.message = MS_BinaryTools.inputToUTF8(in);
-        } catch (IOException e) {
-            res.message = "";
-            res.exception = e;
-        }
-        return res;
+                url += "?" + formParamURL(params);
+            return new HttpGet(url);
+        };
+        return httpRequest(newRequest, headers, connConfig);
     }
 
     /**
-     * Does HTTP "GET" request to presented URL <b>requestURL</b> altogether with presented parameters <b>params</b>.
+     * Does HTTP "GET" request.
+     *
+     * @param requestURL an URL to HTTP server.
+     * @param params     map of parameters to pass for this URL.
+     * @param headers    map of parameters to pass for this URL.
+     * @return HTTP response from server.
+     */
+    public static MS_HttpRequestResult get(String requestURL, Map<String, String> params, Map<String, String> headers) {
+        return get(requestURL, params, headers, MS_IFuncConnectionConfigDefaults.DEFAULT_CONFIG_FOR_CONNECTION);
+    }
+
+    /**
+     * Does HTTP "GET" request.
      *
      * @param requestURL an URL to HTTP server.
      * @param params     map of parameters to pass for this URL.
      * @return HTTP response from server.
      */
     public static MS_HttpRequestResult get(String requestURL, Map<String, String> params) {
-        return get(requestURL, params, MS_IFuncConnectionConfigDefaults.DEFAULT_CONFIG_FOR_CONNECTION);
+        return get(requestURL, params, null, MS_IFuncConnectionConfigDefaults.DEFAULT_CONFIG_FOR_CONNECTION);
     }
 
     /**
-     * Does HTTP "POST" request to presented URL <b>requestURL</b> altogether with presented parameters <b>params</b>.
+     * Does HTTP "POST" request.
+     *
+     * @param requestURL  an URL to HTTP server.
+     * @param requestBody data as whole entity of request body.
+     * @param headers     map of key-value headers to pass for this request.
+     * @param connConfig  initial configuration of connection. For most of the cases that's enough just to set timeouts.
+     *                    For that {@link MS_IFuncConnectionConfigDefaults#DEFAULT_CONFIG_FOR_CONNECTION} can be used as well.
+     * @return HTTP response from server.
+     */
+    public static MS_HttpRequestResult post(String requestURL, HttpEntity requestBody, Map<String, String> headers, RequestConfig connConfig) {
+        IFuncHttpRequestCreator newRequest = () -> {
+            HttpPost request = new HttpPost(requestURL);
+            request.setEntity(requestBody);
+            return request;
+        };
+        return httpRequest(newRequest, headers, connConfig);
+    }
+
+    /**
+     * Does HTTP "POST" request.
      *
      * @param requestURL an URL to HTTP server.
      * @param params     map of parameters to pass for this URL.
-     * @param connConfig initial configuration of connection.
+     * @param headers    map of key-value headers to pass for this request.
+     * @param connConfig  initial configuration of connection. For most of the cases that's enough just to set timeouts.
+     *                    For that {@link MS_IFuncConnectionConfigDefaults#DEFAULT_CONFIG_FOR_CONNECTION} can be used as well.
      * @return HTTP response from server.
      */
-    public static MS_HttpRequestResult post(String requestURL, Map<String, String> params, MS_IFuncConnectionConfig connConfig) {
-        return httpRequest("POST", requestURL, params, connConfig);
+    public static MS_HttpRequestResult post(String requestURL, Map<String, String> params, Map<String, String> headers, RequestConfig connConfig) {
+        IFuncHttpRequestCreator newRequest = () -> {
+            HttpPost request = new HttpPost(requestURL);
+            if (params != null) {
+                List<NameValuePair> paramList = new ArrayList<>();
+                params.forEach((name, value) -> paramList.add(new BasicNameValuePair(name, value)));
+                request.setEntity(new UrlEncodedFormEntity(paramList));
+            }
+            return request;
+        };
+        return httpRequest(newRequest, headers, connConfig);
     }
 
     /**
-     * Does HTTP "POST" request to presented URL <b>requestURL</b> altogether with presented parameters <b>params</b>.
+     * Does HTTP "POST" request.
      *
      * @param requestURL an URL to HTTP server.
      * @param params     map of parameters to pass for this URL.
+     * @param headers    map of key-value headers to pass for this request.
      * @return HTTP response from server.
      */
-    public static MS_HttpRequestResult post(String requestURL, Map<String, String> params) {
-        return post(requestURL, params, MS_IFuncConnectionConfigDefaults.DEFAULT_CONFIG_FOR_CONNECTION);
+    public static MS_HttpRequestResult post(String requestURL, Map<String, String> params, Map<String, String> headers) {
+        return post(requestURL, params, headers, MS_IFuncConnectionConfigDefaults.DEFAULT_CONFIG_FOR_CONNECTION);
     }
 
     /**
-     * Does HTTP "PUT" request to presented URL <b>requestURL</b> altogether with presented parameters <b>params</b>.
+     * Does HTTP "PUT" request.
+     *
+     * @param requestURL  an URL to HTTP server.
+     * @param requestBody data as whole entity of request body.
+     * @param headers     map of key-value headers to pass for this request.
+     * @param connConfig  initial configuration of connection. For most of the cases that's enough just to set timeouts.
+     *                    For that {@link MS_IFuncConnectionConfigDefaults#DEFAULT_CONFIG_FOR_CONNECTION} can be used as well.
+     * @return HTTP response from server.
+     */
+    public static MS_HttpRequestResult put(String requestURL, HttpEntity requestBody,
+                                           Map<String, String> headers, RequestConfig connConfig) {
+        IFuncHttpRequestCreator newRequest = () -> {
+            HttpPut request = new HttpPut(requestURL);
+            request.setEntity(requestBody);
+            return request;
+        };
+        return httpRequest(newRequest, headers, connConfig);
+    }
+
+    /**
+     * Does HTTP "PUT" request.
      *
      * @param requestURL  an URL to HTTP server.
      * @param requestBody data to be sent by request.
-     * @param connConfig  initial configuration of connection.
+     * @param headers     map of key-value headers to pass for this request.
+     * @param connConfig  initial configuration of connection. For most of the cases that's enough just to set timeouts.
+     *                    For that {@link MS_IFuncConnectionConfigDefaults#DEFAULT_CONFIG_FOR_CONNECTION} can be used as well.
      * @return HTTP response from server.
      */
-    public static MS_HttpRequestResult put(String requestURL, String requestBody, MS_IFuncConnectionConfig connConfig) {
-        MS_HttpRequestResult res = new MS_HttpRequestResult();
-        URL url;
-        StringBuilder response = new StringBuilder();
-
-        try {
-            url = new URL(requestURL);
-
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            connConfig.initializeConnection(conn);
-            conn.setRequestMethod("PUT");
-
+    public static MS_HttpRequestResult put(String requestURL, String requestBody,
+                                           Map<String, String> headers, RequestConfig connConfig) {
+        IFuncHttpRequestCreator newRequest = () -> {
+            HttpPut request = new HttpPut(requestURL);
             if (requestBody != null) {
-                OutputStream os = conn.getOutputStream();
-                BufferedWriter writer = new BufferedWriter(
-                        new OutputStreamWriter(os, "UTF-8"));
-                writer.write(requestBody);
-                writer.flush();
-                writer.close();
-                os.close();
+                StringEntity entity = new StringEntity(requestBody);
+                request.setEntity(entity);
             }
-
-            res.connection = conn;
-            int responseCode = conn.getResponseCode();
-            res.reponseCode = responseCode;
-
-            if (responseCode == HttpsURLConnection.HTTP_OK) {
-                String line;
-                BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                while ((line = br.readLine()) != null)
-                    response.append(line);
-            } else {
-                res.message = "";
-            }
-        } catch (IOException e) {
-            res.message = "";
-            res.exception = e;
-        }
-
-        if (res.message == null)
-            res.message = response.toString();
-        return res;
+            return request;
+        };
+        return httpRequest(newRequest, headers, connConfig);
     }
 
     /**
-     * Does HTTP "PUT" request to presented URL <b>requestURL</b> altogether with presented parameters <b>params</b>.
+     * Does HTTP "PUT" request.
+     *
+     * @param requestURL  an URL to HTTP server.
+     * @param requestBody data to be sent by request.
+     * @param connConfig  initial configuration of connection. For most of the cases that's enough just to set timeouts.
+     *                    For that {@link MS_IFuncConnectionConfigDefaults#DEFAULT_CONFIG_FOR_CONNECTION} can be used as well.
+     * @return HTTP response from server.
+     */
+    public static MS_HttpRequestResult put(String requestURL, String requestBody, RequestConfig connConfig) {
+        return put(requestURL, requestBody, null, connConfig);
+    }
+
+    /**
+     * Does HTTP "PUT" request.
      *
      * @param requestURL  an URL to HTTP server.
      * @param requestBody data to be sent by request.
@@ -151,43 +207,44 @@ public class MS_HttpClient {
     }
 
     /**
-     * Does HTTP "DELETE" request to presented URL <b>requestURL</b> altogether with presented parameters <b>params</b>
-     * and connection configuration <b>connConfig</b>.
+     * Does HTTP "DELETE" request.
      *
      * @param requestURL an URL to HTTP server.
-     * @param params     map of parameters to pass for this URL.
-     * @param connConfig initial configuration of connection.
+     * @param headers    map of key-value headers to pass for this request.
+     * @param connConfig  initial configuration of connection. For most of the cases that's enough just to set timeouts.
+     *                    For that {@link MS_IFuncConnectionConfigDefaults#DEFAULT_CONFIG_FOR_CONNECTION} can be used as well.
      * @return HTTP response from server.
      */
-    public static MS_HttpRequestResult delete(String requestURL, Map<String, String> params, MS_IFuncConnectionConfig connConfig) {
-        return httpRequest("DELETE", requestURL, params, connConfig);
+    public static MS_HttpRequestResult delete(String requestURL, Map<String, String> headers, RequestConfig connConfig) {
+        IFuncHttpRequestCreator newRequest = () -> new HttpDelete(requestURL);
+        return httpRequest(newRequest, headers, connConfig);
     }
 
     /**
-     * Does HTTP "DELETE" request to presented URL <b>requestURL</b> altogether with presented parameters <b>params</b>.
+     * Does HTTP "DELETE" request.
      *
      * @param requestURL an URL to HTTP server.
-     * @param params     map of parameters to pass for this URL.
+     * @param headers    map of key-value headers to pass for this request.
      * @return HTTP response from server.
      */
-    public static MS_HttpRequestResult delete(String requestURL, Map<String, String> params) {
-        return delete(requestURL, params, MS_IFuncConnectionConfigDefaults.DEFAULT_CONFIG_FOR_CONNECTION);
+    public static MS_HttpRequestResult delete(String requestURL, Map<String, String> headers) {
+        return delete(requestURL, headers, MS_IFuncConnectionConfigDefaults.DEFAULT_CONFIG_FOR_CONNECTION);
     }
 
     /**
-     * Does HTTP "DELETE" request to presented URL <b>requestURL</b>
-     * altogether with presented connection configuration <b>connConfig</b>.
+     * Does HTTP "DELETE" request.
      *
      * @param requestURL an URL to HTTP server.
-     * @param connConfig initial configuration of connection.
+     * @param connConfig  initial configuration of connection. For most of the cases that's enough just to set timeouts.
+     *                    For that {@link MS_IFuncConnectionConfigDefaults#DEFAULT_CONFIG_FOR_CONNECTION} can be used as well.
      * @return HTTP response from server.
      */
-    public static MS_HttpRequestResult delete(String requestURL, MS_IFuncConnectionConfig connConfig) {
+    public static MS_HttpRequestResult delete(String requestURL, RequestConfig connConfig) {
         return delete(requestURL, null, connConfig);
     }
 
     /**
-     * Does HTTP "DELETE" request to presented URL <b>requestURL</b>.
+     * Does HTTP "DELETE" request.
      *
      * @param requestURL an URL to HTTP server.
      * @return HTTP response from server.
@@ -218,47 +275,42 @@ public class MS_HttpClient {
         return result.toString();
     }
 
-    private static MS_HttpRequestResult httpRequest(String method, String requestURL, Map<String, String> params, MS_IFuncConnectionConfig connConfig) {
+    private static MS_HttpRequestResult httpRequest(IFuncHttpRequestCreator requestAndParameters,
+                                                    Map<String, String> headers, RequestConfig connConfig) {
         MS_HttpRequestResult res = new MS_HttpRequestResult();
-        URL url;
-        StringBuilder response = new StringBuilder();
 
-        try {
-            url = new URL(requestURL);
+        try (CloseableHttpClient httpClient = HttpClientBuilder.create().setDefaultRequestConfig(connConfig).build()) {
+            HttpRequestBase request = requestAndParameters.createRequestAndSetParameters();
 
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            connConfig.initializeConnection(conn);
-            conn.setRequestMethod(method);
+            if (headers != null) headers.forEach((request::addHeader));
 
-            if (params != null) {
-                OutputStream os = conn.getOutputStream();
-                BufferedWriter writer = new BufferedWriter(
-                        new OutputStreamWriter(os, "UTF-8"));
-                writer.write(formParamURL(params));
-                writer.flush();
-                writer.close();
-                os.close();
+            try (CloseableHttpResponse response = httpClient.execute(request)) {
+                res.reponseCode = response.getStatusLine().getStatusCode();
+                for (Header h : response.getAllHeaders()) //save response headers
+                    res.getHeaders().put(h.getName(), h.getValue());
+                // Get hold of the response entity and process it
+                HttpEntity entity = response.getEntity();
+                if (entity != null) {
+                    res.message = MS_BinaryTools.inputToUTF8(entity.getContent());
+                    EntityUtils.consume(entity);
+                }
             }
-
-            res.connection = conn;
-            int responseCode = conn.getResponseCode();
-            res.reponseCode = responseCode;
-
-            if (responseCode == HttpsURLConnection.HTTP_OK) {
-                String line;
-                BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                while ((line = br.readLine()) != null)
-                    response.append(line);
-            } else {
-                res.message = "";
-            }
-        } catch (IOException e) {
-            res.message = "";
+        } catch (SocketTimeoutException | HttpHostConnectException e) {
+            res.message = e.getMessage() != null ? e.getMessage() : "";
             res.exception = e;
+            res.reponseCode = 504;
+        } catch (IOException ioex) {
+            res.exception = ioex;
+            res.reponseCode = 0;
         }
-
-        if (res.message == null)
-            res.message = response.toString();
         return res;
+    }
+
+    @FunctionalInterface
+    private interface IFuncHttpRequestCreator {
+        HttpRequestBase createRequestAndSetParameters() throws UnsupportedEncodingException;
+    }
+
+    private MS_HttpClient() {
     }
 }

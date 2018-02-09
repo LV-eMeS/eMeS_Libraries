@@ -97,7 +97,6 @@ public class MS_BinaryTools {
         try {
             return IOUtils.toByteArray(input);
         } catch (IOException e) {
-            e.printStackTrace();
             return null;
         }
     }
@@ -111,7 +110,7 @@ public class MS_BinaryTools {
     public static String inputToUTF8(InputStream input) {
         try {
             return org.apache.commons.io.IOUtils.toString(input, "UTF-8");
-        } catch (IOException e) {
+        } catch (IOException | NullPointerException e) {
             return "";
         }
     }
