@@ -3,6 +3,7 @@ package lv.emes.libraries.tools.logging;
 import lv.emes.libraries.storage.MS_RepositoryDataExchangeException;
 import lv.emes.libraries.testdata.TestData;
 import lv.emes.libraries.utilities.MS_CodingUtils;
+import lv.emes.libraries.utilities.MS_TestUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;

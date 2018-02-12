@@ -93,10 +93,10 @@ public class MS_Hash {
     }
 
     /**
-     * /** From passed text generates text hashed with SHA1 algorithm using passed salt value and default length of key.
+     * From passed text generates text hashed with SHA1 algorithm using passed salt value and default length of key.
      *
      * @param aTextToHash a text which will be used to do hashing.
-     * @param aSalt       - arbitrary text for hash modification.
+     * @param aSalt       arbitrary text for hash modification.
      * @return empty string in case if <b>aTextToHash</b> is empty or if <b>aSalt</b> is empty.
      */
     public static String getHash(String aTextToHash, String aSalt) {
@@ -105,10 +105,10 @@ public class MS_Hash {
     }
 
     /**
-     * /** From passed text generates text hashed with SHA1 algorithm using passed salt value and passed length of key.
+     * From passed text generates text hashed with SHA1 algorithm using passed salt value and passed length of key.
      *
      * @param aTextToHash a text which will be used to do hashing.
-     * @param aSalt       - arbitrary text for hash modification.
+     * @param aSalt       arbitrary text for hash modification.
      * @param aKeyLength  length of hash key. Min = 256, Max = 2048. For different lengths resulting hash will differ.
      * @return empty string in case if <b>aTextToHash</b> is empty or if <b>aSalt</b> is empty, or if <b>aKeyLength</b> is not in interval [256..2048].
      */
