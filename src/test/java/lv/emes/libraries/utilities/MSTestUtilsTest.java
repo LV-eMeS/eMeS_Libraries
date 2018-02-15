@@ -12,6 +12,7 @@ import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 /**
  * ResultSetExtractor implementation test for barcode key pair.
@@ -35,8 +36,13 @@ public class MSTestUtilsTest {
         table.put("age", new Object[] {firstRecord.age, secondRecord.age, thirdRecord.age});
 
         //Mock result set so that it will return 1 record
-        rs = MS_TestUtils.mockResultSetForTable(table, 1);
+        rs = MS_TestUtils.mockResultSetForTable(table, 0);
         TableToMock extractedObject = MS_ResultSetExtractingUtils.extractRecord(rs, TableToMock.class);
+        assertNull(extractedObject);
+
+        //Mock result set so that it will return 1 record
+        rs = MS_TestUtils.mockResultSetForTable(table, 1);
+        extractedObject = MS_ResultSetExtractingUtils.extractRecord(rs, TableToMock.class);
 
         assertNotNull(extractedObject);
         assertEquals(firstRecord, extractedObject);

@@ -11,5 +11,5 @@ package lv.emes.libraries.storage;
 @FunctionalInterface
 public interface IFuncObjectRetrievalOperation<ID, T> {
 
-    T get(ID id);
+    T get(ID id) throws Exception;
 }

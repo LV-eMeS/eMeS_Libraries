@@ -34,7 +34,11 @@ public class MS_CachedObjectRepository<ID, T> {
             throw new NullPointerException("Cannot retrieve object from cache. Either id or retrievalOperation is null.");
         T objectInCache = objects.get(id);
         if (objectInCache == null) {
-            objectInCache = retrievalOperation.get(id);
+            try {
+                objectInCache = retrievalOperation.get(id);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
             objects.put(id, objectInCache);
         }
         return objectInCache;

@@ -117,7 +117,7 @@ public class MSHttpClientTest {
         response = get(URL_STRING_UNREACHABLE_HOST, null, null, config);
         assertEquals(ConnectTimeoutException.class, response.exception.getClass());
 
-        response = post(URL_STRING_UNREACHABLE_HOST, null, null, config);
+        response = post(URL_STRING_UNREACHABLE_HOST, (Map<String, String>) null, null, config);
         assertEquals(ConnectTimeoutException.class, response.exception.getClass());
     }
 }

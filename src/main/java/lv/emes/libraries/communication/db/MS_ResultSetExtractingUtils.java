@@ -29,7 +29,7 @@ public class MS_ResultSetExtractingUtils {
      * @param rs                      result set of table rows retrieved from database.
      * @param specificRecordTypeClass a class of object that is implements of <b>MS_TableRecord</b> interface.
      * @param <TRecordType>           a type of class that implements <b>MS_TableRecord</b> interface to define type of method's return.
-     * @return new instance of <b>TRecordType</b>.
+     * @return new instance of <b>TRecordType</b> or null if result set is completely empty (returned 0 records).
      * @throws Exception any exception, which occurs in <b>TRecordType</b> constructing process and blocks filling fields
      *                   with values from <b>rs</b>.
      *                   <p>This also might be {@link java.sql.SQLException} indicating that database access error occurs
@@ -40,9 +40,11 @@ public class MS_ResultSetExtractingUtils {
     public static <TRecordType extends MS_TableRecord> TRecordType
     extractRecord(ResultSet rs, Class<TRecordType> specificRecordTypeClass) throws Exception {
 
-        TRecordType record = specificRecordTypeClass.getConstructor().newInstance();
-        if (rs.next())
+        TRecordType record = null;
+        if (rs.next()) {
+            record = specificRecordTypeClass.getConstructor().newInstance();
             record.initColumns(rs);
+        }
         return record;
     }
 
