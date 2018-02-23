@@ -1,8 +1,10 @@
 package lv.emes.libraries.utilities;
 
+import lv.emes.libraries.tools.lists.MS_List;
 import org.junit.Test;
 
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static lv.emes.libraries.utilities.MS_CodingUtils.*;
 import static org.junit.Assert.*;
@@ -78,5 +80,49 @@ public class MS_CodingUtilsTest {
         Object value = new Object();
         Map<Integer, Object> map = newSingletonMap(key, value);
         assertEquals(value, map.get(key));
+    }
+
+    @Test
+    public void testForEach() {
+        MS_List<Integer> list = new MS_List<>();
+        final AtomicInteger sum = new AtomicInteger(0);
+        final AtomicInteger count = new AtomicInteger(0);
+
+        list.add(17);
+        list.add(1);
+        list.add(220);
+        list.add(-4);
+
+        forEach(list, (number, breakLoop) -> {
+            sum.addAndGet(number);
+            count.incrementAndGet();
+        });
+
+        assertEquals(4, count.get());
+        assertEquals(234, sum.get());
+
+        //break right away
+        sum.set(0);
+        count.set(0);
+        forEach(list, (number, breakLoop) -> {
+            sum.addAndGet(number);
+            count.incrementAndGet();
+            breakLoop.set(true);
+        });
+
+        assertEquals(1, count.get());
+        assertEquals(17, sum.get());
+
+        //break when sum is greater than 20
+        sum.set(0);
+        count.set(0);
+        forEach(list, (number, breakLoop) -> {
+            sum.addAndGet(number);
+            count.incrementAndGet();
+            if (sum.get() > 20) breakLoop.set(true);
+        });
+
+        assertEquals(3, count.get());
+        assertEquals(238, sum.get());
     }
 }

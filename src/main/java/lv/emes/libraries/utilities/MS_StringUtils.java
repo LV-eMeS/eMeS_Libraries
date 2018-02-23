@@ -3,10 +3,6 @@ package lv.emes.libraries.utilities;
 import lv.emes.libraries.communication.cryptography.MS_Hash;
 import lv.emes.libraries.tools.lists.MS_StringList;
 
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.Set;
-
 import static lv.emes.libraries.utilities.MS_CodingUtils.inRange;
 
 /**
@@ -57,113 +53,8 @@ public final class MS_StringUtils {
     public static final Character _SINGLE_QUOTE = '\'';
     public static final String _SINGLE_QUOTE_2X = "''";
 
-    //small types
     public enum TNotificationLang {
         nlEN, nlLV
-    }
-
-    /**
-     * Used to describe small letters, capital letters, digits and also symbols (stfgNormalSymbol :/*!@#$%^&amp; etc.),
-     * and also special UTF-8 or Unicode symbols, for example, 1/4 symbol, degree symbol, etc. (stfgSpecialSymbol Ǒøė˧Ω etc.)
-     * This enum is used in set <b>SetForCodeGenParams</b> to implement combinations of those 4 types of symbols.
-     */
-    public enum TSymbolTypeForGenerator { //TODO rewrite as builder pattern
-        stfgSmallLetter, stfgBigLetter, stfgDigit, stfgNormalSymbol, stfgSpecialSymbol
-    }
-
-    public static Set<TSymbolTypeForGenerator> SetForCodeGenParams = Collections.synchronizedSet(EnumSet.noneOf(TSymbolTypeForGenerator.class));
-
-    //methods
-    //------------------------------------------------------------------------------------------------------------------------
-    private static char _returnSpecialSymbol() {
-        //there is 4 regions in ASCII code that contains special symbols.
-        //we will take one of those regions
-        int resASCII = 0;
-        switch (MS_CodingUtils.randomNumber(1, 3)) {
-            case 1:
-                resASCII = MS_CodingUtils.randomNumber(33, 47);
-                break;
-            case 2:
-                resASCII = MS_CodingUtils.randomNumber(58, 64);
-                break;
-            case 3:
-                resASCII = MS_CodingUtils.randomNumber(91, 94);
-                break;
-        }
-        return chr(resASCII);
-    }
-
-    /**
-     * Method implements generation of text of size <b>aSymbolCount</b>.
-     * Generated text will consist of symbols that are defined in set <b>SetForCodeGenParams</b>.
-     * <br><u>Example</u>: <code>
-     * MSStringTools.SetForCodeGenParams.add(TSymbolTypeForGenerator.stfgSmallLetter);
-     * MSStringTools.SetForCodeGenParams.add(TSymbolTypeForGenerator.stfgDigit);
-     * String test = MSStringTools.RandomString(5, MSStringTools.SetForCodeGenParams); </code>
-     * <br><u>Note</u>: there is no need to do <code>MSStringTools.SetForCodeGenParams.clear()</code>. Method will do it after successful generation.
-     *
-     * @param aSymbolCount count of generated symbols.
-     * @param aOptions     settings, which symbols will resulting text consist.
-     * @return text of random symbols: de24j
-     * @see TSymbolTypeForGenerator
-     */
-    public static String getRandomString(int aSymbolCount, Set<TSymbolTypeForGenerator> aOptions) {
-        String res = "";
-        char ch = '\0';
-        if (aOptions.size() == 0)
-            aOptions.add(TSymbolTypeForGenerator.stfgSmallLetter);    //ja tukšs, tad paļubomu vismaz burtam jābūt
-        for (int i = 1; i <= aSymbolCount; i++) {
-            //48..57 digits; 65..90 capital letters; 97..122 small letters;
-            int tmp;
-            do {
-                tmp = MS_CodingUtils.randomNumber(1, 5);
-                switch (tmp) {
-                    case 1:
-                        if (aOptions.contains(TSymbolTypeForGenerator.stfgSmallLetter)) {
-                            ch = Character.toChars(MS_CodingUtils.randomNumber(97, 122))[0];  //kāds mazais burts
-                            break;
-                        }
-                    case 2:
-                        if (aOptions.contains(TSymbolTypeForGenerator.stfgBigLetter)) {
-                            ch = Character.toChars(MS_CodingUtils.randomNumber(65, 90))[0];  //kāds Lielais burts
-                            break;
-                        }
-                    case 3:
-                        if (aOptions.contains(TSymbolTypeForGenerator.stfgDigit)) {
-                            ch = Character.toChars(MS_CodingUtils.randomNumber(48, 57))[0];  //kāds cipars
-                            break;
-                        }
-                    case 4:
-                        if (aOptions.contains(TSymbolTypeForGenerator.stfgNormalSymbol)) {
-                            ch = _returnSpecialSymbol();  //kāds simbols: />$(]=?(*="">>\'[("
-                            break;
-                        }
-                    case 5:
-                        if (aOptions.contains(TSymbolTypeForGenerator.stfgSpecialSymbol)) {
-                            ch = Character.toChars(MS_CodingUtils.randomNumber(123, 254))[0];  //kāds speciālais simbols ¢­ÉÄÊèÉðÎÛ¡°¾Æ²
-                            break;
-                        }
-                    default:
-                        tmp = 0;
-                        break; //continue loop until generated symbol fits input conditions
-                } //switch ends here
-            } while (tmp == 0);
-            res = res.concat(Character.toString(ch)); //produce result char by char
-        } //for ends here
-        SetForCodeGenParams.clear(); //clear for the next use
-        return res;
-    }
-
-    /**
-     * Overloaded version with default option - return only random small letters.
-     *
-     * @param aSymbolCount length of result text.
-     * @return random string.
-     */
-    public static String getRandomString(int aSymbolCount) {
-        SetForCodeGenParams.clear();
-        SetForCodeGenParams.add(TSymbolTypeForGenerator.stfgSmallLetter);
-        return getRandomString(aSymbolCount, SetForCodeGenParams);
     }
 
     /**

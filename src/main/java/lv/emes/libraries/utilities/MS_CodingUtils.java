@@ -1,5 +1,7 @@
 package lv.emes.libraries.utilities;
 
+import com.sun.istack.internal.NotNull;
+import lv.emes.libraries.tools.lists.MS_ListActionWorker;
 import org.apache.commons.lang.StringUtils;
 
 import javax.swing.*;
@@ -15,11 +17,13 @@ import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.BiConsumer;
 
 /**
  * Module is designed to combine different common quick coding operations.
  *
- * @version 2.2.
+ * @version 2.3.
  */
 public final class MS_CodingUtils {
 
@@ -31,7 +35,9 @@ public final class MS_CodingUtils {
     public static final String getSystemUserHomeDir = System.getProperty("user.home") + "/";
     public static final String getSystemOS = System.getProperty("os.name");
 
-
+    /**
+     * @return IP address of this workstation or empty string "" in case host address cannot be determined.
+     */
     public static String getIPAddress() {
         try {
             return InetAddress.getLocalHost().getHostAddress();
@@ -264,5 +270,18 @@ public final class MS_CodingUtils {
         Map<K, V> res = new HashMap<>();
         res.put(key, value);
         return res;
+    }
+
+    /**
+     * Iterates through iterable elements and performs given action <b>action</b> while <b>breakLoop</b> flag,
+     * which is passed as second argument of <b>action</b> bi-consumer is <b>false</b>.
+     * @param iterable iterable collection of elements of type <b>T</b>.
+     * @param action consumer, which accepts iterable element of type <b>T</b> and flag of type {@link AtomicBoolean}, with
+     *               initial value <b>false</b>. Iterating will continue unless the value of this flag will be set to
+     *               <b>true</b>, which will be signal to break iterating and thus next element will not be iterated.
+     * @param <T> type of iterable elements.
+     */
+    public static <T> void forEach(@NotNull Iterable<T> iterable, @NotNull BiConsumer<T, AtomicBoolean> action) {
+        MS_ListActionWorker.forEach(iterable, action);
     }
 }

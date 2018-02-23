@@ -4,9 +4,6 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
-import java.util.Collections;
-import java.util.EnumSet;
-
 import static lv.emes.libraries.utilities.MS_StringUtils.*;
 import static org.junit.Assert.*;
 
@@ -19,19 +16,6 @@ public class MSStringToolsTest {
 		System.out.println("My test message"+ _LINE_BRAKE +"is in new line");
 		System.out.println(_TAB_SPACE + "My test message begins with tab");
 		System.out.println("_DIACTRITIC_CHAR_COUNT is: "+ _DIACTRITIC_CHAR_COUNT);
-		
-		//test genRandomString
-		SetForCodeGenParams.addAll(Collections.synchronizedSet(EnumSet.allOf(TSymbolTypeForGenerator.class)));
-		SetForCodeGenParams.remove(TSymbolTypeForGenerator.stfgSpecialSymbol);
-		SetForCodeGenParams.remove(TSymbolTypeForGenerator.stfgNormalSymbol);
-		SetForCodeGenParams.remove(TSymbolTypeForGenerator.stfgSmallLetter);
-		SetForCodeGenParams.remove(TSymbolTypeForGenerator.stfgBigLetter);
-		
-		SetForCodeGenParams.add(TSymbolTypeForGenerator.stfgNormalSymbol);
-		System.out.println(
-				getRandomString(100, SetForCodeGenParams)
-				);	
-		assertEquals(12, getRandomString(12).length());
 	}
 	
 	@Test

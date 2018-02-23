@@ -16,7 +16,7 @@ public class MSListTest {
     public void test01ListEngine() {
         assertTrue(l.count() == 0);
         l.add(1);
-        assertTrue(l.get(0).intValue() == 1);
+        assertTrue(l.get(0) == 1);
         assertTrue(l.count() > 0);
         l.add(2);
         l.add(3);

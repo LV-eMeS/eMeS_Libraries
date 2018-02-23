@@ -1,18 +1,28 @@
 package lv.emes.libraries.tools.lists;
 
+import com.sun.istack.internal.NotNull;
 import lv.emes.libraries.utilities.MS_CodingUtils;
+
+import java.util.Iterator;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.BiConsumer;
 
 /**
  * Meant for replacing default methods of eMeS list interfaces for easier code reuse.
- * <p>Methods:
+ * <p>Static Methods:
  * <ul>
  * <li>forEachItem</li>
+ * <li>forEach</li>
  * </ul>
  *
  * @author eMeS
- * @version 1.1.
+ * @version 2.0.
  */
 public class MS_ListActionWorker {
+
+    public MS_ListActionWorker() {
+    }
 
     public static <T> void forEachItem(IBaseListWithItems<T, Integer> list, int startFromIndex, int endIndex, IFuncForEachItemLoopAction<T, Integer> action) {
         //range check for indexes that fits in list size and are correct to perform for loop
@@ -42,5 +52,25 @@ public class MS_ListActionWorker {
 
     public static <T> void forEachItem(IBaseListWithItems<T, Integer> list, IFuncForEachItemLoopAction<T, Integer> action) {
         forEachItem(list, 0, action);
+    }
+
+    /**
+     * Iterates through iterable elements and performs given action <b>action</b> while <b>breakLoop</b> flag,
+     * which is passed as second argument of <b>action</b> bi-consumer is <b>false</b>.
+     * @param iterable iterable collection of elements of type <b>T</b>.
+     * @param action consumer, which accepts iterable element of type <b>T</b> and flag of type {@link AtomicBoolean}, with
+     *               initial value <b>false</b>. Iterating will continue unless the value of this flag will be set to
+     *               <b>true</b>, which will be signal to break iterating and thus next element will not be iterated.
+     * @param <T> type of iterable elements.
+     */
+    public static <T> void forEach(@NotNull Iterable<T> iterable, @NotNull BiConsumer<T, AtomicBoolean> action) {
+        Objects.requireNonNull(iterable);
+        Objects.requireNonNull(action);
+
+        AtomicBoolean breakLoop = new AtomicBoolean(false);
+        Iterator<T> iter = iterable.iterator();
+        while (iter.hasNext() && !breakLoop.get()) {
+            action.accept(iter.next(), breakLoop);
+        }
     }
 }
