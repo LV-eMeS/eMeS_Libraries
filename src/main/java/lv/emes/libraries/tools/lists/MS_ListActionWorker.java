@@ -1,6 +1,5 @@
 package lv.emes.libraries.tools.lists;
 
-import com.sun.istack.internal.NotNull;
 import lv.emes.libraries.utilities.MS_CodingUtils;
 
 import java.util.Iterator;
@@ -57,13 +56,13 @@ public class MS_ListActionWorker {
     /**
      * Iterates through iterable elements and performs given action <b>action</b> while <b>breakLoop</b> flag,
      * which is passed as second argument of <b>action</b> bi-consumer is <b>false</b>.
-     * @param iterable iterable collection of elements of type <b>T</b>.
-     * @param action consumer, which accepts iterable element of type <b>T</b> and flag of type {@link AtomicBoolean}, with
+     * @param iterable NonNull iterable collection of elements of type <b>T</b>.
+     * @param action NonNull consumer, which accepts iterable element of type <b>T</b> and flag of type {@link AtomicBoolean}, with
      *               initial value <b>false</b>. Iterating will continue unless the value of this flag will be set to
      *               <b>true</b>, which will be signal to break iterating and thus next element will not be iterated.
      * @param <T> type of iterable elements.
      */
-    public static <T> void forEach(@NotNull Iterable<T> iterable, @NotNull BiConsumer<T, AtomicBoolean> action) {
+    public static <T> void forEach(Iterable<T> iterable, BiConsumer<T, AtomicBoolean> action) {
         Objects.requireNonNull(iterable);
         Objects.requireNonNull(action);
 
