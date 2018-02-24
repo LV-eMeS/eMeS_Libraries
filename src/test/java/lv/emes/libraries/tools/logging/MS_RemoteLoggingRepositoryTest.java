@@ -27,8 +27,8 @@ public class MS_RemoteLoggingRepositoryTest {
     private static final String PRODUCT_OWNER = "eMeS";
     private static final String PRODUCT_NAME = "Testing";
     private static final String SECRET_KEY = "Testing eMeS remote logging repository 2018...";
-//    private static final String HOSTNAME  = TestData.HTTP_PREFIX + TestData.TESTING_SERVER_HOSTAME;
-    private static final String HOSTNAME  = TestData.HTTP_PREFIX + "localhost";
+    private static final String HOSTNAME  = TestData.HTTP_PREFIX + TestData.TESTING_SERVER_HOSTAME;
+//    private static final String HOSTNAME  = TestData.HTTP_PREFIX + "localhost";
 
     private static MS_RemoteLoggingRepository repository;
     private static MS_InMemoryLoggingRepository loggedEvents;
@@ -50,7 +50,7 @@ public class MS_RemoteLoggingRepositoryTest {
         logger.error("Error: Lines as delimiters are not supported for remote logging repository",
                 new MS_TestUtils.MS_UnCheckedException2("Those lines will be ignored there"));
         logger.line();
-        MS_CodingUtils.sleep(2000); //lets give some meaningful time for logging server to take requests
+        MS_CodingUtils.sleep(3000); //lets give some meaningful time for logging server to take requests
     }
 
     @Test

@@ -23,10 +23,57 @@ import java.util.TreeMap;
  * <li>withActionOnException</li>
  * <li>withActionOnInterruptedException</li>
  * <li>withTriggerTime</li>
+ * <li>getScheduledEventCount</li>
+ * <li>getSchedulerStartTime</li>
  * </ul>
+ * <p><u>Examples</u>:
+ * <p><b>Example 1</b>: simple scheduler with 2 events scheduled - first after 5 minutes, second - after 2 hours.
+ * <p><code>
+ * //keep reference of scheduler in case you are going to terminate it later on<br>
+ * //and this is the easiest way, how to re-use scheduler start time inside lambda expressions<br>
+ * MS_Scheduler scheduler = new MS_Scheduler();<br>
+ * scheduler<br>
+ * .withTriggerTime(ZonedDateTime.now().plusMinutes(5))<br>
+ * .withTriggerTime(ZonedDateTime.now().plusHours(2))<br>
+ * .withAction((time) -&gt; {<br>
+ * if (time.isAfter(scheduler.getSchedulerStartTime().plusMinutes(30)))<br>
+ * throw new Exception("Exception in scheduler's action");<br>
+ * System.out.println("Successfully executed 1st event at time: " + MS_DateTimeUtils.formatDateTime(time));<br>
+ * })<br>
+ * .withActionOnException((e, time) -&gt; {<br>
+ * System.out.println("Error while executing 2nd event at time: " + MS_DateTimeUtils.formatDateTime(time));<br>
+ * e.printStackTrace();<br>
+ * })<br>
+ * .schedule();<br>
+ * scheduler.waitFor(); //this will freeze app for ~2 hours
+ * </code>
+ * <p><b>Example 2</b>: never ending scheduler, which executes every 10 minutes.
+ * Constructions must be created inside some class.
+ * <p><code>
+ * private MS_Scheduler cleaningJobScheduler;<br><br>
+ * private void scheduleJob() {<br>
+ * cleaningJobScheduler = new MS_Scheduler()<br>
+ * .withTriggerTime(ZonedDateTime.now().plusMinutes(10))<br>
+ * .withAction(this::runActualJobAndRescheduleIt)<br>
+ * .withActionOnException((exception, eventExecutionTime) -&gt; {<br>
+ * MS_Log4Java.getLogger("scheduleJob")<br>
+ * .error(String.format("Job failed at [%s] due to exception", eventExecutionTime), exception);<br>
+ * scheduleJob(); //to not to break scheduler if some error happens on execution<br>
+ * })<br>
+ * .withActionOnInterruptedException((eventExecutionTime) -&gt; {<br>
+ * MS_Log4Java.getLogger("scheduleJob")<br>
+ * .info(String.format("Job terminated at [%s]", eventExecutionTime));<br>
+ * })<br>
+ * .schedule();<br>
+ * }<br><br>
+ * private void runActualJobAndRescheduleIt(ZonedDateTime execTime) {<br>
+ * System.out.println("Some action happened now and will happen after next 10 minutes");<br>
+ * scheduleCleanupJob(); //at the end create new job to not to brake this endless loop<br>
+ * }<br>
+ * </code>
  *
  * @author eMeS
- * @version 1.0.
+ * @version 1.1.
  */
 public class MS_Scheduler {
 
@@ -117,7 +164,9 @@ public class MS_Scheduler {
 
     /**
      * Forces caller thread to wait for all scheduler's tasks to execute.
-     * As waiting is implemented in looping, checking and sleeping manner, sleep interval <b>sleepInterval</b>
+     * <p><u>Warning</u>: this is not a good idea to force caller thread to wait longer than few seconds, so if
+     * there are tasks scheduled, that will take more than this time, that is strongly recommended not to wait for!
+     * <p>As waiting is implemented in looping, checking and sleeping manner, sleep interval <b>sleepInterval</b>
      * should be indicated in order to define precision of waiting loops (there always will be some delay;
      * the question is, how long).
      *
@@ -152,9 +201,12 @@ public class MS_Scheduler {
         return schedules.size();
     }
 
+    public ZonedDateTime getSchedulerStartTime() {
+        return timeSchedulerStarted;
+    }
+
     //PRIVATE METHODS
     private void filterSchedulesForFutureOnly(Map<ZonedDateTime, MS_FutureEvent> schedules) {
-
         //delete ones that are in past already
         schedules.entrySet().removeIf(entry -> entry.getKey().isBefore(timeSchedulerStarted));
     }
