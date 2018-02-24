@@ -15,31 +15,34 @@ import javax.crypto.spec.PBEKeySpec;
  * <li>getHash</li>
  * </ul>
  *
- * @version 2.0.
+ * @version 3.0.
  */
 public class MS_Hash {
 
     /**
      * Minimum key length that will produce 44 characters long hash code from any non blank text.
+     * Hashing will be done in less than 0,6 seconds.
      */
     public static final int KEY_LENGTH_MINIMUM = 256;
     /**
      * Medium key length that will produce 88 characters long hash code from any non blank text.
+     * Hashing will be done in less than 1 second.
      */
     public static final int KEY_LENGTH_MEDIUM = 512;
     /**
      * Long key length that will produce 172 characters long hash code from any non blank text.
+     * Hashing will be done in less than 1,3 seconds.
      */
     public static final int KEY_LENGTH_LONG = 1024;
     /**
      * Maximum possible key length that will produce 344 characters long hash code from any non blank text.
+     * Hashing will be done in less than 1,5 seconds.
      */
     public static final int KEY_LENGTH_MAXIMUM = 2048;
 
     // The higher the number of iterations the more 
-    // expensive computing the hash is for us and
-    // also for an attacker.
-    private static final int _ITERATIONS = 20000;
+    // expensive computing the hash is for user and also for an attacker.
+    private static final int _ITERATION_MULTIPLIER = 10;
     private static final int _DEFAULT_KEY_LEN = KEY_LENGTH_MINIMUM;
     private static final byte[] _DEFAULT_SALT = {
             1, -115, 85, 122, -18, -49, -94, 25, -36, -128, -43, -83, 122, -21, 38, 47, 2, 124, 70, -54, 111, 67, 106, 39, -28, 51, -32, -112, 50, -28, 97, -37
@@ -60,7 +63,7 @@ public class MS_Hash {
 
         try {
             key = f.generateSecret(new PBEKeySpec(
-                    aTextToHash.toCharArray(), aSalt, _ITERATIONS, aKeyLength)
+                    aTextToHash.toCharArray(), aSalt, _ITERATION_MULTIPLIER * aKeyLength, aKeyLength)
             );
         } catch (Exception e) {
             return "";
@@ -87,7 +90,7 @@ public class MS_Hash {
      * @return empty string in case if <b>aTextToHash</b> is empty or if <b>aKeyLength</b> is not in interval [256..2048].
      */
     public static String getHash(String aTextToHash, int aKeyLength) {
-        if (!MS_CodingUtils.inRange(aKeyLength, KEY_LENGTH_MINIMUM, 2048)) return "";
+        if (!MS_CodingUtils.inRange(aKeyLength, KEY_LENGTH_MINIMUM, KEY_LENGTH_MAXIMUM)) return "";
         // store the salt with the password
         return hash(aTextToHash, _DEFAULT_SALT, aKeyLength);
     }
