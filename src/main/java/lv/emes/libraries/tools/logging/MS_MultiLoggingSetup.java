@@ -31,6 +31,7 @@ public class MS_MultiLoggingSetup {
 
     private MS_List<MS_LoggingRepository> repositories;
     private String delimiterLineText = ILoggingOperations._LINE;
+    private long maxloggingOperationExecutionTime = 5000;
 
     public MS_List<MS_LoggingRepository> getRepositories() {
         return repositories;
@@ -38,6 +39,10 @@ public class MS_MultiLoggingSetup {
 
     public String getDelimiterLineText() {
         return delimiterLineText;
+    }
+
+    public long getMaxloggingOperationExecutionTime() {
+        return maxloggingOperationExecutionTime;
     }
 
     /**
@@ -88,6 +93,18 @@ public class MS_MultiLoggingSetup {
      */
     public MS_MultiLoggingSetup withDelimiterLineText(String delimiterLineText) {
         this.delimiterLineText = delimiterLineText;
+        return this;
+    }
+
+    /**
+     * Changes maximum given time to completely finish 1 event logging.
+     * <p>Only non-negative numbers are accepted. Default value is set to <b>5000</b> milliseconds.
+     *
+     * @param maxloggingOperationExecutionTime timeout, after which single event logging thread will be interrupted.
+     * @return reference to logging configuration itself.
+     */
+    public MS_MultiLoggingSetup withMaxloggingOperationExecutionTime(long maxloggingOperationExecutionTime) {
+        this.maxloggingOperationExecutionTime = maxloggingOperationExecutionTime;
         return this;
     }
 }

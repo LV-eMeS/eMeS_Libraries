@@ -21,15 +21,15 @@ import java.time.ZonedDateTime;
  */
 public class MS_MultiLogger implements ILoggingOperations {
 
-    private MS_MultiLoggingSetup config;
+    private MS_MultiLoggingSetup setup;
 
     /**
      * Creates multi logger with defined configuration <b>setup</b>.
      *
-     * @param setup configuration for logger to define the way, how to work and which repositories to use.
+     * @param setup non-Null configuration for logger to define the way, how to work and which repositories to use.
      */
     public MS_MultiLogger(MS_MultiLoggingSetup setup) {
-        this.config = setup;
+        this.setup = setup;
     }
 
     @Override
@@ -54,24 +54,23 @@ public class MS_MultiLogger implements ILoggingOperations {
 
     @Override
     public void line() {
-        if (config.getDelimiterLineText() != null)
-            logEventMessageToAllRepos(config.getDelimiterLineText(), null, LoggingEventTypeEnum.UNSPECIFIED);
+        if (setup.getDelimiterLineText() != null)
+            logEventMessageToAllRepos(setup.getDelimiterLineText(), null, LoggingEventTypeEnum.UNSPECIFIED);
     }
 
     private void logEventMessageToAllRepos(String message, Exception error, LoggingEventTypeEnum eventType) {
-        ZonedDateTime timeNow = ZonedDateTime.now();
         MS_LoggingEvent event = new MS_LoggingEvent()
-                .withTime(timeNow)
+                .withTime(ZonedDateTime.now())
                 .withType(eventType)
                 .withMessage(message)
                 .withError(error);
 
-        config.getRepositories().forEachItem((repo, i) ->
+        setup.getRepositories().forEachItem((repo, i) ->
                 new MS_FutureEvent()
                         .withThreadName("MS_MultiLogger_" + i)
                         .withActionOnException((e) -> MS_Log4Java.getLogger(MS_MultiLogger.class)
                                 .error("Event logging to repository with index [" + i + "] have been failed due to an exception", e))
-                        .withTimeout(5000)
+                        .withTimeout(setup.getMaxloggingOperationExecutionTime())
                         .withActionOnInterruptedException(() -> MS_Log4Java.getLogger(MS_MultiLogger.class)
                                 .warn("Event logging to repository with index [" + i + "] have been interrupted"))
                         .withAction(() -> repo.logEvent(event))
