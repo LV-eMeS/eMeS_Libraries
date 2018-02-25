@@ -4,10 +4,12 @@ import lv.emes.libraries.communication.MS_TakenPorts;
 
 /**
  * Properties for Remote logging server.
- * Those include hostname and port number to make HTTP requests.
+ * Those include logging server hostname and port number to make HTTP requests.
  * Also default and configurable values are provided for endpoint names, which are part of full path to make HTTP requests
  * to put new events into repository and retrieve existing ones from it.
- * If event logging server is configured properly, that is enough to set host property value <b>host</b>.
+ * If event logging server is configured properly, that is enough to set host property value <b>host</b> and <b>secret</b>.
+ * In case eMeS logging server is good enough for storing logging information, even <b>host</b> property can be left
+ * out in order to use default one <a href="http://emeslv.sytes.net">emeslv.sytes.net</a>.
  * <p>Setters and getters:
  * <ul>
  * <li>getHost</li>
@@ -29,7 +31,7 @@ import lv.emes.libraries.communication.MS_TakenPorts;
  * </ul>
  *
  * @author eMeS
- * @version 1.0.
+ * @version 1.1.
  */
 public class LoggingRemoteServerProperties {
 
@@ -38,7 +40,7 @@ public class LoggingRemoteServerProperties {
      */
     public static final String SECRET_TO_ENCRYPT_SECRET = "Default remote logger secret 2018";
 
-    private String host;
+    private String host = "emeslv.sytes.net";
     private int port = MS_TakenPorts._REMOTE_LOGGING_SERVER_PORT;
     private String secret = SECRET_TO_ENCRYPT_SECRET;
     private String endpointRootName = "RemoteLogger";
