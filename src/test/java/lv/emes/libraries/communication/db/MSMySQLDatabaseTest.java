@@ -19,7 +19,7 @@ public class MSMySQLDatabaseTest {
 
     @BeforeClass
     //Before even start testing do some preparations!
-    public static void initTestPreConditions() throws SQLException, ClassNotFoundException {
+    public static void initTestPreConditions() throws ClassNotFoundException {
         db = new MS_MySQLDatabase(new MS_DBParameters()
                 .withHostname(TestData.TESTING_SERVER_HOSTAME)
                 .withDbName("test")
@@ -59,6 +59,19 @@ public class MSMySQLDatabaseTest {
         try (MS_ConnectionSession con = db.getConnectionSession()) {
             MS_PreparedSQLQuery st = con.prepareQuery("delete from tests");
             con.executeQuery(st);
+        }
+    }
+
+    @Test
+    public void test00GetQueryResultWithoutStmtPreparation() throws Exception {
+        try (MS_ConnectionSession con = db.getConnectionSession()) {
+            String query = "select * from tests";
+            ResultSet rs = con.getQueryResult(query);
+            assertTrue(rs.next());
+            assertEquals("1", rs.getString("id"));
+            assertEquals(1, rs.getInt("id"));
+            assertEquals("test1", rs.getString("name"));
+            assertEquals(33, rs.getInt("count"));
         }
     }
 

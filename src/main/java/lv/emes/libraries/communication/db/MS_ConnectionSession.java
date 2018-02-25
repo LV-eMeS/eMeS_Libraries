@@ -5,6 +5,7 @@ import lv.emes.libraries.tools.lists.MS_List;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.time.LocalDateTime;
 
 /**
@@ -50,8 +51,8 @@ public class MS_ConnectionSession implements AutoCloseable {
     /**
      * Creates new connection session with presented connection object <b>conn</b>.
      *
-     * @param conn      new or existing connection to specified database <b>db</b>.
-     * @param sessionId identifier defined by {@link MS_JDBCDatabase}.
+     * @param conn                new or existing connection to specified database <b>db</b>.
+     * @param sessionId           identifier defined by {@link MS_JDBCDatabase}.
      * @param sessionCreationTime time when session was created or refreshed. Typically <code>LocalDateTime.now()</code>.
      */
     public MS_ConnectionSession(Connection conn, Long sessionId, LocalDateTime sessionCreationTime) {
@@ -113,13 +114,29 @@ public class MS_ConnectionSession implements AutoCloseable {
      * }</code></pre>
      *
      * @param statement proper SQL statement which have been executed as SELECT type statement.
-     * @return ResultSet
+     * @return ResultSet.
      */
     public ResultSet getQueryResult(MS_PreparedSQLQuery statement) {
         try {
             return statement.executeQuery();
         } catch (SQLException | NullPointerException e) {
             //most probably null pointer exception here happens due to wrong SQL
+            errors.add(e);
+            return null;
+        }
+    }
+
+    /**
+     * Immediately (without statement preparations) executes SQL query and returns result.
+     *
+     * @param sql an SQL statement, which most often will be of INSERT type.
+     * @return ResultSet.
+     */
+    public ResultSet getQueryResult(String sql) {
+        try {
+            Statement statement = conn.createStatement();
+            return statement.executeQuery(sql);
+        } catch (SQLException e) {
             errors.add(e);
             return null;
         }
