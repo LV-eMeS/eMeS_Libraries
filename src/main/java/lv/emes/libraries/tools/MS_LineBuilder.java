@@ -4,7 +4,6 @@ import lv.emes.libraries.utilities.MS_StringUtils;
 
 /**
  * String builder that is designed to append lines or composite texts.
- * <p>
  * <p>Methods:
  * <ul>
  * <li>add</li>

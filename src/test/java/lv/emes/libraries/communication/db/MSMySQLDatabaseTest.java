@@ -19,7 +19,7 @@ public class MSMySQLDatabaseTest {
 
     @BeforeClass
     //Before even start testing do some preparations!
-    public static void initTestPreConditions() throws ClassNotFoundException {
+    public static void initTestPreConditions() {
         db = new MS_MySQLDatabase(new MS_DBParameters()
                 .withHostname(TestData.TESTING_SERVER_HOSTAME)
                 .withDbName("test")
@@ -35,7 +35,7 @@ public class MSMySQLDatabaseTest {
     @AfterClass
     //After all tests perform actions that cleans everything up!
     public static void finalizeTestConditions() {
-        db.unlink();
+        db.disconnect();
     }
 
     @Before
@@ -224,6 +224,18 @@ public class MSMySQLDatabaseTest {
 
             assertEquals(3, MS_ResultSetExtractingUtils.extractRecord(rs, MS_TableRecordCount.class).getCount());
         }
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void test11FailToInitializeWithNullParams() {
+        MS_MySQLDatabase database = new MS_MySQLDatabase(new MS_DBParameters()
+                .withHostname(TestData.TESTING_SERVER_HOSTAME)
+                .withDbName(null)
+                .withUserName(null)
+                .withPassword(null)
+                .withPort(0)
+        );
+        database.initialize();
     }
 
     private static class Table_tests_Row implements MS_TableUniqueRecord<Integer> {

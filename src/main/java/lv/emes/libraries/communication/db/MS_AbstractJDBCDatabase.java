@@ -1,11 +1,10 @@
 package lv.emes.libraries.communication.db;
 
+import lv.emes.libraries.tools.MS_BadSetupException;
 import lv.emes.libraries.tools.logging.MS_Log4Java;
 import lv.emes.libraries.tools.threading.MS_Scheduler;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.SQLTimeoutException;
+import java.sql.*;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
@@ -15,42 +14,57 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Base class for database that can be accessed by using JDBC driver.
- * Constructor as well as fields <b>connParams</b> and <b>connectionString</b> acts as a placeholders
- * and should be used in successors of this class.
+ * Constructor as well as fields <b>connParams</b> and <b>isLinked</b> acts as a placeholders
+ * and should be used in successors of this class to implement necessary abstract methods.
  *
  * @author eMeS
- * @version 2.0.
+ * @version 2.1.
  */
 public abstract class MS_AbstractJDBCDatabase implements MS_JDBCDatabase {
 
     protected MS_DBParameters connParams;
-    protected String connectionString;
-    protected boolean isLinked;
+    private String connectionString;
+    protected boolean isLinked = false;
 
     private Map<Long, MS_ConnectionSession> connectionPool;
     private MS_Scheduler cleaningJobScheduler;
     private Long sessionIdCounter = 0L;
 
-    public MS_AbstractJDBCDatabase(MS_DBParameters connParams) {
+    /**
+     * Creates new instance of database and initializes it immediately with all passed <b>connParams</b>.
+     * @param connParams connection parameters and connection pool settings.
+     * @throws MS_BadSetupException if JDBC driver is not found due to {@link ClassNotFoundException}.
+     * @throws NullPointerException if some of connection variables are still not set for this DB or are invalid,
+     *                              which causes connection string to be <i>null</i>.
+     * @see MS_AbstractJDBCDatabase#initialize()
+     */
+    public MS_AbstractJDBCDatabase(MS_DBParameters connParams) throws NullPointerException, MS_BadSetupException {
         this.connParams = connParams;
         this.connectionPool = new ConcurrentHashMap<>();
+        initialize();
     }
 
     @Override
-    public void initialize() throws ClassNotFoundException, NullPointerException {
-        //this implementation should be overwritten in any DB implementation
-        //it's only meant for case when implementation will use super.initialize()
+    public final void initialize() throws NullPointerException, MS_BadSetupException {
+        if (isLinked) return;
         if (connParams.getHostname() == null || connParams.getDbName() == null
                 || connParams.getUserName() == null || connParams.getPassword() == null)
             throw new NullPointerException("Some of connection variables are null");
 
-        connectionString = "";
+        try {
+            Class.forName(getDriverClassName());
+        } catch (ClassNotFoundException e) {
+            throw new MS_BadSetupException(e);
+        }
+
+        connectionString = formConnectionString();
+
         this.isLinked = true;
         scheduleCleanupJob(); //setup connection pool cleaning job scheduler
     }
 
     @Override
-    public void unlink() {
+    public void disconnect() {
         isLinked = false;
         if (cleaningJobScheduler != null) {
             cleaningJobScheduler.terminate();
@@ -88,6 +102,28 @@ public abstract class MS_AbstractJDBCDatabase implements MS_JDBCDatabase {
         return session;
     }
 
+    //*** PROTECTED METHODS ***
+
+    /**
+     * Used in {@link MS_AbstractJDBCDatabase#initialize()} method after basic connection parameter null checks
+     * and before connection string formation.
+     * This method should return valid path to {@link Driver} class.
+     *
+     * @return specific DB implementation full class name (including package)
+     * e.g. "foo.bah.Driver", "oracle.jdbc.driver.OracleDriver", "com.mysql.jdbc.Driver".
+     */
+    protected abstract String getDriverClassName();
+
+    /**
+     * Used in {@link MS_AbstractJDBCDatabase#initialize()} method after Driver class loading
+     * and before cleaning job scheduling.
+     * Forms Driver-specific connection string from connection parameters in order to use it in
+     * {@link MS_AbstractJDBCDatabase#getConnectionFromDriver()}.
+     * @return string that is applicable to {@link DriverManager} and allows to establish connection via
+     * Driver manager's <b>getConnection</b> method.
+     */
+    protected abstract String formConnectionString();
+
     /**
      * Retrieve new connection from connection driver. <p><u>Example</u>:
      * <code>
@@ -99,6 +135,10 @@ public abstract class MS_AbstractJDBCDatabase implements MS_JDBCDatabase {
      * @throws SQLException        if a database access error occurs or the url is null.
      */
     protected abstract Connection getConnectionFromDriver() throws SQLException;
+
+    protected String getConnectionString() {
+        return connectionString;
+    }
 
     //*** PRIVATE METHODS ***
 

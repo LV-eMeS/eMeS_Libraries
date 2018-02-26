@@ -212,8 +212,20 @@ public class MS_SQLQueryBuilder extends MS_LineBuilder {
         return beginOperation(true).appendInternal(joinText).endOperation(Oper.JOIN);
     }
 
-    public String build() {
-        return this.appendInternal(";").toString();
+    /**
+     * In order to finalize and build this SQL query appends semicolon at the end of statement.
+     * @return reference to this query itself.
+     */
+    public MS_SQLQueryBuilder build() {
+        return this.appendInternal(";");
+    }
+
+    /**
+     * Appends semicolon at the end of statement and returns prepared SQL query string.
+     * @return SQL string representing all the parts set for this query in building process.
+     */
+    public String buildAndToString() {
+        return this.build().toString();
     }
 
     @Override

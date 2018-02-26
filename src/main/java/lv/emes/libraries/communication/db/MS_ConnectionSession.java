@@ -102,7 +102,7 @@ public class MS_ConnectionSession implements AutoCloseable {
      * @return a new <code>MS_PreparedSQLQuery</code> object containing the pre-compiled SQL statement.
      */
     public MS_PreparedSQLQuery prepareQuery(MS_SQLQueryBuilder query) {
-        return prepareQuery(query.build());
+        return prepareQuery(query.buildAndToString());
     }
 
     /**
@@ -205,7 +205,7 @@ public class MS_ConnectionSession implements AutoCloseable {
             if (errors.isEmpty()) conn.commit();
             else conn.rollback();
         } catch (SQLException e) {
-            conn.rollback();
+            conn.rollback(); //TODO check this case
         }
         if (hasErrors()) throw errors.get(0);
     }

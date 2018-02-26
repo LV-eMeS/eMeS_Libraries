@@ -51,9 +51,9 @@ public class MS_DBParameters {
      * This parameter is used by database connection pool when cleanup job is being run.
      * All sessions, which time to live is expired are removed from connection pool.
      * <p>No value set (e.g. <i>null</i> value) means that connection sessions are kept and reused inside DB connection pool forever.
-     * Default value is <b>30 minutes</b>.
+     * Default value is <b>10 minutes</b>.
      */
-    private Duration sessionTTL = Duration.ofMinutes(30L);
+    private Duration sessionTTL = Duration.ofMinutes(10L);
 
     /**
      * Value describing, how often connection pool cleanup job will be run.
