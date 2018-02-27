@@ -25,7 +25,8 @@ And this code to same project gradle file:
 ```gradle
 dependencies {
      ...
-     compile "com.github.LV-eMeS:eMeS_Libraries:v2.0.0"
+     compile "com.github.LV-eMeS:eMeS_Libraries:v2.X.Y"
      ...
  }
 ```
+Precise version of artifact can be found in [JitPack.](https://jitpack.io/#LV-eMeS/eMeS_Libraries/)
