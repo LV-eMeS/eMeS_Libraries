@@ -18,6 +18,7 @@ eMeS libraries Version 2.2.0
 * Capability to change MS_MultiLogger single event logging thread interruption time.
 * Improved JDBC interface and SQL builder for more convenient use.
 * Improved boolean decision algorithm in order to support 3 and more boolean parameters.
+* Made "insert/replace into" constructions more intuitive to write using MS_SQLQueryBuilder.
 ========================================================================================================
 eMeS libraries Version 2.1.0
 ========================================================================================================
