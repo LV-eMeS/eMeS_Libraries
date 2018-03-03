@@ -116,6 +116,24 @@ public final class MS_CodingUtils {
     }
 
     /**
+     * Converts boolean to character '1' or '0'.
+     * @param bool true = '1'; false = '0'.
+     * @return character as a number ('1' or '0') representing boolean value.
+     */
+    public static Character booleanToChar(boolean bool) {
+        return bool ? '1' : '0';
+    }
+
+    /**
+     * Converts character to boolean true or false.
+     * @param charValue '1' = true; '0' = false.
+     * @return boolean representing character, as a number ('1' or '0'), value.
+     */
+    public static Boolean charToBoolean(char charValue) {
+        return charValue == '1';
+    }
+
+    /**
      * Asks user to input some line of string from console.
      *
      * @param askText text which will be printed to console before readln method.

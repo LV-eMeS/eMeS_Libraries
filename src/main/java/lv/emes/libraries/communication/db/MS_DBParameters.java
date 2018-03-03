@@ -21,7 +21,7 @@ import java.time.Duration;
  * </ul>
  *
  * @author eMeS
- * @version 2.0.
+ * @version 2.1.
  */
 public class MS_DBParameters {
 

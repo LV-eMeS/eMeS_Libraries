@@ -8,7 +8,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static lv.emes.libraries.utilities.MS_CodingUtils.*;
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertEquals;
 
 /**
  * @author eMeS
@@ -30,6 +29,18 @@ public class MS_CodingUtilsTest {
     public void testInverseBoolean() {
         assertTrue(inverseBoolean(false));
         assertFalse(inverseBoolean(true));
+    }
+
+    @Test
+    public void testBooleanToChar() {
+        assertEquals((Character) '1', booleanToChar(true));
+        assertEquals((Character) '0', booleanToChar(false));
+    }
+
+    @Test
+    public void testCharToBoolean() {
+        assertEquals(true, charToBoolean('1'));
+        assertEquals(false, charToBoolean('0'));
     }
 
     @Test
