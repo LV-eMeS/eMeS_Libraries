@@ -1,5 +1,5 @@
 eMeS libraries
-Version 2.1.2
+Version 2.1.3
 Release Notes
 
 INTRODUCTION:
@@ -19,6 +19,7 @@ eMeS libraries Version 2.2.0
 * Improved JDBC interface and SQL builder for more convenient use.
 * Improved boolean decision algorithm in order to support 3 and more boolean parameters.
 * Made "insert/replace into" constructions more intuitive to write using MS_SQLQueryBuilder.
+* Bugfix in Http client: now replace spaces in URL with %20 symbols.
 ========================================================================================================
 eMeS libraries Version 2.1.0
 ========================================================================================================

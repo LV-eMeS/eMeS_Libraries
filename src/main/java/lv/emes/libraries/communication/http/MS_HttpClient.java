@@ -1,6 +1,7 @@
 package lv.emes.libraries.communication.http;
 
 import lv.emes.libraries.file_system.MS_BinaryTools;
+import lv.emes.libraries.utilities.MS_StringUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
@@ -54,7 +55,7 @@ public class MS_HttpClient {
     public static MS_HttpRequestResult get(String requestURL, Map<String, String> params,
                                            Map<String, String> headers, RequestConfig connConfig) {
         IFuncHttpRequestCreator newRequest = () -> {
-            String url = requestURL;
+            String url = formatRequestUrl(requestURL);
             if (params != null)
                 url += "?" + formParamURL(params);
             return new HttpGet(url);
@@ -97,7 +98,7 @@ public class MS_HttpClient {
      */
     public static MS_HttpRequestResult post(String requestURL, HttpEntity requestBody, Map<String, String> headers, RequestConfig connConfig) {
         IFuncHttpRequestCreator newRequest = () -> {
-            HttpPost request = new HttpPost(requestURL);
+            HttpPost request = new HttpPost(formatRequestUrl(requestURL));
             request.setEntity(requestBody);
             return request;
         };
@@ -116,7 +117,7 @@ public class MS_HttpClient {
      */
     public static MS_HttpRequestResult post(String requestURL, Map<String, String> params, Map<String, String> headers, RequestConfig connConfig) {
         IFuncHttpRequestCreator newRequest = () -> {
-            HttpPost request = new HttpPost(requestURL);
+            HttpPost request = new HttpPost(formatRequestUrl(requestURL));
             if (params != null) {
                 List<NameValuePair> paramList = new ArrayList<>();
                 params.forEach((name, value) -> paramList.add(new BasicNameValuePair(name, value)));
@@ -152,7 +153,7 @@ public class MS_HttpClient {
     public static MS_HttpRequestResult put(String requestURL, HttpEntity requestBody,
                                            Map<String, String> headers, RequestConfig connConfig) {
         IFuncHttpRequestCreator newRequest = () -> {
-            HttpPut request = new HttpPut(requestURL);
+            HttpPut request = new HttpPut(formatRequestUrl(requestURL));
             request.setEntity(requestBody);
             return request;
         };
@@ -172,7 +173,7 @@ public class MS_HttpClient {
     public static MS_HttpRequestResult put(String requestURL, String requestBody,
                                            Map<String, String> headers, RequestConfig connConfig) {
         IFuncHttpRequestCreator newRequest = () -> {
-            HttpPut request = new HttpPut(requestURL);
+            HttpPut request = new HttpPut(formatRequestUrl(requestURL));
             if (requestBody != null) {
                 StringEntity entity = new StringEntity(requestBody);
                 request.setEntity(entity);
@@ -216,7 +217,7 @@ public class MS_HttpClient {
      * @return HTTP response from server.
      */
     public static MS_HttpRequestResult delete(String requestURL, Map<String, String> headers, RequestConfig connConfig) {
-        IFuncHttpRequestCreator newRequest = () -> new HttpDelete(requestURL);
+        IFuncHttpRequestCreator newRequest = () -> new HttpDelete(formatRequestUrl(requestURL));
         return httpRequest(newRequest, headers, connConfig);
     }
 
@@ -254,6 +255,15 @@ public class MS_HttpClient {
     }
 
     //*** PRIVATE METHODS ***
+
+    /**
+     * In given URL replaces all spaces (if any) with "%20" symbols in order to correctly send it using HTTP components.
+     * @param url full request URL.
+     * @return same URL, just formatted in correct format.
+     */
+    private static String formatRequestUrl(String url) {
+        return MS_StringUtils.replaceInString(url, " ", "%20");
+    }
 
     private static String formParamURL(Map<String, String> params) throws UnsupportedEncodingException {
         if (params == null) //if no parameters are assigned then there is no need to build parameters as string
