@@ -3,6 +3,7 @@ package lv.emes.libraries.patches.jmimemagic;
 import net.sf.jmimemagic.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.xml.sax.helpers.XMLReaderFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,9 +31,12 @@ public class MimeMagic extends Magic {
     }
 
     /**
-     * create a parser and initialize it
+     * Creates a parser and initializes it.
      *
-     * @throws MagicParseException DOCUMENT ME!
+     * @throws MagicParseException if MimeMagic configuration initialization fails.
+     *                             {@link XMLReaderFactory} is used in order to read those configurations.
+     *                             This kind of exception might occur if there are problems reading XML by
+     *                             using this XML reader library.
      */
     public static synchronized void initialize()
             throws MagicParseException {
@@ -92,13 +96,17 @@ public class MimeMagic extends Magic {
     }
 
     /**
-     * get a match from a stream of data
+     * Get a match from a stream of data.
      *
-     * @param data DOCUMENT ME!
-     * @return DOCUMENT ME!
-     * @throws MagicParseException         DOCUMENT ME!
-     * @throws MagicMatchNotFoundException DOCUMENT ME!
-     * @throws MagicException              DOCUMENT ME!
+     * @param data stream of data that are going to be checked against MIME type matches.
+     * @return Magic match object.
+     * @throws MagicParseException         if MimeMagic configuration initialization fails.
+     *                                     {@link XMLReaderFactory} is used in order to read those configurations.
+     *                                     This kind of exception might occur if there are problems reading XML by
+     *                                     using this XML reader library.
+     * @throws MagicMatchNotFoundException if MimeMagic algorithms are unable to determine MIME type of data.
+     * @throws MagicException              if some error occurs while parsing data stream.
+     *                                     This could be, for example, some {@link IOException} or {@link UnsupportedTypeException}.
      */
     public static MagicMatch getMagicMatch(byte[] data)
             throws MagicParseException, MagicMatchNotFoundException, MagicException {
@@ -106,14 +114,18 @@ public class MimeMagic extends Magic {
     }
 
     /**
-     * get a match from a stream of data
+     * Get a match from a stream of data.
      *
-     * @param data          DOCUMENT ME!
-     * @param onlyMimeMatch DOCUMENT ME!
-     * @return DOCUMENT ME!
-     * @throws MagicParseException         DOCUMENT ME!
-     * @throws MagicMatchNotFoundException DOCUMENT ME!
-     * @throws MagicException              DOCUMENT ME!
+     * @param data          stream of data that are going to be checked against MIME type matches.
+     * @param onlyMimeMatch  only try to get mime type, no submatches are processed when true
+     * @return the MagicMatch object representing a match in the data <b>data</b>.
+     * @throws MagicParseException         if MimeMagic configuration initialization fails.
+     *                                     {@link XMLReaderFactory} is used in order to read those configurations.
+     *                                     This kind of exception might occur if there are problems reading XML by
+     *                                     using this XML reader library.
+     * @throws MagicMatchNotFoundException if MimeMagic algorithms are unable to determine MIME type of data.
+     * @throws MagicException              if some error occurs while parsing data stream.
+     *                                     This could be, for example, some {@link IOException} or {@link UnsupportedTypeException}.
      */
     public static MagicMatch getMagicMatch(byte[] data, boolean onlyMimeMatch)
             throws MagicParseException, MagicMatchNotFoundException, MagicException {
@@ -151,14 +163,18 @@ public class MimeMagic extends Magic {
     }
 
     /**
-     * get a match from a file
+     * Get a match from a file.
      *
-     * @param file           the file to match content in
-     * @param extensionHints whether or not to use extension to optimize order of content tests
-     * @return the MagicMatch object representing a match in the file
-     * @throws MagicParseException         DOCUMENT ME!
-     * @throws MagicMatchNotFoundException DOCUMENT ME!
-     * @throws MagicException              DOCUMENT ME!
+     * @param file           the file to match content in.
+     * @param extensionHints whether or not to use extension to optimize order of content tests.
+     * @return the MagicMatch object representing a match in the file.
+     * @throws MagicParseException         if MimeMagic configuration initialization fails.
+     *                                     {@link XMLReaderFactory} is used in order to read those configurations.
+     *                                     This kind of exception might occur if there are problems reading XML by
+     *                                     using this XML reader library.
+     * @throws MagicMatchNotFoundException if MimeMagic algorithms are unable to determine MIME type of data.
+     * @throws MagicException              if some error occurs while parsing data stream.
+     *                                     This could be, for example, some {@link IOException} or {@link UnsupportedTypeException}.
      */
     public static MagicMatch getMagicMatch(File file, boolean extensionHints)
             throws MagicParseException, MagicMatchNotFoundException, MagicException {
@@ -166,15 +182,19 @@ public class MimeMagic extends Magic {
     }
 
     /**
-     * get a match from a file
+     * Get a match from a file.
      *
-     * @param file           the file to match content in
-     * @param extensionHints whether or not to use extension to optimize order of content tests
+     * @param file           the file to match content in.
+     * @param extensionHints whether or not to use extension to optimize order of content tests.
      * @param onlyMimeMatch  only try to get mime type, no submatches are processed when true
-     * @return the MagicMatch object representing a match in the file
-     * @throws MagicParseException         DOCUMENT ME!
-     * @throws MagicMatchNotFoundException DOCUMENT ME!
-     * @throws MagicException              DOCUMENT ME!
+     * @return the MagicMatch object representing a match in the file.
+     * @throws MagicParseException         if MimeMagic configuration initialization fails.
+     *                                     {@link XMLReaderFactory} is used in order to read those configurations.
+     *                                     This kind of exception might occur if there are problems reading XML by
+     *                                     using this XML reader library.
+     * @throws MagicMatchNotFoundException if MimeMagic algorithms are unable to determine MIME type of data.
+     * @throws MagicException              if some error occurs while parsing data stream.
+     *                                     This could be, for example, some {@link IOException} or {@link UnsupportedTypeException}.
      */
     public static MagicMatch getMagicMatch(File file, boolean extensionHints, boolean onlyMimeMatch)
             throws MagicParseException, MagicMatchNotFoundException, MagicException {
@@ -209,10 +229,8 @@ public class MimeMagic extends Magic {
                     Collection c = (Collection) hintMap.get(ext);
 
                     if (c != null) {
-                        Iterator i = c.iterator();
-
-                        while (i.hasNext()) {
-                            matcher = new PatchedMagicMatcher((MagicMatcher) i.next());
+                        for (Object aC : c) {
+                            matcher = new PatchedMagicMatcher((MagicMatcher) aC);
 
                             log.debug("getMagicMatch(File): trying to match: " +
                                     matcher.getMatch().getDescription());
@@ -250,10 +268,8 @@ public class MimeMagic extends Magic {
         Collection matchers = magicParser.getMatchers();
         log.debug("getMagicMatch(File): have " + matchers.size() + " matches");
 
-        Iterator i = matchers.iterator();
-
-        while (i.hasNext()) {
-            matcher = new PatchedMagicMatcher((MagicMatcher) i.next());
+        for (Object matcher1 : matchers) {
+            matcher = new PatchedMagicMatcher((MagicMatcher) matcher1);
 
             if (!checked.contains(matcher)) {
                 log.debug("getMagicMatch(File): trying to match: " +

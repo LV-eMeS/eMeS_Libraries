@@ -17,7 +17,7 @@ import java.time.ZonedDateTime;
  * </ul>
  *
  * @author eMeS
- * @version 1.0.
+ * @version 1.1.
  */
 public class MS_MultiLogger implements ILoggingOperations {
 
@@ -69,10 +69,10 @@ public class MS_MultiLogger implements ILoggingOperations {
                 new MS_FutureEvent()
                         .withThreadName("MS_MultiLogger_" + i)
                         .withActionOnException((e) -> MS_Log4Java.getLogger(MS_MultiLogger.class)
-                                .error("Event logging to repository with index [" + i + "] have been failed due to an exception", e))
+                                .error("Concrete event logging to repository with index [" + i + "] have been failed due to an exception", e))
                         .withTimeout(setup.getMaxloggingOperationExecutionTime())
                         .withActionOnInterruptedException(() -> MS_Log4Java.getLogger(MS_MultiLogger.class)
-                                .warn("Event logging to repository with index [" + i + "] have been interrupted"))
+                                .warn("Concrete event logging to repository with index [" + i + "] have been interrupted (timeout or another thread stopped it)"))
                         .withAction(() -> repo.logEvent(event))
                         .schedule()
         );

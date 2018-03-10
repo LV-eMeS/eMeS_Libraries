@@ -38,9 +38,14 @@ import java.util.Map;
  * </ul>
  *
  * @author eMeS
- * @version 2.1.
+ * @version 2.2.
  */
 public class MS_HttpClient {
+
+    /**
+     * Encoding of entity parameter names and values.
+     */
+    public static final String ENCODING = "UTF-8";
 
     /**
      * Does HTTP "GET" request.
@@ -48,8 +53,8 @@ public class MS_HttpClient {
      * @param requestURL an URL to HTTP server.
      * @param params     map of parameters to pass for this URL.
      * @param headers    map of key-value headers to pass for this request.
-     * @param connConfig  initial configuration of connection. For most of the cases that's enough just to set timeouts.
-     *                    For that {@link MS_IFuncConnectionConfigDefaults#DEFAULT_CONFIG_FOR_CONNECTION} can be used as well.
+     * @param connConfig initial configuration of connection. For most of the cases that's enough just to set timeouts.
+     *                   For that {@link MS_IFuncConnectionConfigDefaults#DEFAULT_CONFIG_FOR_CONNECTION} can be used as well.
      * @return HTTP response from server.
      */
     public static MS_HttpRequestResult get(String requestURL, Map<String, String> params,
@@ -111,8 +116,8 @@ public class MS_HttpClient {
      * @param requestURL an URL to HTTP server.
      * @param params     map of parameters to pass for this URL.
      * @param headers    map of key-value headers to pass for this request.
-     * @param connConfig  initial configuration of connection. For most of the cases that's enough just to set timeouts.
-     *                    For that {@link MS_IFuncConnectionConfigDefaults#DEFAULT_CONFIG_FOR_CONNECTION} can be used as well.
+     * @param connConfig initial configuration of connection. For most of the cases that's enough just to set timeouts.
+     *                   For that {@link MS_IFuncConnectionConfigDefaults#DEFAULT_CONFIG_FOR_CONNECTION} can be used as well.
      * @return HTTP response from server.
      */
     public static MS_HttpRequestResult post(String requestURL, Map<String, String> params, Map<String, String> headers, RequestConfig connConfig) {
@@ -121,7 +126,8 @@ public class MS_HttpClient {
             if (params != null) {
                 List<NameValuePair> paramList = new ArrayList<>();
                 params.forEach((name, value) -> paramList.add(new BasicNameValuePair(name, value)));
-                request.setEntity(new UrlEncodedFormEntity(paramList));
+                UrlEncodedFormEntity entity = new UrlEncodedFormEntity(paramList, ENCODING);
+                request.setEntity(entity);
             }
             return request;
         };
@@ -175,7 +181,7 @@ public class MS_HttpClient {
         IFuncHttpRequestCreator newRequest = () -> {
             HttpPut request = new HttpPut(formatRequestUrl(requestURL));
             if (requestBody != null) {
-                StringEntity entity = new StringEntity(requestBody);
+                StringEntity entity = new StringEntity(requestBody, ENCODING);
                 request.setEntity(entity);
             }
             return request;
@@ -212,8 +218,8 @@ public class MS_HttpClient {
      *
      * @param requestURL an URL to HTTP server.
      * @param headers    map of key-value headers to pass for this request.
-     * @param connConfig  initial configuration of connection. For most of the cases that's enough just to set timeouts.
-     *                    For that {@link MS_IFuncConnectionConfigDefaults#DEFAULT_CONFIG_FOR_CONNECTION} can be used as well.
+     * @param connConfig initial configuration of connection. For most of the cases that's enough just to set timeouts.
+     *                   For that {@link MS_IFuncConnectionConfigDefaults#DEFAULT_CONFIG_FOR_CONNECTION} can be used as well.
      * @return HTTP response from server.
      */
     public static MS_HttpRequestResult delete(String requestURL, Map<String, String> headers, RequestConfig connConfig) {
@@ -236,8 +242,8 @@ public class MS_HttpClient {
      * Does HTTP "DELETE" request.
      *
      * @param requestURL an URL to HTTP server.
-     * @param connConfig  initial configuration of connection. For most of the cases that's enough just to set timeouts.
-     *                    For that {@link MS_IFuncConnectionConfigDefaults#DEFAULT_CONFIG_FOR_CONNECTION} can be used as well.
+     * @param connConfig initial configuration of connection. For most of the cases that's enough just to set timeouts.
+     *                   For that {@link MS_IFuncConnectionConfigDefaults#DEFAULT_CONFIG_FOR_CONNECTION} can be used as well.
      * @return HTTP response from server.
      */
     public static MS_HttpRequestResult delete(String requestURL, RequestConfig connConfig) {
@@ -258,6 +264,7 @@ public class MS_HttpClient {
 
     /**
      * In given URL replaces all spaces (if any) with "%20" symbols in order to correctly send it using HTTP components.
+     *
      * @param url full request URL.
      * @return same URL, just formatted in correct format.
      */
@@ -277,9 +284,9 @@ public class MS_HttpClient {
             else
                 result.append("&");
 
-            result.append(URLEncoder.encode(entry.getKey(), "UTF-8"));
+            result.append(URLEncoder.encode(entry.getKey(), ENCODING));
             result.append("=");
-            result.append(URLEncoder.encode(entry.getValue(), "UTF-8"));
+            result.append(URLEncoder.encode(entry.getValue(), ENCODING));
         }
 
         return result.toString();

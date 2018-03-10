@@ -180,7 +180,7 @@ public class MSSQLQueryBuilderTest {
 
     @Test
     public void test20InsertIntoFieldsAndValuesAsLists() {
-        sql.insertInto(tableName, new MS_StringList("id&counter&text_field3", '&'))
+        sql.insertInto(tableName, new MS_StringList("id,counter,text_field3", ','))
                 .values(new MS_StringList("null#123#check"));
         assertEquals("INSERT INTO tabula(id, counter, text_field3)\nVALUES(null, 123, check);", sql.buildAndToString());
     }
@@ -237,7 +237,7 @@ public class MSSQLQueryBuilderTest {
                 .field("logging_time")
                 .field("null")
                 .from().table("logger_events.warning_events")
-        .where().condition("id_event_time like " + MS_SQLQueryBuilder.toSQLText("%672000597%"));
+                .where().condition("id_event_time like " + MS_SQLQueryBuilder.toSQLText("%672000597%"));
 
         assertEquals("SELECT id_event_time, owner, product, message, logging_time, null" +
                 "\nFROM logger_events.warning_events" +

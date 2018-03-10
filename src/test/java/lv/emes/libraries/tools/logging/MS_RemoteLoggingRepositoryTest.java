@@ -46,11 +46,11 @@ public class MS_RemoteLoggingRepositoryTest {
         //do some initial logging to both remote and in-memory repositories
         logger.info("Info: Starting remote logging repository test");
         logger.warning("Warning: Those logging events will be stored to real logging server");
-        logger.error("Error: Tests will fail in initialization part if server will be unreachable");
+        logger.error("Error: Tests will fail in initialization part if server will be unreachable. ĀЮ漢");
         logger.error("Error: Lines as delimiters are not supported for remote logging repository",
-                new MS_TestUtils.MS_UnCheckedException2("Those lines will be ignored there"));
+                new MS_TestUtils.MS_UnCheckedException2("Those lines will be ignored there. 語"));
         logger.line();
-        MS_CodingUtils.sleep(3000); //lets give some meaningful time for logging server to take requests
+        MS_CodingUtils.sleep(3500); //lets give some meaningful time for logging server to take requests
     }
 
     @Test

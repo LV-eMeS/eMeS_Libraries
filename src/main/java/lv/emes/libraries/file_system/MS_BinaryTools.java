@@ -4,17 +4,18 @@ import lv.emes.libraries.patches.jmimemagic.MimeMagic;
 import net.sf.jmimemagic.MagicException;
 import net.sf.jmimemagic.MagicMatchNotFoundException;
 import net.sf.jmimemagic.MagicParseException;
+import net.sf.jmimemagic.UnsupportedTypeException;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.compress.utils.IOUtils;
+import org.xml.sax.helpers.XMLReaderFactory;
 
 import java.io.*;
 
 /**
  * Module consists of methods for binary file I/O.
- * It is mainly used to perform DB operations with binary file exchange.
- * It can also be used in various cases while doing file / stream data exchange.
+ * It can be used in various cases while doing file / stream data exchange or manipulations with bytes.
  *
- * @version 2.0.
+ * @version 2.1.
  */
 public class MS_BinaryTools {
     /**
@@ -147,6 +148,48 @@ public class MS_BinaryTools {
         return Base64.encodeBase64String(bytes);
     }
 
+    /**
+     * Converts text <b>text</b> to Base64 formatted string.
+     * @param text any non-Null string to be converted.
+     * @return Base64 converted string or null if given text <b>text</b> was null.
+     */
+    public static String stringToBase64String(String text) {
+        if (text == null) return null;
+        return new String(Base64.encodeBase64(text.getBytes()));
+    }
+
+    /**
+     * Converts Base64 formatted string to normal text.
+     * @param base64Str any string that has been converted using Base64 algorithm.
+     * @return text converted back from Base64 format or null if given Base64 string <b>base64Str</b> was null.
+     */
+    public static String base64StringToString(String base64Str) {
+        if (base64Str == null) return null;
+        return new String(Base64.decodeBase64(base64Str));
+    }
+
+    /**
+     * Tries to get MIME type of given file <b>file</b>.
+     * Method also uses {@link MimeMagic} extension hints.
+     *
+     * @param file file in file system, which MIME type will be determined.
+     * @return MIME type as string.
+     * Examples: "text/plain", "audio/*", "image/png", "video/mp4", "application/octet-stream"
+     * @throws MagicParseException         if MimeMagic configuration initialization fails.
+     *                                     {@link XMLReaderFactory} is used in order to read those configurations.
+     *                                     This kind of exception might occur if there are problems reading XML by
+     *                                     using this XML reader library.
+     * @throws MagicMatchNotFoundException if MimeMagic algorithms are unable to determine MIME type of data.
+     * @throws MagicException              if some error occurs while parsing data stream.
+     *                                     This could be, for example, some {@link IOException} or {@link UnsupportedTypeException}.
+     */
+    public static String getMimeType(File file) throws MagicMatchNotFoundException, MagicException, MagicParseException {
+        try {
+            return MimeMagic.getMagicMatch(file, true).getMimeType();
+        } catch (OutOfMemoryError e) {
+            throw new MagicMatchNotFoundException("Magic match not found due to lack heap space");
+        }
+    }
 
     /**
      * Checks whether file with file name <b>filename</b> is binary file (text file is not considered as binary file).
@@ -162,14 +205,11 @@ public class MS_BinaryTools {
      *                                     or file is too heavy to process.
      */
     public static boolean isBinaryFile(String filename) throws MagicMatchNotFoundException {
-        String mimeType = "";
         try {
-            mimeType = MimeMagic.getMagicMatch(new File(filename), true).getMimeType();
+            String mimeType = getMimeType(new File(filename));
             return !mimeType.startsWith("text");
         } catch (MagicException | MagicParseException e) {
             return false;
-        } catch (OutOfMemoryError e) {
-            throw new MagicMatchNotFoundException("Magic match not found due to lack heap space");
         }
     }
 }

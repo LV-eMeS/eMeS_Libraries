@@ -65,6 +65,7 @@ public class MS_FutureEvent {
     }
 
     /**
+     * Sets action to be performed when future event thread is interrupted by timeout or another thread.
      * @param action an preferable lambda expression defining actions to be performed on
      *               interrupted thread exception.
      * @return reference to an event itself.

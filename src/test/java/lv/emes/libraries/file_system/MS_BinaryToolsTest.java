@@ -5,8 +5,7 @@ import net.sf.jmimemagic.MagicMatchNotFoundException;
 import org.junit.Test;
 
 import static lv.emes.libraries.testdata.TestData.*;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * Tests part of binary tool features.
@@ -81,5 +80,19 @@ public class MS_BinaryToolsTest {
     public void undeterminedFileArchive() throws MagicMatchNotFoundException {
         testFilePath = TEST_RESOURCES_DIR + TEST_FILE_ARCHIVE;
         MS_BinaryTools.isBinaryFile(testFilePath);
+    }
+
+    @Test
+    public void testBase64FromAndToString() {
+        final String TEXT = "A b 8 �,語āЮ";
+        final String CORRESPONDING_BASE64_TEXT = "QSBiIDgg77+9LOiqnsSB0K4="; //hardcoded Base64 representation of TEXT
+
+        String base64 = MS_BinaryTools.stringToBase64String(TEXT);
+        assertEquals(CORRESPONDING_BASE64_TEXT, base64);
+        String text = MS_BinaryTools.base64StringToString(base64);
+        assertEquals(TEXT, text);
+
+        assertNull(MS_BinaryTools.stringToBase64String(null));
+        assertNull(MS_BinaryTools.base64StringToString(null));
     }
 }

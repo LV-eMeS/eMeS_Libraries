@@ -9,9 +9,45 @@ import lv.emes.libraries.utilities.MS_StringUtils;
  * This class is mainly takes care of quick and easy to use SELECT, INSERT/REPLACE, UPDATE, DELETE statement
  * building. Other constructions are possible to build by using this builder via {@link MS_SQLQueryBuilder#add(String)}
  * or {@link MS_SQLQueryBuilder#append(String)} methods.
+ * <p><u>Example 1</u>:
+ * <pre><code>
+ * public static void main(String[] args) {
+ *     String tableName = "users";
+ *     MS_SQLQueryBuilder sql = new MS_SQLQueryBuilder().select().all().from().table(tableName);
+ *     System.out.println(sql.buildAndToString()); //prints: SELECT * FROM users;
+ * }
+ * </code></pre>
+ * <u>Example 2</u>:
+ * <pre><code>
+ * public static void main(String[] args) {
+ *     String tableName = "users";
+ *     MS_SQLQueryBuilder sql = new MS_SQLQueryBuilder().update().table(tableName).set().value("age", "?");
+ *     System.out.println(sql.buildAndToString()); //prints: UPDATE users SET age = ?;
+ * }
+ * </code></pre>
+ * <u>Example 3</u>:
+ * <pre><code>
+ * public static void main(String[] args) {
+ *     String tableName = "users";
+ *     MS_SQLQueryBuilder sql = new MS_SQLQueryBuilder()
+ *         .insertInto(tableName, new MS_StringList("id,counter,text_field3", ','))
+ *         .values(new MS_StringList("null#123#check"));
+ *     System.out.println(sql.buildAndToString()); //prints: INSERT INTO users(id, counter, text_field3)
+ *     //and in new line: VALUES(null, 123, check);
+ * }
+ * </code></pre>
+ * <u>Example 4</u>:
+ * <pre><code>
+ * public static void main(String[] args) {
+ *     String tableName = "users";
+ *     MS_SQLQueryBuilder sql = new MS_SQLQueryBuilder().deleteFrom().table(tableName).where().condition("age &gt; 104");
+ *     System.out.println(sql.buildAndToString()); //prints: DELETE FROM users
+ *     //and in new line: WHERE age &gt; 104;
+ * }
+ * </code></pre>
  *
  * @author eMeS
- * @version 2.2.
+ * @version 2.3.
  */
 public class MS_SQLQueryBuilder extends MS_LineBuilder {
 
@@ -284,6 +320,16 @@ public class MS_SQLQueryBuilder extends MS_LineBuilder {
     public MS_SQLQueryBuilder from() {
         return beginOperation(Oper.FIELD.equals(previousOperation) && fieldOperationCalledTimes > 3)
                 .appendInternal(Oper.FROM.toString()).endOperation(Oper.FROM);
+    }
+
+    /**
+     * Appends query with "FROM <b>tableName</b>".
+     *
+     * @param tableName table name.
+     * @return reference to this query itself.
+     */
+    public MS_SQLQueryBuilder from(String tableName) {
+        return from().table(tableName);
     }
 
     /**

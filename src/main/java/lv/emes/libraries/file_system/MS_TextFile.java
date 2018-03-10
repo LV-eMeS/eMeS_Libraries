@@ -1,7 +1,6 @@
 package lv.emes.libraries.file_system;
 
 import lv.emes.libraries.tools.lists.MS_List;
-import net.sf.jmimemagic.Magic;
 import net.sf.jmimemagic.MagicException;
 import net.sf.jmimemagic.MagicMatchNotFoundException;
 import net.sf.jmimemagic.MagicParseException;
@@ -15,25 +14,26 @@ import java.util.List;
  * Module provides common operations with files and folders.
  * Public methods:
  * <ul>
- *     <li>openForReading</li>
- *     <li>close</li>
- *     <li>readln</li>
- *     <li>writeln</li>
- *     <li>write</li>
- *     <li>appendln</li>
- *     <li>append</li>
- *     <li>importStringListFromFile</li>
- *     <li>exportStringListToFile</li>
- *     <li>getFilename</li>
+ * <li>openForReading</li>
+ * <li>close</li>
+ * <li>readln</li>
+ * <li>writeln</li>
+ * <li>write</li>
+ * <li>appendln</li>
+ * <li>append</li>
+ * <li>importStringListFromFile</li>
+ * <li>exportStringListToFile</li>
+ * <li>getFilename</li>
  * </ul>
  * Static methods:
  * <ul>
- *     <li>getProjectDirectory</li>
- *     <li>fileExists</li>
- *     <li>createEmptyFile</li>
- *     <li>getResourceFileTextAsString</li>
+ * <li>getProjectDirectory</li>
+ * <li>fileExists</li>
+ * <li>createEmptyFile</li>
+ * <li>getResourceFileTextAsString</li>
  * </ul>
- * @version 2.2.
+ *
+ * @version 2.3.
  */
 public class MS_TextFile {
     private PrintWriter fFileWriter = null; //main object that will perform line WRITING.
@@ -154,12 +154,13 @@ public class MS_TextFile {
 
     /**
      * Creates folder for file to be created in if a folder doesn't exist.
+     *
      * @param filename name of file that will be laying in folder that will be created.
      */
     private void createFolderForFileIfNeeded(String filename) {
         //do checking if directory exists to always create file properly altogether with directory
         String directoryOfFile = MS_FileSystemTools.getDirectoryOfFile(filename);
-        if (! MS_FileSystemTools.directoryExists(directoryOfFile))
+        if (!MS_FileSystemTools.directoryExists(directoryOfFile))
             MS_FileSystemTools.createNewDirectory(directoryOfFile);
     }
 
@@ -471,6 +472,7 @@ public class MS_TextFile {
     /**
      * Returns content of given file as string as it is. Reads file as resource stream.
      * <br><u>Note</u>: resource must be for read only and it must be prepared before launching any script that gets it.
+     *
      * @param filename path to file as resource (do not use full filename, instead use path as it is located in classpath).
      * @return whole file as plain text as it is.
      */
@@ -481,6 +483,7 @@ public class MS_TextFile {
 
     /**
      * Returns content of given stream as UTF-8 encoded string.
+     *
      * @param stream a stream of text file or another stream that could be converted to string.
      * @return whole stream as plain UTF-8 encoded text as it is. Null if input is null or I/O error occurs.
      */
@@ -499,23 +502,24 @@ public class MS_TextFile {
     }
 
     @Override
-    protected void finalize() throws Throwable {
+    protected void finalize() {
         this.close();
     }
 
     /**
      * Checks whether file with file name <b>filename</b> is text file.
+     *
      * @param filename path to file.
      * @return true if file is text file; false, if not or file not found.
+     * @throws MagicMatchNotFoundException if file exists, but jMimeMagic cannot determine actual MIME type of file
+     *                                     or file is too heavy to process.
      */
-    public static boolean isTextFile(String filename) {
-        String mimeType = "";
+    public static boolean isTextFile(String filename) throws MagicMatchNotFoundException {
         try {
-            mimeType = Magic.getMagicMatch(new File(filename), true).getMimeType();
-        } catch (MagicMatchNotFoundException | MagicException | MagicParseException e) {
-            e.printStackTrace();
+            String mimeType = MS_BinaryTools.getMimeType(new File(filename));
+            return mimeType.startsWith("text");
+        } catch (MagicException | MagicParseException e) {
             return false;
         }
-        return mimeType.startsWith("text");
     }
 }

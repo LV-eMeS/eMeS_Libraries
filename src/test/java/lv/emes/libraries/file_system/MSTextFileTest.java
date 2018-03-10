@@ -2,6 +2,7 @@ package lv.emes.libraries.file_system;
 
 import lv.emes.libraries.testdata.TestData;
 import lv.emes.libraries.tools.lists.MS_StringList;
+import net.sf.jmimemagic.MagicMatchNotFoundException;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
@@ -136,7 +137,7 @@ public class MSTextFileTest {
     }
 
     @Test
-    public void test08MixedOperations() {
+    public void test08MixedOperations() throws MagicMatchNotFoundException {
         MS_TextFile mixed = new MS_TextFile(FIRST_FILE);
         mixed.write(TEXT1, false);
         mixed.writeln(TEXT2, true);
