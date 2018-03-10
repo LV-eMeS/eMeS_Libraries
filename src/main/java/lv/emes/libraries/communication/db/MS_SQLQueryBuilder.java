@@ -60,6 +60,22 @@ public class MS_SQLQueryBuilder extends MS_LineBuilder {
     public static final String _ALL = "*";
 
     /**
+     * No arg constructor.
+     */
+    public MS_SQLQueryBuilder() {
+    }
+
+    /**
+     * Creates new instance of {@link MS_SQLQueryBuilder}, which copies from <b>otherBuilder</b> all till this moment
+     * built query constructions.
+     * @param otherBuilder another SQL builder.
+     * @throws NullPointerException if <b>otherBuilder</b> is null.
+     */
+    public MS_SQLQueryBuilder(MS_SQLQueryBuilder otherBuilder) throws NullPointerException {
+        appendInternal(otherBuilder.getStringBuilder().toString());
+    }
+
+    /**
      * Extracts parameter value to be inserted directly as field value in
      * {@link MS_SQLQueryBuilder#value(String)} method's parameter
      * or in {@link MS_SQLQueryBuilder#value(String, String)}
@@ -479,6 +495,14 @@ public class MS_SQLQueryBuilder extends MS_LineBuilder {
      */
     public String buildAndToString() {
         return this.build().toString();
+    }
+
+    /**
+     * This method basically clones this SQL builder.
+     * @return new instance of SQL builder with same SQL constructions as this instance already has.
+     */
+    public MS_SQLQueryBuilder makeCopy() {
+        return new MS_SQLQueryBuilder(this);
     }
 
     @Override

@@ -21,6 +21,7 @@ eMeS libraries Version 2.2.0
 * Made "insert/replace into" constructions more intuitive to write using MS_SQLQueryBuilder.
 * Bugfix in Http client: now replace spaces in URL with %20 symbols.
 * Bugfix in Http client: now use UTF-8 for request entities.
+* Added makeCopy to SQL builder in order to create another instances same as original one.
 ========================================================================================================
 eMeS libraries Version 2.1.0
 ========================================================================================================

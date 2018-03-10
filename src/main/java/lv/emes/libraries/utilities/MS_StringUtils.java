@@ -149,7 +149,7 @@ public final class MS_StringUtils {
             return aStr;
         }
         if (aReplaceWith == null)
-            aReplaceWith = new String("");
+            aReplaceWith = "";
         int counter = 0;
         String thesubstr = "";
         while ((counter < aStr.length())
@@ -310,7 +310,7 @@ public final class MS_StringUtils {
     public static String removePunctuation(String aText) {
         int i = 0;
         if (aText == null) return null;
-        String res = "";
+        StringBuilder res = new StringBuilder();
         while (i < aText.length()) {
             boolean allowToAddSymbolToRes = true;
             int j = 0;
@@ -324,10 +324,10 @@ public final class MS_StringUtils {
                 j++;
             }
             if (allowToAddSymbolToRes)
-                res = res + iThSymbol;
+                res.append(iThSymbol);
             i++;
         }
-        return res;
+        return res.toString();
     }
 
     /**

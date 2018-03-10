@@ -249,4 +249,15 @@ public class MSSQLQueryBuilderTest {
         sql.append("CREATE").append("DATABASE").append("logger_events");
         assertEquals("CREATE DATABASE logger_events;", sql.buildAndToString());
     }
+
+    @Test
+    public void test31Copy() {
+        sql.append("CREATE").append("DATABASE").append("logger_events");
+        assertEquals(sql.makeCopy().buildAndToString(), sql.buildAndToString());
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void test32CopyNull() {
+        new MS_SQLQueryBuilder(null);
+    }
 }
