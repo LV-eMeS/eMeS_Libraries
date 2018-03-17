@@ -1,5 +1,6 @@
 package lv.emes.libraries.storage;
 
+import lv.emes.libraries.utilities.MS_TestUtils;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -11,7 +12,7 @@ import static org.junit.Assert.*;
  */
 public class MS_InMemoryCacheTest {
 
-    private static MS_InMemoryCache<String, Object> repository = new MS_InMemoryCache<>();
+    private static MS_InMemoryCache<Object, String> repository = new MS_InMemoryCache<>();
 
     @Test
     public void test01RetrievalOperations() {
@@ -41,7 +42,7 @@ public class MS_InMemoryCacheTest {
     @Test(expected = RuntimeException.class)
     public void test04RuntimeInRetrievalOperation() {
         repository.get("", (id) -> {
-            throw new RuntimeException("Exception occurred");
+            throw new MS_TestUtils.MS_CheckedException("Exception occurred");
         });
     }
 }

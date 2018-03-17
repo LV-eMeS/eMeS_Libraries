@@ -1,5 +1,7 @@
 package lv.emes.libraries.storage;
 
+import lv.emes.libraries.utilities.MS_ObjectRetrievalFailureException;
+
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -16,7 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author eMeS
  * @version 1.1.
  */
-public class MS_InMemoryCache<ID, T> {
+public class MS_InMemoryCache<T, ID> {
 
     //TODO add TTL and possibility to store objects in different caches (only memory will be default one)
     private Map<ID, T> objects = new ConcurrentHashMap<>();
@@ -28,9 +30,9 @@ public class MS_InMemoryCache<ID, T> {
      *                           found in cache.
      * @return object retrieved either from cache, either by <b>retrievalOperation</b>.
      * @throws NullPointerException if <b>id</b> or <b>retrievalOperation</b> is null.
-     * @throws RuntimeException     if any exception occurred while performing object's retrieval operation.
+     * @throws MS_ObjectRetrievalFailureException     if any exception occurred while performing object's retrieval operation.
      */
-    public T get(ID id, IFuncObjectRetrievalOperation<ID, T> retrievalOperation) throws RuntimeException {
+    public T get(ID id, IFuncObjectRetrievalOperation<T, ID> retrievalOperation) throws RuntimeException {
         if (id == null || retrievalOperation == null)
             throw new NullPointerException("Cannot retrieve object from cache. Either id or retrievalOperation is null.");
         T objectInCache = objects.get(id);
@@ -38,7 +40,8 @@ public class MS_InMemoryCache<ID, T> {
             try {
                 objectInCache = retrievalOperation.get(id);
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                throw new MS_ObjectRetrievalFailureException("Object retrieval failed. " +
+                        "It doesn't exist in cache yet and alternative retrieval operation failed due to an exception", e);
             }
             objects.put(id, objectInCache);
         }

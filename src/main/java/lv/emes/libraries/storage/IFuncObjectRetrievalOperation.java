@@ -9,7 +9,7 @@ package lv.emes.libraries.storage;
  * @version 1.0.
  */
 @FunctionalInterface
-public interface IFuncObjectRetrievalOperation<ID, T> {
+public interface IFuncObjectRetrievalOperation<T, ID> {
 
     T get(ID id) throws Exception;
 }
