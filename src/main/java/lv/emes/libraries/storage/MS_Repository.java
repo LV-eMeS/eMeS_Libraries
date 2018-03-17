@@ -59,9 +59,11 @@ public abstract class MS_Repository<T, ID> implements IRepositoryOperations<T, I
 
     /**
      * Constructs instance of repository without initialization.
+     * This constructor calls {@link MS_Repository#MS_Repository(String, String, boolean)} with
+     * <b>autoInitialize</b> = false.
      *
      * @param repositoryRoot         root location of repository.
-     * @param repositoryCategoryName specific category which helps to located this repository in repository root.
+     * @param repositoryCategoryName specific category which helps to locate this repository in repository root.
      */
     public MS_Repository(String repositoryRoot, String repositoryCategoryName) {
         this(repositoryRoot, repositoryCategoryName, false);
@@ -71,14 +73,13 @@ public abstract class MS_Repository<T, ID> implements IRepositoryOperations<T, I
      * Constructs instance of repository and initializes it if <b>autoInitialize</b> is set to true.
      *
      * @param repositoryRoot         root location of repository.
-     * @param repositoryCategoryName specific category which helps to located this repository in repository root.
-     * @param autoInitialize         if true then repository will be initialized.
+     * @param repositoryCategoryName specific category which helps to locate this repository in repository root.
+     * @param autoInitialize         if true then repository will be initialized right after construction.
      */
     public MS_Repository(String repositoryRoot, String repositoryCategoryName, boolean autoInitialize) {
         this.repositoryRoot = repositoryRoot;
         this.repositoryCategoryName = repositoryCategoryName;
-        if (autoInitialize)
-            init();
+        if (autoInitialize) init();
     }
 
     //PROTECTED METHODS
@@ -109,7 +110,7 @@ public abstract class MS_Repository<T, ID> implements IRepositoryOperations<T, I
     protected abstract void doAdd(ID identifier, T item);
 
     /**
-     * Removes / deletes item from the repository and returns its value.
+     * Removes / deletes item from the repository.
      *
      * @param identifier an item identifier.
      */

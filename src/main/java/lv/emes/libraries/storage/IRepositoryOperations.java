@@ -66,11 +66,12 @@ public interface IRepositoryOperations<T, ID> {
     T find(ID identifier) throws UnsupportedOperationException, MS_RepositoryDataExchangeException;
 
     /**
-     * Gathers all the existing repository items to list in specific order.
+     * Gathers all the existing repository items in specific order to new instance of map.
+     * E.g. changing content of this map has no effect on actual data in repository.
      * This method should be optimized as much as it's possible and should be working faster
      * than calling <b>find</b> method <b>size</b> times.
      *
-     * @return list of existing items in repository.
+     * @return map of existing items in repository.
      * @throws UnsupportedOperationException   if this operation is not supported for this kind of repository or some
      *                                         specific conditions in order to operate within this repository isn't met.
      * @throws MS_RepositoryDataExchangeException if something repository-specific happens while performing data exchange.

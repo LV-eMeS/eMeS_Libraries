@@ -31,20 +31,22 @@ public class MS_RepositoryUtils {
      * try to guarantee that in next method calls retrieval will be faster than in first call.
      * For example, if we need to retrieve information about user, which can be:
      * <ul>
-     *     <li>found in file in file system;</li>
-     *     <li>cached in memory;</li>
-     *     <li>calculated somehow from given data,</li>
+     * <li>found in file in file system;</li>
+     * <li>cached in memory;</li>
+     * <li>calculated somehow from given data,</li>
      * </ul>
      * then best <b>retrievalOperations</b> order would be:
      * <ol>
-     *     <li>try to find this information from memory cache;</li>
-     *     <li>parse file to find information from there - after successful parsing return retrieved object,
-     *     also do in-memory caching of this object (in new thread);</li>
-     *     <li>calculate and create new instance if nothing else worked -
-     *     after this also do saving information to file in new thread and maybe even in another thread
-     *     try to cache this object in memory, if it's not there yet.</li>
+     * <li>try to find this information from memory cache;</li>
+     * <li>parse file to find information from there - after successful parsing return retrieved object,
+     * also do in-memory caching of this object (in new thread);</li>
+     * <li>calculate and create new instance if nothing else worked -
+     * after this also do saving information to file in new thread and maybe even in another thread
+     * try to cache this object in memory, if it's not there yet.</li>
      * </ol>
      *
+     * @param <T>                 type of object to retrieve.
+     * @param <ID>                type of object identifier.
      * @param id                  non-null identifier of object (if null is passed then method will return null).
      * @param continueOnError     flag to move on to next operation is current operation failed due to an exception.
      * @param retrievalOperations operation, which going to create new instance of object or will get existing one.

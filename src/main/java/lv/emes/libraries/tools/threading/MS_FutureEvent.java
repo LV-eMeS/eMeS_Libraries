@@ -1,5 +1,10 @@
 package lv.emes.libraries.tools.threading;
 
+import lv.emes.libraries.tools.lists.MS_List;
+import lv.emes.libraries.tools.lists.MS_StringList;
+import lv.emes.libraries.utilities.MS_CodingUtils;
+import lv.emes.libraries.utilities.MS_ExecutionFailureException;
+
 /**
  * An event in new thread that is going to happen after some short time measured in milliseconds.
  * Most common use cases are user actions or operation with GUI that has to be done in some
@@ -9,21 +14,28 @@ package lv.emes.libraries.tools.threading;
  * Just create new instance, use setters to configure time till execution and action on execution!
  * Optionally actions on exceptions can be set to define, what will happen if exception occurs
  * during event execution.
- * <p>Setters:
+ * <p>Setters and getters:
  * <ul>
  * <li>withTimeTillExecution</li>
  * <li>withTimeout</li>
  * <li>withAction</li>
  * <li>withActionOnInterruptedException</li>
  * <li>withActionOnException</li>
+ * <li>isFinished</li>
+ * <li>getThreadName</li>
  * </ul>
  * <p>Public methods:
  * <ul>
  * <li>schedule</li>
+ * <li>terminate</li>
+ * </ul>
+ * <p>Static methods:
+ * <ul>
+ * <li>joinEvents</li>
  * </ul>
  *
  * @author eMeS
- * @version 1.0.
+ * @version 1.1.
  */
 public class MS_FutureEvent {
 
@@ -43,6 +55,8 @@ public class MS_FutureEvent {
 
     /**
      * Sets timeout vale for execution of event's action.
+     * Default is set to '0', which means that caller thread will wait as long as it will take for this event
+     * to finish its job.
      *
      * @param timeout non-negative value defining maximal amount of time that
      *                execution should take before it will be interrupted.
@@ -66,6 +80,7 @@ public class MS_FutureEvent {
 
     /**
      * Sets action to be performed when future event thread is interrupted by timeout or another thread.
+     *
      * @param action an preferable lambda expression defining actions to be performed on
      *               interrupted thread exception.
      * @return reference to an event itself.
@@ -126,11 +141,49 @@ public class MS_FutureEvent {
     /**
      * Stops event if its not started yet.
      * Due to this termination InterruptedException may arise.
+     *
      * @return reference to an event itself.
      */
     public MS_FutureEvent terminate() {
         worker.stop();
         return this;
+    }
+
+    //*** Static methods ***
+
+    /**
+     * Forces current thread to wait until all of events completes their jobs or gets interrupted.
+     *
+     * @param sleepInterval     sleeping interval between checker loop cycles.
+     * @param maxIterationCount maximum count of iterations to perform.
+     *                          If this number is reached then {@link MS_ExecutionFailureException} is thrown.
+     * @param events            collection of events.
+     * @throws MS_ExecutionFailureException if failed to join given <b>events</b> in given time
+     *                                      <b>sleepInterval</b> * <b>maxIterationCount</b>.
+     */
+    public static void joinEvents(long sleepInterval, int maxIterationCount, MS_FutureEvent... events)
+            throws MS_ExecutionFailureException {
+
+        if (maxIterationCount > 0)
+            joinEvents(sleepInterval, maxIterationCount, MS_List.newInstance(events));
+    }
+
+    //*** Private methods and classes ***
+
+    private static void joinEvents(long sleepInterval, int maxIterationCount, MS_List<MS_FutureEvent> events)
+            throws MS_ExecutionFailureException {
+
+        events.removeIf(event -> event == null || event.isFinished());
+        if (events.size() > 0) {
+            MS_CodingUtils.sleep(sleepInterval);
+            if (maxIterationCount == 0) {
+                MS_StringList notJoinedEventThreadNames = new MS_StringList(',');
+                events.forEach((event) -> notJoinedEventThreadNames.add(event.getThreadName()));
+                throw new MS_ExecutionFailureException("Failed to join given events [" +
+                        notJoinedEventThreadNames.toStringWithNoLastDelimiter() + "] in given time");
+            }
+            joinEvents(sleepInterval, maxIterationCount - 1, events);
+        }
     }
 
     private static class WorkerThread extends MS_Thread<WorkerThread> {

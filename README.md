@@ -1,5 +1,5 @@
 # eMeS_Libraries
-Project consists of different solutions to make developer's life easier.
+Project consists of different solutions to make Java developer's life easier.
 
 Creator of project: **Māris Salenieks**
 

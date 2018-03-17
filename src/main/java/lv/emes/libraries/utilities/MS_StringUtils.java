@@ -7,7 +7,7 @@ import static lv.emes.libraries.utilities.MS_CodingUtils.inRange;
 
 /**
  * Module designed to combine different actions related to text formatting and other things to do with String type Objects.
- * Also there is included latvian laguage customization tools.
+ * Also there is included latvian language customization tools.
  * <p>Methods:
  * <ul>
  *     <li>getRandomString</li>

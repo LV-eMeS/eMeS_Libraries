@@ -6,7 +6,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Repository that is meant just for in-memory object caching or creating new instances with custom method and
+ * <b>Scheduled to remove in eMeS_Libraries:v2.2.0</b>.
+ * <p>Repository that is meant just for in-memory object caching or creating new instances with custom method and
  * afterwards saving newly created object to cache to retrieve it later on.
  * <p>Public methods:
  * <ul>
@@ -18,9 +19,9 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author eMeS
  * @version 1.1.
  */
+@Deprecated
 public class MS_InMemoryCache<T, ID> {
 
-    //TODO add TTL and possibility to store objects in different caches (only memory will be default one)
     private Map<ID, T> objects = new ConcurrentHashMap<>();
 
     /**

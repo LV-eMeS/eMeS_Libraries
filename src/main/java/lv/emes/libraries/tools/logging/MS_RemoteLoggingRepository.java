@@ -13,6 +13,7 @@ import java.security.GeneralSecurityException;
 import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -90,7 +91,7 @@ public class MS_RemoteLoggingRepository extends MS_Repository<MS_LoggingEvent, I
         checkResponseAndThrowExceptionIfNeeded(httpResult, "Finding all events failed with HTTP status code " +
                 httpResult.getReponseCode());
         try {
-            Map<Instant, MS_LoggingEvent> res = new HashMap<>();
+            Map<Instant, MS_LoggingEvent> res = new LinkedHashMap<>();
             Map<ZonedDateTime, MS_SerializedLoggingEvent> serializedEvents =
                     (Map<ZonedDateTime, MS_SerializedLoggingEvent>) JsonReader.jsonToJava(httpResult.getMessage());
             serializedEvents.forEach((key, value) -> res.put(key.toInstant(), value.getWrappedObject()));

@@ -1,5 +1,5 @@
 ext {
-    eMeS_LibrariesVersion = "v2.0.1"
+    eMeS_LibrariesVersion = "v2.X.Y"
     jnaVersion = "4.4.0"
     openCSVVersion = '2.3'
     jsonIoVersion = '4.10.0'

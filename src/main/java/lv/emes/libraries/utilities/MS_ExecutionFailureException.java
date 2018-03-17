@@ -10,4 +10,8 @@ public class MS_ExecutionFailureException extends Exception {
     public MS_ExecutionFailureException(String messsage, Throwable cause) {
         super(messsage, cause);
     }
+
+    public MS_ExecutionFailureException(String message) {
+        super(message);
+    }
 }

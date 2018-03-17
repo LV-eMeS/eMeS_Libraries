@@ -8,7 +8,7 @@ import static lv.emes.libraries.utilities.MS_CodingUtils.inRange;
 
 /** 
  * Purpose of this class is to make lists of different objects.
- * It's possible to perambulate list using methods from interface <b>IPerambulateListActions</b>.
+ * //TODO remove on eMeS_Libraries:v2.2.0 It's possible to perambulate list using methods from interface <b>IPerambulateListActions</b>.
  * @version 2.0.
  * @see IPerambulateListActions
  */

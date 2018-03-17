@@ -1,5 +1,6 @@
 package lv.emes.libraries.tools.lists;
 /**
+ * //TODO remove on eMeS_Libraries:v2.2.0
  * Interface defines methods for list that can be perambulated.
  * <p>Methods:
  * <ul>
@@ -13,6 +14,7 @@ package lv.emes.libraries.tools.lists;
  * @param <T> type of list elements.
  * @version 1.4.
  */
+@Deprecated
 public interface IPerambulateListActions<T> extends IContactableList<T, Integer> {
 
 	/**
