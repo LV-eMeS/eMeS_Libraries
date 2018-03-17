@@ -1,5 +1,7 @@
 package lv.emes.libraries.utilities;
 
+import lv.emes.libraries.tools.IFuncAction;
+import lv.emes.libraries.tools.MS_BadSetupException;
 import lv.emes.libraries.tools.lists.MS_ListActionWorker;
 import org.apache.commons.lang.StringUtils;
 
@@ -13,16 +15,14 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiConsumer;
 
 /**
  * Module is designed to combine different common quick coding operations.
  *
- * @version 2.3.
+ * @version 2.4.
  */
 public final class MS_CodingUtils {
 
@@ -52,8 +52,7 @@ public final class MS_CodingUtils {
             aFrom = aTill;
             aTill = swapper;
         }
-        Random random = new Random();
-        return random.nextInt(aTill - aFrom + 1) + aFrom;
+        return new Random().nextInt(aTill - aFrom + 1) + aFrom;
     }
 
     /**
@@ -117,6 +116,7 @@ public final class MS_CodingUtils {
 
     /**
      * Converts boolean to character '1' or '0'.
+     *
      * @param bool true = '1'; false = '0'.
      * @return character as a number ('1' or '0') representing boolean value.
      */
@@ -126,6 +126,7 @@ public final class MS_CodingUtils {
 
     /**
      * Converts character to boolean true or false.
+     *
      * @param charValue '1' = true; '0' = false.
      * @return boolean representing character, as a number ('1' or '0'), value.
      */
@@ -242,7 +243,7 @@ public final class MS_CodingUtils {
      * not get malformed, <b>precision</b> is applied to this method.
      * It should be closest number, of how long fractional part will be.
      *
-     * @param value [3.14] [-10.1] [0.0]
+     * @param value     [3.14] [-10.1] [0.0]
      * @param precision [2] [1] [0] <u>Note</u>: in case rounding is necessary while getting fractional part,
      *                  rounding down is performed.
      * @return [0.14000000000000012] [-0.1] [0.0]
@@ -292,13 +293,87 @@ public final class MS_CodingUtils {
     /**
      * Iterates through iterable elements and performs given action <b>action</b> while <b>breakLoop</b> flag,
      * which is passed as second argument of <b>action</b> bi-consumer is <b>false</b>.
+     *
      * @param iterable NonNull iterable collection of elements of type <b>T</b>.
-     * @param action NonNull consumer, which accepts iterable element of type <b>T</b> and flag of type {@link AtomicBoolean}, with
-     *               initial value <b>false</b>. Iterating will continue unless the value of this flag will be set to
-     *               <b>true</b>, which will be signal to break iterating and thus next element will not be iterated.
-     * @param <T> type of iterable elements.
+     * @param action   NonNull consumer, which accepts iterable element of type <b>T</b> and flag of type {@link AtomicBoolean}, with
+     *                 initial value <b>false</b>. Iterating will continue unless the value of this flag will be set to
+     *                 <b>true</b>, which will be signal to break iterating and thus next element will not be iterated.
+     * @param <T>      type of iterable elements.
      */
     public static <T> void forEach(Iterable<T> iterable, BiConsumer<T, AtomicBoolean> action) {
         MS_ListActionWorker.forEach(iterable, action);
+    }
+
+    public static <T> List<T> arrayToList(T[] arr) {
+        return new ArrayList<>(Arrays.asList(arr));
+    }
+
+    /**
+     * Tries to execute some action for maximum of <b>maxTimesToRun</b> times.
+     *
+     * @param maxTimesToRun maximum attempt count to make execution done without errors (exceptions).
+     *                      If execution failed within this number of re-runs, an {@link MS_ExecutionFailureException}
+     *                      is thrown.
+     * @param action        action to execute.
+     * @throws MS_ExecutionFailureException if execution failed within given amount of <b>maxTimesToRun</b>
+     *                                   or, if any exception occurred while performing execution of action.
+     *                                   In that case cause exception is added to this exception as well.
+     * @throws MS_BadSetupException if action is not provided or <b>maxTimesToRun</b> is negative or 0.
+     */
+    public static void executeWithRetry(int maxTimesToRun, IFuncAction action) throws MS_ExecutionFailureException {
+        executeWithRetry(maxTimesToRun, action, null);
+    }
+
+    /**
+     * Tries to execute some action for maximum of <b>maxTimesToRun</b> times.
+     *
+     * @param maxTimesToRun        maximum attempt count to make execution done without errors (exceptions).
+     *                             If execution failed within this number of re-runs, an {@link MS_ExecutionFailureException}
+     *                             is thrown.
+     * @param action               action to execute.
+     * @param actionBetweenRetries action to be performed between retries in case retry is needed.
+     * @throws MS_ExecutionFailureException if execution failed within given amount of <b>maxTimesToRun</b>
+     *                                   or, if any exception occurred while performing execution of action.
+     *                                   In that case cause exception is added to this exception as well.
+     * @throws MS_BadSetupException if action is not provided or <b>maxTimesToRun</b> is negative or 0.
+     */
+    public static void executeWithRetry(int maxTimesToRun, IFuncAction action, IFuncAction actionBetweenRetries) throws MS_ExecutionFailureException {
+        if (action == null)
+            throw new MS_BadSetupException("Action to execute must be provided");
+
+        executeWithRetry(maxTimesToRun, maxTimesToRun, action, actionBetweenRetries);
+    }
+
+    //*** Private (static) methods ***
+
+    private static void executeWithRetry(int initialTimesToRun, int timesToRunLeft, IFuncAction action, IFuncAction actionBetweenRetries) throws MS_ExecutionFailureException {
+        if (timesToRunLeft > 1) {
+            try {
+                action.execute();
+                //if something like this happens, it means that developer's code is not ready for execution repeatable,
+                //cause either class setup is incorrect, either there is mistaken attempt to work with null objects
+            } catch (NullPointerException | MS_BadSetupException e) {
+                throw e;
+            } catch (Exception e) {
+                try {
+                    if (actionBetweenRetries != null)
+                        actionBetweenRetries.execute();
+                } catch (Exception exIfActionBetweenRetriesFailed) {
+                    throw new MS_ExecutionFailureException("Operation failed to execute when performing action to execute between retries." +
+                            " At " + (initialTimesToRun - timesToRunLeft + 1) + " of " + initialTimesToRun + " running attempts.", exIfActionBetweenRetriesFailed);
+                }
+                executeWithRetry(initialTimesToRun, timesToRunLeft - 1, action, actionBetweenRetries);
+            }
+        } else if (timesToRunLeft == 1) {
+            try {
+                action.execute();
+            } catch (Exception e) {
+                throw new MS_ExecutionFailureException("Operation failed to execute within " + initialTimesToRun + " running attempts", e);
+            }
+        } else if (timesToRunLeft == 0) {
+            throw new MS_BadSetupException("Nothing to do here. Please, check method's executeWithRetry documentation!");
+        } else {
+            throw new MS_BadSetupException("Negative amount of times to run is not acceptable. Please, check method's executeWithRetry documentation!");
+        }
     }
 }

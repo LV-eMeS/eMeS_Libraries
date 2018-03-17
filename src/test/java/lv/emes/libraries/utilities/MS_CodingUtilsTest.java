@@ -1,9 +1,11 @@
 package lv.emes.libraries.utilities;
 
+import lv.emes.libraries.tools.MS_BadSetupException;
 import lv.emes.libraries.tools.lists.MS_List;
 import org.junit.Test;
 
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static lv.emes.libraries.utilities.MS_CodingUtils.*;
@@ -14,6 +16,17 @@ import static org.junit.Assert.*;
  * @version 1.0.
  */
 public class MS_CodingUtilsTest {
+
+    @Test
+    public void testGetIPAddress() {
+        assertNotNull(getIPAddress());
+    }
+
+    @Test
+    public void testRandomNumber() {
+        int res = randomNumber(5, -5);
+        assertTrue("Generated random number is not in range [-5..5]", inRange(res, -5, 5));
+    }
 
     @Test
     public void testInRange() {
@@ -136,4 +149,123 @@ public class MS_CodingUtilsTest {
         assertEquals(3, count.get());
         assertEquals(238, sum.get());
     }
+
+    //*** executeWithRetry tests ***
+
+    @Test
+    public void testExecuteWithRetrySuccessOnFirstAttempt() throws MS_ExecutionFailureException {
+        AtomicBoolean success = new AtomicBoolean(false);
+        AtomicInteger executionTimes = new AtomicInteger(0);
+        executeWithRetry(5, () -> {
+            success.set(true);
+            executionTimes.incrementAndGet();
+        });
+        assertTrue(success.get());
+        assertEquals(1, executionTimes.get());
+    }
+
+    @Test
+    public void testExecuteWithRetrySuccessOnSecondAttempt() throws MS_ExecutionFailureException {
+        AtomicBoolean success = new AtomicBoolean(false);
+        AtomicInteger executionTimes = new AtomicInteger(0);
+        executeWithRetry(5, () -> {
+            if (executionTimes.incrementAndGet() < 2) {
+                throw new Exception();
+            }
+            success.set(true);
+        });
+        assertTrue(success.get());
+        assertEquals(2, executionTimes.get());
+    }
+
+    @Test
+    public void testExecuteWithRetryFailureDueToBug2OutOf2() {
+        AtomicBoolean success = new AtomicBoolean(false);
+        AtomicInteger executionTimes = new AtomicInteger(0);
+        try {
+            executeWithRetry(2, () -> {
+                executionTimes.incrementAndGet();
+                throw new MS_BadSetupException("This is a complete failure");
+            });
+        } catch (Exception e) {
+            assertTrue(e instanceof MS_BadSetupException);
+            assertFalse(success.get());
+            assertEquals(1, executionTimes.get());
+        }
+    }
+
+    @Test
+    public void testExecuteWithRetryFailure2OutOf2() {
+        AtomicBoolean success = new AtomicBoolean(false);
+        AtomicInteger executionTimes = new AtomicInteger(0);
+        try {
+            executeWithRetry(2, () -> {
+                executionTimes.incrementAndGet();
+                throw new IllegalAccessException("This is a complete failure");
+            });
+        } catch (Exception e) {
+            assertTrue(e instanceof MS_ExecutionFailureException);
+            assertTrue(e.getCause() instanceof IllegalAccessException);
+            assertFalse(success.get());
+            assertEquals(2, executionTimes.get());
+        }
+    }
+
+    @Test
+    public void testExecuteWithRetrySuccessOnSecondAttemptAndActionBetweenRetries() throws MS_ExecutionFailureException {
+        AtomicBoolean success = new AtomicBoolean(false);
+        AtomicBoolean actionBetweenRetriesPerformed = new AtomicBoolean(false);
+        AtomicInteger executionTimes = new AtomicInteger(0);
+        executeWithRetry(5, () -> {
+            if (executionTimes.incrementAndGet() < 2) {
+                throw new Exception();
+            }
+            success.set(true);
+        }, () -> {
+            actionBetweenRetriesPerformed.set(true);
+        });
+        assertEquals(2, executionTimes.get());
+        assertTrue(success.get());
+        assertTrue(actionBetweenRetriesPerformed.get());
+    }
+
+    @Test
+    public void testExecuteWithRetrySuccessOnSecondAttemptAndActionBetweenRetriesFailed() {
+        AtomicBoolean success = new AtomicBoolean(false);
+        AtomicBoolean actionBetweenRetriesPerformed = new AtomicBoolean(false);
+        AtomicInteger executionTimes = new AtomicInteger(0);
+        try {
+            executeWithRetry(5, () -> {
+                if (executionTimes.incrementAndGet() < 2) {
+                    throw new Exception();
+                }
+                success.set(true);
+            }, () -> {
+                throw new InterruptedException();
+            });
+        } catch (MS_ExecutionFailureException e) {
+            assertTrue(e.getCause() instanceof InterruptedException);
+            assertEquals(1, executionTimes.get());
+            assertFalse(success.get());
+            assertFalse(actionBetweenRetriesPerformed.get());
+        }
+    }
+
+    @Test(expected = MS_BadSetupException.class)
+    public void testExecuteWithRetryNegativeAmountOfTimesToRun() throws MS_ExecutionFailureException {
+        executeWithRetry(-2, () -> {
+        });
+    }
+
+    @Test(expected = MS_BadSetupException.class)
+    public void testExecuteWithRetry0AmountOfTimesToRun() throws MS_ExecutionFailureException {
+        executeWithRetry(0, () -> {
+        });
+    }
+
+    @Test(expected = MS_BadSetupException.class)
+    public void testExecuteWithRetryNoActionProvided() throws MS_ExecutionFailureException {
+        executeWithRetry(-2, null);
+    }
+    //*** executeWithRetry test end ***
 }
