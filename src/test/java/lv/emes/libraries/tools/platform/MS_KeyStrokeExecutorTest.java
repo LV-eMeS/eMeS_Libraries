@@ -11,7 +11,7 @@ import java.awt.*;
 import static junit.framework.TestCase.assertTrue;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class MSKeyStrokeExecutorTest {
+public class MS_KeyStrokeExecutorTest {
 	public static MS_KeyStrokeExecutor executorInstance = null;
 
     @BeforeClass

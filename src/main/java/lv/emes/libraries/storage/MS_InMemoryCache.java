@@ -14,10 +14,11 @@ import java.util.concurrent.ConcurrentHashMap;
  * @param <T>  type of objects stored in cache.
  * @param <ID> type of object's identifier.
  * @author eMeS
- * @version 1.0.
+ * @version 1.1.
  */
-public class MS_CachedObjectRepository<ID, T> {
+public class MS_InMemoryCache<ID, T> {
 
+    //TODO add TTL and possibility to store objects in different caches (only memory will be default one)
     private Map<ID, T> objects = new ConcurrentHashMap<>();
 
     /**

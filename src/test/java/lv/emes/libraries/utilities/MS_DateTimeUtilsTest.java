@@ -8,7 +8,7 @@ import java.util.Date;
 import static lv.emes.libraries.utilities.MS_DateTimeUtils.*;
 import static org.junit.Assert.assertEquals;
 
-public class MSDateTimeUtilsTest {
+public class MS_DateTimeUtilsTest {
 
     private Date simpleDate;
     private LocalDateTime dateTime;

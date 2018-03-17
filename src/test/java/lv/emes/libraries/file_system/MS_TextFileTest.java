@@ -16,10 +16,10 @@ import static lv.emes.libraries.file_system.MS_FileSystemTools.*;
 import static org.junit.Assert.*;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class MSTextFileTest {
+public class MS_TextFileTest {
 
     private final static String TEST_DIR = "src/test/resources/";
-    private final static String FIRST_FILE = TEST_DIR + "MSTextFileTest.txt";
+    private final static String FIRST_FILE = TEST_DIR + "MS_TextFileTest.txt";
     private final static String FILE_AS_RESOURCE = "sampleTextFile4Testing.txt";
     private final static String SECOND_FILE = TEST_DIR + "MSTextFileTest2.txt";
     private final static String TEXT1 = "Test string"; //EN
@@ -84,7 +84,7 @@ public class MSTextFileTest {
 
     @Test
     public void test04FromStringListToFile() {
-        //now to create a list, which we will use to rewrite MSTextFileTest.txt file with completetly different text
+        //now to create a list, which we will use to rewrite MS_TextFileTest.txt file with completetly different text
         MS_StringList list = new MS_StringList();
         list.add(TEXT4);
         list.add(TEXT5);

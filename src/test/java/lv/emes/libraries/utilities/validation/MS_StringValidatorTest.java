@@ -14,7 +14,7 @@ import static org.junit.Assert.*;
  * @version 1.0.
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class MSStringValidatorTest {
+public class MS_StringValidatorTest {
 
     private static MS_StringValidator validator;
     private String textToValidate;

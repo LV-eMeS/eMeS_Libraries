@@ -15,7 +15,7 @@ import static org.junit.Assert.assertTrue;
  * @version 1.0.
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class MSDateBuilderTest {
+public class MS_DateBuilderTest {
 
     @Test
     public void test01ReferenceDateToday() {

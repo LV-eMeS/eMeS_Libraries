@@ -13,7 +13,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class MSMySQLDatabaseTest {
+public class MS_MySQLDatabaseTest {
 
     private static MS_JDBCDatabase db;
 

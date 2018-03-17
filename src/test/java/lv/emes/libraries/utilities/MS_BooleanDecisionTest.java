@@ -7,7 +7,7 @@ import org.junit.runners.MethodSorters;
 import static org.junit.Assert.assertEquals;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class MSBooleanDecisionTest {
+public class MS_BooleanDecisionTest {
 
     @Test
     public void test01Decision() {

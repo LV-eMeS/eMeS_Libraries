@@ -14,7 +14,7 @@ import static org.junit.Assert.*;
  * @version 1.0.
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class MSObjectValidatorTest {
+public class MS_ObjectValidatorTest {
 
     private static MS_ObjectValidator<Integer> intValidator;
     private static MS_ObjectValidator<String> stringValidator;

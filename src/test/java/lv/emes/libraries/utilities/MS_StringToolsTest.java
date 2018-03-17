@@ -8,7 +8,7 @@ import static lv.emes.libraries.utilities.MS_StringUtils.*;
 import static org.junit.Assert.*;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class MSStringToolsTest {
+public class MS_StringToolsTest {
 
 	@Test
 	public void test01PrimitiveFunctions() {	

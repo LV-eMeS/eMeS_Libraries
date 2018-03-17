@@ -10,18 +10,19 @@ import org.junit.runners.MethodSorters;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * All tests depends on previous test data.
  * This test operates with text file repository and files can hold only one string line.
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class MSFileRepositoryTest {
+public class MS_FileRepositoryTest {
 
     private static final String PROJECT_NAME = TestData.TEMP_DIR + "eMeS_Libraries";
-    private static final String CATEGORY_NAME1 = "MSFileRepositoryTest";
-    private static final String CATEGORY_NAME2 = "MSFileRepositoryTest2";
+    private static final String CATEGORY_NAME1 = "MS_FileRepositoryTest";
+    private static final String CATEGORY_NAME2 = "MS_FileRepositoryTest2";
     private static final String[] ITEM_IDS = {"First.txt", "Second.txt", "Third.txt"};
     private static final String[] ITEMS = {"Item1", "Item2", "Item3", "Replaced item"};
 

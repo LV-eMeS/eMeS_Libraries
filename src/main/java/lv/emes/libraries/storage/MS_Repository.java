@@ -162,7 +162,7 @@ public abstract class MS_Repository<T, ID> implements IRepositoryOperations<T, I
         checkAndThrowNotInitializedException();
         T previous = doFind(identifier);
         if (previous == null)
-        doAdd(identifier, item);
+            doAdd(identifier, item);
     }
 
     @Override
@@ -219,16 +219,27 @@ public abstract class MS_Repository<T, ID> implements IRepositoryOperations<T, I
         }
     }
 
+    /**
+     * Alias to {@link MS_Repository#find(Object)}.
+     * Looks for item with presented identifier <b>identifier</b>.
+     *
+     * @param identifier an item identifier.
+     * @return an existing item or null if such item couldn't be found in the repository.
+     * @throws UnsupportedOperationException      if this operation is not supported for this kind of repository or some
+     *                                            specific conditions in order to operate within this repository isn't met.
+     * @throws MS_RepositoryDataExchangeException if something repository-specific happens while performing data exchange.
+     */
     @Override
-    public T get(ID identifier) {
+    public T get(ID identifier) throws UnsupportedOperationException, MS_RepositoryDataExchangeException {
         checkAndThrowNotInitializedException();
         return doFind(identifier);
     }
 
     /**
      * <u><b>Unsupported for any of repositories.</b></u>
+     *
      * @param startFromIndex ignored.
-     * @param action ignored.
+     * @param action         ignored.
      */
     @Override
     public void forEachItem(ID startFromIndex, IFuncForEachItemLoopAction<T, ID> action) {
@@ -237,9 +248,10 @@ public abstract class MS_Repository<T, ID> implements IRepositoryOperations<T, I
 
     /**
      * <u><b>Unsupported for any of repositories.</b></u>
+     *
      * @param startFromIndex ignored.
-     * @param endIndex ignored.
-     * @param action ignored.
+     * @param endIndex       ignored.
+     * @param action         ignored.
      */
     @Override
     public void forEachItem(ID startFromIndex, ID endIndex, IFuncForEachItemLoopAction<T, ID> action) {

@@ -13,7 +13,7 @@ import static org.junit.Assert.assertEquals;
  * @version 2.0.
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class MSSQLQueryBuilderTest {
+public class MS_SQLQueryBuilderTest {
 
     private MS_SQLQueryBuilder sql;
     private final String tableName = "tabula";

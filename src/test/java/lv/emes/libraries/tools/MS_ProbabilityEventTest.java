@@ -9,7 +9,7 @@ import org.junit.runners.MethodSorters;
 import static org.junit.Assert.*;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class MSProbabilityEventTest {
+public class MS_ProbabilityEventTest {
     private static MS_ProbabilityEvent event = null;
 
     @Before

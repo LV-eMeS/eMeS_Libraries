@@ -23,17 +23,18 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class MSXMLFileTest {
-    private static final String PATH_TO_XML_FILE = TestData.TEMP_DIR + "MSXMLFileTest.xml";
-    private static final String PATH_TO_XML_FILE2 = TestData.TEMP_DIR + "MSXMLFileTest2.xml";
-    private static final String PATH_TO_XML_FILE3 = TestData.TEMP_DIR + "MSXMLFileTest3.xml";
+public class MS_XMLFileTest {
+
+    private static final String PATH_TO_XML_FILE = TestData.TEMP_DIR + "MS_XMLFileTest.xml";
+    private static final String PATH_TO_XML_FILE2 = TestData.TEMP_DIR + "MS_XMLFileTest2.xml";
+    private static final String PATH_TO_XML_FILE3 = TestData.TEMP_DIR + "MS_XMLFileTest3.xml";
     private static MS_StringList FOOD_NAME_LIST = null;
     private static MS_XML file1;
     private static MS_XML file2;
     private static MS_XML file3;
 
     @Test
-    public void test01ParseSimpleXMLFile() throws ParserConfigurationException, SAXException, IOException {
+    public void test01ParseSimpleXMLFile() {
         MS_XML file = file1;
         assertEquals("breakfast_menu", file.getRootElementName());
         //everything starting from first <food> tag and ending with very last </food> tag
@@ -83,7 +84,7 @@ public class MSXMLFileTest {
     }
 
     @Test
-    public void test03WrongParsing() throws ParserConfigurationException, SAXException, IOException {
+    public void test03WrongParsing() {
         MS_XML file = file1;
         boolean exceptionCaught = false;
         try {
@@ -98,7 +99,7 @@ public class MSXMLFileTest {
     }
 
     @Test
-    public void test04ParseAndEditElements() throws ParserConfigurationException, SAXException, IOException {
+    public void test04ParseAndEditElements() {
         MS_XML file = file1;
         MS_XMLElementNodeList allFoods = file.getNodesByTagName("food");
         allFoods.forEachItem((item, ind) -> {
@@ -115,7 +116,7 @@ public class MSXMLFileTest {
     }
 
     @Test
-    public void test05ParseComplicatedXMLFile() throws IOException, ParserConfigurationException, SAXException {
+    public void test05ParseComplicatedXMLFile() {
         MS_XML file = file2;
 //        System.out.println(file.toString());
         assertEquals("Students", file.getRootElementName());
@@ -136,12 +137,12 @@ public class MSXMLFileTest {
     }
 
     @Test
-    public void test06ParseXMLFileWithOnly1Tag() throws IOException, ParserConfigurationException, SAXException {
+    public void test06ParseXMLFileWithOnly1Tag() {
         assertEquals("", file3.getNodesByTagName(file3.getRootElementName()).get(0).getValue());
     }
 
     @Test
-    public void test07NodeIsNotAnElement() throws IOException, ParserConfigurationException, SAXException {
+    public void test07NodeIsNotAnElement() {
         MS_XMLElementNode textNode = file1.getRootNode().getAllChildNodes().get(0);
         assertEquals(MS_XMLElementNode._TEXT_NODE_NAME, textNode.getTagName());
         assertEquals(0, textNode.getAllChildNodes().length());

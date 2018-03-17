@@ -14,7 +14,7 @@ import static org.junit.Assert.*;
  *
  * @author eMeS
  */
-public class MSEqualityCheckBuilderTest {
+public class MS_EqualityCheckBuilderTest {
 
     private MS_EqualityCheckBuilder builder;
 

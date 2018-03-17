@@ -19,7 +19,7 @@ import static org.junit.Assert.assertTrue;
  * @version 1.0.
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class MSSchedulerTest {
+public class MS_SchedulerTest {
 
     private final int DEFAULT_SLEEPING_TIME = 300; //fair enough time to run 2 (in future) scheduled events
     private ZonedDateTime timePresent;
@@ -71,7 +71,7 @@ public class MSSchedulerTest {
     }
 
     @Test
-    public void test03InterruptedException() throws Exception {
+    public void test03InterruptedException() {
         MS_Scheduler scheduler = new MS_Scheduler()
                 .withTriggerTime(timeFuture = timeFuture.plusDays(1)) //to not to happen soon enough
                 .withAction((time) -> executionTimes++)

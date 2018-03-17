@@ -9,9 +9,9 @@ import static org.junit.Assert.*;
  * @author eMeS
  * @version 1.0.
  */
-public class MSCachedObjectRepositoryTest {
+public class MS_InMemoryCacheTest {
 
-    private static MS_CachedObjectRepository<String, Object> repository = new MS_CachedObjectRepository<>();
+    private static MS_InMemoryCache<String, Object> repository = new MS_InMemoryCache<>();
 
     @Test
     public void test01RetrievalOperations() {

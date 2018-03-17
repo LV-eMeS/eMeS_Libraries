@@ -1,5 +1,5 @@
 eMeS libraries
-Version 2.1.4
+Version 2.1.5
 Release Notes
 
 INTRODUCTION:
@@ -22,6 +22,8 @@ eMeS libraries Version 2.2.0
 * Bugfix in Http client: now replace spaces in URL with %20 symbols.
 * Bugfix in Http client: now use UTF-8 for request entities.
 * Added makeCopy to SQL builder in order to create another instances same as original one.
+* Method to execute with retry in Coding utilities.
+* Method to retrieve some object in several different manners in Repository utilities.
 ========================================================================================================
 eMeS libraries Version 2.1.0
 ========================================================================================================

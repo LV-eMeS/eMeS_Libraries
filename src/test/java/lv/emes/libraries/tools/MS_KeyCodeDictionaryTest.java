@@ -114,7 +114,7 @@ import static org.junit.Assert.*;
  * @see lv.emes.libraries.tools.MS_KeyCodeDictionary
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class MSKeyCodeDictionaryTest {
+public class MS_KeyCodeDictionaryTest {
     @Test
     public void test01Symbols() {
         assertEquals(65, MS_KeyCodeDictionary.textToKeyCode("a"));

@@ -8,7 +8,7 @@ import java.time.LocalTime;
 
 import static org.junit.Assert.*;
 
-public class MSHashTest {
+public class MS_HashTest {
 
 	@Test
 	public void testHashing() {

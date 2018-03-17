@@ -19,7 +19,7 @@ import static lv.emes.libraries.file_system.MS_FileSystemTools.*;
 import static org.junit.Assert.*;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class MSFileSystemToolsTest {
+public class MS_FileSystemToolsTest {
 
     private final static String TEST_RESOURCES_DIR = "src/test/resources/";
     private final static String CSV_COMMA_SEPARATED = "commaSeparated.csv";
@@ -83,13 +83,13 @@ public class MSFileSystemToolsTest {
     }
 
     @Test
-    public void test05DirectoryOfFile() throws IOException {
+    public void test05DirectoryOfFile() {
         assertTrue("Previous test failed", tmpFileStillExists);
         assertEquals(getTmpDirectory(), getDirectoryOfFile(tmpFilePath));
     }
 
     @Test
-    public void test06DirectoryCreating() throws IOException {
+    public void test06DirectoryCreating() {
         assertTrue(directoryExists(getTmpDirectory()));
         assertTrue(directoryExists(new File(getTmpDirectory())));
 

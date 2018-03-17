@@ -16,7 +16,7 @@ import static org.junit.Assert.assertTrue;
  * @version 1.0.
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class MSFutureEventTest {
+public class MS_FutureEventTest {
 
     private static final int DEFAULT_SLEEP_TIME = 10;
     private boolean threadExecuted = false;
@@ -24,7 +24,7 @@ public class MSFutureEventTest {
     @Test
     public void test01Execute() {
         new MS_FutureEvent()
-                .withThreadName("MSFutureEventTest")
+                .withThreadName("MS_FutureEventTest")
                 .withAction(() -> {
                     threadExecuted = true;
                 })
@@ -62,7 +62,7 @@ public class MSFutureEventTest {
         //setting some random exception as initial value, and this should be changes in withActionOnException method
         AtomicReference<Exception> expectedException = new AtomicReference<>(new ClassCastException());
         new MS_FutureEvent()
-                .withThreadName("MSFutureEventTest")
+                .withThreadName("MS_FutureEventTest")
                 .withAction(() -> {
                     throw new ActivationException();
                 })

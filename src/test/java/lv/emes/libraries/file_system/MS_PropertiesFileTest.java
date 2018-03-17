@@ -1,17 +1,17 @@
 package lv.emes.libraries.file_system;
 
-import org.junit.*;
+import org.junit.AfterClass;
+import org.junit.FixMethodOrder;
+import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
 import java.io.IOException;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class MSPropertiesFileTest {
-    private static final String FILE_NAME = "./src/test/resources/" + "MSPropertiesFileTest.properties";
+public class MS_PropertiesFileTest {
+    private static final String FILE_NAME = "./src/test/resources/" + "MS_PropertiesFileTest.properties";
 
     @AfterClass
     public static void finalizeTestObjects() {

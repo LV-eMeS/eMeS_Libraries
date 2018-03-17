@@ -10,15 +10,13 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 
 /**
  * ResultSetExtractor implementation test for barcode key pair.
  * Created by maris.salenieks on 07.03.2017.
  */
-public class MSTestUtilsTest {
+public class MS_TestUtilsTest {
 
     @Test
     public void testResultSetMocking() throws Exception {

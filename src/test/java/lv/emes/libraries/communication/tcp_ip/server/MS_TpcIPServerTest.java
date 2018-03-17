@@ -21,7 +21,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class MSTpcIPServerTest {
+public class MS_TpcIPServerTest {
 
     private static final int PORT = MS_TakenPorts._DEFAULT_PORT_FOR_TESTING;
     private static final int DEFAULT_SLEEP_TIME = 150;
@@ -120,7 +120,7 @@ public class MSTpcIPServerTest {
     }
 
     @Test
-    public void test01SimpleMessagging() throws InterruptedException {
+    public void test01SimpleMessagging() {
         doSleepForXTimes(2);
         assertEquals(2, getServerConnectionCount());
         client1.addDataToContainer(TEXT1);

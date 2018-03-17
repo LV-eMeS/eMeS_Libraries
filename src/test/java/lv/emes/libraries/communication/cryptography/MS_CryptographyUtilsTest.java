@@ -7,7 +7,7 @@ import java.security.GeneralSecurityException;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
-public class MSCryptographyUtilsTest {
+public class MS_CryptographyUtilsTest {
 
 	private static final String KEY = "test key 4 encryption.~";
 	private static final String MAC_KEY = "test MAC key 4 encryption. (^_^)";

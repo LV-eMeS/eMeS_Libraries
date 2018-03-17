@@ -10,7 +10,7 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class MSStringListTest {
+public class MS_StringListTest {
     @Test
     public void test01listImportFromStringWithoutSecondDelimiter() {
         MS_StringList sl = new MS_StringList("Test#String#List");

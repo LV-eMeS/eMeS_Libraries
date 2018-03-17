@@ -19,7 +19,7 @@ import static org.junit.Assert.*;
  * All tests depends on previous test data.
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class MSRepositoryTest {
+public class MS_RepositoryTest {
 
     private static final String PROJECT_NAME1 = "Test";
     private static final String CATEGORY_NAME1 = "First category";

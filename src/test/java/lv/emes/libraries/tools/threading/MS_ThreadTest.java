@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import static org.junit.Assert.*;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class MSThreadTest {
+public class MS_ThreadTest {
 
     @Test
     public void test01ThreadWorksIndependentlyOfMainThread() {
@@ -105,7 +105,7 @@ public class MSThreadTest {
             }
 
             @Override
-            protected void doOnExecution() throws InterruptedException {
+            protected void doOnExecution() {
                 throw falseException;
             }
         }
@@ -153,7 +153,7 @@ public class MSThreadTest {
                 return this;
             }
             @Override
-            protected void doOnExecution() throws InterruptedException, RuntimeException {
+            protected void doOnExecution() throws RuntimeException {
                 thread.stop();
             }
         }.start();

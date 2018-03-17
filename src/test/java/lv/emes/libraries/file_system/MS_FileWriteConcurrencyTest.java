@@ -14,9 +14,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class MSFileWriteConcurrencyTest {
+public class MS_FileWriteConcurrencyTest {
 
-    private final static String FILE_NAME = TestData.TEMP_DIR + "MSFileWriteConcurrencyTest/MSFileWriteConcurrencyTest.log";
+    private final static String FILE_NAME = TestData.TEMP_DIR + "MS_FileWriteConcurrencyTest/MS_FileWriteConcurrencyTest.log";
     private final static int THREAD_COUNT = 20;
     private final static int WAITING_TIMEOUT = 2000;
     private final static int MAX_WAITING_TIMES = 4; //after double timeout all threads must finish their work for sure

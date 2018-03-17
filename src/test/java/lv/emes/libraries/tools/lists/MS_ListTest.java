@@ -8,7 +8,7 @@ import org.junit.runners.MethodSorters;
 import static org.junit.Assert.*;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class MSListTest {
+public class MS_ListTest {
     private MS_List<Integer> l = new MS_List<>();
     private int count, sum, indexSum;
 
