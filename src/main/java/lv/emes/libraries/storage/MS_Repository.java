@@ -284,15 +284,20 @@ public abstract class MS_Repository<T, ID> implements IRepositoryOperations<T, I
         setBreakOngoingForLoop(true);
     }
 
-    //PRIVATE METHODS
+    //*** Private and protected methods ***
+
     private void throwLoopingException() {
         throw new UnsupportedOperationException("Repositories doesn't support looping through just a part of elements.");
     }
 
-    private void checkAndThrowNotInitializedException() {
+    protected void checkAndThrowNotInitializedException() {
         if (!isInitialized()) {
             throw new UnsupportedOperationException("Cannot perform operation. Repository must be initialized first.");
         }
+    }
+
+    protected void throwUnsupportedWhenNoImplementationNeeded() throws UnsupportedOperationException {
+        throw new UnsupportedOperationException("Cannot perform operation. This repository doesn't support it.");
     }
 
     // *** Getters and setters

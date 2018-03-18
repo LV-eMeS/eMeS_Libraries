@@ -191,7 +191,10 @@ public class MS_TextFile {
 
     /**
      * Reads one line from the file. If file isn't opened, method will open the file.
-     * For reading all the file by loop consider using construction: <p><code>while ( (str = reader.readln()) != null) {...}</code>!
+     * For reading all the file by loop consider using construction:
+     * <pre><code>
+     *     String line;
+     *     while ( (line = reader.readln()) != null) {...}</code></pre>
      *
      * @return current line in file or null if end of file is reached or file is empty.
      */
@@ -201,7 +204,10 @@ public class MS_TextFile {
 
     /**
      * Reads one line from the file. If file isn't opened, method will open the file.
-     * For reading all the file by loop consider using construction: <p><code>while ( (str = reader.readln()) != null) {...}</code>!
+     * For reading all the file by loop consider using construction:
+     * <pre><code>
+     *     String line;
+     *     while ( (line = reader.readln()) != null) {...}</code></pre>
      *
      * @param aCloseAfterRead if true file will be close after successful reading of line.
      * @return current line in file or null if end of file is reached or file is empty.

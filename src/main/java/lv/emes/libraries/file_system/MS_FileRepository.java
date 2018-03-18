@@ -6,10 +6,11 @@ import static lv.emes.libraries.file_system.MS_FileSystemTools.SLASH;
 
 /**
  * A repository for files of some type that are located in some file system.
+ * Single file is stored and can be found by its short name + extension.
  * Describes, how file system repository should get initialized.
  *
  * @param <T> type of items that will be stored in file repository
- *           (for example, text files, images, videos, etc.).
+ *            (for example, text files, images, videos, etc.).
  * @author eMeS
  * @version 2.0.
  */

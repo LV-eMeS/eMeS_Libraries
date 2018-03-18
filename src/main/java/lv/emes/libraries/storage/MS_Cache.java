@@ -13,8 +13,9 @@ import java.time.LocalDateTime;
  * {@link MS_Cache#store(Object, Object, Long)} operation. Zero TTL will mean that objects will be cached forever.
  * If TTL is expired at the moment when retrieval operation is called,
  * object will be removed from cache, and retrieval operation will return <code>null</code>.
- * <p>All methods of {@link MS_Cache} are silent (no exceptions will be thrown), that's why there is option to
- * set multi logger {@link MS_MultiLogger}, which is supposed to log any errors happened during caching or retrieval process.
+ * <p>All methods of {@link MS_Cache} are silent (no exceptions will be thrown), and write operations are asynchronous
+ * that's why there is option to set multi logger {@link MS_MultiLogger}, which is supposed to
+ * log any errors happened during caching or retrieval process.
  * <p>For ease of use overloaded method {@link MS_Cache#store(Object, Object)} without TTL is introduced to use
  * default TTL set by setter {@link MS_Cache#setDefaultTTL(long)}.
  * <p>Public methods:
@@ -62,6 +63,7 @@ public class MS_Cache<T, ID> {
         try {
             if (ttl == null) ttl = defaultTTL;
             LocalDateTime expirationTime = ttl.intValue() == 0L ? null : LocalDateTime.now().plusSeconds(ttl);
+            //TODO perform in new thread
             repository.put(id, Pair.of(object, expirationTime));
         } catch (UnsupportedOperationException e) {
             if (logger != null) {
@@ -111,6 +113,7 @@ public class MS_Cache<T, ID> {
      */
     public void clear() {
         try {
+            //TODO perform in new thread
             repository.removeAll();
         } catch (MS_RepositoryDataExchangeException e) {
             if (logger != null) {

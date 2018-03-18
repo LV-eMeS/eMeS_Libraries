@@ -25,6 +25,7 @@ eMeS libraries Version 2.2.0
 * Method to execute with retry in Coding utilities.
 * Method to retrieve some object in several different manners in Repository utilities.
 * Method to join different future events MS_FutureEvent.
+* MS_CachingRepository with In-memory and text file caching repository implementations.
 -----------
 * Removed deprecated MS_InMemoryCache, as instead MS_Cache with appropriate MS_CachingRepository
   should be used.

@@ -202,7 +202,7 @@ public final class MS_DateTimeUtils {
      *                 </ul>
      * @return ZonedDateTime object.
      * @throws IllegalArgumentException in case <b>format</b> is illegal.
-     * @throws DateTimeParseException in case date couldn't be parsed in given format <b>format</b>.
+     * @throws DateTimeParseException   in case date couldn't be parsed in given format <b>format</b>.
      */
     public static ZonedDateTime formatDateTime(String dateTime, String format) throws IllegalArgumentException, DateTimeParseException {
         switch (format) {
