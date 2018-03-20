@@ -34,7 +34,7 @@ public class MS_StringValidator extends MS_ObjectValidator<String> {
     @Override
     protected void initAllPossibleValidationErrors() {
         initNewError(VALIDATION_ERROR_EMPTY_VALUE)
-//                .setErrorMessageForming(() -> "some message")
+//                .withErrorMessageFormingAction(() -> "some message")
         ;
         initNewError(VALIDATION_ERROR_MINIMUM_SIZE_VIOLATED);
         initNewError(VALIDATION_ERROR_MAXIMUM_SIZE_VIOLATED);

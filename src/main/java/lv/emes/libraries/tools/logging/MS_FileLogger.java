@@ -22,7 +22,7 @@ import static lv.emes.libraries.utilities.MS_StringUtils._LINE_BRAKE;
  * @author eMeS
  * @version 2.1.
  */
-public class MS_FileLogger implements ILoggingOperations, MS_LoggingRepository {
+public class MS_FileLogger implements MS_LoggingOperations, MS_LoggingRepository {
 
     private MS_TextFile actualFile;
 
@@ -42,7 +42,7 @@ public class MS_FileLogger implements ILoggingOperations, MS_LoggingRepository {
      * @param msg arbitrary text to be added to logger lines.
      */
     public void info(String msg) {
-        pAppendLine(pGetTimePart(LocalDateTime.now()) + pGetMainPart(LoggingEventTypeEnum.INFO, msg));
+        pAppendLine(pGetTimePart(LocalDateTime.now()) + pGetMainPart(MS_LoggingEventTypeEnum.INFO, msg));
     }
 
     /**
@@ -52,7 +52,7 @@ public class MS_FileLogger implements ILoggingOperations, MS_LoggingRepository {
      * @param msg arbitrary text to be added to logger lines.
      */
     public void warning(String msg) {
-        pAppendLine(pGetTimePart(LocalDateTime.now()) + pGetMainPart(LoggingEventTypeEnum.WARN, msg));
+        pAppendLine(pGetTimePart(LocalDateTime.now()) + pGetMainPart(MS_LoggingEventTypeEnum.WARN, msg));
     }
 
     /**
@@ -62,7 +62,7 @@ public class MS_FileLogger implements ILoggingOperations, MS_LoggingRepository {
      * @param msg arbitrary text to be added to logger lines.
      */
     public void error(String msg) {
-        pAppendLine(pGetTimePart(LocalDateTime.now()) + pGetMainPart(LoggingEventTypeEnum.ERROR, msg));
+        pAppendLine(pGetTimePart(LocalDateTime.now()) + pGetMainPart(MS_LoggingEventTypeEnum.ERROR, msg));
     }
 
     /**
@@ -79,7 +79,7 @@ public class MS_FileLogger implements ILoggingOperations, MS_LoggingRepository {
         else
             pAppendLine(
                     pGetTimePart(LocalDateTime.now())
-                            + pGetMainPart(LoggingEventTypeEnum.ERROR, msg)
+                            + pGetMainPart(MS_LoggingEventTypeEnum.ERROR, msg)
                             + pGetErrorPart(error));
     }
 
@@ -93,7 +93,7 @@ public class MS_FileLogger implements ILoggingOperations, MS_LoggingRepository {
 
     @Override
     public void logEvent(MS_LoggingEvent event) {
-        if (LoggingEventTypeEnum.UNSPECIFIED.equals(event.getType()))
+        if (MS_LoggingEventTypeEnum.UNSPECIFIED.equals(event.getType()))
             pAppendLine(event.getMessage());
         else
             pAppendLine(pGetTimePart(event.getTime().toLocalDateTime())
@@ -106,7 +106,7 @@ public class MS_FileLogger implements ILoggingOperations, MS_LoggingRepository {
         return MS_DateTimeUtils.dateTimeToStr(time, MS_DateTimeUtils._CUSTOM_DATE_TIME_FORMAT_EN) + " ";
     }
 
-    private String pGetMainPart(LoggingEventTypeEnum eventType, String message) {
+    private String pGetMainPart(MS_LoggingEventTypeEnum eventType, String message) {
         return eventType.name() + " " + message;
     }
 

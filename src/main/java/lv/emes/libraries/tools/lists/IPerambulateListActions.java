@@ -15,7 +15,7 @@ package lv.emes.libraries.tools.lists;
  * @version 1.4.
  */
 @Deprecated
-public interface IPerambulateListActions<T> extends IContactableList<T, Integer> {
+public interface IPerambulateListActions<T> extends MS_IContactableList<T, Integer> {
 
 	/**
 	 * Index of current element. Returns -1 when reached end of list.

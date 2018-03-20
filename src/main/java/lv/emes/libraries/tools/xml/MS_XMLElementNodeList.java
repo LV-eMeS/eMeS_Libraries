@@ -1,7 +1,7 @@
 package lv.emes.libraries.tools.xml;
 
-import lv.emes.libraries.tools.lists.IBaseListWithItems;
 import lv.emes.libraries.tools.lists.IFuncForEachItemLoopAction;
+import lv.emes.libraries.tools.lists.MS_ILoopableListWithItems;
 import lv.emes.libraries.tools.lists.MS_ListActionWorker;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -18,7 +18,7 @@ import org.w3c.dom.NodeList;
  * @version 1.3.
  * @see MS_XMLElementNode
  */
-public class MS_XMLElementNodeList implements IBaseListWithItems<MS_XMLElementNode, Integer> {
+public class MS_XMLElementNodeList implements MS_ILoopableListWithItems<MS_XMLElementNode, Integer> {
     boolean flagForLoopBreaking;
     private static final String MESSAGE_FOR_NODE_NOT_FOUND_EXCEPTION = "Node with index (%d) didn't found in list";
 

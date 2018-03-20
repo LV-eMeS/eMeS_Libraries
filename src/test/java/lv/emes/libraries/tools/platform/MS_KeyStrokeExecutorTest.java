@@ -12,11 +12,11 @@ import static junit.framework.TestCase.assertTrue;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MS_KeyStrokeExecutorTest {
-	public static MS_KeyStrokeExecutor executorInstance = null;
+	public static MS_RobotKeyStrokeExecutor executorInstance = null;
 
     @BeforeClass
     public static void setUp() throws AWTException {
-        executorInstance = new MS_KeyStrokeExecutor();
+        executorInstance = new MS_RobotKeyStrokeExecutor();
     }
 
     @AfterClass

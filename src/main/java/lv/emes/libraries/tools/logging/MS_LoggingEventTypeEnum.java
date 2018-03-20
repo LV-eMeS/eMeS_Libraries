@@ -8,7 +8,7 @@ package lv.emes.libraries.tools.logging;
  * @author eMeS
  * @version 1.0.
  */
-public enum LoggingEventTypeEnum {
+public enum MS_LoggingEventTypeEnum {
 
     INFO, WARN, ERROR, UNSPECIFIED
 }

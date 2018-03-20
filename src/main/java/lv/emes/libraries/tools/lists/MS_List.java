@@ -150,7 +150,7 @@ public class MS_List<T> extends ArrayList<T> implements IPerambulateListActions<
 	}
 
 	@Override
-	public void concatenate(IContactableList<T, Integer> otherList) {
+	public void concatenate(MS_IContactableList<T, Integer> otherList) {
 		otherList.forEachItem((item, index) -> {
 			this.add(item);
 		});

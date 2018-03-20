@@ -63,8 +63,8 @@ public class MS_MultiLoggerTest {
         assertEquals(DELIMITER_LINE, loggedEvent2.getMessage());
 
         //check some rules regarding what should not be logged in this case
-        assertEquals(LoggingEventTypeEnum.UNSPECIFIED, loggedEvent1.getType());
-        assertEquals(LoggingEventTypeEnum.UNSPECIFIED, loggedEvent2.getType());
+        assertEquals(MS_LoggingEventTypeEnum.UNSPECIFIED, loggedEvent1.getType());
+        assertEquals(MS_LoggingEventTypeEnum.UNSPECIFIED, loggedEvent2.getType());
         assertEquals(null, loggedEvent1.getError());
         assertEquals(null, loggedEvent2.getError());
     }
@@ -89,15 +89,15 @@ public class MS_MultiLoggerTest {
         //compare file content with events that should've been logged
         String lineInFile;
         lineInFile = checkerFile.readln();
-        assertTrue(MS_StringUtils.textContains(lineInFile, LoggingEventTypeEnum.INFO.name()));
+        assertTrue(MS_StringUtils.textContains(lineInFile, MS_LoggingEventTypeEnum.INFO.name()));
         assertTrue(MS_StringUtils.textContains(lineInFile, infoEvent));
 
         lineInFile = checkerFile.readln();
-        assertTrue(MS_StringUtils.textContains(lineInFile, LoggingEventTypeEnum.WARN.name()));
+        assertTrue(MS_StringUtils.textContains(lineInFile, MS_LoggingEventTypeEnum.WARN.name()));
         assertTrue(MS_StringUtils.textContains(lineInFile, warningEvent));
 
         lineInFile = checkerFile.readln();
-        assertTrue(MS_StringUtils.textContains(lineInFile, LoggingEventTypeEnum.ERROR.name()));
+        assertTrue(MS_StringUtils.textContains(lineInFile, MS_LoggingEventTypeEnum.ERROR.name()));
         assertTrue(MS_StringUtils.textContains(lineInFile, errorEvent));
     }
 
@@ -111,8 +111,8 @@ public class MS_MultiLoggerTest {
 
         MS_LoggingEvent loggedEvent1 = inMemoryLogger1.getEventList().get(0);
         MS_LoggingEvent loggedEvent2 = inMemoryLogger2.getEventList().get(0);
-        assertEquals(LoggingEventTypeEnum.ERROR, loggedEvent1.getType());
-        assertEquals(LoggingEventTypeEnum.ERROR, loggedEvent2.getType());
+        assertEquals(MS_LoggingEventTypeEnum.ERROR, loggedEvent1.getType());
+        assertEquals(MS_LoggingEventTypeEnum.ERROR, loggedEvent2.getType());
         assertEquals(errorEvent, loggedEvent1.getMessage());
         assertEquals(errorEvent, loggedEvent2.getMessage());
         assertEquals(MS_TestUtils.MS_CheckedException.class, loggedEvent1.getError().getClass());

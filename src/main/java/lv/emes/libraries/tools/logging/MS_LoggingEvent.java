@@ -29,9 +29,9 @@ public class MS_LoggingEvent {
     private ZonedDateTime time;
     /**
      * Type of event that is being logged.
-     * If {@link LoggingEventTypeEnum#UNSPECIFIED} then raw event message (without event type, time and error parts) should be logged.
+     * If {@link MS_LoggingEventTypeEnum#UNSPECIFIED} then raw event message (without event type, time and error parts) should be logged.
      */
-    private LoggingEventTypeEnum type;
+    private MS_LoggingEventTypeEnum type;
     /**
      * Specific message that will be stored in repository as entry.
      */
@@ -52,9 +52,9 @@ public class MS_LoggingEvent {
 
     /**
      * @return type of event that is being logged.
-     * If {@link LoggingEventTypeEnum#UNSPECIFIED} then raw event message (without event type, time and error parts) should be logged.
+     * If {@link MS_LoggingEventTypeEnum#UNSPECIFIED} then raw event message (without event type, time and error parts) should be logged.
      */
-    public LoggingEventTypeEnum getType() {
+    public MS_LoggingEventTypeEnum getType() {
         return type;
     }
 
@@ -96,11 +96,11 @@ public class MS_LoggingEvent {
      * Sets type of event.
      *
      * @param eventType type of event that is being logged.
-     *                  If {@link LoggingEventTypeEnum#UNSPECIFIED} then raw event
+     *                  If {@link MS_LoggingEventTypeEnum#UNSPECIFIED} then raw event
      *                  message (without event type, time and error parts) should be logged.
      * @return reference to logging event itself.
      */
-    public MS_LoggingEvent withType(LoggingEventTypeEnum eventType) {
+    public MS_LoggingEvent withType(MS_LoggingEventTypeEnum eventType) {
         this.type = eventType;
         return this;
     }

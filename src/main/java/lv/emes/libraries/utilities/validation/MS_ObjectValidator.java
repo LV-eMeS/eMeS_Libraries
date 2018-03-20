@@ -221,7 +221,7 @@ public abstract class MS_ObjectValidator<T> {
         possibleValidationErrors.forEachItem((possibleError, i) -> {
             if (possibleError.getNumber().equals(number)) {
                 this.validationErrors.add(possibleError);
-                possibleError.setObject(objectToValidate);
+                possibleError.withObject(objectToValidate);
                 possibleValidationErrors.breakOngoingForLoop();
             }
         });

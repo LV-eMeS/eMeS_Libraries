@@ -2,7 +2,7 @@ package lv.emes.libraries.tools.logging;
 
 import com.cedarsoftware.util.io.JsonReader;
 import com.cedarsoftware.util.io.JsonWriter;
-import lv.emes.libraries.tools.MS_IObjectWrapper;
+import lv.emes.libraries.tools.MS_ObjectWrapper;
 import lv.emes.libraries.tools.MS_ObjectWrapperHelper;
 import lv.emes.libraries.utilities.MS_DateTimeUtils;
 import lv.emes.libraries.utilities.MS_StringUtils;
@@ -13,7 +13,7 @@ import java.util.Objects;
  * Serialized logging event, which wraps real {@link MS_LoggingEvent}.
  * All instance members are of type String so that it can easily moved outside application.
  * <p>Fields <b>time</b> and <b>error</b> are being serialized with {@link JsonWriter}.
- * Field <b>type</b> is being serialized just by taking its enum constant name {@link LoggingEventTypeEnum#name()}.
+ * Field <b>type</b> is being serialized just by taking its enum constant name {@link MS_LoggingEventTypeEnum#name()}.
  * <p>Setters and getters:
  * <ul>
  * <li>getTime</li>
@@ -29,7 +29,7 @@ import java.util.Objects;
  * @author eMeS
  * @version 1.0.
  */
-public class MS_SerializedLoggingEvent implements MS_IObjectWrapper<MS_LoggingEvent> {
+public class MS_SerializedLoggingEvent implements MS_ObjectWrapper<MS_LoggingEvent> {
 
     private String time, type, message, error;
     private MS_LoggingEvent wrappedObject;
@@ -118,7 +118,7 @@ public class MS_SerializedLoggingEvent implements MS_IObjectWrapper<MS_LoggingEv
         return wrappedObject = new MS_LoggingEvent()
                 .withTime(time == null ? null : MS_DateTimeUtils.formatDateTime(time, MS_DateTimeUtils._DATE_TIME_FORMAT_NANOSEC_ZONE_OFFSET))
                 .withError(error == null ? null : (Exception) JsonReader.jsonToJava(error))
-                .withType(LoggingEventTypeEnum.valueOf(type))
+                .withType(MS_LoggingEventTypeEnum.valueOf(type))
                 .withMessage(message)
                 ;
     }

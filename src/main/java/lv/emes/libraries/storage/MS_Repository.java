@@ -1,7 +1,7 @@
 package lv.emes.libraries.storage;
 
-import lv.emes.libraries.tools.lists.IBaseListWithItems;
 import lv.emes.libraries.tools.lists.IFuncForEachItemLoopAction;
+import lv.emes.libraries.tools.lists.MS_ILoopableListWithItems;
 
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -51,7 +51,7 @@ import java.util.Map;
  * @author eMeS
  * @version 2.0.
  */
-public abstract class MS_Repository<T, ID> implements IRepositoryOperations<T, ID>, IBaseListWithItems<T, ID> {
+public abstract class MS_Repository<T, ID> implements MS_IRepositoryOperations<T, ID>, MS_ILoopableListWithItems<T, ID> {
 
     private String repositoryRoot;
     private String repositoryCategoryName;

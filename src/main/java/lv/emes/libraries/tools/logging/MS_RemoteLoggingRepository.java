@@ -27,7 +27,7 @@ public class MS_RemoteLoggingRepository extends MS_Repository<MS_LoggingEvent, I
 
     public static int MAX_SECRET_LENGTH = 250;
 
-    private LoggingRemoteServerProperties serverProperties;
+    private MS_LoggingRemoteServerProperties serverProperties;
 
     /**
      * Constructs instance of remote logging repository that will connect to server with properties <b>props</b>.
@@ -38,7 +38,7 @@ public class MS_RemoteLoggingRepository extends MS_Repository<MS_LoggingEvent, I
      * @param props        remote server properties that identifies specific logging service,
      *                     which accepts outbound connections and provides specific simple HTTP call support.
      */
-    public MS_RemoteLoggingRepository(String productOwner, String productName, LoggingRemoteServerProperties props) {
+    public MS_RemoteLoggingRepository(String productOwner, String productName, MS_LoggingRemoteServerProperties props) {
         super(productOwner, productName);
         if (props.getHost() == null || props.getHost().length() < 3)
             throw new IllegalArgumentException("Invalid hostname [" + props.getHost() + "] passed as argument to create MS_RemoteLoggingRepository");
@@ -59,7 +59,7 @@ public class MS_RemoteLoggingRepository extends MS_Repository<MS_LoggingEvent, I
 
     @Override
     protected void doAdd(Instant identifier, MS_LoggingEvent item) {
-        if (item == null || LoggingEventTypeEnum.UNSPECIFIED.equals(item.getType()))
+        if (item == null || MS_LoggingEventTypeEnum.UNSPECIFIED.equals(item.getType()))
             return; //do nothing for lines, because it doesn't make sense to store them as items with IDs
 
         //serialize event and send it to remote logging server
@@ -177,19 +177,19 @@ public class MS_RemoteLoggingRepository extends MS_Repository<MS_LoggingEvent, I
 
     //*** PRIVATE METHODS ***
 
-    private String getRemoteServerRoot(LoggingRemoteServerProperties props) {
+    private String getRemoteServerRoot(MS_LoggingRemoteServerProperties props) {
         return props.getHost() + ":" + props.getPort() + "/" + props.getEndpointRootName() + "/";
     }
 
-    private String getRemoteServerBasePath(LoggingRemoteServerProperties props) {
+    private String getRemoteServerBasePath(MS_LoggingRemoteServerProperties props) {
         return getRemoteServerRoot(props) + this.getProductOwner() + "/" + this.getProductName() + "/";
     }
 
-    private String getEncryptedSecret(LoggingRemoteServerProperties props) {
+    private String getEncryptedSecret(MS_LoggingRemoteServerProperties props) {
         try {
             if (props.getSecret().length() > MAX_SECRET_LENGTH)
                 throw new MS_RepositoryDataExchangeException("Failed to encrypt secret for this logging product - length of secret exceeds 255 characters");
-            return MS_CryptographyUtils.encrypt(props.getSecret(), LoggingRemoteServerProperties.SECRET_TO_ENCRYPT_SECRET);
+            return MS_CryptographyUtils.encrypt(props.getSecret(), MS_LoggingRemoteServerProperties.SECRET_TO_ENCRYPT_SECRET);
         } catch (GeneralSecurityException e) {
             throw new MS_RepositoryDataExchangeException("Failed to encrypt secret for this logging product", e);
         }

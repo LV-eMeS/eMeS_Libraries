@@ -36,7 +36,7 @@ public class MS_RemoteLoggingRepositoryTest {
     @BeforeClass
     public static void initialize() {
         repository = new MS_RemoteLoggingRepository(PRODUCT_OWNER, PRODUCT_NAME,
-                new LoggingRemoteServerProperties()
+                new MS_LoggingRemoteServerProperties()
                         .withHost(HOSTNAME)
                         .withSecret(SECRET_KEY));
         loggedEvents = new MS_InMemoryLoggingRepository();
@@ -70,7 +70,7 @@ public class MS_RemoteLoggingRepositoryTest {
     public void test03FindAllEvents() {
         Map<Instant, MS_LoggingEvent> events = repository.findAll();
         loggedEvents.getEventList().forEachItem((event, i) -> {
-            if (!event.getType().equals(LoggingEventTypeEnum.UNSPECIFIED))
+            if (!event.getType().equals(MS_LoggingEventTypeEnum.UNSPECIFIED))
                 assertEquals("Not found item at index: " + i
                                 + "\nExpected items:\n" + loggedEvents.getEventList().toString()
                                 + "\nActual items:\n" + events.values().toString() + "\n"
@@ -112,12 +112,12 @@ public class MS_RemoteLoggingRepositoryTest {
     @Test
     public void test15InvalidSecret() {
         MS_RemoteLoggingRepository repository = new MS_RemoteLoggingRepository(PRODUCT_OWNER, PRODUCT_NAME,
-                new LoggingRemoteServerProperties()
+                new MS_LoggingRemoteServerProperties()
                         .withHost(HOSTNAME)
                         .withSecret("Invalid secret"));
 
         boolean requestPassed = true;
-        MS_LoggingEvent event = new MS_LoggingEvent().withTime(ZonedDateTime.now()).withType(LoggingEventTypeEnum.INFO)
+        MS_LoggingEvent event = new MS_LoggingEvent().withTime(ZonedDateTime.now()).withType(MS_LoggingEventTypeEnum.INFO)
                 .withMessage("This message will not reach repository");
         try {
             repository.add(event.getTime().toInstant(), event);
@@ -146,7 +146,7 @@ public class MS_RemoteLoggingRepositoryTest {
     @Test(expected = MS_RepositoryDataExchangeException.class)
     public void test16TooLongSecret() {
         new MS_RemoteLoggingRepository(PRODUCT_OWNER, PRODUCT_NAME,
-                new LoggingRemoteServerProperties()
+                new MS_LoggingRemoteServerProperties()
                         .withHost(TestData.HTTP_PREFIX + TestData.TESTING_SERVER_HOSTAME)
                         .withSecret(RandomStringUtils.random(MAX_SECRET_LENGTH + 1)))
                 .removeAll();

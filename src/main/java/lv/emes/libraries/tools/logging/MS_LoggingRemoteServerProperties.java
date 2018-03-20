@@ -33,7 +33,7 @@ import lv.emes.libraries.communication.MS_TakenPorts;
  * @author eMeS
  * @version 1.1.
  */
-public class LoggingRemoteServerProperties {
+public class MS_LoggingRemoteServerProperties {
 
     /**
      * Secret key to be used in order to encrypt secret coming altogether with logging event to authorize logging.
@@ -87,7 +87,7 @@ public class LoggingRemoteServerProperties {
      * @param host host name.
      * @return reference to properties.
      */
-    public LoggingRemoteServerProperties withHost(String host) {
+    public MS_LoggingRemoteServerProperties withHost(String host) {
         this.host = host;
         return this;
     }
@@ -98,7 +98,7 @@ public class LoggingRemoteServerProperties {
      * @param port port number. <b>DEFAULT</b>: {@link MS_TakenPorts#_REMOTE_LOGGING_SERVER_PORT}
      * @return reference to properties.
      */
-    public LoggingRemoteServerProperties withPort(int port) {
+    public MS_LoggingRemoteServerProperties withPort(int port) {
         this.port = port;
         return this;
     }
@@ -110,7 +110,7 @@ public class LoggingRemoteServerProperties {
      *                         <p><b>DEFAULT</b>: "RemoteLogger"
      * @return reference to properties.
      */
-    public LoggingRemoteServerProperties withEndpointRootName(String endpointRootName) {
+    public MS_LoggingRemoteServerProperties withEndpointRootName(String endpointRootName) {
         if (endpointGetAllEvents != null && !endpointGetAllEvents.equals(""))
             this.endpointRootName = endpointRootName;
         return this;
@@ -123,7 +123,7 @@ public class LoggingRemoteServerProperties {
      *               <p><b>DEFAULT</b>: "status"
      * @return reference to properties.
      */
-    public LoggingRemoteServerProperties withEndpointStatus(String status) {
+    public MS_LoggingRemoteServerProperties withEndpointStatus(String status) {
         if (endpointGetAllEvents != null && !endpointGetAllEvents.equals(""))
             this.endpointStatus = status;
         return this;
@@ -136,7 +136,7 @@ public class LoggingRemoteServerProperties {
      *                         <p><b>DEFAULT</b>: "event"
      * @return reference to properties.
      */
-    public LoggingRemoteServerProperties withEndpointLogEvent(String endpointPutEvent) {
+    public MS_LoggingRemoteServerProperties withEndpointLogEvent(String endpointPutEvent) {
         if (endpointGetAllEvents != null && !endpointGetAllEvents.equals(""))
             this.endpointLogEvent = endpointPutEvent;
         return this;
@@ -149,7 +149,7 @@ public class LoggingRemoteServerProperties {
      *                             <p><b>DEFAULT</b>: "all"
      * @return reference to properties.
      */
-    public LoggingRemoteServerProperties withEndpointGetAllEvents(String endpointGetAllEvents) {
+    public MS_LoggingRemoteServerProperties withEndpointGetAllEvents(String endpointGetAllEvents) {
         if (endpointGetAllEvents != null && !endpointGetAllEvents.equals(""))
             this.endpointGetAllEvents = endpointGetAllEvents;
         return this;
@@ -162,7 +162,7 @@ public class LoggingRemoteServerProperties {
      *                                <p><b>DEFAULT</b>: "clear"
      * @return reference to properties.
      */
-    public LoggingRemoteServerProperties withEndpointClearAllEvents(String endpointDeleteAllEvents) {
+    public MS_LoggingRemoteServerProperties withEndpointClearAllEvents(String endpointDeleteAllEvents) {
         if (endpointDeleteAllEvents != null && !endpointDeleteAllEvents.equals(""))
             this.endpointClearAllEvents = endpointDeleteAllEvents;
         return this;
@@ -180,7 +180,7 @@ public class LoggingRemoteServerProperties {
      *               <p><b>DEFAULT</b>: "Default secret 123"
      * @return reference to properties.
      */
-    public LoggingRemoteServerProperties withSecret(String secret) {
+    public MS_LoggingRemoteServerProperties withSecret(String secret) {
         if (secret != null && !secret.equals(""))
             this.secret = secret;
         return this;

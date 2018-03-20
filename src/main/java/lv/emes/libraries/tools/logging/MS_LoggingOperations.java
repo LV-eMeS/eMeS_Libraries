@@ -13,7 +13,7 @@ package lv.emes.libraries.tools.logging;
  * @author eMeS
  * @version 1.0.
  */
-public interface ILoggingOperations {
+public interface MS_LoggingOperations {
 
     /**
      * Default line text for logging content separator line.

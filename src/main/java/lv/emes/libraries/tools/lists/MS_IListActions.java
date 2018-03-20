@@ -6,7 +6,7 @@ package lv.emes.libraries.tools.lists;
  * @param <T> type of list elements.
  * @version 1.8.
  */
-public interface IListActions<T> extends IPerambulateListActions<T> {
+public interface MS_IListActions<T> extends IPerambulateListActions<T> {
 
     /**
      * Add element to the end of T list.

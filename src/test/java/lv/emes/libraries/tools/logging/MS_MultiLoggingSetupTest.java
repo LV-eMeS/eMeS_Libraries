@@ -36,7 +36,7 @@ public class MS_MultiLoggingSetupTest {
     public void testDefaults() {
         MS_MultiLoggingSetup config = new MS_MultiLoggingSetup();
         assertNull(config.getRepositories());
-        assertEquals(ILoggingOperations._LINE, config.getDelimiterLineText());
+        assertEquals(MS_LoggingOperations._LINE, config.getDelimiterLineText());
     }
 
     @Test

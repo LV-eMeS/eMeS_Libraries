@@ -19,7 +19,7 @@ import java.util.Map;
  * @author eMeS
  * @version 2.0.
  */
-public interface IRepositoryOperations<T, ID> {
+public interface MS_IRepositoryOperations<T, ID> {
 
     /**
      * Adds new item to the repository. If item with such identifier exists, does nothing.

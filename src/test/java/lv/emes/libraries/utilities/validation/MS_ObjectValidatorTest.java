@@ -29,8 +29,8 @@ public class MS_ObjectValidatorTest {
         intValidator = new MS_ObjectValidator<Integer>() {
             @Override
             protected void initAllPossibleValidationErrors() {
-                this.initNewError(1).setErrorMessageForming(() -> ERROR1);
-                this.initNewError(2).setErrorMessageForming(() -> ERROR2);
+                this.initNewError(1).withErrorMessageFormingAction(() -> ERROR1);
+                this.initNewError(2).withErrorMessageFormingAction(() -> ERROR2);
             }
             @Override
             protected void doValidation(Integer objectToValidate, MS_List validationErrorList) {
@@ -46,7 +46,7 @@ public class MS_ObjectValidatorTest {
 
             @Override
             protected void initAllPossibleValidationErrors() {
-                this.initNewError(100).setErrorMessageForming(() ->
+                this.initNewError(100).withErrorMessageFormingAction(() ->
                         String.format(BAD_VALUE_MSG, name));
             }
             @Override

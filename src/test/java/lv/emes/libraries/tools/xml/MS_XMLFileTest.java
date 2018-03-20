@@ -29,13 +29,13 @@ public class MS_XMLFileTest {
     private static final String PATH_TO_XML_FILE2 = TestData.TEMP_DIR + "MS_XMLFileTest2.xml";
     private static final String PATH_TO_XML_FILE3 = TestData.TEMP_DIR + "MS_XMLFileTest3.xml";
     private static MS_StringList FOOD_NAME_LIST = null;
-    private static MS_XML file1;
-    private static MS_XML file2;
-    private static MS_XML file3;
+    private static MS_XMLReader file1;
+    private static MS_XMLReader file2;
+    private static MS_XMLReader file3;
 
     @Test
     public void test01ParseSimpleXMLFile() {
-        MS_XML file = file1;
+        MS_XMLReader file = file1;
         assertEquals("breakfast_menu", file.getRootElementName());
         //everything starting from first <food> tag and ending with very last </food> tag
         //<breakfast_menu><food>...</food><food>...</food></breakfast_menu>
@@ -73,7 +73,7 @@ public class MS_XMLFileTest {
 
     @Test
     public void test02DocumentObject() throws ParserConfigurationException, SAXException, IOException {
-        MS_XML file = new MS_XML(PATH_TO_XML_FILE);
+        MS_XMLReader file = new MS_XMLReader(PATH_TO_XML_FILE);
         Document doc = file.getDocument();
         //TODO test on different machine, cause following commented code fails
 //        assertEquals("1.0", doc.getXmlVersion());
@@ -85,11 +85,11 @@ public class MS_XMLFileTest {
 
     @Test
     public void test03WrongParsing() {
-        MS_XML file = file1;
+        MS_XMLReader file = file1;
         boolean exceptionCaught = false;
         try {
             file.getNodesByTagName("princesses");
-        } catch (MS_XML.NodesNotFoundException e) {
+        } catch (MS_XMLReader.NodesNotFoundException e) {
             exceptionCaught = true;
         }
         assertTrue(exceptionCaught);
@@ -100,7 +100,7 @@ public class MS_XMLFileTest {
 
     @Test
     public void test04ParseAndEditElements() {
-        MS_XML file = file1;
+        MS_XMLReader file = file1;
         MS_XMLElementNodeList allFoods = file.getNodesByTagName("food");
         allFoods.forEachItem((item, ind) -> {
             MS_XMLElementNode nameOfFood = item.getFirstChild("name");
@@ -117,7 +117,7 @@ public class MS_XMLFileTest {
 
     @Test
     public void test05ParseComplicatedXMLFile() {
-        MS_XML file = file2;
+        MS_XMLReader file = file2;
 //        System.out.println(file.toString());
         assertEquals("Students", file.getRootElementName());
         MS_XMLElementNodeList allTheStudents = file.getNodesByTagName("Student");
@@ -240,9 +240,9 @@ public class MS_XMLFileTest {
         xmlFile.writeln("<Universities></Universities>");
         xmlFile.close();
 
-        file1 = new MS_XML(MS_BinaryTools.readFile(PATH_TO_XML_FILE));
-        file2 = new MS_XML(MS_BinaryTools.readFile(PATH_TO_XML_FILE2));
-        file3 = new MS_XML(MS_BinaryTools.readFile(PATH_TO_XML_FILE3));
+        file1 = new MS_XMLReader(MS_BinaryTools.readFile(PATH_TO_XML_FILE));
+        file2 = new MS_XMLReader(MS_BinaryTools.readFile(PATH_TO_XML_FILE2));
+        file3 = new MS_XMLReader(MS_BinaryTools.readFile(PATH_TO_XML_FILE3));
     }
 
     @AfterClass

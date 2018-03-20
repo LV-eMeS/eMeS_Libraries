@@ -20,7 +20,7 @@ import static org.junit.Assert.assertNull;
 public class MS_SerializedLoggingEventTest {
 
     @Test
-    public void test01SerializationAndDeserialization() throws Exception {
+    public void test01SerializationAndDeserialization() {
         MS_LoggingEvent event = newEvent();
         MS_SerializedLoggingEvent wrapper = MS_ObjectWrapperHelper.wrap(event, MS_SerializedLoggingEvent.class);
         MS_LoggingEvent wrappedEvent = wrapper.getWrappedObject();
@@ -28,12 +28,12 @@ public class MS_SerializedLoggingEventTest {
     }
 
     @Test
-    public void test02UnwrapObject() throws Exception {
+    public void test02UnwrapObject() {
         MS_SerializedLoggingEvent wrapper = new MS_SerializedLoggingEvent();
         ZonedDateTime timeNow = ZonedDateTime.now();
         wrapper.withTime(MS_DateTimeUtils.formatDateTime(timeNow, MS_DateTimeUtils._DATE_TIME_FORMAT_NANOSEC_ZONE_OFFSET));
         wrapper.withError(JsonWriter.objectToJson(null));
-        wrapper.withType(LoggingEventTypeEnum.UNSPECIFIED.name());
+        wrapper.withType(MS_LoggingEventTypeEnum.UNSPECIFIED.name());
         wrapper.withMessage(RandomStringUtils.randomAlphabetic(10));
 
         MS_LoggingEvent wrappedEvent = wrapper.unwrap();
@@ -50,7 +50,7 @@ public class MS_SerializedLoggingEventTest {
         return new MS_LoggingEvent()
                 .withTime(ZonedDateTime.now())
                 .withMessage(RandomStringUtils.randomAlphabetic(10))
-                .withType(LoggingEventTypeEnum.ERROR)
+                .withType(MS_LoggingEventTypeEnum.ERROR)
                 .withError(new MS_TestUtils.MS_CheckedException())
                 ;
     }

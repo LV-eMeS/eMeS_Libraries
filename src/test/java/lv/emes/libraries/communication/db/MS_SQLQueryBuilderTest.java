@@ -146,15 +146,15 @@ public class MS_SQLQueryBuilderTest {
         sql.select()
                 .field("u.id").field("u.name").field("t.name")
                 .from().table("users u")
-                .join(JoinTypeEnum.INNER, "user_types t", "u.type_id = t.id")
+                .join(MS_JoinTypeEnum.INNER, "user_types t", "u.type_id = t.id")
         ;
         assertEquals("SELECT u.id, u.name, t.name FROM users u\nINNER JOIN user_types t ON (u.type_id = t.id);", sql.buildAndToString());
 
         sql = new MS_SQLQueryBuilder().select()
                 .field("u.id").field("u.name").field("t.name").field("z.name")
                 .from().table("users u")
-                .join(JoinTypeEnum.LEFT, "user_types t", "u.type_id = t.id")
-                .join(JoinTypeEnum.INNER, "user_z_types z", "t.z_type_id = z.id")
+                .join(MS_JoinTypeEnum.LEFT, "user_types t", "u.type_id = t.id")
+                .join(MS_JoinTypeEnum.INNER, "user_z_types z", "t.z_type_id = z.id")
         ;
         assertEquals("SELECT u.id, u.name, t.name, z.name" +
                 "\nFROM users u" +

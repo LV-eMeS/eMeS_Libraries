@@ -7,7 +7,7 @@ package lv.emes.libraries.communication.db;
  * @author eMeS
  * @version 2.0.
  */
-public enum JoinTypeEnum {
+public enum MS_JoinTypeEnum {
 
     LEFT, RIGHT, INNER
 }

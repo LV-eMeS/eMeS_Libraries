@@ -6,9 +6,9 @@ package lv.emes.libraries.tools.lists;
  *
  * @param <T> type of list items.
  * @param <I> type of list item index.
- * @version 1.5.
+ * @version 2.0.
  */
-public interface IBaseListWithItems<T, I> {
+public interface MS_ILoopableListWithItems<T, I> {
 
     /**
      * @return count of items in list. [0..+]
@@ -19,7 +19,7 @@ public interface IBaseListWithItems<T, I> {
      * Just an overloaded method of <b>count()</b>.
      *
      * @return count of items in list.
-     * @see IBaseListWithItems#count()
+     * @see MS_ILoopableListWithItems#count()
      */
     int size();
 
@@ -27,7 +27,7 @@ public interface IBaseListWithItems<T, I> {
      * Just an overloaded method of <b>count()</b>.
      *
      * @return count of items in list.
-     * @see IBaseListWithItems#count()
+     * @see MS_ILoopableListWithItems#count()
      */
     int length();
 
@@ -108,7 +108,7 @@ public interface IBaseListWithItems<T, I> {
      * @param startFromIndex 0..count()-1
      * @param action method that describes the actions that every item must do.
      *               Method's incoming parameters are every item of the list and index of item.
-     * @see IBaseListWithItems#forEachItem(IFuncForEachItemLoopAction)
+     * @see MS_ILoopableListWithItems#forEachItem(IFuncForEachItemLoopAction)
      */
     void forEachItem(I startFromIndex, IFuncForEachItemLoopAction<T, I> action);
 
@@ -121,7 +121,7 @@ public interface IBaseListWithItems<T, I> {
      * @param endIndex startFromIndex..count()-1
      * @param action method that describes the actions that every item must do.
      *               Method's incoming parameters are every item of the list and index of item.
-     * @see IBaseListWithItems#forEachItem(IFuncForEachItemLoopAction)
+     * @see MS_ILoopableListWithItems#forEachItem(IFuncForEachItemLoopAction)
      */
     void forEachItem(I startFromIndex, I endIndex, IFuncForEachItemLoopAction<T, I> action);
 }

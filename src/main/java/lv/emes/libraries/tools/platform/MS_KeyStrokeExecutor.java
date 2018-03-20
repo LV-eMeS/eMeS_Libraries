@@ -1,165 +1,127 @@
 package lv.emes.libraries.tools.platform;
 
-import com.sun.jna.platform.KeyboardUtils;
-
 import java.awt.*;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
 
-import static lv.emes.libraries.tools.MS_KeyCodeDictionary.textToKeyCode;
-
-/** 
- * Recognizes, what OS is device using and creates corresponding object to imitate keyboard button pressing and mouse controlling.
+/**
+ * An interface that describes actions to be done to imitate keyboard button pressing or mouse controlling.
  * <p>Public methods:
  * <ul>
- *     <li>keyDown</li>
- *     <li>keyUp</li>
- *     <li>isKeyDown</li>
- *     <li>isCapsLockToggled</li>
- *     <li>getCurrentMouseCoords</li>
- *     <li>mouseLeftDown</li>
- *     <li>mouseLeftUp</li>
- *     <li>mouseLeftClick</li>
- *     <li>mouseRightDown</li>
- *     <li>mouseRightUp</li>
- *     <li>mouseRightClick</li>
- *     <li>mouseSetCoords</li>
- *     <li>mouseMove</li>
+ * <li>keyDown</li>
+ * <li>keyUp</li>
+ * <li>keyPress</li>
+ * <li>isKeyDown</li>
+ * <li>isCapsLockToggled</li>
+ * <li>getCurrentMouseCoords</li>
+ * <li>mouseLeftDown</li>
+ * <li>mouseLeftUp</li>
+ * <li>mouseLeftClick</li>
+ * <li>mouseRightDown</li>
+ * <li>mouseRightUp</li>
+ * <li>mouseRightClick</li>
+ * <li>mouseSetCoords</li>
+ * <li>mouseMove</li>
+ * <li>mouseWheel</li>
  * </ul>
- * @version 0.8.
+ *
  * @author eMeS
+ * @version 1.2.
  */
-public class MS_KeyStrokeExecutor implements IKeyStrokeExecutor {
-	//PUBLIC STRUCTURES, EXCEPTIONS, PROPERTIES AND CONSTANTS
+public interface MS_KeyStrokeExecutor {
 
-	//PRIVATE VARIABLES
-	private static MS_KeyStrokeExecutor INSTANCE = null;
-	private Robot robot = null;
+    /**
+     * Imitates keyboard key pressing down and hold it.
+     *
+     * @param key code of valid keyboard key.
+     */
+    void keyDown(String key);
 
-	//PUBLIC VARIABLES
+    /**
+     * Imitates keyboard key releasing.
+     *
+     * @param key code of valid keyboard key.
+     */
+    void keyUp(String key);
 
-	//CONSTRUCTORS
-	/**
-	 * Constructs robot for executing keystrokes and simulating mouse events.
-	 * @throws AWTException if the platform configuration does not allow low-level input control.
-	 * This exception is always thrown when GraphicsEnvironment.isHeadless() returns true.
-	 */
-	public MS_KeyStrokeExecutor() throws AWTException {
-		robot = new Robot();
-	}
+    /**
+     * Imitates keyboard key hitting (pressing down and releasing it immediately).
+     *
+     * @param key code of valid keyboard key.
+     */
+    void keyPress(String key);
 
+    /**
+     * Tests, if key of keyboard is pressed.
+     *
+     * @param key code of valid keyboard key.
+     * @return true if key <b>key</b> is pushed and hold down, otherwise false.
+     */
+    boolean isKeyDown(String key);
 
-	//STATIC CONSTRUCTORS
-	/**
-	 * If working with common executor instead of seperated instances.
-	 * @return singletone instance of this object.
-	 */
-	public static MS_KeyStrokeExecutor getInstance() {
-		if (INSTANCE == null)
-			try {
-				INSTANCE = new MS_KeyStrokeExecutor();
-			} catch (AWTException e) {
-				e.printStackTrace();
-			}
-		return INSTANCE;
-	}
+    /**
+     * Tests, if Caps Lock key is toggled.
+     *
+     * @return true if caps lock on.
+     */
+    boolean isCapsLockToggled();
 
-	//PRIVATE METHODS
-	/**
-	 * From user input text generates valid key code.
-	 * @param key String representing key value. Mapping is done using ...
-	 * @return key code.
-	 */
-	private int translateKey(String key) {
-		return textToKeyCode(key);
-	}
+    /**
+     * @return mouse pointer coordinates in current position.
+     */
+    Point getCurrentMouseCoords();
 
-	//PROTECTED METHODS
+    /**
+     * Do mouse left click and hold it.
+     */
+    void mouseLeftDown();
 
-	//PUBLIC METHODS
-	@Override
-	public void keyDown(String key) {
-		robot.keyPress(translateKey(key));
-	}
+    /**
+     * Release mouse left click.
+     */
+    void mouseLeftUp();
 
-	@Override
-	public void keyUp(String key) {
-		robot.keyRelease(translateKey(key));
-	}
+    /**
+     * Do mouse left click and release it immediately.
+     */
+    void mouseLeftClick();
 
-	@Override
-	public void keyPress(String key) {
-		keyDown(key);
-		keyUp(key);
-	}
+    /**
+     * Do mouse right click and hold it.
+     */
+    void mouseRightDown();
 
-	@Override
-	public boolean isKeyDown(String key) {
-		return KeyboardUtils.isPressed(translateKey(key));
-	}
+    /**
+     * Release mouse right click.
+     */
+    void mouseRightUp();
 
-	@Override
-	public boolean isCapsLockToggled() {
-		return Toolkit.getDefaultToolkit().getLockingKeyState(KeyEvent.VK_CAPS_LOCK);
-	}
+    /**
+     * Do mouse right click and release it immediately.
+     */
+    void mouseRightClick();
 
-	@Override
-	public void mouseLeftDown() {
-		robot.mousePress(InputEvent.BUTTON1_MASK);
-	}
+    /**
+     * Do mouse wheel click and release it immediately.
+     */
+    void mouseWheelClick();
 
-	@Override
-	public void mouseLeftUp() {
-		robot.mouseRelease(InputEvent.BUTTON1_MASK);
-	}
+    /**
+     * Sets mouse pointer to a specific coordinates on the screen (be aware of user's screen resolution!).
+     *
+     * @param coords X starting from screen's left edge with value 0; Y starting from screen's top edge with value 0.
+     */
+    void mouseSetCoords(Point coords);
 
-	@Override
-	public void mouseLeftClick() {
-		mouseLeftDown();
-		mouseLeftUp();
-	}
+    /**
+     * Moves mouse for specified distance. Simply moves mouse pointer for (X, Y) pixels.
+     *
+     * @param coords X starting from screen's left edge with value 0; Y starting from screen's top edge with value 0.
+     */
+    void mouseMove(Point coords);
 
-	@Override
-	public void mouseRightDown() {
-		robot.mousePress(InputEvent.BUTTON3_MASK);
-	}
-
-	@Override
-	public void mouseRightUp() {
-		robot.mouseRelease(InputEvent.BUTTON3_MASK);
-	}
-
-	@Override
-	public void mouseRightClick() {
-		mouseRightDown();
-		mouseRightUp();
-	}
-
-	@Override
-	public void mouseWheelClick() {
-		robot.mousePress(InputEvent.BUTTON2_MASK);
-		robot.mouseRelease(InputEvent.BUTTON2_MASK);
-	}
-
-	@Override
-	public void mouseSetCoords(Point coords) {
-		robot.mouseMove(coords.x, coords.y);
-	}
-
-	@Override
-	public void mouseMove(Point coords) {
-		Point currentCoords = getCurrentMouseCoords();
-		robot.mouseMove(currentCoords.x + coords.x, currentCoords.y + coords.y);
-	}
-	//STATIC METHODS
-
-	@Override
-	public Point getCurrentMouseCoords() {
-		return MouseInfo.getPointerInfo().getLocation();
-	}
-
-	@Override
-	public void mouseWheel(int steps) {
-		robot.mouseWheel(steps);
-	}
+    /**
+     * Rotates mouse wheel up or down for count of <b>steps</b>.
+     *
+     * @param steps wheel up if given value is negative(-) and down, if value is positive(+).
+     */
+    void mouseWheel(int steps);
 }

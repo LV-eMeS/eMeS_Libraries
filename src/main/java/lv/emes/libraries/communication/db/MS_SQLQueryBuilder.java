@@ -453,15 +453,15 @@ public class MS_SQLQueryBuilder extends MS_LineBuilder {
 
     /**
      * Adds join clause of type <b>joinType</b> with table <b>tableToJoin</b> on presented condition <b>onCondition</b>.
-     * <br><u>Example</u>: join(JoinTypeEnum.LEFT, "user_types t", "u.user_type_id=t.id")
+     * <br><u>Example</u>: join(MS_JoinTypeEnum.LEFT, "user_types t", "u.user_type_id=t.id")
      *
      * @param joinType    one of supported join types.
      * @param tableToJoin table name and preferable alias of table (alias is delimited from table name with space).
      * @param onCondition boolean expression on condition to link tables.
      * @return reference to this query itself.
-     * @see JoinTypeEnum
+     * @see MS_JoinTypeEnum
      */
-    public MS_SQLQueryBuilder join(JoinTypeEnum joinType, String tableToJoin, String onCondition) {
+    public MS_SQLQueryBuilder join(MS_JoinTypeEnum joinType, String tableToJoin, String onCondition) {
         return join(joinType.name(), tableToJoin, onCondition);
     }
 

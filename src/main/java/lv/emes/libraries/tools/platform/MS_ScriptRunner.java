@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static lv.emes.libraries.tools.platform.MS_KeyStrokeExecutor.getInstance;
+import static lv.emes.libraries.tools.platform.MS_RobotKeyStrokeExecutor.getInstance;
 import static lv.emes.libraries.tools.platform.ScriptParsingError.*;
 
 /**
@@ -374,7 +374,7 @@ public class MS_ScriptRunner {
             case CMD_SEC_EXECUTE_TEXT_INPUT_SIMULATION:
                 commandParamsAsText = extractCommandContainingVariables(commandParamsAsText);
 
-                MS_KeyStrokeExecutor exec = getInstance();
+                MS_RobotKeyStrokeExecutor exec = getInstance();
                 for (int i = 0; i < commandParamsAsText.length(); i++) {
                     try {
                         char singleCharOfText = commandParamsAsText.charAt(i);
@@ -726,7 +726,7 @@ public class MS_ScriptRunner {
     boolean scriptRunningTerminated() {
         AtomicBoolean res = new AtomicBoolean(true);
         fScriptTerminationShortcutKeyCombination.forEachItem((key, ind) -> {
-            if (!MS_KeyStrokeExecutor.getInstance().isKeyDown(key)) {
+            if (!MS_RobotKeyStrokeExecutor.getInstance().isKeyDown(key)) {
                 res.set(false);
                 fScriptTerminationShortcutKeyCombination.breakOngoingForLoop();
             }

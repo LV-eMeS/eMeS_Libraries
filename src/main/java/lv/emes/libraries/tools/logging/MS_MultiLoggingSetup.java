@@ -30,7 +30,7 @@ import java.util.List;
 public class MS_MultiLoggingSetup {
 
     private MS_List<MS_LoggingRepository> repositories;
-    private String delimiterLineText = ILoggingOperations._LINE;
+    private String delimiterLineText = MS_LoggingOperations._LINE;
     private long maxloggingOperationExecutionTime = 5000;
 
     public MS_List<MS_LoggingRepository> getRepositories() {
@@ -85,8 +85,8 @@ public class MS_MultiLoggingSetup {
 
     /**
      * Changes delimiter line text.
-     * <p>If set to null, nothing will be logged on method's {@link ILoggingOperations#line()} call.
-     * By default this text is {@link ILoggingOperations#_LINE}.
+     * <p>If set to null, nothing will be logged on method's {@link MS_LoggingOperations#line()} call.
+     * By default this text is {@link MS_LoggingOperations#_LINE}.
      *
      * @param delimiterLineText new line text.
      * @return reference to logging configuration itself.

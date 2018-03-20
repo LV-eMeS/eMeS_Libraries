@@ -19,7 +19,7 @@ import java.time.ZonedDateTime;
  * @author eMeS
  * @version 1.1.
  */
-public class MS_MultiLogger implements ILoggingOperations {
+public class MS_MultiLogger implements MS_LoggingOperations {
 
     private MS_MultiLoggingSetup setup;
 
@@ -34,31 +34,31 @@ public class MS_MultiLogger implements ILoggingOperations {
 
     @Override
     public void info(String msg) {
-        logEventMessageToAllRepos(msg, null, LoggingEventTypeEnum.INFO);
+        logEventMessageToAllRepos(msg, null, MS_LoggingEventTypeEnum.INFO);
     }
 
     @Override
     public void warning(String msg) {
-        logEventMessageToAllRepos(msg, null, LoggingEventTypeEnum.WARN);
+        logEventMessageToAllRepos(msg, null, MS_LoggingEventTypeEnum.WARN);
     }
 
     @Override
     public void error(String msg) {
-        logEventMessageToAllRepos(msg, null, LoggingEventTypeEnum.ERROR);
+        logEventMessageToAllRepos(msg, null, MS_LoggingEventTypeEnum.ERROR);
     }
 
     @Override
     public void error(String msg, Exception error) {
-        logEventMessageToAllRepos(msg, error, LoggingEventTypeEnum.ERROR);
+        logEventMessageToAllRepos(msg, error, MS_LoggingEventTypeEnum.ERROR);
     }
 
     @Override
     public void line() {
         if (setup.getDelimiterLineText() != null)
-            logEventMessageToAllRepos(setup.getDelimiterLineText(), null, LoggingEventTypeEnum.UNSPECIFIED);
+            logEventMessageToAllRepos(setup.getDelimiterLineText(), null, MS_LoggingEventTypeEnum.UNSPECIFIED);
     }
 
-    private void logEventMessageToAllRepos(String message, Exception error, LoggingEventTypeEnum eventType) {
+    private void logEventMessageToAllRepos(String message, Exception error, MS_LoggingEventTypeEnum eventType) {
         MS_LoggingEvent event = new MS_LoggingEvent()
                 .withTime(ZonedDateTime.now())
                 .withType(eventType)

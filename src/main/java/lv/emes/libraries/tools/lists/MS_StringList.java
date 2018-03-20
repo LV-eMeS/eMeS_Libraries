@@ -9,15 +9,15 @@ import static lv.emes.libraries.utilities.MS_CodingUtils.inRange;
 
 /**
  * Purpose of this class is to store many different but related texts in a list. It implements number of methods for different actions with elements of the list,
- * including perambulation using methods from <b>IListActions</b>. <b>Delimiter</b> works to separate elements each from another when convert this list from big string.
+ * including perambulation using methods from <b>MS_IListActions</b>. <b>Delimiter</b> works to separate elements each from another when convert this list from big string.
  * <b>secondDelimiter</b> helps in cases when a symbol equal to <b>delimiter</b> is already used in big string.
  * <br><u>Note</u>: those delimiters shouldn't be changed unless they are often used in text which operated with this list.
  * <br><u>Note</u>: class is in it's final implementation state. If there is need for overriding this, use <b>MS_List</b> instead!
  *
- * @version 2.6.
+ * @version 2.8.
  * @see MS_List
  */
-public final class MS_StringList implements IListActions<String> {
+public final class MS_StringList implements MS_IListActions<String> {
 
     boolean flagForLoopBreaking;
     public static final char _DEFAULT_DELIMITER = '#';
@@ -543,7 +543,7 @@ public final class MS_StringList implements IListActions<String> {
     }
 
     @Override
-    public void concatenate(IContactableList<String, Integer> otherList) {
+    public void concatenate(MS_IContactableList<String, Integer> otherList) {
         otherList.forEachItem((item, index) -> {
             this.add(item);
         });

@@ -21,7 +21,7 @@ public class MS_ValidationErrorImpl<T> implements MS_ValidationError<T> {
         return object;
     }
 
-    public MS_ValidationError setObject(T object) {
+    public MS_ValidationError withObject(T object) {
         this.object = object;
         return this;
     }
@@ -36,7 +36,7 @@ public class MS_ValidationErrorImpl<T> implements MS_ValidationError<T> {
         return actionToFormatMessage != null ? actionToFormatMessage.formMessage() : "";
     }
 
-    public MS_ValidationError setErrorMessageForming(IFuncFormValidationErrorMessage action) {
+    public MS_ValidationError withErrorMessageFormingAction(IFuncFormValidationErrorMessage action) {
         actionToFormatMessage = action;
         return this;
     }
