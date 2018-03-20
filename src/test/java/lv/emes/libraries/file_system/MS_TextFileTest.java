@@ -31,7 +31,6 @@ public class MS_TextFileTest {
     private final static String TEXT7_AS_RESOURCE = "2 rows";
     private final static String TEXT8_AS_RESOURCE = "in this file.";
     private final static String MISSING_DIRECTORY_NAME = TestData.TEMP_DIR + "test09CreateFileInNonExistingDirectory/Directory/";
-    private final static String FILENAME_FOR_MISSING_DIR = "test09CreateFileInNonExistingDirectory.txt";
 
     @BeforeClass
     public static void initializeTestObjects() {
@@ -151,19 +150,5 @@ public class MS_TextFileTest {
         mixed.writeln(TEXT4, true); //once again new line
         assertEquals(TEXT4, mixed.readln());
         mixed.close();
-    }
-
-    @Test
-    public void test09CreateFileInNonExistingDirectory() {
-        deleteDirectory(directoryUp(MISSING_DIRECTORY_NAME));
-        assertFalse(directoryExists(MISSING_DIRECTORY_NAME));
-
-        boolean fileCreated = MS_TextFile.createEmptyFile(MISSING_DIRECTORY_NAME + FILENAME_FOR_MISSING_DIR);
-        assertFalse("File shouldn't be created using this method!", fileCreated);
-
-        //but it can be created by overriding a text file manually
-        MS_TextFile aFile = new MS_TextFile(MISSING_DIRECTORY_NAME + FILENAME_FOR_MISSING_DIR);
-        assertTrue( aFile.writeln("Test") );
-        aFile.close();
     }
 }

@@ -3,6 +3,7 @@ package lv.emes.libraries.file_system;
 import lv.emes.libraries.testdata.TestData;
 import lv.emes.libraries.tools.lists.MS_StringList;
 import lv.emes.libraries.utilities.MS_StringUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
@@ -223,16 +224,25 @@ public class MS_FileSystemToolsTest {
         assertFalse(tmpFileStillExists);
     }
 
+    @Test
+    public void test14NewFileCreation() {
+        String filename = tmpDirPath + RandomStringUtils.randomAlphanumeric(9) + SLASH + "test14NewFileCreation.txt";
+        assertFalse("Error: file already exists", fileExists(filename));
+        assertTrue("New file creation failed", createEmptyFile(filename));
+        assertTrue("File doesn't exist after creation", fileExists(filename));
+    }
+
     /**
      * Tests file with content (numbers are corresponding line numbers):<pre>
-     1
-     2 x
-     3 DE,4,
-     4 ABC,2,@
-     5
-     6
+     * 1
+     * 2 x
+     * 3 DE,4,
+     * 4 ABC,2,@
+     * 5
+     * 6
      * </pre>
-     * @throws IOException if there are some problem during file read.
+     *
+     * @throws IOException if there are some problem during file read, which shouldn't normally happen.
      */
     @Test
     public void test20CSVCommaSeparated() throws IOException {

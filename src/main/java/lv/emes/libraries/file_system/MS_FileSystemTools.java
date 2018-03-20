@@ -55,9 +55,10 @@ import java.util.List;
  * <li>extractResourceToTmpFolder</li>
  * </ul>
  *
- * @version 1.8.
+ * @version 1.9.
  */
 public class MS_FileSystemTools {
+
     public static final String CURRENT_DIRECTORY = "./";
     public static final String SLASH = "/";
     public static final String NIRCMD_FILE_FOR_WINDOWS = "tools/nircmd.exe";
@@ -234,18 +235,22 @@ public class MS_FileSystemTools {
     }
 
     /**
-     * Atomically creates a new, empty file named by this abstract pathname if and only if a file with this name does not yet exist. The check for the existence of the file and the creation of the file if it does not exist are a single operation that is atomic with respect to all other filesystem activities that might affect the file.
-     * Note: this method should not be used for file-locking, as the resulting protocol cannot be made to work reliably. The FileLock facility should be used instead.
+     * Atomically creates a new, empty file named by this abstract pathname if and only if a file with this name does not yet exist.
+     * If directories (subdirectories) in path to this file doesn't exist, all necessary directories are created
+     * The check for the existence of the file and the creation of the file if it does not exist are a single operation
+     * that is atomic with respect to all other filesystem activities that might affect the file.
+     * Note: this method should not be used for file-locking, as the resulting protocol cannot be made to work reliably.
+     * The FileLock facility should be used instead.
      *
-     * @param aFileName - path + short filename, in other words: full path to file.
-     * @return true if the named file does not exist and was successfully created; false if the named file already exists.
+     * @param fileName directory path + short filename, in other words: full path to file.
+     * @return true if the named file did not exist and was successfully created; false if the named file already exists.
      */
-
-    public static boolean createEmptyFile(String aFileName) {
-        File file = new File(aFileName);
+    public static boolean createEmptyFile(String fileName) {
+        createNewDirectory(directoryUp(fileName));
+        File file = new File(fileName);
         try {
             return file.createNewFile();
-        } catch (IOException e) {
+        } catch (IOException e) { //shouldn't happen if directory exists
             return false;
         }
     }
@@ -576,7 +581,7 @@ public class MS_FileSystemTools {
      * Opens comma separated UTF-8 encoded file, reads its content and stores in list of String array with element size matching
      * element count in each of read lines.
      *
-     * @param pathToFile       full CSV filename.
+     * @param pathToFile full CSV filename.
      * @return list of String array or empty list if file is empty.
      * @throws IOException <ul>
      *                     <li>if the file does not exist, is a directory rather than a regular file, or for some other reason cannot be opened for reading;</li>

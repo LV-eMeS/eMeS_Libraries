@@ -33,7 +33,7 @@ import java.util.List;
  * <li>getResourceFileTextAsString</li>
  * </ul>
  *
- * @version 2.3.
+ * @version 2.4.
  */
 public class MS_TextFile {
     private PrintWriter fFileWriter = null; //main object that will perform line WRITING.
@@ -226,7 +226,7 @@ public class MS_TextFile {
         if (isFileOpened) { //if successfully opened the read it!
             try {
                 res = fFileReader.readLine();
-            } catch (IOException e) {
+            } catch (IOException ignored) {
             } finally {
                 if (aCloseAfterRead)
                     closeThisFileReading();
@@ -425,30 +425,18 @@ public class MS_TextFile {
     }
 
     /**
-     * @return path to a directory where application is launched.
-     * @see lv.emes.libraries.file_system.MS_FileSystemTools#getProjectDirectory
-     */
-    public static String getProjectDirectory() {
-        return MS_FileSystemTools.getProjectDirectory();
-    }
-
-    public static boolean fileExists(String aFileName) {
-        return MS_FileSystemTools.fileExists(aFileName);
-    }
-
-    public static boolean fileExists(File aFile) {
-        return MS_FileSystemTools.fileExists(aFile);
-    }
-
-    /**
-     * Atomically creates a new, empty file named by this abstract pathname if and only if a file with this name does not yet exist. The check for the existence of the file and the creation of the file if it does not exist are a single operation that is atomic with respect to all other filesystem activities that might affect the file.
-     * Note: this method should not be used for file-locking, as the resulting protocol cannot be made to work reliably. The FileLock facility should be used instead.
+     * Atomically creates a new, empty file named by this abstract pathname if and only if a file with this name does not yet exist.
+     * If directories (subdirectories) in path to this file doesn't exist, all necessary directories are created
+     * The check for the existence of the file and the creation of the file if it does not exist are a single operation
+     * that is atomic with respect to all other filesystem activities that might affect the file.
+     * Note: this method should not be used for file-locking, as the resulting protocol cannot be made to work reliably.
+     * The FileLock facility should be used instead.
      *
-     * @param aFileName - path + short filename, in other words: full path to file.
-     * @return true if the named file did not exist and was successfully created; false if the named file already exists
+     * @param fileName directory path + short filename, in other words: full path to file.
+     * @return true if the named file did not exist and was successfully created; false if the named file already exists.
      */
-    public static boolean createEmptyFile(String aFileName) {
-        return MS_FileSystemTools.createEmptyFile(aFileName);
+    public static boolean createEmptyFile(String fileName) {
+        return MS_FileSystemTools.createEmptyFile(fileName);
     }
 
     /**

@@ -59,26 +59,40 @@ public class MS_Cache<T, ID> {
         this.repository = repository;
     }
 
-    public void store(T object, ID id, Long ttl) {
-        try {
-            if (ttl == null) ttl = defaultTTL;
-            LocalDateTime expirationTime = ttl.intValue() == 0L ? null : LocalDateTime.now().plusSeconds(ttl);
-            //TODO perform in new thread
-            repository.put(id, Pair.of(object, expirationTime));
-        } catch (UnsupportedOperationException e) {
-            if (logger != null) {
-                logger.error("Caching operation is not supported", e);
-            }
-        } catch (MS_RepositoryDataExchangeException e) {
-            if (logger != null) {
-                String errorMess = e.getMessage() == null ? "" : "\nError message: " + e.getMessage();
-                logger.warning("Caching operation failed" + errorMess);
-            }
-        }
+    /**
+     * Method runs new thread with purpose to store new object into cache.
+     * @param object object to store.
+     * @param id object's ID.
+     * @param ttl object's Time To Live in cache.
+     * @return reference to created storing operation thread.
+     */
+    public MS_FutureEvent store(T object, ID id, Long ttl) {
+        if (ttl == null) ttl = defaultTTL;
+        LocalDateTime expirationTime = ttl.intValue() == 0L ? null : LocalDateTime.now().plusSeconds(ttl);
+        return new MS_FutureEvent()
+                .withThreadName("MS_Cache object storage operation")
+                .withAction(() -> repository.put(id, Pair.of(object, expirationTime)))
+                .withActionOnException((e -> {
+                    if (e instanceof UnsupportedOperationException) {
+                        if (logger != null) {
+                            logger.error("Caching operation is not supported", e);
+                        }
+                    } else if (e instanceof MS_RepositoryDataExchangeException) {
+                        if (logger != null) {
+                            String errorMess = e.getMessage() == null ? "" : "\nError message: " + e.getMessage();
+                            logger.warning("Caching operation failed" + errorMess);
+                        }
+                    } else {
+                        if (logger != null) {
+                            logger.error("Unexpected error occurred while performing object storage", e);
+                        }
+                    }
+                }))
+                .schedule();
     }
 
-    public void store(T object, ID id) {
-        store(object, id, null);
+    public MS_FutureEvent store(T object, ID id) {
+        return store(object, id, null);
     }
 
     public T retrieve(ID id) {
@@ -107,43 +121,51 @@ public class MS_Cache<T, ID> {
     }
 
     /**
-     * Method clears all information stored in cache so far.
+     * Method runs new thread to clears all information stored in cache so far.
      * Some caching repositories might not support this operation.
      * In that case information about unsupported operation will be logged as warning.
+     * @return reference to created clearing operation thread.
      */
-    public void clear() {
-        try {
-            //TODO perform in new thread
-            repository.removeAll();
-        } catch (MS_RepositoryDataExchangeException e) {
-            if (logger != null) {
-                logger.error("Cache clearing operation failed due to data exchange exception", e);
-            }
-        } catch (UnsupportedOperationException e) {
-            if (logger != null) {
-                String errorMess = e.getMessage() == null ? "" : "\nError message: " + e.getMessage();
-                logger.warning("Cannot perform cache clearing operation because this operation is not supported " +
-                        "for this type of caching repository" + errorMess);
-            }
-        }
+    public MS_FutureEvent clear() {
+        return new MS_FutureEvent()
+                .withThreadName("MS_Cache all object cleanup operation")
+                .withAction(() -> repository.removeAll())
+                .withActionOnException((e -> {
+                    if (e instanceof UnsupportedOperationException) {
+                        if (logger != null) {
+                            String errorMess = e.getMessage() == null ? "" : "\nError message: " + e.getMessage();
+                            logger.warning("Cannot perform cache clearing operation because this operation is not supported " +
+                                    "for this type of caching repository" + errorMess);
+                        }
+                    } else if (e instanceof MS_RepositoryDataExchangeException) {
+                        if (logger != null) {
+                            logger.error("Cache clearing operation failed due to data exchange exception", e);
+                        }
+                    } else {
+                        if (logger != null) {
+                            logger.error("Unexpected error occurred while performing all object cleanup", e);
+                        }
+                    }
+                }))
+                .schedule();
     }
 
     //*** Synonyms ***
 
-    public void cache(T object, ID id, Long objectTTL) {
-        store(object, id, objectTTL);
+    public MS_FutureEvent cache(T object, ID id, Long objectTTL) {
+        return store(object, id, objectTTL);
     }
 
-    public void cache(T object, ID id) {
-        store(object, id, null);
+    public MS_FutureEvent cache(T object, ID id) {
+        return store(object, id, null);
     }
 
     public T get(ID id) {
         return retrieve(id);
     }
 
-    public void removeAll() {
-        clear();
+    public MS_FutureEvent removeAll() {
+        return clear();
     }
 
     //*** Setters and getters ***
@@ -172,7 +194,7 @@ public class MS_Cache<T, ID> {
 
     private void performExpiredObjectRemoval(ID objId) {
         new MS_FutureEvent()
-                .withThreadName("MS_Cache cleanup job")
+                .withThreadName("MS_Cache expired object cleanup operation")
                 .withAction(() -> repository.remove(objId))
                 .withActionOnException((e -> {
                     if (e instanceof UnsupportedOperationException) {
