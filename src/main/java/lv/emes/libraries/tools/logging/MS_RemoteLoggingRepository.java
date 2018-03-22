@@ -51,7 +51,7 @@ public class MS_RemoteLoggingRepository extends MS_Repository<MS_LoggingEvent, I
     }
 
     @Override
-    protected boolean isInitialized() {
+    public boolean isInitialized() {
         return MS_HttpClient
                 .get(getRemoteServerRoot(serverProperties) + serverProperties.getEndpointStatus(), null)
                 .getReponseCode() == 200;

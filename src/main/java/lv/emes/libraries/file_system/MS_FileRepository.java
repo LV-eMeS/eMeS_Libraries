@@ -30,7 +30,7 @@ public abstract class MS_FileRepository<T> extends MS_Repository<T, String> {
     }
 
     @Override
-    protected boolean isInitialized() {
+    public boolean isInitialized() {
         return MS_FileSystemTools.directoryExists(pathToRepository);
     }
 

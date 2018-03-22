@@ -1,5 +1,6 @@
 package lv.emes.libraries.storage;
 
+import lv.emes.libraries.file_system.CachingTestHelper;
 import lv.emes.libraries.tools.lists.MS_List;
 import lv.emes.libraries.tools.logging.MS_InMemoryLoggingRepository;
 import lv.emes.libraries.tools.logging.MS_MultiLogger;
@@ -17,6 +18,8 @@ import org.junit.runners.MethodSorters;
 import java.time.LocalDateTime;
 import java.util.Map;
 
+import static lv.emes.libraries.file_system.CachingTestHelper.FIRST;
+import static lv.emes.libraries.file_system.CachingTestHelper.SECOND;
 import static org.junit.Assert.*;
 
 /**
@@ -28,13 +31,11 @@ import static org.junit.Assert.*;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MS_CacheTest {
 
+    private static CachingTestHelper<String, Integer> helper;
     private static MS_Cache<String, Integer> cache;
     private static MS_MultiLogger logger;
     private static MS_InMemoryLoggingRepository logs;
     private static Integer lastId = 0;
-
-    private static final String FIRST = "First object will stay there until it will be removed manually";
-    private static final String SECOND = "Second object will expired after 1 second";
 
     private MS_FutureEvent operThread;
 
@@ -255,7 +256,7 @@ public class MS_CacheTest {
                     }
 
                     @Override
-                    protected boolean isInitialized() {
+                    public boolean isInitialized() {
                         return true;
                     }
 
@@ -299,7 +300,7 @@ public class MS_CacheTest {
                     }
 
                     @Override
-                    protected boolean isInitialized() {
+                    public boolean isInitialized() {
                         return true;
                     }
 

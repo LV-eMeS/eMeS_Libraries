@@ -28,7 +28,7 @@ public class MS_InMemoryCachingRepository<T, ID> extends MS_CachingRepository<T,
     }
 
     @Override
-    protected boolean isInitialized() {
+    public boolean isInitialized() {
         return objects != null;
     }
 

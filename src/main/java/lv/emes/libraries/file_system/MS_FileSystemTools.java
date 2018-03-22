@@ -340,7 +340,7 @@ public class MS_FileSystemTools {
     }
 
     /**
-     * Silently deletes file from file system. If file doesn't exist, nothing happens.
+     * Silently deletes file from file system. If file doesn't exist result is <code>false</code>.
      *
      * @param filename name of file to be deleted.
      * @return true if delete successful, false if file couldn't be found or deleted.

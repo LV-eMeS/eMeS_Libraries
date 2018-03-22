@@ -82,14 +82,14 @@ public abstract class MS_Repository<T, ID> implements MS_IRepositoryOperations<T
         if (autoInitialize) init();
     }
 
-    //PROTECTED METHODS
-
     /**
      * Check, if repository for <b>repositoryRoot</b> and <b>repositoryCategoryName</b> is initialized.
      *
      * @return true if repository is ready and can be accessed, false otherwise
      */
-    protected abstract boolean isInitialized();
+    public abstract boolean isInitialized();
+
+    //PROTECTED METHODS
 
     /**
      * Does all the actions to initialize repository.

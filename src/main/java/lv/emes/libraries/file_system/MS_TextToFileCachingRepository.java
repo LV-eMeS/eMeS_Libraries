@@ -49,7 +49,7 @@ public class MS_TextToFileCachingRepository extends MS_CachingRepository<String,
     }
 
     @Override
-    protected boolean isInitialized() {
+    public boolean isInitialized() {
         return MS_FileSystemTools.fileExists(pathToFile);
     }
 
@@ -80,12 +80,11 @@ public class MS_TextToFileCachingRepository extends MS_CachingRepository<String,
 
     @Override
     protected void doRemoveAll() {
-        if (MS_FileSystemTools.deleteFile(pathToFile)) {
-            MS_TextFile.createEmptyFile(pathToFile); //recreate file again
-        } else {
+        if (!(MS_FileSystemTools.deleteFile(pathToFile) &
+                MS_TextFile.createEmptyFile(pathToFile)) //recreate file again
+                )
             throw new MS_RepositoryDataExchangeException("Failed to remove all cached items. " +
                     "Cannot delete corresponding file:\n" + pathToFile);
-        }
     }
 
     @Override

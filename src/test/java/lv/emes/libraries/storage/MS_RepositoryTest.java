@@ -181,7 +181,7 @@ public class MS_RepositoryTest {
         }
 
         @Override
-        protected boolean isInitialized() {
+        public boolean isInitialized() {
             return initedRepos.contains(repositoryLabel);
         }
 
