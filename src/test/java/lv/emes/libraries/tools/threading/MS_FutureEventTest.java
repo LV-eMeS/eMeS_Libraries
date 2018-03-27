@@ -1,6 +1,8 @@
 package lv.emes.libraries.tools.threading;
 
+import lv.emes.libraries.tools.lists.MS_List;
 import lv.emes.libraries.utilities.MS_CodingUtils;
+import lv.emes.libraries.utilities.MS_ExecutionFailureException;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
@@ -8,8 +10,7 @@ import org.junit.runners.MethodSorters;
 import java.rmi.activation.ActivationException;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * @author eMeS
@@ -104,5 +105,91 @@ public class MS_FutureEventTest {
                 .terminate();
         MS_CodingUtils.sleep(DEFAULT_SLEEP_TIME * 3); //lets give much more time for this event to try to execute!
         assertFalse(threadExecuted);
+    }
+
+    @Test
+    public void test21WaitUntilOneFinishedWithStopping() throws MS_ExecutionFailureException {
+        threadExecuted = false;
+        MS_FutureEvent longLastingEvent = new MS_FutureEvent()
+                .withThreadName("Test MS_FutureEvent longLastingEvent")
+                .withAction(() -> {
+                    MS_CodingUtils.sleep(DEFAULT_SLEEP_TIME * 2000);
+                    threadExecuted = true;
+                })
+                .schedule();
+
+        MS_FutureEvent normalEvent = new MS_FutureEvent()
+                .withThreadName("Test MS_FutureEvent normalEvent")
+                .withAction(() -> {
+                    MS_CodingUtils.sleep(DEFAULT_SLEEP_TIME);
+                    threadExecuted = true;
+                })
+                .schedule();
+
+        MS_FutureEvent.waitUntilOneFinished(DEFAULT_SLEEP_TIME / 2, 5, true,
+                longLastingEvent, normalEvent);
+        assertTrue("After waiting thread should've been executed", threadExecuted);
+        assertTrue("After waiting normalEvent should've been finished its work", normalEvent.isFinished());
+        assertTrue("longLastingEvent should've been stopped at this point", longLastingEvent.isFinished());
+    }
+
+    @Test
+    public void test22WaitUntilOneFinishedWithoutStopping() throws MS_ExecutionFailureException {
+        threadExecuted = false;
+        MS_FutureEvent longLastingEvent = new MS_FutureEvent()
+                .withThreadName("Test MS_FutureEvent longLastingEvent")
+                .withAction(() -> {
+                    MS_CodingUtils.sleep(DEFAULT_SLEEP_TIME * 2000);
+                    threadExecuted = true;
+                })
+                .schedule();
+
+        MS_FutureEvent normalEvent = new MS_FutureEvent()
+                .withThreadName("Test MS_FutureEvent normalEvent")
+                .withAction(() -> {
+                    MS_CodingUtils.sleep(DEFAULT_SLEEP_TIME);
+                    threadExecuted = true;
+                })
+                .schedule();
+
+        MS_FutureEvent.waitUntilOneFinished(DEFAULT_SLEEP_TIME, 10, false,
+                longLastingEvent, normalEvent);
+        assertTrue("After waiting thread should've been executed", threadExecuted);
+        assertTrue("After waiting normalEvent should've been finished its work", normalEvent.isFinished());
+        assertFalse("longLastingEvent should've been stopped at this point", longLastingEvent.isFinished());
+        longLastingEvent.terminate();
+    }
+
+    @Test(expected = MS_ExecutionFailureException.class)
+    public void test23WaitUntilOneFinishedWithoutStopping() throws MS_ExecutionFailureException {
+        MS_FutureEvent longLastingEvent = new MS_FutureEvent()
+                .withAction(() -> {
+                    MS_CodingUtils.sleep(DEFAULT_SLEEP_TIME * 20);
+                })
+                .schedule();
+
+        MS_FutureEvent normalEvent = new MS_FutureEvent()
+                .withAction(() -> {
+                    MS_CodingUtils.sleep(DEFAULT_SLEEP_TIME * 20);
+                })
+                .schedule();
+
+        MS_FutureEvent.waitUntilOneFinished(DEFAULT_SLEEP_TIME, 1, false,
+                longLastingEvent, normalEvent);
+    }
+
+    @Test
+    public void test31GetThreadByFutureEventName() {
+        String threadName = "test31GetThreadByFutureEventName";
+        MS_FutureEvent event = new MS_FutureEvent()
+                .withThreadName(threadName)
+                .withAction(() -> MS_CodingUtils.sleep(DEFAULT_SLEEP_TIME * 20))
+                .schedule();
+
+        MS_List<Thread> threads = MS_Thread.getThreadsByName(threadName);
+        assertEquals(1, threads.size());
+        Thread eventThread = threads.get(0);
+        assertTrue(eventThread.isAlive());
+        assertEquals(event.getThreadName(), eventThread.getName());
     }
 }

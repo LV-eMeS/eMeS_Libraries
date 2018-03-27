@@ -5,6 +5,8 @@ import lv.emes.libraries.tools.lists.MS_StringList;
 import lv.emes.libraries.utilities.MS_CodingUtils;
 import lv.emes.libraries.utilities.MS_ExecutionFailureException;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 /**
  * An event in new thread that is going to happen after some short time measured in milliseconds.
  * Most common use cases are user actions or operation with GUI that has to be done in some
@@ -22,6 +24,7 @@ import lv.emes.libraries.utilities.MS_ExecutionFailureException;
  * <li>withActionOnInterruptedException</li>
  * <li>withActionOnException</li>
  * <li>isFinished</li>
+ * <li>isInterrupted</li>
  * <li>getThreadName</li>
  * </ul>
  * <p>Public methods:
@@ -32,10 +35,11 @@ import lv.emes.libraries.utilities.MS_ExecutionFailureException;
  * <p>Static methods:
  * <ul>
  * <li>joinEvents</li>
+ * <li>waitUntilOneFinished</li>
  * </ul>
  *
  * @author eMeS
- * @version 1.1.
+ * @version 1.2.
  */
 public class MS_FutureEvent {
 
@@ -124,6 +128,13 @@ public class MS_FutureEvent {
     }
 
     /**
+     * @return true if event has been stopped or its thread has been interrupted.
+     */
+    public boolean isInterrupted() {
+        return worker.isInterrupted();
+    }
+
+    /**
      * Creates new thread and starts time countdown till event execution then executes event.
      *
      * @return reference to an event itself.
@@ -184,6 +195,45 @@ public class MS_FutureEvent {
             joinEvents(sleepInterval, maxIterationCount, events);
     }
 
+    /**
+     * Forces current thread to wait until at least one of events completes its job.
+     *
+     * @param sleepInterval     sleeping interval between checker loop cycles.
+     * @param maxIterationCount maximum count of iterations to perform.
+     *                          If this number is reached then {@link MS_ExecutionFailureException} is thrown.
+     * @param stopOthers        flag to stop others when one event finished its job.
+     * @param events            collection of events.
+     * @throws MS_ExecutionFailureException if failed to join given <b>events</b> in given time
+     *                                      <b>sleepInterval</b> * <b>maxIterationCount</b>.
+     */
+    public static void waitUntilOneFinished(long sleepInterval, int maxIterationCount, boolean stopOthers, MS_FutureEvent... events)
+            throws MS_ExecutionFailureException {
+
+        waitUntilOneFinished(MS_List.newInstance(events), sleepInterval, maxIterationCount, stopOthers);
+    }
+
+    /**
+     * Forces current thread to wait until at least one of events completes its job.
+     *
+     * @param sleepInterval     sleeping interval between checker loop cycles.
+     * @param maxIterationCount maximum count of iterations to perform.
+     *                          If this number is reached then {@link MS_ExecutionFailureException} is thrown.
+     * @param stopOthers        flag to stop others when one event finished its job.
+     * @param events            collection of events.
+     * @throws MS_ExecutionFailureException if failed to join given <b>events</b> in given time
+     *                                      <b>sleepInterval</b> * <b>maxIterationCount</b>.
+     *                                      <p><u>Warning</u>: in this case all events are continuing their work,
+     *                                      as it is not intended to stop them. If it's necessary to stop them,
+     *                                      it can be done in catch block when {@link MS_ExecutionFailureException}
+     *                                      is caught.
+     */
+    public static void waitUntilOneFinished(MS_List<MS_FutureEvent> events, long sleepInterval, int maxIterationCount, boolean stopOthers)
+            throws MS_ExecutionFailureException {
+
+        if (maxIterationCount > 0)
+            waitUntilOneFinished(sleepInterval, maxIterationCount, stopOthers, events);
+    }
+
     //*** Private methods and classes ***
 
     private static void joinEvents(long sleepInterval, int maxIterationCount, MS_List<MS_FutureEvent> events)
@@ -199,6 +249,37 @@ public class MS_FutureEvent {
                         notJoinedEventThreadNames.toStringWithNoLastDelimiter() + "] in given time");
             }
             joinEvents(sleepInterval, maxIterationCount - 1, events);
+        }
+    }
+
+    private static void waitUntilOneFinished(long sleepInterval, int maxIterationCount, boolean stopOthers, MS_List<MS_FutureEvent> events)
+            throws MS_ExecutionFailureException {
+
+        if (events.size() > 0) {
+            MS_CodingUtils.sleep(sleepInterval);
+            AtomicInteger finishedEventIndex = new AtomicInteger(-1);
+            events.forEachItem((event, i) -> {
+                if (event.isFinished()) {
+                    events.breakOngoingForLoop();
+                    finishedEventIndex.set(i);
+                }
+            });
+
+            if (finishedEventIndex.get() != -1) {
+                if (stopOthers) {
+                    events.remove(finishedEventIndex.get());
+                    events.forEach(MS_FutureEvent::terminate);
+                }
+                return;
+            }
+
+            if (maxIterationCount == 0) {
+                MS_StringList notJoinedEventThreadNames = new MS_StringList(',');
+                events.forEach((event) -> notJoinedEventThreadNames.add(event.getThreadName()));
+                throw new MS_ExecutionFailureException("Following events [" +
+                        notJoinedEventThreadNames.toStringWithNoLastDelimiter() + "] didn't manage to finish in given time");
+            }
+            waitUntilOneFinished(sleepInterval, maxIterationCount - 1, stopOthers, events);
         }
     }
 
