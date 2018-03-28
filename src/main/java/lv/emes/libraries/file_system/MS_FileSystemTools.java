@@ -205,6 +205,7 @@ public class MS_FileSystemTools {
      * @return true if file exists (not directory).
      */
     public static boolean fileExists(String aFileName) {
+        if (aFileName == null) return false;
         File file = new File(aFileName);
         return file.isFile();
     }

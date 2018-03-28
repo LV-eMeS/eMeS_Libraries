@@ -7,6 +7,9 @@ package lv.emes.libraries.utilities;
  */
 public class MS_ExecutionFailureException extends Exception {
 
+    public MS_ExecutionFailureException() {
+    }
+
     public MS_ExecutionFailureException(String messsage, Throwable cause) {
         super(messsage, cause);
     }

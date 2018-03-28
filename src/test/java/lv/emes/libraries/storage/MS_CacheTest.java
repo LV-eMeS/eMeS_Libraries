@@ -1,6 +1,5 @@
 package lv.emes.libraries.storage;
 
-import lv.emes.libraries.file_system.CachingTestHelper;
 import lv.emes.libraries.tools.lists.MS_List;
 import lv.emes.libraries.tools.logging.MS_InMemoryLoggingRepository;
 import lv.emes.libraries.tools.logging.MS_MultiLogger;
@@ -18,8 +17,6 @@ import org.junit.runners.MethodSorters;
 import java.time.LocalDateTime;
 import java.util.Map;
 
-import static lv.emes.libraries.file_system.CachingTestHelper.FIRST;
-import static lv.emes.libraries.file_system.CachingTestHelper.SECOND;
 import static org.junit.Assert.*;
 
 /**
@@ -31,7 +28,9 @@ import static org.junit.Assert.*;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MS_CacheTest {
 
-    private static CachingTestHelper<String, Integer> helper;
+    public static final String FIRST = "First object will stay there until it will be removed manually";
+    public static final String SECOND = "Second object will become expired after 1 second";
+
     private static MS_Cache<String, Integer> cache;
     private static MS_MultiLogger logger;
     private static MS_InMemoryLoggingRepository logs;
@@ -65,7 +64,7 @@ public class MS_CacheTest {
     }
 
     @Test
-    public void test11StoreAndRetrieveFirst() throws MS_ExecutionFailureException {
+    public void test11StoreAndRetrieveFirst() throws Exception {
         operThread = cache.cache(FIRST, ++lastId, 0L);
         MS_FutureEvent.joinEvents(5, 20, operThread);
         assertEquals(1, cache.getRepository().size());

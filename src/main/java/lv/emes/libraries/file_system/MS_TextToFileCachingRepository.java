@@ -3,6 +3,8 @@ package lv.emes.libraries.file_system;
 import lv.emes.libraries.storage.MS_CachingRepository;
 import lv.emes.libraries.storage.MS_RepositoryDataExchangeException;
 import lv.emes.libraries.tools.lists.MS_StringList;
+import lv.emes.libraries.utilities.MS_CodingUtils;
+import lv.emes.libraries.utilities.MS_ExecutionFailureException;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.time.LocalDateTime;
@@ -23,7 +25,8 @@ import static lv.emes.libraries.utilities.MS_DateTimeUtils.*;
 public class MS_TextToFileCachingRepository extends MS_CachingRepository<String, String> {
 
     private String pathToFile;
-    private MS_TextFile file; //TODO test, if we can use 1 file for all operations (read / write)
+    private MS_TextFile file;
+    private boolean fileLocked = false;
 
     /**
      * Constructs file system new caching repository for texts.
@@ -33,7 +36,6 @@ public class MS_TextToFileCachingRepository extends MS_CachingRepository<String,
      */
     public MS_TextToFileCachingRepository(String fileRootPath, String fileName) {
         super(fileRootPath, fileName);
-        pathToFile = fileRootPath + SLASH + fileName;
     }
 
     /**
@@ -45,7 +47,6 @@ public class MS_TextToFileCachingRepository extends MS_CachingRepository<String,
      */
     public MS_TextToFileCachingRepository(String fileRootPath, String fileName, boolean autoInitialize) {
         super(fileRootPath, fileName, autoInitialize);
-        pathToFile = fileRootPath + SLASH + fileName;
     }
 
     @Override
@@ -55,6 +56,7 @@ public class MS_TextToFileCachingRepository extends MS_CachingRepository<String,
 
     @Override
     protected void doInitialize() {
+        pathToFile = getRepositoryRoot() + SLASH + getRepositoryCategoryName();
         MS_TextFile.createEmptyFile(pathToFile);
         file = new MS_TextFile(pathToFile);
     }
@@ -63,16 +65,20 @@ public class MS_TextToFileCachingRepository extends MS_CachingRepository<String,
     protected Map<String, Pair<String, LocalDateTime>> doFindAll() {
         Map<String, Pair<String, LocalDateTime>> res = new LinkedHashMap<>();
         String line = "";
+
+        waitAndLockFile();
         try {
             while ((line = file.readln()) != null) {
                 CachedText text = CachedText.newInstance(line);
                 res.put(text.getId(), Pair.of(text.getText(), text.getExpirationTime()));
             }
-            file.close();
         } catch (IndexOutOfBoundsException | DateTimeParseException e) {
             throw new MS_RepositoryDataExchangeException("Failed to parse corrupted line in file:\n" + line, e);
         } catch (Exception e) {
             throw new MS_RepositoryDataExchangeException("Failed to read from file:\n" + pathToFile, e);
+        } finally {
+            file.close();
+            releaseFile();
         }
 
         return res;
@@ -80,18 +86,24 @@ public class MS_TextToFileCachingRepository extends MS_CachingRepository<String,
 
     @Override
     protected void doRemoveAll() {
-        if (!(MS_FileSystemTools.deleteFile(pathToFile) &
-                MS_TextFile.createEmptyFile(pathToFile)) //recreate file again
-                )
+        waitAndLockFile();
+        //just recreate file
+        if (!(MS_FileSystemTools.deleteFile(pathToFile) & MS_TextFile.createEmptyFile(pathToFile))) {
+            releaseFile();
             throw new MS_RepositoryDataExchangeException("Failed to remove all cached items. " +
                     "Cannot delete corresponding file:\n" + pathToFile);
+        } else {
+            releaseFile();
+        }
     }
 
     @Override
     protected int doGetSize() {
+        waitAndLockFile();
         int fileSize = 0;
         while (file.readln() != null) fileSize++;
         file.close();
+        releaseFile();
         return fileSize;
     }
 
@@ -156,8 +168,41 @@ public class MS_TextToFileCachingRepository extends MS_CachingRepository<String,
 
     //*** Private methods and classes ***
 
+    /**
+     * Locks file for caching from other threads.
+     */
+    private void waitAndLockFile() {
+        waitUntilFileReleased();
+        lockFile();
+    }
+
+    private synchronized void lockFile() {
+        this.fileLocked = true;
+    }
+
+    private synchronized void releaseFile() {
+        fileLocked = false;
+    }
+
+    private synchronized boolean isFileLocked() {
+        return fileLocked;
+    }
+
+    private void waitUntilFileReleased() {
+        try {
+            MS_CodingUtils.executeWithRetry(100, () -> {
+                if (isFileLocked())
+                    throw new MS_ExecutionFailureException();
+            }, () -> MS_CodingUtils.sleep(10));
+        } catch (MS_ExecutionFailureException e) {
+            throw new MS_RepositoryDataExchangeException("Thread failed to execute within ~1 second lasting attempt of " +
+                    "waiting until file is released by another thread", e);
+        }
+    }
+
     private void rewriteFile(Map<String, Pair<String, LocalDateTime>> cachedObjects) {
         doRemoveAll();
+        waitAndLockFile();
         cachedObjects.forEach((id, objToCache) -> {
             MS_StringList parts = new MS_StringList();
             parts.add(id);
@@ -168,9 +213,11 @@ public class MS_TextToFileCachingRepository extends MS_CachingRepository<String,
             file.appendln(parts.toStringWithNoLastDelimiter(), false);
         });
         file.close();
+        releaseFile();
     }
 
     private static class CachedText {
+
         private String id;
         private String text;
         private LocalDateTime expirationTime;

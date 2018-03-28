@@ -165,7 +165,7 @@ public class MS_FutureEvent {
     /**
      * Forces current thread to wait until all of events completes their jobs or gets interrupted.
      *
-     * @param sleepInterval     sleeping interval between checker loop cycles.
+     * @param sleepInterval     sleeping interval (in milliseconds) between checker loop cycles.
      * @param maxIterationCount maximum count of iterations to perform.
      *                          If this number is reached then {@link MS_ExecutionFailureException} is thrown.
      * @param events            collection of events.
@@ -181,7 +181,7 @@ public class MS_FutureEvent {
     /**
      * Forces current thread to wait until all of events completes their jobs or gets interrupted.
      *
-     * @param sleepInterval     sleeping interval between checker loop cycles.
+     * @param sleepInterval     sleeping interval (in milliseconds) between checker loop cycles.
      * @param maxIterationCount maximum count of iterations to perform.
      *                          If this number is reached then {@link MS_ExecutionFailureException} is thrown.
      * @param events            collection of events.

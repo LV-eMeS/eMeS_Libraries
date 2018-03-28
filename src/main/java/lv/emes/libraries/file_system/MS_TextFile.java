@@ -33,9 +33,10 @@ import java.util.List;
  * <li>getResourceFileTextAsString</li>
  * </ul>
  *
- * @version 2.4.
+ * @version 2.5.
  */
 public class MS_TextFile {
+
     private PrintWriter fFileWriter = null; //main object that will perform line WRITING.
     private BufferedReader fFileReader = null; //main object that will perform line READING.
     private PrintWriter fFileAppender = null; //main object that will perform line APPENDING.
@@ -85,7 +86,7 @@ public class MS_TextFile {
         }
     }
 
-    protected void closeThisFileReading() {
+    private void closeThisFileReading() {
         if (fFileReader != null) {
             try {
                 fFileReader.close();
@@ -174,10 +175,7 @@ public class MS_TextFile {
     public boolean openForReading() {
         if (fFileWriter != null) closeThisFileWriting();
         if (fFileAppender != null) closeThisFileAppending();
-        if (fFileReader != null)
-            return false;
-        else
-            return pCreateFileLinkForReading();
+        return fFileReader == null && pCreateFileLinkForReading();
     }
 
     /**
@@ -411,6 +409,11 @@ public class MS_TextFile {
         this.close();
     }
 
+    @Override
+    protected void finalize() {
+        this.close();
+    }
+
     //STATISKAS METODES
 
     /**
@@ -493,11 +496,6 @@ public class MS_TextFile {
         } catch (UnsupportedEncodingException e) {
             return new String(bytes, Charset.defaultCharset());
         }
-    }
-
-    @Override
-    protected void finalize() {
-        this.close();
     }
 
     /**

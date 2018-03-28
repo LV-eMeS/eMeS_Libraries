@@ -1,190 +1,185 @@
 package lv.emes.libraries.file_system;
 
+import lv.emes.libraries.storage.MS_Cache;
+import lv.emes.libraries.storage.MS_RepositoryDataExchangeException;
 import lv.emes.libraries.testdata.TestData;
+import lv.emes.libraries.tools.lists.MS_List;
+import lv.emes.libraries.tools.logging.MS_InMemoryLoggingRepository;
+import lv.emes.libraries.tools.logging.MS_MultiLogger;
+import lv.emes.libraries.tools.logging.MS_MultiLoggingSetup;
+import lv.emes.libraries.tools.threading.MS_FutureEvent;
+import lv.emes.libraries.utilities.MS_CodingUtils;
+import lv.emes.libraries.utilities.MS_ExecutionFailureException;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
+
+import java.time.LocalDateTime;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+import static org.junit.Assert.*;
 
 /**
  * These tests are partly integration tests with {@link lv.emes.libraries.storage.MS_Cache} class.
  *
  * @author eMeS
  */
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MS_TextToFileCachingRepositoryTest {
 
     private static final String PROJECT_NAME = TestData.TEMP_DIR + "eMeS_Libraries/";
     private static final String REPOSITORY_ROOT = PROJECT_NAME + "MS_TextToFileCachingRepositoryTest";
-    private static final String FIRST_FILE = "first.txt";
-    private static final String SECOND_FILE = "second.txt";
+    private static final String FIRST_FILE = "first_test_file.txt";
+    private static final String FIRST = "First object will stay there until it will be removed manually";
+    private static final String SECOND = "Second object will become expired after 1 second";
     private static final String THIRD = "Third object ## HAS some deli#miter characters inside & used, but it should still be ok.";
+    private static final String THIRD_AFTER_PUT = "Object content changed with put method";
+    private static final int TTL = 1000;
 
-    private static CachingTestHelper<String, String> helper;
+    private static MS_Cache<String, String> cache;
+    private static MS_MultiLogger logger;
+    private static MS_InMemoryLoggingRepository logs;
+    private static Map<Integer, String> idStorage; //to keep IDs for stored objects and retrieve them by Integer ID
+    private static MS_TextToFileCachingRepository fileRepository;
+
+    private MS_FutureEvent operThread;
 
     @BeforeClass
     public static void init() {
-        helper = new CachingTestHelper<>();
-        helper.init(new MS_TextToFileCachingRepository(REPOSITORY_ROOT, FIRST_FILE));
+        idStorage = new ConcurrentHashMap<>();
+        for (int i = 1; i <= 500; i++)
+            idStorage.put(i, String.valueOf(i));
+
+        fileRepository = new MS_TextToFileCachingRepository(
+                REPOSITORY_ROOT, FIRST_FILE, true);
+        logs = new MS_InMemoryLoggingRepository();
+        logger = new MS_MultiLogger(new MS_MultiLoggingSetup().withRepository(logs));
+        cache = new MS_Cache<>(fileRepository);
+        cache.setDefaultTTL(TTL / 1000);
+        cache.setLogger(logger);
     }
 
     @AfterClass
     public static void finalizeTestConditions() {
-        MS_FileSystemTools.deleteDirectory(PROJECT_NAME);
+        assertTrue("Cleanup failed because folder cannot be deleted ATM",
+                MS_FileSystemTools.deleteDirectory(PROJECT_NAME));
     }
 
     @Test
     public void test01CheckSetParams() {
-        helper.checkSetParams();
+        assertEquals(TTL / 1000, cache.getDefaultTTL());
+        assertEquals(logger, cache.getLogger());
+        assertTrue("Repository is not initialized, but it should've been on init() step",
+                cache.getRepository().isInitialized());
     }
-//
-//    @Test
-//    public void test11StoreAndRetrieveFirst() throws MS_ExecutionFailureException {
-//        operThread = cache.cache(FIRST, ++lastId, 0L);
-//        MS_FutureEvent.joinEvents(5, 20, operThread);
-//        assertEquals(1, cache.getRepository().size());
-//
-//        assertEquals(FIRST, cache.get(lastId));
-//        verifyCurrentLogCount(0);
-//    }
-//
-//    @Test
-//    public void test12StoreSecondAndBothAreStillThere() throws MS_ExecutionFailureException {
-//        operThread = cache.cache(SECOND, ++lastId);
-//        MS_FutureEvent.joinEvents(5, 20, operThread);
-//        assertEquals(2, cache.getRepository().size());
-//
-//        assertEquals(SECOND, cache.get(lastId));
-//        assertEquals(FIRST, cache.get(lastId - 1));
-//        verifyCurrentLogCount(0);
-//    }
-//
-//    @Test
-//    public void test13CleanupAfter1SecondSecondObjectIsGoneBut1stRemains() {
-//        assertNotNull("Performance issues: Second object shouldn't be expired yet", cache.get(lastId));
-//        MS_CodingUtils.sleep(1000);
-//        assertNull("Second object is still in cache after 1 second, which was its TTL. ", cache.get(lastId));
-//        //if this call will be fast enough we might still find object in real cache
-//        assertNotNull("Performance issues: As expired object cleanup takes some time " +
-//                        "while new thread is created, actual repository should've been returned second object," +
-//                        "which still should've been there.",
-//                cache.getRepository().get(lastId));
-//
-//        assertEquals("First object should stay in cache forever", FIRST, cache.get(lastId - 1));
-//        verifyCurrentLogCount(0);
-//
-//        MS_CodingUtils.sleep(100); //sleep a bit more until cleanup will be completed
-//        assertNull("Performance issues: After additional waiting second object should've been already removed" +
-//                        "from cache repository completely, but it doesn't",
-//                cache.getRepository().get(lastId));
-//        verifyCurrentLogCount(0); //hopefully, Concurrent modification exception will not arise here!
-//    }
-//
-//    @Test
-//    public void test14ClearingBunchOfObjectsHappensInSameThread() throws MS_ExecutionFailureException {
-//        assertEquals(1, cache.getRepository().size()); //first element is still there
-//        MS_List<MS_FutureEvent> cachingThreads = new MS_List<>();
-//        operThread = cache.cache(RandomStringUtils.randomAlphabetic(10), ++lastId);
-//        cachingThreads.add(operThread);
-//        operThread = cache.cache(RandomStringUtils.randomAlphabetic(10), ++lastId, 0L);
-//        cachingThreads.add(operThread);
-//        operThread = cache.store(RandomStringUtils.randomAlphabetic(10), ++lastId);
-//        cachingThreads.add(operThread);
-//        operThread = cache.store(RandomStringUtils.randomAlphabetic(10), ++lastId, 54L);
-//        cachingThreads.add(operThread);
-//
-//        MS_FutureEvent.joinEvents(cachingThreads, 5, 20);
-//        assertEquals(5, cache.getRepository().size());
-//        operThread = cache.removeAll();
-//        MS_FutureEvent.joinEvents(5, 20, operThread);
-//        assertEquals("After clearing cache there should not have been any object left",
-//                0, cache.getRepository().size());
-//        assertNull(cache.get(1));
-//        assertNull(cache.get(lastId));
-//        verifyCurrentLogCount(0);
-//        lastId = 0; //restart ID counter, cause at this point all logs are cleared
-//    }
-//
-//    @Test
-//    public void test21UnsupportedActions() throws MS_ExecutionFailureException {
-//        MS_Cache<String, Integer> cacheForUnsupportedActions = newCacheForUnsupportedActions();
-//        cacheForUnsupportedActions.setLogger(logger);
-//        verifyCurrentLogCount(0);
-//
-//        operThread = cacheForUnsupportedActions.store(FIRST, 1);
-//        MS_FutureEvent.joinEvents(5, 20, operThread);
-//        verifyCurrentLogCount(1);
-//
-//        cacheForUnsupportedActions.retrieve(1);
-//        MS_CodingUtils.sleep(50);
-//        verifyCurrentLogCount(2);
-//
-//        operThread = cacheForUnsupportedActions.clear();
-//        MS_FutureEvent.joinEvents(5, 20, operThread);
-//        verifyCurrentLogCount(3);
-//        logs.getEventList().clear(); //restart logger, because in next steps we will need clean logs
-//    }
-//
-//    @Test
-//    public void test22repositoryDataExceptions() throws MS_ExecutionFailureException {
-//        MS_Cache<String, Integer> cacheForUnsupportedActions = newCacheForRepositoryDataException();
-//        cacheForUnsupportedActions.setLogger(logger);
-//        verifyCurrentLogCount(0);
-//
-//        operThread = cacheForUnsupportedActions.store(FIRST, 1);
-//        MS_FutureEvent.joinEvents(5, 20, operThread);
-//        verifyCurrentLogCount(1);
-//
-//        cacheForUnsupportedActions.retrieve(1);
-//        MS_CodingUtils.sleep(50);
-//        verifyCurrentLogCount(2);
-//
-//        operThread = cacheForUnsupportedActions.clear();
-//        MS_FutureEvent.joinEvents(5, 20, operThread);
-//        verifyCurrentLogCount(3);
-//        logs.getEventList().clear(); //restart logger, because in next steps we will need clean logs
-//    }
-//
-//    @Test
-//    public void test31ConcurrencyNonConflictingIds() throws MS_ExecutionFailureException {
-//        MS_List<MS_FutureEvent> threads1_100 = newThreadListToStoreAndRetrieveObjects(1, 100);
-//        MS_List<MS_FutureEvent> threads101_200 = newThreadListToStoreAndRetrieveObjects(101, 200);
-//        MS_List<MS_FutureEvent> threads201_300 = newThreadListToStoreAndRetrieveObjects(201, 300);
-//        MS_List<MS_FutureEvent> threads301_400 = newThreadListToStoreAndRetrieveObjects(301, 400);
-//        MS_List<MS_FutureEvent> threads401_500 = newThreadListToStoreAndRetrieveObjects(401, 500);
-//
-//        MS_List<MS_FutureEvent> allThreadsTogether = new MS_List<>();
-//        allThreadsTogether.concatenate(threads1_100);
-//        allThreadsTogether.concatenate(threads101_200);
-//        allThreadsTogether.concatenate(threads201_300);
-//        allThreadsTogether.concatenate(threads301_400);
-//        allThreadsTogether.concatenate(threads401_500);
-//
-//        //wait until last thread executes
-//        MS_FutureEvent.joinEvents(allThreadsTogether, 25, 30);
-//        verifyCurrentLogCount(0);
-//        assertEquals(500, cache.getRepository().size());
-//    }
-//
-//    @Test
-//    public void test32ConcurrencyConflictingIds() throws MS_ExecutionFailureException {
-//        cache.clear();
-//        MS_List<MS_FutureEvent> threads1 = newThreadListToStoreAndRetrieveObjects(1, 100);
-//        MS_List<MS_FutureEvent> threads2 = newThreadListToStoreAndRetrieveObjects(20, 120);
-//        MS_List<MS_FutureEvent> threads3 = newThreadListToStoreAndRetrieveObjects(40, 140);
-//        MS_List<MS_FutureEvent> threads4 = newThreadListToStoreAndRetrieveObjects(60, 160);
-//        MS_List<MS_FutureEvent> threads5 = newThreadListToStoreAndRetrieveObjects(80, 180);
-//        MS_List<MS_FutureEvent> threads6 = newThreadListToStoreAndRetrieveObjects(100, 200);
-//
-//        MS_List<MS_FutureEvent> allThreadsTogether = new MS_List<>();
-//        allThreadsTogether.concatenate(threads1);
-//        allThreadsTogether.concatenate(threads2);
-//        allThreadsTogether.concatenate(threads3);
-//        allThreadsTogether.concatenate(threads4);
-//        allThreadsTogether.concatenate(threads5);
-//        allThreadsTogether.concatenate(threads6);
-//
-//        //wait until last thread executes
-//        MS_FutureEvent.joinEvents(allThreadsTogether, 25, 35);
-//        verifyCurrentLogCount(0);
-//        assertEquals(200, cache.getRepository().size());
-//    }
+
+    @Test
+    public void test11StoreAndRetrieveFirst() throws MS_ExecutionFailureException {
+        operThread = cache.cache(FIRST, idStorage.get(1), 0L);
+        MS_FutureEvent.joinEvents(TTL, 10, operThread);
+        assertEquals("After first object caching there should be 1 object cached",
+                1, cache.getRepository().size());
+
+        assertEquals(FIRST, cache.get(idStorage.get(1)));
+        verifyCurrentLogCount(0);
+    }
+
+    @Test
+    public void test12StoreSecondAndBothAreStillThere() throws MS_ExecutionFailureException {
+        operThread = cache.cache(SECOND, idStorage.get(2));
+        MS_FutureEvent.joinEvents(TTL / 10, 10, operThread);
+        assertEquals(2, cache.getRepository().size());
+
+        verifyCurrentLogCount(0);
+        assertEquals("Second object suddenly disappeared from repository", SECOND, cache.get(idStorage.get(2)));
+        assertEquals("First object is not removed manually, so it still should've been there",
+                FIRST, cache.get(idStorage.get(1)));
+    }
+
+    @Test
+    public void test13CleanupAfter1SecondSecondObjectIsGoneBut1stRemains() {
+        assertNotNull("Performance issues: Second object shouldn't be expired yet", cache.get(idStorage.get(2)));
+        MS_CodingUtils.sleep(TTL * 2);
+        assertNull("Second object is still in cache after 2 seconds, which was its TTL. ", cache.get(idStorage.get(2)));
+        //if this call will be fast enough we might still find object in real cache
+        assertNotNull("Performance issues: As expired object cleanup takes some time " +
+                        "while new thread is created, actual repository should've been returned second object," +
+                        "which still should've been there.",
+                cache.getRepository().get(idStorage.get(2)));
+
+        assertEquals("First object should stay in cache forever", FIRST, cache.get(idStorage.get(1)));
+        verifyCurrentLogCount(0);
+
+        verifyCurrentLogCount(0); //hopefully, Concurrent modification exception will not arise here!
+    }
+
+    @Test
+    public void test14ClearingBunchOfObjectsHappensInSameThread() throws MS_ExecutionFailureException {
+        MS_List<MS_FutureEvent> cachingThreads = new MS_List<>();
+        operThread = cache.cache(RandomStringUtils.randomAlphabetic(10), idStorage.get(141));
+        cachingThreads.add(operThread);
+        operThread = cache.cache(RandomStringUtils.randomAlphabetic(10), idStorage.get(142), 0L);
+        cachingThreads.add(operThread);
+        operThread = cache.store(RandomStringUtils.randomAlphabetic(10), idStorage.get(143));
+        cachingThreads.add(operThread);
+        operThread = cache.store(RandomStringUtils.randomAlphabetic(10), idStorage.get(144), 54L);
+        cachingThreads.add(operThread);
+
+        MS_FutureEvent.joinEvents(cachingThreads, TTL / 200, 10);
+        assertEquals("After successful caching and waiting for threads to finish there should be number of objects in cache",
+                5, cache.getRepository().size());
+        operThread = cache.removeAll();
+        MS_FutureEvent.joinEvents(TTL / 200, 10, operThread);
+        assertEquals("After clearing cache there should not have been any object left",
+                0, cache.getRepository().size());
+        assertNull(cache.get(idStorage.get(1)));
+        assertNull(cache.get(idStorage.get(144)));
+        verifyCurrentLogCount(0);
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void test21UnsupportedActionDoAdd() {
+        fileRepository.doAdd(null, null);
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void test22UnsupportedActionDoFind() {
+        fileRepository.doFind(null);
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void test23UnsupportedActionDoremove() {
+        fileRepository.doRemove(null);
+    }
+
+    @Test
+    public void test41AddAndPutComparison() {
+        fileRepository.add(idStorage.get(401), Pair.of(THIRD, LocalDateTime.now().plusHours(1)));
+        assertEquals(THIRD, fileRepository.get(idStorage.get(401)).getLeft());
+        fileRepository.put(idStorage.get(401), Pair.of(THIRD_AFTER_PUT, LocalDateTime.now().plusHours(1)));
+        assertEquals(THIRD_AFTER_PUT, fileRepository.get(idStorage.get(401)).getLeft());
+        //test that add will not overwrite existing object
+        fileRepository.add(idStorage.get(401), Pair.of(THIRD, LocalDateTime.now().plusHours(1)));
+        assertEquals("Calling 'add' on existing ID should not do a thing",
+                THIRD_AFTER_PUT, fileRepository.get(idStorage.get(401)).getLeft());
+    }
+
+    @Test(expected = MS_RepositoryDataExchangeException.class)
+    public void test999repositoryDataExceptionWhenFileCorrupted() {
+        MS_TextFile fileCorrupter = new MS_TextFile(REPOSITORY_ROOT + MS_FileSystemTools.SLASH + FIRST_FILE);
+        fileCorrupter.writeln("Some really bad file content", true);
+        fileRepository.findAll();
+    }
+
+    //*** Private methods ***
+
+    private void verifyCurrentLogCount(int expectedCount) {
+        assertEquals("Error and warning log count differs from expected at this point",
+                expectedCount, logs.getEventList().size());
+    }
 }

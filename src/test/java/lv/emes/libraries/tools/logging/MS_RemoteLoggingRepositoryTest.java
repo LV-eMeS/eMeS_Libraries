@@ -3,6 +3,7 @@ package lv.emes.libraries.tools.logging;
 import lv.emes.libraries.storage.MS_RepositoryDataExchangeException;
 import lv.emes.libraries.testdata.TestData;
 import lv.emes.libraries.utilities.MS_CodingUtils;
+import lv.emes.libraries.utilities.MS_ExecutionFailureException;
 import lv.emes.libraries.utilities.MS_TestUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.BeforeClass;
@@ -67,14 +68,16 @@ public class MS_RemoteLoggingRepositoryTest {
     }
 
     @Test
-    public void test03FindAllEvents() {
-        Map<Instant, MS_LoggingEvent> events = repository.findAll();
-        loggedEvents.getEventList().forEachItem((event, i) -> {
-            if (!event.getType().equals(MS_LoggingEventTypeEnum.UNSPECIFIED))
-                assertEquals("Not found item at index: " + i
-                                + "\nExpected items:\n" + loggedEvents.getEventList().toString()
-                                + "\nActual items:\n" + events.values().toString() + "\n"
-                        , event, events.get(event.getTime().toInstant()));
+    public void test03FindAllEvents() throws MS_ExecutionFailureException {
+        MS_CodingUtils.executeWithRetry(3, () -> {
+            Map<Instant, MS_LoggingEvent> events = repository.findAll();
+            loggedEvents.getEventList().forEachItem((event, i) -> {
+                if (!event.getType().equals(MS_LoggingEventTypeEnum.UNSPECIFIED))
+                    assertEquals("Not found item at index: " + i
+                                    + "\nExpected items:\n" + loggedEvents.getEventList().toString()
+                                    + "\nActual items:\n" + events.values().toString() + "\n"
+                            , event, events.get(event.getTime().toInstant()));
+            });
         });
     }
 
