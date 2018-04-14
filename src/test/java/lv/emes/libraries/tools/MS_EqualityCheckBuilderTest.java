@@ -4,7 +4,9 @@ import lv.emes.libraries.utilities.MS_TestUtils;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.*;
 
@@ -192,10 +194,138 @@ public class MS_EqualityCheckBuilderTest {
         assertNotEquals(exc1, exc2);
     }
 
+    //*** Map equality comparison ***
+
+    @Test
+    public void testMapsEqual() {
+        Map<Integer, Integer> integers = new HashMap<>();
+        integers.put(1, 3);
+        integers.put(2, 6);
+        Map<Integer, Long> longs = new HashMap<>();
+        longs.put(1, 3L);
+        longs.put(2, 6L);
+        builder = buildMaps(integers, longs);
+        assertTrue(builder.isEquals());
+    }
+
+    @Test
+    public void testMapsNotEqual() {
+        Map<Integer, Integer> integers = new HashMap<>();
+        integers.put(1, 3);
+        integers.put(2, 919);
+        Map<Integer, Long> longs = new HashMap<>();
+        longs.put(1, 3L);
+        longs.put(2, 6L);
+        builder = buildMaps(integers, longs);
+        assertFalse(builder.areEqual());
+    }
+
+    @Test
+    public void testMapSizesDiffers() {
+        Map<Integer, Integer> integers = new HashMap<>();
+        integers.put(1, 3);
+        Map<Integer, Long> longs = new HashMap<>();
+        longs.put(1, 3L);
+        longs.put(2, 6L);
+        builder = buildMaps(integers, longs);
+        assertFalse(builder.areEqual());
+    }
+
+    @Test
+    public void testEmptyMapsEqual() {
+        Map<Integer, Integer> integers = new HashMap<>();
+        Map<Integer, Long> longs = new HashMap<>();
+        builder = buildMaps(integers, longs);
+        assertTrue(builder.areEqual());
+    }
+
+    @Test
+    public void testBothMapsNull() {
+        builder = buildMaps(null, null);
+        assertTrue(builder.areEqual());
+    }
+
+    @Test
+    public void testFirstMapNull() {
+        Map<Integer, Long> longs = new HashMap<>();
+        builder = buildMaps(null, longs);
+        assertFalse(builder.areEqual());
+    }
+
+    @Test
+    public void testSecondMapNull() {
+        Map<Integer, Integer> integers = new HashMap<>();
+        builder = buildMaps(integers, null);
+        assertFalse(builder.areEqual());
+    }
+
+    //*** Map with different types of IDs equality comparison ***
+
+    @Test
+    public void testMapsDifferentIdEqual() {
+        Map<Integer, Integer> integers = new HashMap<>();
+        integers.put(1, 3);
+        integers.put(2, 6);
+        Map<Long, Long> longs = new HashMap<>();
+        longs.put(1L, 3L);
+        longs.put(2L, 6L);
+        builder = buildMapsDifferentIdTypes(integers, longs);
+        assertTrue(builder.isEquals());
+    }
+
+    @Test
+    public void testMapsDifferentIdNotEqual() {
+        Map<Integer, Integer> integers = new HashMap<>();
+        integers.put(1, 3);
+        integers.put(2, 919);
+        Map<Long, Long> longs = new HashMap<>();
+        longs.put(1L, 3L);
+        longs.put(2L, 6L);
+        builder = buildMapsDifferentIdTypes(integers, longs);
+        assertFalse(builder.areEqual());
+    }
+
+    @Test
+    public void testMapsDifferentIdSizesDiffers() {
+        Map<Integer, Integer> integers = new HashMap<>();
+        integers.put(1, 3);
+        Map<Long, Long> longs = new HashMap<>();
+        longs.put(1L, 3L);
+        longs.put(2L, 6L);
+        builder = buildMapsDifferentIdTypes(integers, longs);
+        assertFalse(builder.areEqual());
+    }
+
+    @Test
+    public void testEmptyMapsDifferentIdEqual() {
+        Map<Integer, Integer> integers = new HashMap<>();
+        Map<Long, Long> longs = new HashMap<>();
+        builder = buildMapsDifferentIdTypes(integers, longs);
+        assertTrue(builder.areEqual());
+    }
+
+    @Test
+    public void testFirstMapDifferentIdNull() {
+        Map<Long, Long> longs = new HashMap<>();
+        builder = buildMapsDifferentIdTypes(null, longs);
+        assertFalse(builder.areEqual());
+    }
+
+    private static final MS_EqualityCheckBuilder.IComparisonAlgorithm<Integer, Long> INTEGER_AND_LONG_COMPARISON =
+            (integerElement, longElement) -> integerElement.intValue() == longElement;
+
     private MS_EqualityCheckBuilder buildLists(List<Integer> integers, List<Long> longs, boolean mandatoryEquality) {
         return new MS_EqualityCheckBuilder(mandatoryEquality)
-                .appendLists(integers, longs,
-                        (integerElement, longElement) -> integerElement.intValue() == longElement
-                );
+                .appendLists(integers, longs, INTEGER_AND_LONG_COMPARISON);
+    }
+
+    private MS_EqualityCheckBuilder buildMaps(Map<Integer, Integer> integers, Map<Integer, Long> longs) {
+        return new MS_EqualityCheckBuilder(false)
+                .appendMaps(integers, longs, INTEGER_AND_LONG_COMPARISON);
+    }
+
+    private MS_EqualityCheckBuilder buildMapsDifferentIdTypes(Map<Integer, Integer> integers, Map<Long, Long> longs) {
+        return new MS_EqualityCheckBuilder(false)
+                .appendMaps(integers, longs, INTEGER_AND_LONG_COMPARISON, INTEGER_AND_LONG_COMPARISON);
     }
 }
