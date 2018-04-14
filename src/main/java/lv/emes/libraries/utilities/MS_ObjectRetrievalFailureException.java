@@ -1,7 +1,7 @@
 package lv.emes.libraries.utilities;
 
 /**
- * An exception indicating that some kind of operation failed to execute.
+ * An exception indicating that some kind of object retrieval operation failed to execute.
  *
  * @author eMeS
  */
