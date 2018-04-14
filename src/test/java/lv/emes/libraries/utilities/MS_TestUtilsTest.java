@@ -2,11 +2,14 @@ package lv.emes.libraries.utilities;
 
 import lv.emes.libraries.communication.db.MS_ResultSetExtractingUtils;
 import lv.emes.libraries.communication.db.MS_TableRecord;
+import lv.emes.libraries.tools.MS_EqualityCheckBuilder;
 import lv.emes.libraries.tools.lists.MS_List;
 import org.junit.Test;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import javax.sql.rowset.serial.SerialBlob;
+import java.io.ByteArrayInputStream;
+import java.math.BigDecimal;
+import java.sql.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -59,6 +62,115 @@ public class MS_TestUtilsTest {
         extractedObjects = MS_ResultSetExtractingUtils.extractList(rs, TableToMock.class);
         assertEquals(4, extractedObjects.count());
         assertEquals(fourthRecord.name, extractedObjects.get(3).name);
+    }
+
+    @Test
+    public void testMockResultSetForTable() throws SQLException {
+        Map<String, Object[]> emptyTable = new HashMap<>();
+        ResultSet emptyRs = MS_TestUtils.mockResultSetForTable(emptyTable, 2);
+        assertFalse("Result set for empty table must not have next record", emptyRs.next());
+
+        Map<String, Object[]> table = new HashMap<>();
+        table.put("id", new Object[] {1, 2});
+        table.put("name", new Object[] {null, "John"});
+        table.put("longNumber", new Object[] {1234567890987654321L, null});
+        table.put("birthDate", new Object[] {new Date(12345)});
+        table.put("lastLoggedInAt", new Object[] {new Time(987654321)});
+        table.put("isEmployee", new Object[] {null, true});
+        table.put("someTimeAgo", new Object[] {new Timestamp(564576)});
+        table.put("avgSalary", new Object[] {null, new BigDecimal("2540.76")});
+        table.put("zero", new Object[] {new byte[]{0}});
+        table.put("someWeirdObject", new Object[] {new MS_EqualityCheckBuilder()});
+        table.put("b", new Object[] {(byte) 1});
+        Blob fakeBlob = new SerialBlob(new byte[]{3});
+        table.put("blobFail", new Object[] {fakeBlob, new SQLFeatureNotSupportedException("JDBC driver doesn't support BLOBs")});
+        table.put("stream", new Object[] {new SQLException("getBinaryStream usually throws only SQLException"),
+                new ByteArrayInputStream(new byte[] {0})});
+
+        ResultSet rsWithoutAnyRecords = MS_TestUtils.mockResultSetForTable(table, 0);
+        assertFalse(rsWithoutAnyRecords.next());
+
+        ResultSet rsWith1RecordOnly = MS_TestUtils.mockResultSetForTable(table, 1);
+        assertTrue(rsWith1RecordOnly.next());
+        assertFalse(rsWith1RecordOnly.next());
+
+        ResultSet rs = MS_TestUtils.mockResultSetForTable(table, 2);
+        assertTrue(rs.next());
+        assertTrue(rs.next());
+        assertFalse(rs.next());
+
+        Object obj;
+        Integer id;
+        String name;
+        Long longNumber;
+        Date birthDate;
+        Time lastLoggedInAt;
+        Boolean isEmployee;
+        Timestamp someTimeAgo;
+        BigDecimal avgSalary;
+        byte[] zero;
+        Object someWeirdObject;
+        byte b;
+        Blob blobFail;
+
+        id = rs.getInt("id");
+        assertEquals(1, (int) id);
+        name = rs.getString("name");
+        assertEquals(null, name);
+        longNumber = rs.getLong("longNumber");
+        assertEquals(1234567890987654321L, (long) longNumber);
+        birthDate = rs.getDate("birthDate");
+        assertEquals(new Date(12345), birthDate);
+        lastLoggedInAt = rs.getTime("lastLoggedInAt");
+        assertEquals(new Time(987654321), lastLoggedInAt);
+        isEmployee = rs.getBoolean("isEmployee");
+        assertEquals(false, isEmployee);
+        someTimeAgo = rs.getTimestamp("someTimeAgo");
+        assertNotNull(someTimeAgo);
+        avgSalary = rs.getBigDecimal("avgSalary");
+        assertEquals(null, avgSalary);
+        zero = rs.getBytes("zero");
+        assertEquals(1, zero.length);
+        someWeirdObject = rs.getObject("someWeirdObject");
+        assertTrue(someWeirdObject instanceof MS_EqualityCheckBuilder);
+        b = rs.getByte("b");
+        assertEquals(1, b);
+        blobFail = rs.getBlob("blobFail");
+        assertNotNull(blobFail);
+
+        id = rs.getInt("id");
+        assertEquals(2, (int) id);
+        name = rs.getString("name");
+        assertEquals("John", name);
+        obj = rs.getLong("longNumber");
+        assertEquals(0L, obj);
+        birthDate = rs.getDate("birthDate");
+        assertEquals(null, birthDate);
+        assertNull(rs.getTime("lastLoggedInAt"));
+        isEmployee = rs.getBoolean("isEmployee");
+        assertEquals(true, isEmployee);
+        avgSalary = rs.getBigDecimal("avgSalary");
+        assertEquals(new BigDecimal("2540.76"), avgSalary);
+
+        //check, if throwables are thrown as intended
+        boolean exceptionCaught;
+        exceptionCaught = false;
+        try {
+            rs.getBlob("blobFail");
+        } catch (SQLFeatureNotSupportedException e) {
+            exceptionCaught = true;
+        }
+        assertTrue("For this cell rs.getBlob should've thrown a SQLFeatureNotSupportedException", exceptionCaught);
+
+        exceptionCaught = false;
+        try {
+            rs.getBinaryStream("stream");
+        } catch (SQLException e) {
+            exceptionCaught = true;
+        }
+        assertTrue("For this cell rs.getBinaryStream should've thrown a SQLException ", exceptionCaught);
+        //but on second attempt we can get actual stream object
+        assertNotNull("On second attempt we should've been able to get actual stream object", rs.getBinaryStream("stream"));
     }
 
     public static class TableToMock implements MS_TableRecord {

@@ -86,7 +86,7 @@ public class MS_TextToFileCachingRepositoryTest {
                 1, cache.getRepository().size());
 
         assertEquals(FIRST, cache.get(idStorage.get(1)));
-        verifyCurrentLogCount(0);
+        verifyThatCurrentLogCountIs0();
     }
 
     @Test
@@ -95,7 +95,7 @@ public class MS_TextToFileCachingRepositoryTest {
         MS_FutureEvent.joinEvents(TTL / 10, 10, operThread);
         assertEquals(2, cache.getRepository().size());
 
-        verifyCurrentLogCount(0);
+        verifyThatCurrentLogCountIs0();
         assertEquals("Second object suddenly disappeared from repository", SECOND, cache.get(idStorage.get(2)));
         assertEquals("First object is not removed manually, so it still should've been there",
                 FIRST, cache.get(idStorage.get(1)));
@@ -113,9 +113,9 @@ public class MS_TextToFileCachingRepositoryTest {
                 cache.getRepository().get(idStorage.get(2)));
 
         assertEquals("First object should stay in cache forever", FIRST, cache.get(idStorage.get(1)));
-        verifyCurrentLogCount(0);
+        verifyThatCurrentLogCountIs0();
 
-        verifyCurrentLogCount(0); //hopefully, Concurrent modification exception will not arise here!
+        verifyThatCurrentLogCountIs0(); //hopefully, Concurrent modification exception will not arise here!
     }
 
     @Test
@@ -139,7 +139,7 @@ public class MS_TextToFileCachingRepositoryTest {
                 0, cache.getRepository().size());
         assertNull(cache.get(idStorage.get(1)));
         assertNull(cache.get(idStorage.get(144)));
-        verifyCurrentLogCount(0);
+        verifyThatCurrentLogCountIs0();
     }
 
     @Test(expected = UnsupportedOperationException.class)
@@ -178,8 +178,8 @@ public class MS_TextToFileCachingRepositoryTest {
 
     //*** Private methods ***
 
-    private void verifyCurrentLogCount(int expectedCount) {
+    private void verifyThatCurrentLogCountIs0() {
         assertEquals("Error and warning log count differs from expected at this point",
-                expectedCount, logs.getEventList().size());
+                0, logs.getEventList().size());
     }
 }
