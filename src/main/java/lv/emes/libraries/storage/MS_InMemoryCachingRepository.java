@@ -23,8 +23,20 @@ public class MS_InMemoryCachingRepository<T, ID> extends MS_CachingRepository<T,
 
     private Map<ID, Pair<T, LocalDateTime>> objects;
 
-    public MS_InMemoryCachingRepository(String repositoryRoot, String cacheName) {
-        super(repositoryRoot, cacheName, true);
+    /**
+     * Constructs new in-memory caching repository with default root and cache names.
+     */
+    public MS_InMemoryCachingRepository() {
+        this(_DEFAULT_REPOSITORY_ROOT_NAME, _DEFAULT_CACHE_NAME);
+    }
+
+    /**
+     * Constructs new in-memory caching repository with informative <b>cacheRootName</b> and <b>cacheName</b>.
+     * @param cacheRootName name identifying in-memory cache root, which actually doesn't mean anything.
+     * @param cacheName name for this in-memory cache.
+     */
+    public MS_InMemoryCachingRepository(String cacheRootName, String cacheName) {
+        super(cacheRootName, cacheName, true);
     }
 
     @Override
