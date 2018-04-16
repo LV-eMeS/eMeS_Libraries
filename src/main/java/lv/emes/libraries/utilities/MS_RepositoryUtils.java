@@ -2,9 +2,7 @@ package lv.emes.libraries.utilities;
 
 import lv.emes.libraries.storage.IFuncObjectRetrievalOperation;
 import lv.emes.libraries.tools.MS_BadSetupException;
-import lv.emes.libraries.tools.logging.MS_Log4Java;
-import lv.emes.libraries.tools.logging.MS_LoggingRepository;
-import lv.emes.libraries.tools.logging.MS_MultiLoggingSetup;
+import lv.emes.libraries.tools.logging.*;
 import org.apache.log4j.Logger;
 
 import java.util.List;
@@ -108,6 +106,19 @@ public class MS_RepositoryUtils {
                     logger.error(event.getMessage(), event.getError());
             }
         };
+    }
+
+    /**
+     * Prepares logging repository to work with eMeS Remote Logger.
+     * Should be used to add new repository to {@link lv.emes.libraries.tools.logging.MS_MultiLogger} repository
+     * list with {@link MS_MultiLoggingSetup#withRepository(MS_LoggingRepository)}.
+     *
+     * @return new instance of remote logging repository {@link MS_RemoteLoggingRepository}.
+     */
+    public static MS_LoggingRepository newRemoteLoggerRepository(String productOwner, String productName, String secret) {
+        return new MS_RemoteLoggingRepository(productOwner, productName,
+                new MS_LoggingRemoteServerProperties().withSecret(secret)
+        );
     }
 
     //*** Private (static) methods ***
