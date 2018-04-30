@@ -1,6 +1,7 @@
 package lv.emes.libraries.communication.tcp_ip;
 
 import lv.emes.libraries.tools.lists.MS_StringList;
+import lv.emes.libraries.tools.threading.IFuncOnSomeException;
 
 /** 
  * TCP/IP common core things that contains methods for communication. 
@@ -11,6 +12,7 @@ import lv.emes.libraries.tools.lists.MS_StringList;
  * @see lv.emes.libraries.communication.tcp_ip.server.MS_TcpIPServer
  */
 public abstract class MS_TcpIPAbstract implements Runnable {
+
 	//PUBLISKĀS STRUKTŪRAS, IZŅĒMUMI UN KONSTANTES
 	/**
 	 * Set this to handle this kind of error when trying to read message sent by communication partner!
@@ -22,6 +24,11 @@ public abstract class MS_TcpIPAbstract implements Runnable {
 	 * <p>(exception) -&gt; {};
 	 */
 	public IFuncOnIOException onIOException = Throwable::printStackTrace;
+
+	/**
+	 * Set this to handle any exception that occurs when executing some caller command.
+	 */
+	public IFuncOnSomeException onExecutionException = Throwable::printStackTrace;
 
 	//PRIVĀTIE MAINĪGIE
 	protected boolean isActive = false; 

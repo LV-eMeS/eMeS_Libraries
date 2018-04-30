@@ -3,6 +3,7 @@ package lv.emes.libraries.communication.tcp_ip.server;
 import lv.emes.libraries.communication.tcp_ip.MS_ClientServerConstants;
 import lv.emes.libraries.tools.lists.MS_List;
 import lv.emes.libraries.tools.lists.MS_StringList;
+import lv.emes.libraries.tools.threading.MS_FutureEvent;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -49,6 +50,7 @@ import java.io.IOException;
  * @version 1.2.
  */
 public class MS_TcpIPServer extends MS_TcpIPServerCore {
+
     //PUBLIC STRUCTURES, EXCEPTIONS, PROPERTIES AND CONSTANTS
     /**
      * Set this property with lambda expression to do actions after client went down (disconnected).
@@ -130,7 +132,14 @@ public class MS_TcpIPServer extends MS_TcpIPServerCore {
 
         for (MS_ServerCommand cmd : commandList)
             if (cmd.code.equals(userCmd)) { //command found
-                cmd.doOnCommand.doMessageHandling(this, data, client, out);
+                if (cmd.doOnCommand != null) {
+                    MS_FutureEvent commandExecution = new MS_FutureEvent()
+                            .withThreadName("MS_TcpIPServer.onIncomingClientMessage")
+                            .withAction(() -> cmd.doOnCommand.doMessageHandling(this, data, client, out));
+                    if (this.onExecutionException != null)
+                        commandExecution.withActionOnException((ex) -> this.onExecutionException.doOnError(ex));
+                    commandExecution.schedule();
+                }
                 return;
             }
     }

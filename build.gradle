@@ -5,6 +5,7 @@ ext {
     jsonIoVersion = '4.10.0'
     googleHttpClientVersion = '1.23.0'
     apacheHttpComponentsVersion = '4.5.5'
+    mockitoVersion = '1.10.19'
 }
 
 apply plugin: 'java'
@@ -41,7 +42,7 @@ dependencies {
 //    compile group: 'com.jayway.restassured', name: 'rest-assured', version: '2.9.0'
 
     //For tests:
-    compile group: 'org.mockito', name: 'mockito-all', version: '1.9.5'
+    compile 'org.mockito:mockito-all:' + mockitoVersion
     compile "junit:junit:4.12"
     testCompile "junit:junit:4.12"
 }

@@ -3,6 +3,7 @@ package lv.emes.libraries.communication.tcp_ip.client;
 import lv.emes.libraries.communication.tcp_ip.MS_ClientServerConstants;
 import lv.emes.libraries.tools.lists.MS_List;
 import lv.emes.libraries.tools.lists.MS_StringList;
+import lv.emes.libraries.tools.threading.MS_FutureEvent;
 import lv.emes.libraries.utilities.MS_CodingUtils;
 
 import java.io.DataOutputStream;
@@ -51,7 +52,7 @@ public class MS_TcpIPClient extends MS_TcpIPClientCore {
         MS_ClientCommand tmp = new MS_ClientCommand();
         tmp.code = MS_ClientServerConstants._DC_NOTIFY_MESSAGE;
         tmp.doOnCommand = (client, data, out) -> {
-            this.disconnect(); //break connection because it's already closed from server's side
+            this.disconnect(); //break connection, because it's already closed from server's side
             //user can define his own expected behavior when server goes down.
             if (onServerGoingDown != null)
                 onServerGoingDown.doOnEvent();
@@ -77,7 +78,14 @@ public class MS_TcpIPClient extends MS_TcpIPClientCore {
 
         for (MS_ClientCommand cmd : commandList)
             if (cmd.code.equals(userCmd)) { //command found
-                cmd.doOnCommand.doMessageHandling(this, data, out);
+                if (cmd.doOnCommand != null) {
+                    MS_FutureEvent commandExecution = new MS_FutureEvent()
+                            .withThreadName("MS_TcpIPClient.onIncomingServerMessage")
+                            .withAction(() -> cmd.doOnCommand.doMessageHandling(this, data, out));
+                    if (onExecutionException != null)
+                        commandExecution.withActionOnException((ex) -> this.onExecutionException.doOnError(ex));
+                    commandExecution.schedule();
+                }
                 return;
             }
     }
@@ -90,7 +98,7 @@ public class MS_TcpIPClient extends MS_TcpIPClientCore {
      * @param cmd command code and method which will be triggered when client sends particular command.
      */
     public void registerNewCommand(MS_ClientCommand cmd) {
-        commandList.add(cmd);
+        if (cmd != null) commandList.add(cmd);
     }
 
     /**
@@ -116,8 +124,7 @@ public class MS_TcpIPClient extends MS_TcpIPClientCore {
      */
     public MS_ClientCommand getCommandByCode(String cmdCode) {
         for (MS_ClientCommand cmd : commandList)
-            if (cmd.code.equals(cmdCode))
-                return cmd;
+            if (cmd.code.equals(cmdCode)) return cmd;
         return null;
     }
 

@@ -113,6 +113,9 @@ public class MS_RepositoryUtils {
      * Should be used to add new repository to {@link lv.emes.libraries.tools.logging.MS_MultiLogger} repository
      * list with {@link MS_MultiLoggingSetup#withRepository(MS_LoggingRepository)}.
      *
+     * @param productOwner product owner's name or ID.
+     * @param productName product name or ID.
+     * @param secret secret key to get access to logging operations for this product.
      * @return new instance of remote logging repository {@link MS_RemoteLoggingRepository}.
      */
     public static MS_LoggingRepository newRemoteLoggerRepository(String productOwner, String productName, String secret) {

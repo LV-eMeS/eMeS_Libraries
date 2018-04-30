@@ -33,7 +33,7 @@ import java.util.Random;
  * @version 1.3.
  */
 abstract class MS_TcpIPClientCore extends MS_TcpIPAbstract {
-    //	static Logger log = Logger.getLogger(MS_TcpClientCore.class.getName());
+
     private final int DEFAULT_THREAD_SLEEP_TIME = 250;
     private Socket server; // server socket
 

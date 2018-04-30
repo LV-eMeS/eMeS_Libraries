@@ -34,15 +34,15 @@ public class MS_PropertiesFileTest {
     public void test02ReadPropertiesFile() throws IOException {
         MS_PropertiesFile pro = new MS_PropertiesFile();
         pro.load(FILE_NAME);
-        assertTrue(pro.getProperty("USERNAME").equals("root"));
-        assertTrue(pro.getProperty("HOSTNAME").equals("localhost"));
+        assertEquals("root", pro.getProperty("USERNAME"));
+        assertEquals("localhost", pro.getProperty("HOSTNAME"));
         assertEquals(pro.getProperty("PORT", -123456789), 3306); //tests for integer value
-        assertTrue(pro.getOrDefault("DEFAULT_USER_ID", 0).equals("1")); //good result is String anyways
+        assertEquals("1", pro.getOrDefault("DEFAULT_USER_ID", 0)); //good result is String anyways
 
         //some bad cases
-        assertFalse(pro.getProperty("DEFAULT_USER_ID").equals("something wrong"));
-        assertTrue(pro.getProperty("unknown property") == null);
+        assertNotEquals("something wrong", pro.getProperty("DEFAULT_USER_ID"));
+        assertNull(pro.getProperty("unknown property"));
         //default value is Integer, so be careful, better not to use different types for expected and default values!
-        assertTrue(pro.getOrDefault("unknown property", 0).equals(0));
+        assertEquals(0, pro.getOrDefault("unknown property", 0));
     }
 }
