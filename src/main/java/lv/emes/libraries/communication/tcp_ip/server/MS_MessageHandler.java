@@ -13,17 +13,18 @@ import java.util.Random;
  * @see MS_TcpIPServerCore
  */
 class MS_MessageHandler implements Runnable {
+
     //	static Logger log = Logger.getLogger(MS_MessageHandler.class.getName());
     private final int DEFAULT_THREAD_SLEEP_TIME = 250;
-    MS_ClientOfServer client;
-    MS_TcpIPServerCore server;
+    private MS_ClientOfServer client;
+    private MS_TcpIPServerCore server;
 
     /**
      * Saves references of linked client and server sockets.
      * Also sets I/O handlers so in run()
      *
-     * @param client
-     * @param server
+     * @param client client that is connected to server.
+     * @param server TCP/IP server.
      */
     public MS_MessageHandler(MS_ClientOfServer client, MS_TcpIPServerCore server) {
         this.client = client;

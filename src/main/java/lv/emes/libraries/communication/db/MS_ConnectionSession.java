@@ -72,7 +72,7 @@ public class MS_ConnectionSession implements AutoCloseable {
      * ResultSet rs = getQueryResult(stmt);<br>
      * </code>
      * OR<br>
-     * <code>conn.executeQuery.(stmt); //if making changes in DB</code>
+     * <code>conn.executeQuery(stmt); //if making changes in DB</code>
      *
      * @param sql an SQL statement that may contain one or more '?' IN parameter placeholders.
      * @return a new <code>MS_PreparedSQLQuery</code> object containing the pre-compiled SQL statement.
@@ -96,7 +96,7 @@ public class MS_ConnectionSession implements AutoCloseable {
      * ResultSet rs = getQueryResult(stmt);<br>
      * </code>
      * OR<br>
-     * <code>conn.executeQuery.(stmt); //if making changes in DB</code>
+     * <code>conn.executeQuery(stmt); //if making changes in DB</code>
      *
      * @param query a SQL builder that may contain one or more '?' IN parameter placeholders.
      * @return a new <code>MS_PreparedSQLQuery</code> object containing the pre-compiled SQL statement.

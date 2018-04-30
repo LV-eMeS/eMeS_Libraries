@@ -5,7 +5,7 @@ import lv.emes.libraries.tools.platform.MS_InputOutputMethodDefaults;
 import lv.emes.libraries.tools.platform.MS_ScriptRunner;
 
 /**
- * @version 2.2.
+ * @version 3.0.
  * @author eMeS
  */
 public class MSScriptRunnerExecutable {
@@ -14,10 +14,10 @@ public class MSScriptRunnerExecutable {
         String commandText = "";
         //for testing:
 //        commandText = "mute#";
-//        commandText = commandText + "appendln#DD:/tmp/$test$.txt&Line 1#" + "appendln#D:/tmp/f.txt&Line 2 + $test$#";
+//        commandText = commandText + "run#C:/Windows/System32/devcon.exe&enable&HID\\VID_1135*6605*COL03*#";
 
         //For building
-        commandText = MS_TextFile.getFileTextAsString(args[0], "");
+        commandText = MS_TextFile.getFileTextAsString(args[0], ""); //uncomment when testing
         MS_ScriptRunner runner = new MS_ScriptRunner(commandText);
         runner.setPathToLoggerFile("MSScriptRunnerExecutable.log"); //ATM we are letting user to log info by himself
         runner.setVariableInputMethod(MS_InputOutputMethodDefaults._INPUT_JOPTION_PANE);

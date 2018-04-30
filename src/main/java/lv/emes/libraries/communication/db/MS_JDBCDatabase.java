@@ -3,6 +3,7 @@ package lv.emes.libraries.communication.db;
 import lv.emes.libraries.tools.MS_BadSetupException;
 
 import java.sql.SQLException;
+import java.sql.SQLTimeoutException;
 
 /**
  * Describes main operations with JDBC database, which supports connection sessions.
@@ -51,7 +52,10 @@ public interface MS_JDBCDatabase {
      *     }</code></pre>
      *
      * @return new connection session object bind to new or existing (in connection pool) connection.
-     * @throws SQLException if a database connection or access error occurs or the url is invalid.
+     * @throws SQLTimeoutException when the driver has determined that the timeout value specified by the
+     *                             setLoginTimeout method has been exceeded and has at least tried to cancel
+     *                             the current database connection attempt.
+     * @throws SQLException        if a database access error occurs or the url is null.
      */
     MS_ConnectionSession getConnectionSession() throws SQLException;
 

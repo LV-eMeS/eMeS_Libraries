@@ -3,6 +3,7 @@ package lv.emes.libraries.communication.tcp_ip;
 import lv.emes.libraries.communication.MS_TakenPorts;
 
 public class MS_ClientServerConstants {
+
 	public static final String _DEFAULT_HOST = "localhost";
 	public static final String _DC_NOTIFY_MESSAGE = "<Notify All clients on DC>";
 	public static final String _NEW_CLIENT_ID_NOTIFY_MESSAGE = "<Hello, your ID is...>";

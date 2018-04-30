@@ -32,6 +32,7 @@ public abstract class MS_AbstractJDBCDatabase implements MS_JDBCDatabase {
 
     /**
      * Creates new instance of database and initializes it immediately with all passed <b>connParams</b>.
+     *
      * @param connParams connection parameters and connection pool settings.
      * @throws MS_BadSetupException if JDBC driver is not found due to {@link ClassNotFoundException}.
      * @throws NullPointerException if some of connection variables are still not set for this DB or are invalid,
@@ -119,6 +120,7 @@ public abstract class MS_AbstractJDBCDatabase implements MS_JDBCDatabase {
      * and before cleaning job scheduling.
      * Forms Driver-specific connection string from connection parameters in order to use it in
      * {@link MS_AbstractJDBCDatabase#getConnectionFromDriver()}.
+     *
      * @return string that is applicable to {@link DriverManager} and allows to establish connection via
      * Driver manager's <b>getConnection</b> method.
      */

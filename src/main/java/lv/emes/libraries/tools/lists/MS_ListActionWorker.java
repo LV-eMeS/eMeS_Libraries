@@ -20,7 +20,7 @@ import java.util.function.BiConsumer;
  */
 public class MS_ListActionWorker {
 
-    public MS_ListActionWorker() {
+    private MS_ListActionWorker() {
     }
 
     public static <T> void forEachItem(MS_ILoopableListWithItems<T, Integer> list, int startFromIndex, int endIndex, IFuncForEachItemLoopAction<T, Integer> action) {

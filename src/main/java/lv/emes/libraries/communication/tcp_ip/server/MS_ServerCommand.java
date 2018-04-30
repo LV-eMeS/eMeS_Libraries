@@ -6,6 +6,7 @@ package lv.emes.libraries.communication.tcp_ip.server;
  * @see lv.emes.libraries.communication.tcp_ip.server.IFuncOnIncomingClientMessage
  */
 public class MS_ServerCommand {
+
 	public String code = "";
 	public IFuncOnIncomingClientMessage doOnCommand;
 	

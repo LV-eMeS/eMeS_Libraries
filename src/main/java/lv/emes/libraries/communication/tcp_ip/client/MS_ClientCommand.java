@@ -5,6 +5,7 @@ package lv.emes.libraries.communication.tcp_ip.client;
  * @author eMeS
  */
 public class MS_ClientCommand {
+
 	public String code = "";
 	/**
 	 * (client, data, out) -&gt; {methods};

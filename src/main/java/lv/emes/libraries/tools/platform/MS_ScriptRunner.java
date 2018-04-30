@@ -55,6 +55,7 @@ import static lv.emes.libraries.tools.platform.ScriptParsingError.*;
  * <li><code>WSHOW#notepad#</code> - (platform: Windows) brings first window matching text in task manager as second parameter like "notepad".</li>
  * <li><code>WHIDE#notepad#</code> - (platform: Windows) minimizes first window matching text in task manager as second parameter like "notepad".</li>
  * <li><code>PAUSE#1000#</code> - holds script executing for 1 second.</li>
+ * <li><code>SLEEP#1000#</code> - holds script executing for 1 second.</li>
  * <li><code>DI#1000#</code> - defines interval of delaying script command execution for 1 second after each command; to stop this
  * either use DI#0# or PAUSE#X#, and after X miliseconds delaying will be canceled.</li>
  * <li><code>ML#</code> - does left mouse click.</li>
@@ -96,7 +97,7 @@ import static lv.emes.libraries.tools.platform.ScriptParsingError.*;
  * </ul>
  *
  * @author eMeS
- * @version 1.8.
+ * @version 3.0.
  */
 public class MS_ScriptRunner {
 
@@ -142,6 +143,7 @@ public class MS_ScriptRunner {
         COMMANDS.put("WHIDE", CMD_NR_HIDE_WINDOW_OS_WINDOWS);
         COMMANDS.put("HIDE", CMD_NR_HIDE_WINDOW_OS_WINDOWS); //synonym for Windows OS only
         COMMANDS.put("PAUSE", CMD_NR_PAUSE);
+        COMMANDS.put("SLEEP", CMD_NR_PAUSE); //synonym
         COMMANDS.put("DI", CMD_NR_SET_DELAY_INTERVAL);
         COMMANDS.put("ML", CMD_NR_MOUSE_LEFT);
         COMMANDS.put("MLD", CMD_NR_MOUSE_LEFT_DOWN);
@@ -393,9 +395,16 @@ public class MS_ScriptRunner {
             case CMD_SEC_RUN_APPLICATION:
                 params = new MS_StringList(commandParamsAsText, DELIMITER_OF_PARAMETERS);
                 StringBuilder appParams = new StringBuilder();
-                if (params.count() > 2)
+                if (params.count() == 2) { //in this case parameters should be delimited with spaces
                     for (int i = 1; i < params.count(); i++)
                         appParams.append(params.get(i));
+                } else if (params.count() > 2) { //in this case every parameter must be delimited
+                    // with DELIMITER_OF_PARAMETERS and spaces mustn't be present
+                    for (int i = 1; i < params.count(); i++) {
+                        appParams.append(params.get(i));
+                        appParams.append(" ");
+                    }
+                }
                 MS_FileSystemTools.executeApplication(params.get(0), appParams.toString());
                 break;
             case CMD_SEC_MOUSE_WHEEL:

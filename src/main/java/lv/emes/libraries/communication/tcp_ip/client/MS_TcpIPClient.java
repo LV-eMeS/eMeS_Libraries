@@ -25,9 +25,10 @@ import java.io.IOException;
  * -writeln
  *
  * @author eMeS
- * @version 1.1.
+ * @version 1.2.
  */
 public class MS_TcpIPClient extends MS_TcpIPClientCore {
+
     //PUBLIC STRUCTURES, EXCEPTIONS AND CONSTANTS
     /**
      * Set this property with lambda expression to do actions after server went down (disconnected).
