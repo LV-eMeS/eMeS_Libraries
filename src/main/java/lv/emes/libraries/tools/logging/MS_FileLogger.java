@@ -13,7 +13,7 @@ import static lv.emes.libraries.utilities.MS_StringUtils._LINE_BRAKE;
  * <p>Public methods:
  * <ul>
  * <li>info</li>
- * <li>warning</li>
+ * <li>warn</li>
  * <li>error</li>
  * <li>line</li>
  * <li>logEvent</li>
@@ -51,7 +51,7 @@ public class MS_FileLogger implements MS_LoggingOperations, MS_LoggingRepository
      *
      * @param msg arbitrary text to be added to logger lines.
      */
-    public void warning(String msg) {
+    public void warn(String msg) {
         pAppendLine(pGetTimePart(LocalDateTime.now()) + pGetMainPart(MS_LoggingEventTypeEnum.WARN, msg));
     }
 

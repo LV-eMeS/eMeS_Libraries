@@ -174,13 +174,13 @@ public class MS_Scheduler {
      * @throws IllegalStateException if scheduler haven't started yet.
      */
     public void waitFor(long sleepInterval) throws IllegalStateException {
-        if (!scheduled)
-            throw new IllegalStateException(SCHEDULER_IS_STARTED);
-        while (getScheduledEventCount() > 0) {
-            MS_CodingUtils.sleep(sleepInterval);
-            clearOldEvents();
+        if (scheduled) { //only if it's still scheduled
+            while (getScheduledEventCount() > 0) {
+                MS_CodingUtils.sleep(sleepInterval);
+                clearOldEvents();
+            }
+            scheduled = false; //when its all done
         }
-        scheduled = false; //when its all done
     }
 
     /**

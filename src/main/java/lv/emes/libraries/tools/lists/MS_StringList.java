@@ -9,17 +9,18 @@ import static lv.emes.libraries.utilities.MS_CodingUtils.inRange;
 
 /**
  * Purpose of this class is to store many different but related texts in a list. It implements number of methods for different actions with elements of the list,
- * including perambulation using methods from <b>MS_IListActions</b>. <b>Delimiter</b> works to separate elements each from another when convert this list from big string.
+ * including perambulation using methods from <b>MS_IListActions</b>.
+ * <b>Delimiter</b> works to separate elements each from another when convert this list from big string.
  * <b>secondDelimiter</b> helps in cases when a symbol equal to <b>delimiter</b> is already used in big string.
- * <br><u>Note</u>: those delimiters shouldn't be changed unless they are often used in text which operated with this list.
- * <br><u>Note</u>: class is in it's final implementation state. If there is need for overriding this, use <b>MS_List</b> instead!
+ * <br><u>Note</u>: those delimiters shouldn't be changed unless they are often used in text which operated by this list.
+ * <br><u>Note</u>: class is in it's final implementation state and therefore is considered as finished.
  *
  * @version 2.8.
  * @see MS_List
  */
 public final class MS_StringList implements MS_IListActions<String> {
 
-    boolean flagForLoopBreaking;
+    private boolean flagForLoopBreaking;
     public static final char _DEFAULT_DELIMITER = '#';
     public static final char _SECOND_DEFAULT_DELIM = '`';//chr(9835);
     /**
@@ -433,12 +434,12 @@ public final class MS_StringList implements MS_IListActions<String> {
      */
     public void fromString(String aString, char aDelimiter) {
         this.delimiter = aDelimiter;
-        clear(); //iztuksot sarakstu
-        if (aString == null) return; //neko nedarit, ja string nav vertibas
+        clear(); //clear the list
+        if (aString == null) return; //if no text given, list will be left empty
         int aStringLen = aString.length();
         if (aStringLen == 0) return;
-        String el = ""; //teksts, ko saglabasim ka konkreto saraksta elementu
-        //parliecinamies, lai dati beidzas ar atdalitaju, ja nu lietotajs to ir piemirsis
+        StringBuilder el = new StringBuilder(); //text, which will be saved as concrete element of list
+        //make sure data ends with delimiter, in case it is not so for input
         if (aString.charAt(aString.length() - 1) != aDelimiter) {
             aString = aString + aDelimiter;
             aStringLen++;
@@ -447,20 +448,21 @@ public final class MS_StringList implements MS_IListActions<String> {
         int i = 0;
         while (i < aStringLen) {
             if (aString.charAt(i) != aDelimiter)
-                el = el + aString.charAt(i);
+                el.append(aString.charAt(i));
             else {
-                //ja sastapts atdalitajs...
+                //if delimiter met...
                 if ((i + 1 < aString.length()) && (aString.charAt(i + 1) == secondDelimiter)) {
-                    //ja atdalitajam seko otras kartas atdalitajs, tad to elementu noignorejam, tas vel nav beidzies
-                    el = el + aString.charAt(i);
-                    i++; //uzreiz ejam talak
-                } else {//ja aiz atdalitaja neseko otras kartas atdalitajs, tas nozime, ka var registret jaunu elementu
-                    this.add(el);
-                    el = ""; //attiram mainiga vertibu
+                    //if there is second delimiter after this one, it means that delimiter was a symbol, and therefore
+                    //we must continue on element content building
+                    el.append(aString.charAt(i));
+                    i++; //move on
+                } else {//if there is no second delimiter after delimiter, it means that element ends here - lets add it to the list!
+                    this.add(el.toString());
+                    el = new StringBuilder(); //clear content of the element
                 }
             }
             i++;
-        } //while cikla beigas
+        } //while loop ends here
     }
 
     private boolean listIsEmptyOrIndexNotInRange(int index) {

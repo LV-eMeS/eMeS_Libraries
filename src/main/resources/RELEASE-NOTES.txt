@@ -1,5 +1,5 @@
 eMeS libraries
-Version 2.1.5
+Version 2.1.6
 Release Notes
 
 INTRODUCTION:
@@ -27,7 +27,8 @@ eMeS libraries Version 2.2.0
 * Method to join different future events MS_FutureEvent.
 * MS_CachingRepository with In-memory and text file caching repository implementations.
 * MS_Flow implementation for flow oriented design.
-* Scheduler support for Script runner like "sleep#till&23:55" or "sleep#for&3600".
+* Scheduler support for Script runner to hold till some time like, e.g. "sleep#till&23:55".
+* "Continue on errors" flag for MS_ScriptRunner (default - true).
 -----------
 * Removed deprecated MS_InMemoryCache, as instead MS_Cache with appropriate MS_CachingRepository
   should be used.

@@ -5,13 +5,13 @@ package lv.emes.libraries.tools.logging;
  * <p>Public methods:
  * <ul>
  * <li>info</li>
- * <li>warning</li>
+ * <li>warn</li>
  * <li>error</li>
  * <li>line</li>
  * </ul>
  *
  * @author eMeS
- * @version 1.0.
+ * @version 1.1.
  */
 public interface MS_LoggingOperations {
 
@@ -29,12 +29,12 @@ public interface MS_LoggingOperations {
     void info(String msg);
 
     /**
-     * Log warning with message <b>msg</b>.
+     * Log warn with message <b>msg</b>.
      * Word "WARN" will be added before this message while performing logging operation.
      *
      * @param msg informative text to be added to logger entries.
      */
-    void warning(String msg);
+    void warn(String msg);
 
     /**
      * Log error with message <b>msg</b>.

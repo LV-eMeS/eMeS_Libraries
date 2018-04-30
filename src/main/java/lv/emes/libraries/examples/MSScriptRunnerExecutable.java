@@ -14,7 +14,8 @@ public class MSScriptRunnerExecutable {
         String commandText = "";
         //for testing:
 //        commandText = "mute#";
-//        commandText = commandText + "run#C:/Windows/System32/devcon.exe&enable&HID\\VID_1135*6605*COL03*#";
+//        commandText = commandText + "SLEEP#till&2018-04-30T22:51:30#";
+//        commandText = commandText + "comb#win&D#";
 
         //For building
         commandText = MS_TextFile.getFileTextAsString(args[0], ""); //uncomment when testing

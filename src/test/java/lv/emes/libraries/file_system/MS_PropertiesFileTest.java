@@ -11,6 +11,7 @@ import static org.junit.Assert.*;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MS_PropertiesFileTest {
+
     private static final String FILE_NAME = "./src/test/resources/" + "MS_PropertiesFileTest.properties";
 
     @AfterClass

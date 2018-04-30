@@ -10,17 +10,12 @@ import static org.junit.Assert.assertEquals;
 
 public class MS_DateTimeUtilsTest {
 
-    private Date simpleDate;
-    private LocalDateTime dateTime;
-    private LocalTime time;
-    private LocalDate date;
-
     @Test
     public void testToString() {
-        simpleDate = new Date();
-        dateTime = LocalDateTime.ofInstant(simpleDate.toInstant(), ZoneId.systemDefault());
-        time = LocalTime.from(dateTime);
-        date = LocalDate.from(dateTime);
+        Date simpleDate = new Date();
+        LocalDateTime dateTime = LocalDateTime.ofInstant(simpleDate.toInstant(), ZoneId.systemDefault());
+        LocalTime time = LocalTime.from(dateTime);
+        LocalDate date = LocalDate.from(dateTime);
 
         assertEquals(dateTimeToStr(simpleDate), dateTimeToStr(dateTime));
         assertEquals(timeToStr(simpleDate), timeToStr(time));
@@ -138,9 +133,15 @@ public class MS_DateTimeUtilsTest {
         assertEquals(expected, actual);
 
         //date of Epoch day part plus concrete time
-        expected = ZonedDateTime.of(1970, 1, 1, 11, 34, 3, 0, ZoneOffset.systemDefault()).withFixedOffsetZone();
-        dateAndOrTimeString = "11:34:03";
+        expected = ZonedDateTime.of(1970, 1, 1, 1, 4, 3, 0, ZoneOffset.systemDefault()).withFixedOffsetZone();
+        dateAndOrTimeString = "1:4:3"; //01:04:03
         actual = formatDateTime(dateAndOrTimeString, _TIME_FORMAT_TIME_ONLY);
+        assertEquals(expected, actual);
+
+        //date of Epoch day part plus concrete time
+        expected = ZonedDateTime.of(1970, 1, 1, 1, 34, 0, 0, ZoneOffset.systemDefault()).withFixedOffsetZone();
+        dateAndOrTimeString = "1:34";
+        actual = formatDateTime(dateAndOrTimeString, _TIME_FORMAT_TIME_ONLY_HH_MM);
         assertEquals(expected, actual);
 
         //custom format LV

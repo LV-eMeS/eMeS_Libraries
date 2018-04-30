@@ -118,12 +118,6 @@ public class MS_SchedulerTest {
         assertEquals(2, executionTimes);
     }
 
-    @Test(expected = IllegalStateException.class)
-    public void test14WaitBeforeStarted() {
-        new MS_Scheduler()
-                .waitFor();
-    }
-
     @Test
     public void test21PrecisionTest() {
         MS_Scheduler scheduler = new MS_Scheduler()

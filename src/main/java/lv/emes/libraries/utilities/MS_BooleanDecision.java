@@ -55,7 +55,7 @@ package lv.emes.libraries.utilities;
  *     doSaveRecordToDB(REPLACE);
  *     break;
  *   case MS_BooleanDecision._FIRST_AND_THIRD_OF_3:
- *     getLogger().warning("File existed in File system, but didn't exist in DB =&gt; INSERTED in DB as well");
+ *     getLogger().warn("File existed in File system, but didn't exist in DB =&gt; INSERTED in DB as well");
  *     doSaveRecordToDB(INSERT");
  *     break;
  *   case MS_BooleanDecision._ALL_3:

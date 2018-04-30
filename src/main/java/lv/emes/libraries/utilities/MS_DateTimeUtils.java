@@ -1,5 +1,7 @@
 package lv.emes.libraries.utilities;
 
+import lv.emes.libraries.tools.lists.MS_StringList;
+
 import java.text.SimpleDateFormat;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
@@ -24,6 +26,7 @@ public final class MS_DateTimeUtils {
     public static final String _DATE_TIME_FORMAT_SECONDS = "yyyy-MM-dd'T'HH:mm:ss";
     public static final String _DATE_FORMAT_DATE_ONLY = "yyyy-MM-dd";
     public static final String _TIME_FORMAT_TIME_ONLY = "HH:mm:ss";
+    public static final String _TIME_FORMAT_TIME_ONLY_HH_MM = "HH:mm";
     public static final String _CUSTOM_DATE_TIME_FORMAT_LV = "dd.MM.yyyy HH:mm:ss:SSS";
     public static final String _DEFAULT_DATE_TIME_FORMAT = _DATE_TIME_FORMAT_SECONDS_ZONE_OFFSET;
     //Custom formats
@@ -201,8 +204,8 @@ public final class MS_DateTimeUtils {
      *                 <li>{@link MS_DateTimeUtils#_CUSTOM_DATE_TIME_FORMAT_LV}.</li>
      *                 </ul>
      * @return ZonedDateTime object.
-     * @throws IllegalArgumentException in case <b>format</b> is illegal.
-     * @throws DateTimeParseException   in case date couldn't be parsed in given format <b>format</b>.
+     * @throws IllegalArgumentException in case <b>format</b> is illegal for formatter to handle formatting.
+     * @throws DateTimeParseException   in case date <b>dateTime</b> couldn't be parsed in given format <b>format</b>.
      */
     public static ZonedDateTime formatDateTime(String dateTime, String format) throws IllegalArgumentException, DateTimeParseException {
         switch (format) {
@@ -219,6 +222,18 @@ public final class MS_DateTimeUtils {
                 LocalTime localTime = LocalTime.of(0, 0);
                 return ZonedDateTime.of(localDate, localTime, ZoneId.systemDefault()).withFixedOffsetZone();
             case _TIME_FORMAT_TIME_ONLY:
+            case _TIME_FORMAT_TIME_ONLY_HH_MM:
+                //1. fix passed time if it's missing leading zeros, like, e.g. "1:4:3", which actually is "01:04:03"
+                MS_StringList parts = new MS_StringList(dateTime, ':');
+                if (parts.size() > 1) {
+                    parts.forEachItem((timePart, i) -> {
+                        if (timePart.length() == 1)
+                            parts.edit(i, "0" + timePart);
+                    });
+                    dateTime = parts.toStringWithNoLastDelimiter();
+                } //if there is no at least 2 elements (like hour and minute part) then string is wrong - let parsing part fail immediately
+
+                //2. try to parse time as string
                 localTime = LocalTime.parse(dateTime);
                 localDate = LocalDate.ofEpochDay(0); //this date part SHOULD NOT be used later on
                 return ZonedDateTime.of(localDate, localTime, ZoneId.systemDefault()).withFixedOffsetZone();
@@ -255,5 +270,80 @@ public final class MS_DateTimeUtils {
      */
     public static String getZoneIdText(ZonedDateTime dateTime) {
         return dateTime.getZone().getId();
+    }
+
+    public static class ZonedDateTimeBuilder {
+
+        private int year = 1970;
+        private int month = 1;
+        private int dayOfMonth = 1;
+        private int hour = 0;
+        private int minute = 0;
+        private int second = 0;
+        private int nanoOfSecond = 0;
+        private ZoneId zone = ZoneId.systemDefault();
+
+        public ZonedDateTimeBuilder() {
+        }
+
+        public static ZonedDateTimeBuilder newBuilder() {
+            return new ZonedDateTimeBuilder();
+        }
+
+        public ZonedDateTimeBuilder withYear(int year) {
+            this.year = year;
+            return this;
+        }
+
+        public ZonedDateTimeBuilder withMonth(int month) {
+            this.month = month;
+            return this;
+        }
+
+        public ZonedDateTimeBuilder withDayOfMonth(int dayOfMonth) {
+            this.dayOfMonth = dayOfMonth;
+            return this;
+        }
+
+        public ZonedDateTimeBuilder withHour(int hour) {
+            this.hour = hour;
+            return this;
+        }
+
+        public ZonedDateTimeBuilder withMinute(int minute) {
+            this.minute = minute;
+            return this;
+        }
+
+        public ZonedDateTimeBuilder withSecond(int second) {
+            this.second = second;
+            return this;
+        }
+
+        public ZonedDateTimeBuilder withNanoSecond(int nanoOfSecond) {
+            this.nanoOfSecond = nanoOfSecond;
+            return this;
+        }
+
+        public ZonedDateTimeBuilder withZone(ZoneId zone) {
+            if (zone != null) this.zone = zone;
+            return this;
+        }
+
+        public ZonedDateTimeBuilder from(ZonedDateTime other) {
+            this.year = other.getYear();
+            this.month = other.getMonthValue();
+            this.dayOfMonth = other.getDayOfMonth();
+            this.hour = other.getHour();
+            this.minute = other.getMinute();
+            this.second = other.getSecond();
+            this.nanoOfSecond = other.getNano();
+            this.zone = other.getZone();
+            return this;
+        }
+
+        public ZonedDateTime build() {
+            return ZonedDateTime.of(year, month, dayOfMonth, hour, minute, second, nanoOfSecond, zone);
+        }
     }
 }

@@ -80,7 +80,7 @@ public class MS_Cache<T, ID> {
                     } else if (e instanceof MS_RepositoryDataExchangeException) {
                         if (logger != null) {
                             String errorMess = e.getMessage() == null ? "" : "\nError message: " + e.getMessage();
-                            logger.warning("Caching operation failed" + errorMess);
+                            logger.warn("Caching operation failed" + errorMess);
                         }
                     } else {
                         if (logger != null) {
@@ -114,7 +114,7 @@ public class MS_Cache<T, ID> {
         } catch (MS_RepositoryDataExchangeException e) {
             if (logger != null) {
                 String errorMess = e.getMessage() == null ? "" : "\nError message: " + e.getMessage();
-                logger.warning("Object retrieval from cache operation failed" + errorMess);
+                logger.warn("Object retrieval from cache operation failed" + errorMess);
             }
         }
         return null;
@@ -134,7 +134,7 @@ public class MS_Cache<T, ID> {
                     if (e instanceof UnsupportedOperationException) {
                         if (logger != null) {
                             String errorMess = e.getMessage() == null ? "" : "\nError message: " + e.getMessage();
-                            logger.warning("Cannot perform cache clearing operation because this operation is not supported " +
+                            logger.warn("Cannot perform cache clearing operation because this operation is not supported " +
                                     "for this type of caching repository" + errorMess);
                         }
                     } else if (e instanceof MS_RepositoryDataExchangeException) {
@@ -204,7 +204,7 @@ public class MS_Cache<T, ID> {
                     } else if (e instanceof MS_RepositoryDataExchangeException) {
                         if (logger != null) {
                             String errorMess = e.getMessage() == null ? "" : "\nError message: " + e.getMessage();
-                            logger.warning("Object removal from cache operation failed" + errorMess);
+                            logger.warn("Object removal from cache operation failed" + errorMess);
                         }
                     } else {
                         if (logger != null) {

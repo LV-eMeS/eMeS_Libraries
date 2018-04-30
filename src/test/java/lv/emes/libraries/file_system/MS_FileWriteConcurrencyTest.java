@@ -67,7 +67,7 @@ public class MS_FileWriteConcurrencyTest {
         threads.forEachItem((thread, i) -> {
             thread.withAction(() -> {
                         loggersForTest.get(i).info("Test thread with name " + thread.getThreadName() + " started");
-                        loggersForTest.get(i).warning("Current thread number: " + (i+1));
+                        loggersForTest.get(i).warn("Current thread number: " + (i+1));
                         loggersForTest.get(i).error("If there had an error, it would look like this: ", new Exception("Some fake error."));
                         loggersForTest.get(i).line();
                     }

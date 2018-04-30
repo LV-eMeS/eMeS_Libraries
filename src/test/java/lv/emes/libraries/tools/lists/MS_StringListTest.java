@@ -11,13 +11,20 @@ import static org.junit.Assert.*;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MS_StringListTest {
+
     @Test
     public void test01listImportFromStringWithoutSecondDelimiter() {
         MS_StringList sl = new MS_StringList("Test#String#List");
-        assertTrue(sl.get(0).equals("Test"));
-        assertTrue(sl.get(1).equals("String"));
-        assertTrue(sl.get(2).equals("List"));
-        assertTrue(sl.get(3) == "");
+        assertEquals("Test", sl.get(0));
+        assertEquals("String", sl.get(1));
+        assertEquals("List", sl.get(2));
+        assertSame("", sl.get(3));
+
+        final String STRING_WITHOUT_DELIMITER = "No delimiter here";
+        MS_StringList sl2 = new MS_StringList(STRING_WITHOUT_DELIMITER);
+        assertEquals(1, sl2.size());
+        assertEquals(STRING_WITHOUT_DELIMITER, sl2.get(0));
+        assertEquals(STRING_WITHOUT_DELIMITER + MS_StringList._DEFAULT_DELIMITER, sl2.toString());
     }
 
     @Test
@@ -25,14 +32,14 @@ public class MS_StringListTest {
         MS_StringList sl = new MS_StringList();
         sl.secondDelimiter = '^';
         sl.fromString("1#2#^3#4", '#');
-        assertTrue(sl.get(0).equals("1"));
-        assertTrue(sl.get(1).equals("2#3"));
-        assertTrue(sl.get(2).equals("4"));
+        assertEquals("1", sl.get(0));
+        assertEquals("2#3", sl.get(1));
+        assertEquals("4", sl.get(2));
         sl.secondDelimiter = 'z';
-        assertTrue(sl.toString().equals("1#2#z3#4#"));
+        assertEquals("1#2#z3#4#", sl.toString());
         sl.delimiter = ' ';
         System.out.println(sl);
-        assertTrue(sl.toString().equals("1 2#3 4 "));
+        assertEquals("1 2#3 4 ", sl.toString());
     }
 
     @Test
@@ -40,16 +47,16 @@ public class MS_StringListTest {
         MS_StringList sl = new MS_StringList();
         sl.secondDelimiter = '^';
         sl.fromString("My$List's$Delimiter$Is $^", '$');
-        assertTrue(sl.get(0).equals("My"));
-        assertTrue(sl.get(1).equals("List's"));
-        assertTrue(sl.get(2).equals("Delimiter"));
-        assertTrue(sl.get(3).equals("Is $"));
+        assertEquals("My", sl.get(0));
+        assertEquals("List's", sl.get(1));
+        assertEquals("Delimiter", sl.get(2));
+        assertEquals("Is $", sl.get(3));
     }
 
     @Test
     public void test04EmptyListTest() {
         MS_StringList sl = new MS_StringList();
-        assertTrue(sl.toString().equals(""));
+        assertEquals("", sl.toString());
 
         sl = new MS_StringList("", '?');
         assertEquals("", sl.toString());
@@ -166,5 +173,13 @@ public class MS_StringListTest {
         sl = new MS_StringList("One#Two#");
         res = sl.toStringWithNoLastDelimiter();
         assertEquals("One#Two", res);
+    }
+
+    @Test
+    public void test21LoopThroughAndEdit() {
+        MS_StringList sl = new MS_StringList("1:4:3", ':');
+        //add leading zeroes to each element
+        sl.forEachItem((str, i) -> sl.edit(i, "0" + str));
+        assertEquals("01:04:03", sl.toStringWithNoLastDelimiter());
     }
 }

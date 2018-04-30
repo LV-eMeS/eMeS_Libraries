@@ -77,7 +77,7 @@ public class MS_MultiLoggerTest {
 
         logger.info(infoEvent);
         MS_CodingUtils.sleep(TIME_FOR_LOGGERS_TO_EXECUTE);
-        logger.warning(warningEvent);
+        logger.warn(warningEvent);
         MS_CodingUtils.sleep(TIME_FOR_LOGGERS_TO_EXECUTE);
         logger.error(errorEvent);
         MS_CodingUtils.sleep(TIME_FOR_LOGGERS_TO_EXECUTE);

@@ -11,13 +11,13 @@ import java.time.ZonedDateTime;
  * <p>Public methods:
  * <ul>
  * <li>info</li>
- * <li>warning</li>
+ * <li>warn</li>
  * <li>error</li>
  * <li>line</li>
  * </ul>
  *
  * @author eMeS
- * @version 1.1.
+ * @version 1.2.
  */
 public class MS_MultiLogger implements MS_LoggingOperations {
 
@@ -38,7 +38,7 @@ public class MS_MultiLogger implements MS_LoggingOperations {
     }
 
     @Override
-    public void warning(String msg) {
+    public void warn(String msg) {
         logEventMessageToAllRepos(msg, null, MS_LoggingEventTypeEnum.WARN);
     }
 

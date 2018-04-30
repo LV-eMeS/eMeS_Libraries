@@ -2,15 +2,24 @@ package lv.emes.libraries.tools.platform;
 
 import lv.emes.libraries.file_system.MS_FileSystemTools;
 import lv.emes.libraries.file_system.MS_TextFile;
+import lv.emes.libraries.tools.MS_BooleanFlag;
 import lv.emes.libraries.tools.MS_KeyCodeDictionary;
 import lv.emes.libraries.tools.lists.MS_StringList;
 import lv.emes.libraries.tools.logging.MS_FileLogger;
+import lv.emes.libraries.tools.logging.MS_MultiLogger;
+import lv.emes.libraries.tools.logging.MS_MultiLoggingSetup;
 import lv.emes.libraries.tools.platform.windows.MS_ApplicationWindow;
 import lv.emes.libraries.tools.platform.windows.MS_WindowsAPIManager;
 import lv.emes.libraries.tools.platform.windows.MediaEventTypeEnum;
+import lv.emes.libraries.tools.threading.MS_Scheduler;
 import lv.emes.libraries.utilities.MS_CodingUtils;
+import lv.emes.libraries.utilities.MS_DateTimeUtils;
+import lv.emes.libraries.utilities.MS_DateTimeUtils.ZonedDateTimeBuilder;
+import lv.emes.libraries.utilities.MS_RepositoryUtils;
 
 import java.awt.*;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -56,6 +65,9 @@ import static lv.emes.libraries.tools.platform.ScriptParsingError.*;
  * <li><code>WHIDE#notepad#</code> - (platform: Windows) minimizes first window matching text in task manager as second parameter like "notepad".</li>
  * <li><code>PAUSE#1000#</code> - holds script executing for 1 second.</li>
  * <li><code>SLEEP#1000#</code> - holds script executing for 1 second.</li>
+ * <li><code>SLEEP#till&amp;23:55#</code> - holds script executing until next time 23:55 (today or tomorrow).</li>
+ * <li><code>SLEEP#till&amp;23:55:12#</code> - holds script executing until next time 23:55:12 (today or tomorrow).</li>
+ * <li><code>SLEEP#till&amp;2018-04-30T23:55:12#</code> - holds script execution until exact date and time (if it's already in past then it doesn't hold a second).</li>
  * <li><code>DI#1000#</code> - defines interval of delaying script command execution for 1 second after each command; to stop this
  * either use DI#0# or PAUSE#X#, and after X miliseconds delaying will be canceled.</li>
  * <li><code>ML#</code> - does left mouse click.</li>
@@ -98,6 +110,7 @@ import static lv.emes.libraries.tools.platform.ScriptParsingError.*;
  *
  * @author eMeS
  * @version 3.0.
+ * @since 1.3.0
  */
 public class MS_ScriptRunner {
 
@@ -195,7 +208,7 @@ public class MS_ScriptRunner {
     private final static int CMD_SEC_SET_VOLUME_TO = 115;
     private final static int CMD_SEC_VOLUME_UP = 116;
     private final static int CMD_SEC_VOLUME_DOWN = 117;
-    private final static int CMD_SEC_MUTE = 118; //TODO if there will be modes for mute, like just mute, toggle or unmute
+    //    private final static int CMD_SEC_MUTE = 118; //if there will be modes for mute, like just mute, toggle or unmute
     private final static int CMD_SEC_MONITOR = 119;
     private final static int CMD_SEC_MUSIC = 120;
     private final static int CMD_SEC_COMBINATION = 121;
@@ -224,6 +237,7 @@ public class MS_ScriptRunner {
     private MS_IFuncStringInputMethod passwordInputMethod = MS_InputOutputMethodDefaults._INPUT_CONSOLE;
     private MS_IFuncStringOutputMethod outputMethod = MS_InputOutputMethodDefaults._OUTPUT_CONSOLE;
     private String pathToLoggerFile = "";
+    private MS_BooleanFlag continueOnError = new MS_BooleanFlag(true);
 
     public MS_ScriptRunner() {
         fScriptTerminationShortcutKeyCombination = new MS_StringList("ctrl+alt+shift+4", '+');
@@ -418,36 +432,52 @@ public class MS_ScriptRunner {
                         try {
                             wheelSteps = -1 * Integer.parseInt(params.get(1));
                         } catch (NumberFormatException e) {
-                            throw new ScriptParsingError(String.format(_ERROR_WRONG_NUMBER_INPUT, params.get(1)));
+                            throw new ScriptParsingError(_ERROR_WRONG_NUMBER_INPUT, params.get(1));
                         }
                     } else if (params.get(0).equals("DOWN")) {
                         try {
                             wheelSteps = Integer.parseInt(params.get(1));
                         } catch (NumberFormatException e) {
-                            throw new ScriptParsingError(String.format(_ERROR_WRONG_NUMBER_INPUT, params.get(1)));
+                            throw new ScriptParsingError(_ERROR_WRONG_NUMBER_INPUT, params.get(1));
                         }
                     } else {
-                        throw new ScriptParsingError(String.format(_ERROR_WRONG_MOUSE_WHEEL_COMMAND, commandParamsAsText));
+                        throw new ScriptParsingError(_ERROR_WRONG_MOUSE_WHEEL_COMMAND, commandParamsAsText);
                     }
                     //if everything is okay then perform mouse wheel rotate action
                     getInstance().mouseWheel(wheelSteps);
 
                 } else {
-                    throw new ScriptParsingError(String.format(_ERROR_WRONG_MOUSE_WHEEL_COMMAND, commandParamsAsText));
+                    throw new ScriptParsingError(_ERROR_WRONG_MOUSE_WHEEL_COMMAND, commandParamsAsText);
                 }
                 break;
             case CMD_SEC_SHOW_WINDOW_OS_WINDOWS:
                 if (!MS_ApplicationWindow.showApplicationWindow(commandParamsAsText))
-                    throw new ScriptParsingError(String.format(_ERROR_FAILED_TO_SHOW_WINDOW, commandParamsAsText));
+                    throw new ScriptParsingError(_ERROR_FAILED_TO_SHOW_WINDOW, commandParamsAsText);
                 break;
             case CMD_SEC_HIDE_WINDOW_OS_WINDOWS:
                 if (!MS_ApplicationWindow.hideApplicationWindow(commandParamsAsText)) {
-                    throw new ScriptParsingError(String.format(_ERROR_FAILED_TO_HIDE_WINDOW, commandParamsAsText));
+                    throw new ScriptParsingError(_ERROR_FAILED_TO_HIDE_WINDOW, commandParamsAsText);
                 }
                 break;
             case CMD_SEC_PAUSE:
-                delay = Long.parseLong(commandParamsAsText);
-                paused = true;
+                commandParamsAsText = extractCommandContainingVariables(commandParamsAsText);
+                params = new MS_StringList(commandParamsAsText.toUpperCase(), DELIMITER_OF_PARAMETERS);
+                if (params.count() == 2) {
+                    //"sleep#till&23:55" case. Check for parameter keyword TILL
+                    if ("TILL".equals(params.get(0))) {
+                        //in case this parse will fail, execution will not continue, but afterwards this flag setting
+                        //won't affect next commands in case parsing was succeeded, because flag's value will be reset to original
+                        continueOnError.setForOnce(false);
+                        //parse date, time or what ever we support here and run scheduler
+                        ZonedDateTime timeTill = parseTimeTillForSleepingOperation(params.get(1));
+                        new MS_Scheduler().withTriggerTime(timeTill).schedule().waitFor();
+                    } else {
+                        throw new ScriptParsingError(_ERROR_UNSUPPORTED_SLEEPING_CMD_SYNTAX, "syntax", commandParamsAsText);
+                    }
+                } else { //normal one-time sleeping
+                    delay = Long.parseLong(commandParamsAsText);
+                    paused = true;
+                }
                 break;
             case CMD_SEC_SET_DELAY_INTERVAL:
                 delay = Long.parseLong(commandParamsAsText);
@@ -455,7 +485,7 @@ public class MS_ScriptRunner {
             case CMD_SEC_MOUSE_SET_COORDINATES:
                 params = new MS_StringList(commandParamsAsText, DELIMITER_OF_PARAMETERS);
                 if (params.count() != 2)
-                    throw new ScriptParsingError(String.format(_ERROR_PARAMETER_COUNT, 2));
+                    throw new ScriptParsingError(_ERROR_PARAMETER_COUNT, 2);
                 getInstance().mouseSetCoords(
                         new Point(Integer.parseInt(params.get(0)), Integer.parseInt(params.get(1)))
                 );
@@ -463,7 +493,7 @@ public class MS_ScriptRunner {
             case CMD_SEC_MOUSE_MOVE_FOR_COORDINATES:
                 params = new MS_StringList(commandParamsAsText, DELIMITER_OF_PARAMETERS);
                 if (params.count() != 2)
-                    throw new ScriptParsingError(String.format(_ERROR_PARAMETER_COUNT, 2));
+                    throw new ScriptParsingError(_ERROR_PARAMETER_COUNT, 2);
                 getInstance().mouseMove(
                         new Point(Integer.parseInt(params.get(0)), Integer.parseInt(params.get(1)))
                 );
@@ -481,23 +511,23 @@ public class MS_ScriptRunner {
             case CMD_SEC_VARIABLE_PROMPT:
                 params = new MS_StringList(commandParamsAsText, DELIMITER_OF_PARAMETERS);
                 if (params.count() != 2)
-                    throw new ScriptParsingError(String.format(_ERROR_PARAMETER_COUNT, 2));
+                    throw new ScriptParsingError(_ERROR_PARAMETER_COUNT, 2);
                 //put variable in userVariables
                 tmpStr2 = variableInputMethod.readString(params.get(1));
                 tmpStr = userVariables.put(params.get(0), tmpStr2);
                 if (tmpStr != null)
-                    throw new ScriptParsingError(String.format(_WARNING_USER_VARIABLE_OVERRIDDEN, params.get(0), tmpStr, tmpStr2));
+                    throw new ScriptParsingError(_WARNING_USER_VARIABLE_OVERRIDDEN, params.get(0), tmpStr, tmpStr2);
                 break;
             case CMD_SEC_PASSWORD_PROMPT:
                 params = new MS_StringList(commandParamsAsText, DELIMITER_OF_PARAMETERS);
                 if (params.count() != 2)
-                    throw new ScriptParsingError(String.format(_ERROR_PARAMETER_COUNT, 2));
+                    throw new ScriptParsingError(_ERROR_PARAMETER_COUNT, 2);
 
                 //put variable in userVariables
                 tmpStr2 = passwordInputMethod.readString(params.get(1));
                 tmpStr = userVariables.put(params.get(0), tmpStr2);
                 if (tmpStr != null)
-                    throw new ScriptParsingError(String.format(_WARNING_USER_VARIABLE_OVERRIDDEN, params.get(0), tmpStr, tmpStr2));
+                    throw new ScriptParsingError(_WARNING_USER_VARIABLE_OVERRIDDEN, params.get(0), tmpStr, tmpStr2);
                 break;
             case CMD_SEC_SET_LOGGING:
                 setPathToLoggerFile(commandParamsAsText);
@@ -506,7 +536,7 @@ public class MS_ScriptRunner {
                 try {
                     volumeLevelParameter = new Integer(commandParamsAsText);
                 } catch (NumberFormatException e) {
-                    throw new ScriptParsingError(String.format(_ERROR_WRONG_NUMBER_INPUT, commandParamsAsText));
+                    throw new ScriptParsingError(_ERROR_WRONG_NUMBER_INPUT, commandParamsAsText);
                 }
                 MS_WindowsAPIManager.setVolume(volumeLevelParameter);
                 break;
@@ -514,7 +544,7 @@ public class MS_ScriptRunner {
                 try {
                     volumeLevelParameter = new Integer(commandParamsAsText);
                 } catch (NumberFormatException e) {
-                    throw new ScriptParsingError(String.format(_ERROR_WRONG_NUMBER_INPUT, commandParamsAsText));
+                    throw new ScriptParsingError(_ERROR_WRONG_NUMBER_INPUT, commandParamsAsText);
                 }
                 MS_WindowsAPIManager.volumeUp(volumeLevelParameter);
                 break;
@@ -522,7 +552,7 @@ public class MS_ScriptRunner {
                 try {
                     volumeLevelParameter = new Integer(commandParamsAsText);
                 } catch (NumberFormatException e) {
-                    throw new ScriptParsingError(String.format(_ERROR_WRONG_NUMBER_INPUT, commandParamsAsText));
+                    throw new ScriptParsingError(_ERROR_WRONG_NUMBER_INPUT, commandParamsAsText);
                 }
                 MS_WindowsAPIManager.volumeDown(volumeLevelParameter);
                 break;
@@ -542,7 +572,7 @@ public class MS_ScriptRunner {
             case CMD_SEC_COMBINATION:
                 params = new MS_StringList(commandParamsAsText, DELIMITER_OF_PARAMETERS);
                 if (params.count() < 2)
-                    throw new ScriptParsingError(String.format(_ERROR_PARAMETER_COUNT, 2));
+                    throw new ScriptParsingError(_ERROR_PARAMETER_COUNT, 2);
 
                 //first push all the buttons down
                 params.first();
@@ -564,7 +594,7 @@ public class MS_ScriptRunner {
             case CMD_SEC_KILL_TASK:
                 commandParamsAsText = "taskkill /F /IM " + commandParamsAsText;
                 if (!MS_FileSystemTools.executeApplication(commandParamsAsText, ""))
-                    throw new ScriptParsingError(String.format(_ERROR_FAILED_TO_KILL_TASK, commandParamsAsText));
+                    throw new ScriptParsingError(_ERROR_FAILED_TO_KILL_TASK, commandParamsAsText);
                 break;
             case CMD_SEC_WRITELN:
             case CMD_SEC_APPENDLN:
@@ -572,7 +602,7 @@ public class MS_ScriptRunner {
                 params = new MS_StringList(commandParamsAsText, DELIMITER_OF_PARAMETERS);
                 //first parameter is filename, second - text to be written in line of newly created file
                 if (params.count() != 2)
-                    throw new ScriptParsingError(String.format(_ERROR_EXACT_PARAMETER_COUNT, 2));
+                    throw new ScriptParsingError(_ERROR_EXACT_PARAMETER_COUNT, 2);
                 MS_TextFile file = new MS_TextFile(params.get(0));
 
                 //case of writeln or appendl
@@ -583,7 +613,7 @@ public class MS_ScriptRunner {
                     successOfOperation = file.appendln(params.get(1), true);
                 }
                 if (!successOfOperation) //if didn't succeed to write or append a line to file
-                    throw new ScriptParsingError(String.format(_ERROR_FAILED_TO_WRITE_TO_FILE, params.get(1), params.get(0)));
+                    throw new ScriptParsingError(_ERROR_FAILED_TO_WRITE_TO_FILE, params.get(1), params.get(0));
                 break;
             default:
                 commandNotFoundTryKeyPressing = true;
@@ -625,14 +655,16 @@ public class MS_ScriptRunner {
             getInstance().keyPress("CAPS"); //caps lock during script executing is not needed at all
 
         AtomicInteger primaryCommandCount = new AtomicInteger(0);
+        MS_MultiLogger logFile = new MS_MultiLogger(new MS_MultiLoggingSetup()
+                .withRepository(new MS_FileLogger(pathToLoggerFile))
+                .withRepository(MS_RepositoryUtils.newConsoleLoggerRepository())
+        );
         fCommandList.forEachItem((cmd, index) -> {
-            MS_FileLogger logFile = new MS_FileLogger(pathToLoggerFile);
             if (isScriptRunningTerminated) {
-                logFile.warning("Script running terminated by user's request.");
+                logFile.warn("Script running terminated by user's request.");
                 fCommandList.breakOngoingForLoop();
             } else {
                 try {
-//                System.out.println(cmd);
                     if (delay > 0) {
                         MS_CodingUtils.sleep(delay); //delay interval can be set using command "di"
                         if (paused) { //if script was paused then this is the place to remove pause
@@ -656,12 +688,16 @@ public class MS_ScriptRunner {
                             getInstance().keyPress(cmd);
                     }
                 } catch (Exception e) {
-//                e.printStackTrace();
-                    System.out.println(e.toString());
                     primaryCommandReading = true; //if command fails then lets try to read next command as primary command!
                     if (!pathToLoggerFile.equals("")) {
-                        logFile.error(String.format("Command (%d) failed to execute. Command text:\n%s", primaryCommandCount.get(), cmd), e);
-                        //after this loop continues executing next commands
+                        logFile.error(String.format("Command number %d failed to execute. Command text:\n%s"
+                                , primaryCommandCount.get(), cmd), e);
+                        //after this loop continues executing next commands...
+                    }
+
+                    if (!continueOnError.get()) { //... unless we are not continuing on errors
+                        logFile.warn("Script running terminated due to an critical error, because continueOnError is set to false.");
+                        fCommandList.breakOngoingForLoop();
                     }
                 }
             } //else if running terminated END
@@ -712,6 +748,10 @@ public class MS_ScriptRunner {
         this.outputMethod = outputMethod;
     }
 
+    public void setContinueOnError(boolean value) {
+        this.continueOnError.set(value);
+    }
+
     /**
      * Sets new combination for script runner to terminate by user's request.
      * Default combination is: CTRL + ALT + SHIFT + 4
@@ -741,5 +781,41 @@ public class MS_ScriptRunner {
             }
         });
         return res.get();
+    }
+
+    /**
+     * When executing "sleep#till&<b>timeInput</b>#", parameter <b>timeInput</b> needs to be converted to
+     * specific time with 3 supported formats. This method performs calculations and parsing.
+     *
+     * @param timeInput time as string in one of following formats: ['HH:mm', 'HH:mm:ss', 'yyyy-MM-dd'T'HH:mm:ss'],
+     *                  respectively - [{@link MS_DateTimeUtils#_TIME_FORMAT_TIME_ONLY_HH_MM},
+     *                  {@link MS_DateTimeUtils#_TIME_FORMAT_TIME_ONLY}, {@link MS_DateTimeUtils#_DATE_TIME_FORMAT_SECONDS}].
+     * @return parsed time until sleeping will be performed.
+     */
+    private ZonedDateTime parseTimeTillForSleepingOperation(String timeInput) throws ScriptParsingError {
+        if (timeInput.length() > 8) { //8 - max character count if time is passed instead of full date format
+            return MS_DateTimeUtils.formatDateTime(timeInput, MS_DateTimeUtils._DATE_TIME_FORMAT_SECONDS);
+        } else {
+            ZonedDateTime parsedTime;
+            try {
+                parsedTime = MS_DateTimeUtils.formatDateTime(timeInput, MS_DateTimeUtils._TIME_FORMAT_TIME_ONLY);
+            } catch (DateTimeParseException e) {
+                throw new ScriptParsingError(_ERROR_UNSUPPORTED_SLEEPING_CMD_SYNTAX, "time format", timeInput);
+            }
+            ZonedDateTime now = MS_DateTimeUtils.getCurrentDateTimeNow();
+            ZonedDateTime sleepTill = ZonedDateTimeBuilder.newBuilder().from(now)
+                    .withHour(parsedTime.getHour())
+                    .withMinute(parsedTime.getMinute())
+                    .withSecond(parsedTime.getSecond())
+                    .withNanoSecond(0)
+                    .build();
+
+            //if time already passed for today then lets take same time for next day
+            if (now.isAfter(sleepTill)) {
+                sleepTill = sleepTill.plusDays(1);
+            }
+
+            return sleepTill;
+        }
     }
 }
