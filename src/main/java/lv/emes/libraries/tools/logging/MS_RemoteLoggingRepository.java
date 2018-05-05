@@ -12,16 +12,18 @@ import lv.emes.libraries.utilities.MS_CodingUtils;
 import java.security.GeneralSecurityException;
 import java.time.Instant;
 import java.time.ZonedDateTime;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * Remote repository to store logging events.
  * All data exchange is done by HTTP requests.
  *
  * @author eMeS
- * @version 1.0.
+ * @version 1.1.
+ * @since 2.0.4
  */
 public class MS_RemoteLoggingRepository extends MS_Repository<MS_LoggingEvent, Instant> implements MS_LoggingRepository {
 
@@ -91,7 +93,7 @@ public class MS_RemoteLoggingRepository extends MS_Repository<MS_LoggingEvent, I
         checkResponseAndThrowExceptionIfNeeded(httpResult, "Finding all events failed with HTTP status code " +
                 httpResult.getReponseCode());
         try {
-            Map<Instant, MS_LoggingEvent> res = new LinkedHashMap<>();
+            Map<Instant, MS_LoggingEvent> res = new TreeMap<>(Collections.reverseOrder());
             Map<ZonedDateTime, MS_SerializedLoggingEvent> serializedEvents =
                     (Map<ZonedDateTime, MS_SerializedLoggingEvent>) JsonReader.jsonToJava(httpResult.getMessage());
             serializedEvents.forEach((key, value) -> res.put(key.toInstant(), value.getWrappedObject()));

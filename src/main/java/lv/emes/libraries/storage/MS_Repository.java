@@ -6,6 +6,7 @@ import lv.emes.libraries.tools.lists.MS_ILoopableListWithItems;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * A standalone repository to store some items and get them by ID when needed.
@@ -126,7 +127,7 @@ public abstract class MS_Repository<T, ID> implements MS_IRepositoryOperations<T
 
     /**
      * @return all the item values mapped by ID. If repository have no items then empty map is returned.
-     * <p><u>Note</u>: that is recommended to use {@link LinkedHashMap} implementation here to preserve item order.
+     * <p><u>Note</u>: that is recommended to use {@link LinkedHashMap} or {@link TreeMap} implementation here to preserve item order.
      */
     protected abstract Map<ID, T> doFindAll();
 

@@ -29,6 +29,7 @@ eMeS libraries Version 2.2.0
 * MS_Flow implementation for flow oriented design.
 * Scheduler support for Script runner to hold till some time like, e.g. "sleep#till&23:55".
 * "Continue on errors" flag for MS_ScriptRunner (default - true).
+* Bugfix in remote logging repository, when events came in wrong order.
 -----------
 * Removed deprecated MS_InMemoryCache, as instead MS_Cache with appropriate MS_CachingRepository
   should be used.
