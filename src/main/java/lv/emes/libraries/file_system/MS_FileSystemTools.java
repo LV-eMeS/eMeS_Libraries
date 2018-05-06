@@ -56,12 +56,13 @@ import java.util.List;
  * </ul>
  *
  * @version 1.9.
+ * @since 1.1.1
  */
 public class MS_FileSystemTools {
 
-    public static final String CURRENT_DIRECTORY = "./";
-    public static final String SLASH = "/";
-    public static final String NIRCMD_FILE_FOR_WINDOWS = "tools/nircmd.exe";
+    public static final String _CURRENT_DIRECTORY = "./";
+    public static final String _SLASH = "/";
+    public static final String _NIRCMD_FILE_FOR_WINDOWS = "tools/nircmd.exe";
 
     /**
      * Opens link in default web browser or runs an application in OS. Do not use spaces in links!
@@ -148,7 +149,7 @@ public class MS_FileSystemTools {
 
         ProcessBuilder pb = new ProcessBuilder(cmdAndArgs);
         String directory = getDirectoryOfFile(fileName);
-        if (!directory.equals(CURRENT_DIRECTORY)) {
+        if (!directory.equals(_CURRENT_DIRECTORY)) {
             File dir = new File(directory);
             pb.directory(dir);
         }
@@ -168,7 +169,7 @@ public class MS_FileSystemTools {
      * @return text with all existing backslash symbols replaced with slash symbols.
      */
     public static String replaceBackslash(String textWithBackslashes) {
-        return textWithBackslashes.replace("\\", SLASH);
+        return textWithBackslashes.replace("\\", _SLASH);
     }
 
     /**
@@ -197,7 +198,7 @@ public class MS_FileSystemTools {
      * @return path to a directory where application is launched.
      */
     public static String getProjectDirectory() {
-        return replaceBackslash(System.getProperty("user.dir")) + SLASH;
+        return replaceBackslash(System.getProperty("user.dir")) + _SLASH;
     }
 
     /**
@@ -318,8 +319,8 @@ public class MS_FileSystemTools {
      */
     public static String getDirectoryOfFile(String aFilename) {
         aFilename = replaceBackslash(aFilename);
-        String res = aFilename.endsWith(SLASH) ? aFilename : directoryUp(aFilename);
-        return res.equals("") ? CURRENT_DIRECTORY : res;
+        String res = aFilename.endsWith(_SLASH) ? aFilename : directoryUp(aFilename);
+        return res.equals("") ? _CURRENT_DIRECTORY : res;
     }
 
     /**
@@ -347,8 +348,18 @@ public class MS_FileSystemTools {
      * @return true if delete successful, false if file couldn't be found or deleted.
      */
     public static boolean deleteFile(String filename) {
-        File fileToDelete = new File(filename);
-        return fileToDelete.delete();
+        return deleteFile(new File(filename));
+    }
+
+    /**
+     * Silently deletes file from file system. If file doesn't exist result is <code>false</code>.
+     *
+     * @param file file to be deleted.
+     * @return true if delete successful, false if file is null or couldn't be found or deleted.
+     */
+    public static boolean deleteFile(File file) {
+        if (file == null) return false;
+        else return file.delete();
     }
 
     /**
@@ -358,46 +369,88 @@ public class MS_FileSystemTools {
      * @return true if delete successful, false if couldn't delete directory.
      */
     public static boolean deleteDirectory(String dirName) {
+        return deleteDirectory(new File(dirName));
+    }
+
+    /**
+     * Silently deletes directory from file system. If directory doesn't exist, nothing happens.
+     *
+     * @param directory directory to be deleted.
+     * @return true if delete successful, false if directory is null or couldn't delete directory.
+     */
+    public static boolean deleteDirectory(File directory) {
         try {
-            FileUtils.deleteDirectory(new File(dirName));
+            FileUtils.deleteDirectory(directory);
             return true;
-        } catch (IOException e) {
+        } catch (Exception e) {
             return false;
         }
     }
 
     /**
-     * Moves a file to another location or simply renames it.
-     * It overwrites file existing in destination.
+     * Moves file or directory to another location or simply renames it.
+     * It overwrites file or directory existing in destination.
      * If destination directory doesn't exist, creates it.
      *
-     * @param filename     path and name of file that needs to be moved.
-     * @param destFilename new path and new filename of file.
-     * @return true if moved successfully, false, if error in moving process or destination file exists.
+     * @param sourcePath path and name of file or directory that needs to be moved.
+     * @param destPath   new path of file or directory.
+     * @return true if moved successfully, false, if error in moving process or destination file or directory exists.
      */
-    public static boolean moveFile(String filename, String destFilename) {
-        return moveFile(filename, destFilename, true);
+    public static boolean moveFileOrDirectory(String sourcePath, String destPath) {
+        return moveFileOrDirectory(sourcePath, destPath, true);
     }
 
     /**
-     * Moves a file to another location or simply renames it.
+     * Moves file or directory to another location or simply renames it.
      * If destination directory doesn't exist, creates it.
      *
-     * @param filename      path and name of file that needs to be moved.
-     * @param destFilename  new path and new filename of file.
-     * @param overwriteDest if true then attempts to overwrite existing file in destination path.
+     * @param sourcePath    path and name of file or directory that needs to be moved.
+     * @param destPath      new path of file or directory.
+     * @param overwriteDest if true then attempts to overwrite existing file or directory in destination path.
      *                      If false then obviously it will rename file only if destination file doesn't exist.
-     * @return true if moved successfully.
+     * @return true if moved successfully, false, if error in moving process or destination file or directory exists.
      */
-    public static boolean moveFile(String filename, String destFilename, boolean overwriteDest) {
+    public static boolean moveFileOrDirectory(String sourcePath, String destPath, boolean overwriteDest) {
         if (overwriteDest)
-            deleteFile(destFilename);
-        File fileToMove = new File(filename);
-        File fileToMoveTo = new File(destFilename);
+            deleteFile(destPath);
+        File fileToMove = new File(sourcePath);
+        File fileToMoveTo = new File(destPath);
         //check, if dest dir exists, if not, create it
-        if (!directoryExists(destFilename))
-            createNewDirectory(getDirectoryOfFile(destFilename));
+        if (!directoryExists(destPath))
+            createNewDirectory(getDirectoryOfFile(destPath));
         return fileToMove.renameTo(fileToMoveTo);
+    }
+
+    /**
+     * Copies file or directory to desired <b>destPath</b>.
+     * It overwrites everything that already exists in destination with same name.
+     * If destination directory doesn't exist, creates it.
+     *
+     * @param sourcePath path and name of file or directory that needs to be copied.
+     * @param destPath   new path of file or directory.
+     * @return true if copied successfully, false, if error in copying process or destination file or directory exists.
+     */
+    public static boolean copyFileOrDirectory(String sourcePath, String destPath) {
+        try {
+            File filePathToCopyFrom = new File(sourcePath);
+            File filePathToCopyTo = new File(destPath);
+            //do cleanup - remove existing files or directories in destination path
+            if (filePathToCopyTo.isFile()) deleteFile(filePathToCopyTo);
+            if (filePathToCopyTo.isDirectory()) deleteDirectory(filePathToCopyTo);
+            //now do actual copying depending on what we are copying - file or directory
+            if (filePathToCopyFrom.isFile()) {
+                //check, if dest dir for file exists, if not, create it
+                String destFileDir = getDirectoryOfFile(destPath);
+                if (!directoryExists(destFileDir)) createNewDirectory(destFileDir);
+                FileUtils.copyFile(filePathToCopyFrom, filePathToCopyTo);
+            }
+            if (filePathToCopyFrom.isDirectory()) {
+                FileUtils.copyDirectory(filePathToCopyFrom, filePathToCopyTo);
+            }
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     /**
@@ -501,9 +554,9 @@ public class MS_FileSystemTools {
         if (dirInTempDirectory == null) {
             tmpDir = getTmpDirectory();
         } else {
-            tmpDir = dirInTempDirectory.endsWith(SLASH) ?
+            tmpDir = dirInTempDirectory.endsWith(_SLASH) ?
                     getTmpDirectory() + dirInTempDirectory :
-                    getTmpDirectory() + dirInTempDirectory + SLASH;
+                    getTmpDirectory() + dirInTempDirectory + _SLASH;
         }
         String fullFilename = tmpDir + fileName;
 

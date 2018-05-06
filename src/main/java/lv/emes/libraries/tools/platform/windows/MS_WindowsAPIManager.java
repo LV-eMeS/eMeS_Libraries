@@ -40,7 +40,7 @@ public final class MS_WindowsAPIManager {
      */
     private static String getNircmdFileName() {
         if (nircmdFileName.equals(""))
-            nircmdFileName = MS_FileSystemTools.extractResourceToTmpFolder(MS_FileSystemTools.NIRCMD_FILE_FOR_WINDOWS, TEMP_DIRECTORY_FOR_VOLUME_MANAGER, false);
+            nircmdFileName = MS_FileSystemTools.extractResourceToTmpFolder(MS_FileSystemTools._NIRCMD_FILE_FOR_WINDOWS, TEMP_DIRECTORY_FOR_VOLUME_MANAGER, false);
         return nircmdFileName;
     }
 

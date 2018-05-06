@@ -12,7 +12,7 @@ import java.time.format.DateTimeParseException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import static lv.emes.libraries.file_system.MS_FileSystemTools.SLASH;
+import static lv.emes.libraries.file_system.MS_FileSystemTools._SLASH;
 import static lv.emes.libraries.utilities.MS_DateTimeUtils.*;
 
 /**
@@ -56,7 +56,7 @@ public class MS_TextToFileCachingRepository extends MS_CachingRepository<String,
 
     @Override
     protected void doInitialize() {
-        pathToFile = getRepositoryRoot() + SLASH + getRepositoryCategoryName();
+        pathToFile = getRepositoryRoot() + _SLASH + getRepositoryCategoryName();
         MS_TextFile.createEmptyFile(pathToFile);
         file = new MS_TextFile(pathToFile);
     }

@@ -171,7 +171,7 @@ public class MS_TextToFileCachingRepositoryTest {
 
     @Test(expected = MS_RepositoryDataExchangeException.class)
     public void test999repositoryDataExceptionWhenFileCorrupted() {
-        MS_TextFile fileCorrupter = new MS_TextFile(REPOSITORY_ROOT + MS_FileSystemTools.SLASH + FIRST_FILE);
+        MS_TextFile fileCorrupter = new MS_TextFile(REPOSITORY_ROOT + MS_FileSystemTools._SLASH + FIRST_FILE);
         fileCorrupter.writeln("Some really bad file content", true);
         fileRepository.findAll();
     }

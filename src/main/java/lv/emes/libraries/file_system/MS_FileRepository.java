@@ -2,7 +2,7 @@ package lv.emes.libraries.file_system;
 
 import lv.emes.libraries.storage.MS_Repository;
 
-import static lv.emes.libraries.file_system.MS_FileSystemTools.SLASH;
+import static lv.emes.libraries.file_system.MS_FileSystemTools._SLASH;
 
 /**
  * A repository for files of some type that are located in some file system.
@@ -20,7 +20,7 @@ public abstract class MS_FileRepository<T> extends MS_Repository<T, String> {
 
     public MS_FileRepository(String repositoryRoot, String repositoryCategoryName) {
         super(repositoryRoot, repositoryCategoryName);
-        pathToRepository = repositoryRoot + SLASH + repositoryCategoryName + SLASH;
+        pathToRepository = repositoryRoot + _SLASH + repositoryCategoryName + _SLASH;
     }
 
     public MS_FileRepository(String repositoryRoot, String repositoryCategoryName, boolean autoInitialize) {

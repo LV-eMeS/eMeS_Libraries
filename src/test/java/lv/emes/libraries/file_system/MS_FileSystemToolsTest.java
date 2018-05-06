@@ -172,21 +172,21 @@ public class MS_FileSystemToolsTest {
 
     @Test
     public void test10ResourceExtractingToTmpFolder() {
-        String tmpFile = extractResourceToTmpFolder(NIRCMD_FILE_FOR_WINDOWS, null, true);
+        String tmpFile = extractResourceToTmpFolder(_NIRCMD_FILE_FOR_WINDOWS, null, true);
         String shortName = getShortFilename(tmpFile);
         assertTrue(fileExists(getTmpDirectory() + shortName));
     }
 
     @Test
     public void test11ResourceExtractingToParticularFolderInsideTmpFolder() {
-        String tmpFile = extractResourceToTmpFolder(NIRCMD_FILE_FOR_WINDOWS, "test/", true);
+        String tmpFile = extractResourceToTmpFolder(_NIRCMD_FILE_FOR_WINDOWS, "test/", true);
         String shortName = getShortFilename(tmpFile);
         assertTrue(fileExists(getTmpDirectory() + "test/" + shortName));
     }
 
     @Test
     public void test12ResourceExtractingToParticularSubFolderInsideTmpFolder() {
-        String tmpFile = extractResourceToTmpFolder(NIRCMD_FILE_FOR_WINDOWS, "test/subTest", true);
+        String tmpFile = extractResourceToTmpFolder(_NIRCMD_FILE_FOR_WINDOWS, "test/subTest", true);
         String shortName = getShortFilename(tmpFile);
         assertTrue(fileExists(getTmpDirectory() + "test/subTest/" + shortName));
     }
@@ -198,7 +198,7 @@ public class MS_FileSystemToolsTest {
         String anotherFilename = tmpFilePath2;
 
         //move file to this same folder
-        tmpFileStillExists = !moveFile(thisFilename, anotherFilename);
+        tmpFileStillExists = !moveFileOrDirectory(thisFilename, anotherFilename);
         assertFalse(tmpFileStillExists);
 
         //create another file with first filename, so now we got 2 files
@@ -207,26 +207,26 @@ public class MS_FileSystemToolsTest {
         assertTrue(fileExists(anotherFilename));
 
         //move renamed file back using method that doesn't overwrite it
-        tmpFileStillExists = !moveFile(anotherFilename, thisFilename, false);
+        tmpFileStillExists = !moveFileOrDirectory(anotherFilename, thisFilename, false);
         assertTrue(tmpFileStillExists);
         assertTrue(fileExists(createdFile));
         assertTrue(fileExists(anotherFilename));
 
         //this time move second file to first file dest with overwriting it
-        tmpFileStillExists = moveFile(anotherFilename, thisFilename, true);
+        tmpFileStillExists = moveFileOrDirectory(anotherFilename, thisFilename, true);
         assertTrue(tmpFileStillExists);
         assertFalse(fileExists(anotherFilename));
 
         //now to test, if dest directory is created by renaming process
         String childDirectoryUnique = "new_child_directory_6397/";
         String anotherFileInDiffDir = getTmpDirectory() + childDirectoryUnique + tmpFileName2;
-        tmpFileStillExists = !moveFile(thisFilename, anotherFileInDiffDir);
+        tmpFileStillExists = !moveFileOrDirectory(thisFilename, anotherFileInDiffDir);
         assertFalse(tmpFileStillExists);
     }
 
     @Test
     public void test14NewFileCreation() {
-        String filename = tmpDirPath + RandomStringUtils.randomAlphanumeric(9) + SLASH + "test14NewFileCreation.txt";
+        String filename = tmpDirPath + RandomStringUtils.randomAlphanumeric(9) + _SLASH + "test14NewFileCreation.txt";
         assertFalse("Error: file already exists", fileExists(filename));
         assertTrue("New file creation failed", createEmptyFile(filename));
         assertTrue("File doesn't exist after creation", fileExists(filename));
@@ -332,5 +332,58 @@ public class MS_FileSystemToolsTest {
     @Test(expected = FileNotFoundException.class)
     public void test25CSVFileDoesntExist() throws IOException {
         loadCSVFile(TEST_RESOURCES_DIR + "anything unreal");
+    }
+
+    @Test
+    public void test30MoveDirectory() {
+        String newDirPath = tmpDirPath + childDirectory;
+        String destDirPath = newDirPath + "30";
+        String newFileInDirName = "test30MoveDirectory.txt";
+        createNewDirectory(newDirPath);
+        assertTrue(createEmptyFile(destDirPath + _SLASH + newFileInDirName));
+        moveFileOrDirectory(newDirPath, destDirPath);
+        assertTrue(fileExists(destDirPath + _SLASH + newFileInDirName));
+    }
+
+    @Test
+    public void test31CopyDirectory() {
+        String newDirPath = tmpDirPath + childDirectory + "31";
+        String copiedDirPath = newDirPath + "31";
+        String newFileInDirName = "test31CopyDirectory.txt";
+        createNewDirectory(newDirPath);
+        assertTrue(createEmptyFile(newDirPath + _SLASH + newFileInDirName));
+        assertTrue(copyFileOrDirectory(newDirPath, copiedDirPath));
+        //files in both directories should exist if copied successfully
+        assertTrue("File copy failure", fileExists(copiedDirPath + _SLASH + newFileInDirName));
+        assertTrue("Created file doesn't exist after copying", fileExists(newDirPath + _SLASH + newFileInDirName));
+    }
+
+    @Test
+    public void test32CopyFileWhenDestAlreadyExists() {
+        String dir1 = tmpDirPath + childDirectory + "32";
+        String dir2 = dir1 + "32";
+        String fileInBothDirsName = "test32CopyFileWhenDestAlreadyExists.txt";
+        String fileInDir1Path = dir1 + _SLASH + fileInBothDirsName;
+        String fileInDir2Path = dir2 + _SLASH + fileInBothDirsName;
+
+        createNewDirectory(dir1);
+        createNewDirectory(dir2);
+        assertTrue(createEmptyFile(fileInDir2Path)); //empty file in second directory
+        //some text in file, which is located in first directory
+        final String stringToCheckAgainst = "test32CopyFileWhenDestAlreadyExists";
+        MS_TextFile fileInDir1 = new MS_TextFile(fileInDir1Path);
+        fileInDir1.writeln(stringToCheckAgainst);
+        fileInDir1.close();
+
+        //check that content of files differs
+        assertNotEquals(stringToCheckAgainst, MS_TextFile.getFileTextAsString(fileInDir2Path, null));
+        assertEquals(stringToCheckAgainst, MS_TextFile.getFileTextAsString(fileInDir1Path, null));
+
+        //copy file with text to empty file destination
+        assertTrue(copyFileOrDirectory(fileInDir1Path, fileInDir2Path));
+
+        //now both files should have same content
+        assertEquals(stringToCheckAgainst, MS_TextFile.getFileTextAsString(fileInDir1Path, null));
+        assertEquals(stringToCheckAgainst, MS_TextFile.getFileTextAsString(fileInDir2Path, null));
     }
 }
