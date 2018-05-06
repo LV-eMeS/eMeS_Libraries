@@ -30,6 +30,7 @@ eMeS libraries Version 2.2.0
 * Scheduler support for Script runner to hold till some time like, e.g. "sleep#till&23:55".
 * "Continue on errors" flag for MS_ScriptRunner (default - true).
 * Bugfix in remote logging repository, when events came in wrong order.
+* Utility methods to copy files / directories and determine file / directory size.
 -----------
 * Removed deprecated MS_InMemoryCache, as instead MS_Cache with appropriate MS_CachingRepository
   should be used.

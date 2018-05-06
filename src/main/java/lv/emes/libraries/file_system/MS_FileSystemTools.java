@@ -18,6 +18,7 @@ Copyright [2016] [Māris Salenieks]
 
 import au.com.bytecode.opencsv.CSVReader;
 import lv.emes.libraries.tools.lists.MS_StringList;
+import lv.emes.libraries.tools.logging.MS_Log4Java;
 import lv.emes.libraries.utilities.MS_StringUtils;
 import org.apache.commons.io.FileUtils;
 
@@ -25,10 +26,11 @@ import java.awt.*;
 import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Different transformations and actions related with OS file system.
@@ -174,7 +176,7 @@ public class MS_FileSystemTools {
 
     /**
      * @return path to system default temporary folder.
-     * <br><u>Note</u>: path ends with "/".
+     * <br><u>Note</u>: path ends with slash "/".
      */
     public static String getTmpDirectory() {
         String res = System.getProperty("java.io.tmpdir");
@@ -503,6 +505,50 @@ public class MS_FileSystemTools {
                 }
             }
         return res;
+    }
+
+    /**
+     * Calculates total size of file or directory in bytes.
+     * <p><u>Warning</u>: this method doesn't throw any exception in case it couldn't enter some directory
+     * or had trouble traversing. Instead it's logging to Log4J failing file or directory name.
+     * In this failing case result might be inaccurate.
+     * <p>Inspired from:
+     * <a href="https://stackoverflow.com/questions/2149785/get-size-of-folder-or-file/19877372#19877372">Aksel Willgert @Stackoverflow</a>.
+     *
+     * @param path path to file or directory.
+     * @return file size in bytes or <code>0L</code> if the file or directory does not exist.
+     */
+    public static long getFileOrDirectorySize(String path) {
+        final AtomicLong res = new AtomicLong(0);
+        try {
+            Files.walkFileTree(Paths.get(path), new SimpleFileVisitor<Path>() {
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
+                    res.addAndGet(attrs.size());
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult visitFileFailed(Path file, IOException exc) {
+                    MS_Log4Java.getLogger(MS_FileSystemTools.class)
+                            .warn(String.format("While getting '%s' size, skipped: '%s' (%s)", path, file, exc));
+                    // Skip folders that can't be traversed
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult postVisitDirectory(Path dir, IOException exc) {
+                    if (exc != null)
+                        MS_Log4Java.getLogger(MS_FileSystemTools.class)
+                                .warn(String.format("While getting '%s' size, had trouble traversing: '%s' (%s)", path, dir, exc));
+                    // Ignore errors traversing a folder
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+        } catch (IOException e) {
+            throw new AssertionError("walkFileTree will not throw IOException if the FileVisitor does not");
+        }
+        return res.get();
     }
 
     /**

@@ -386,4 +386,45 @@ public class MS_FileSystemToolsTest {
         assertEquals(stringToCheckAgainst, MS_TextFile.getFileTextAsString(fileInDir1Path, null));
         assertEquals(stringToCheckAgainst, MS_TextFile.getFileTextAsString(fileInDir2Path, null));
     }
+
+    @Test
+    public void test33GetFileOrFolderSize() {
+        String dir = tmpDirPath + childDirectory + "33/";
+
+        final String fileWithSize0Bytes = "fileWithSize0Bytes";
+        createEmptyFile(dir + fileWithSize0Bytes);
+
+        final String fileWithSize2Bytes = "fileWithSize2Bytes";
+        MS_TextFile fileWriter;
+        fileWriter = new MS_TextFile(dir + fileWithSize2Bytes);
+        fileWriter.writeln("");
+        fileWriter.close();
+
+        final String fileWithSize6Bytes = "fileWithSize6Bytes";
+        fileWriter = new MS_TextFile(dir + fileWithSize6Bytes);
+        fileWriter.writeln("abcd");
+        fileWriter.close();
+
+        final String fileWithSize12Bytes = "fileWithSize12Bytes";
+        fileWriter = new MS_TextFile(dir + fileWithSize12Bytes);
+        fileWriter.writeln("1234567890");
+        fileWriter.close();
+
+        assertEquals("File '" + fileWithSize0Bytes + "' size should be 1+2",
+                0, getFileOrDirectorySize(dir + fileWithSize0Bytes));
+        assertEquals("File '" + fileWithSize2Bytes + "' size should be 1+2",
+                2, getFileOrDirectorySize(dir + fileWithSize2Bytes));
+        assertEquals("File '" + fileWithSize6Bytes + "' size should be 3+2",
+                6, getFileOrDirectorySize(dir + fileWithSize6Bytes));
+        assertEquals("File '" + fileWithSize12Bytes + "' size should be 10+2",
+                12, getFileOrDirectorySize(dir + fileWithSize12Bytes));
+        //now to try to determine folder's size. It should weight 20 bytes.
+        assertEquals("Folder's '" + dir + "' (containing all previous files) size should be 0+2+6+12",
+                20, getFileOrDirectorySize(dir));
+    }
+
+    @Test
+    public void test34GetNotExistingPathSize() {
+        assertEquals(0, getFileOrDirectorySize("ugabuga"));
+    }
 }
