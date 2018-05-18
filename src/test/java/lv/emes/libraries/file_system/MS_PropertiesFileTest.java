@@ -37,7 +37,7 @@ public class MS_PropertiesFileTest {
         pro.load(FILE_NAME);
         assertEquals("root", pro.getProperty("USERNAME"));
         assertEquals("localhost", pro.getProperty("HOSTNAME"));
-        assertEquals(pro.getProperty("PORT", -123456789), 3306); //tests for integer value
+        assertEquals(pro.getInt("PORT", -123456789), 3306); //tests for integer value
         assertEquals("1", pro.getOrDefault("DEFAULT_USER_ID", 0)); //good result is String anyways
 
         //some bad cases
