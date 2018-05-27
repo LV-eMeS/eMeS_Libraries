@@ -4,6 +4,7 @@ import lv.emes.libraries.tools.MS_BadSetupException;
 import lv.emes.libraries.tools.lists.MS_List;
 import org.junit.Test;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -13,7 +14,7 @@ import static org.junit.Assert.*;
 
 /**
  * @author eMeS
- * @version 1.0.
+ * @version 1.1.
  */
 public class MS_CodingUtilsTest {
 
@@ -267,5 +268,46 @@ public class MS_CodingUtilsTest {
     public void testExecuteWithRetryNoActionProvided() throws MS_ExecutionFailureException {
         executeWithRetry(-2, null);
     }
+
     //*** executeWithRetry test end ***
+
+    @Test
+    public void testGetMapItemKeyAndValue() {
+        Map<Integer, String> map = new LinkedHashMap<>();
+        map.put(5, "Test");
+        map.put(6, "6");
+        map.put(1, "XYZ");
+
+        Integer expected;
+        expected = 5;
+        assertEquals(expected, getMapElementKey(map, 0));
+        expected = 6;
+        assertEquals(expected, getMapElementKey(map, 1));
+        expected = 1;
+        assertEquals(expected, getMapElementKey(map, 2));
+
+        assertEquals("Test", getMapElementValue(map, 0));
+        assertEquals("6", getMapElementValue(map, 1));
+        assertEquals("XYZ", getMapElementValue(map, 2));
+    }
+
+    @Test(expected = MS_BadSetupException.class)
+    public void testGetMapItemKeyIndexOutOfBounds() {
+        Map<Integer, String> map = new LinkedHashMap<>();
+        getMapElementKey(map, 0);
+    }
+
+    @Test(expected = MS_BadSetupException.class)
+    public void testGetMapItemKeyIndexOutOfBoundsNegative() {
+        Map<Integer, String> map = new LinkedHashMap<>();
+        getMapElementKey(map, -1);
+    }
+
+    @Test(expected = MS_BadSetupException.class)
+    public void testGetMapItemValueIndexOutOfBounds() {
+        Map<Integer, String> map = new LinkedHashMap<>();
+        getMapElementKey(map, 6);
+    }
+
+    //*** getMapElementKey and getMapElementValue test end ***
 }

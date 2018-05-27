@@ -22,7 +22,7 @@ import java.util.function.BiConsumer;
 /**
  * Module is designed to combine different common quick coding operations.
  *
- * @version 2.4.
+ * @version 2.5.
  */
 public final class MS_CodingUtils {
 
@@ -342,6 +342,53 @@ public final class MS_CodingUtils {
             throw new MS_BadSetupException("Action to execute must be provided");
 
         executeWithRetry(maxTimesToRun, maxTimesToRun, action, actionBetweenRetries);
+    }
+
+    /**
+     * Iterates through map elements by Map's natural order and returns key of item at given <b>index</b>.
+     * It's recommended to use this method for types of maps, where you can determine their element order, for
+     * example, {@link java.util.LinkedHashMap} or {@link java.util.TreeMap}.
+     *
+     * @param map   given map. <b>Should not be null!</b>
+     * @param index index (starting from 0) of Map's element, whose key we are trying to find.
+     * @param <T>   type of Map's keys.
+     * @return key of Map's element at index <b>index</b>.
+     * @throws NullPointerException      in case given <b>map</b> is null.
+     * @throws MS_BadSetupException in case index is out of Map's element index bounds.
+     */
+    public static <T> T getMapElementKey(Map<T, ?> map, int index) {
+        T res = null;
+        Iterator<T> iter = map.keySet().iterator();
+        if (index < 0 || index > map.size() - 1) {
+            throw new MS_BadSetupException(String.format("Index [%d] out of bounds. Actual size of map: [%s]", index, map.size()));
+        }
+        for (int i = 0; i <= index; i++) {
+            res = iter.next();
+        }
+        return res;
+    }
+
+    /**
+     * @param map   given map. <b>Should not be null!</b>
+     * @param index index (starting from 0) of Map's element, whose key we are trying to find.
+     * @param <T>   type of Map's keys.
+     * @param <U>   type of Map's values.
+     * @return map's element at index <b>index</b>.
+     * @throws MS_BadSetupException in case index is out of Map's element index bounds.
+     */
+    public static <T, U> U getMapElementValue(Map<T, U> map, int index) {
+        return map.get(getMapElementKey(map, index));
+    }
+
+    /**
+     * Tests if some collection is empty or null.
+     *
+     * @param collection any collection of elements.
+     * @param <T>        type of elements in collection.
+     * @return true if collection is null or has no elements; false, if there is at least 1 element in collection.
+     */
+    public static <T> boolean isEmpty(Collection<T> collection) {
+        return collection == null || collection.size() == 0;
     }
 
     //*** Private (static) methods ***
