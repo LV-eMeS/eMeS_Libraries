@@ -39,7 +39,8 @@ public class MS_RemoteLoggingRepositoryTest {
         repository = new MS_RemoteLoggingRepository(PRODUCT_OWNER, PRODUCT_NAME,
                 new MS_LoggingRemoteServerProperties()
                         .withHost(HOSTNAME)
-                        .withSecret(SECRET_KEY));
+                        .withSecret(SECRET_KEY)
+                        .withHttpConnectionTimeout(15000));
         loggedEvents = new MS_InMemoryLoggingRepository();
         MS_MultiLoggingSetup setup = new MS_MultiLoggingSetup().withRepository(loggedEvents).withRepository(repository);
         MS_MultiLogger logger = new MS_MultiLogger(setup);

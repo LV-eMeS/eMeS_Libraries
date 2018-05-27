@@ -55,7 +55,8 @@ public class MS_RemoteLoggingRepository extends MS_Repository<MS_LoggingEvent, I
     @Override
     public boolean isInitialized() {
         return MS_HttpClient
-                .get(getRemoteServerRoot(serverProperties) + serverProperties.getEndpointStatus(), null)
+                .get(getRemoteServerRoot(serverProperties) + serverProperties.getEndpointStatus(),
+                        null, null, serverProperties.getHttpRequestConfig())
                 .getReponseCode() == 200;
     }
 
@@ -73,7 +74,9 @@ public class MS_RemoteLoggingRepository extends MS_Repository<MS_LoggingEvent, I
         parameters.put("error", serializedEvent.getError());
 
         String url = getRemoteServerBasePath(serverProperties) + serverProperties.getEndpointLogEvent();
-        MS_HttpRequestResult httpResult = MS_HttpClient.post(url, parameters, MS_CodingUtils.newSingletonMap("Authorization", getEncryptedSecret(serverProperties)));
+        MS_HttpRequestResult httpResult = MS_HttpClient.post(url, parameters,
+                MS_CodingUtils.newSingletonMap("Authorization", getEncryptedSecret(serverProperties)),
+                serverProperties.getHttpRequestConfig());
 
         if (httpResult.getReponseCode() == 400) {
             MS_Log4Java.getLogger(MS_RemoteLoggingRepository.class)
@@ -89,7 +92,8 @@ public class MS_RemoteLoggingRepository extends MS_Repository<MS_LoggingEvent, I
     @SuppressWarnings("unchecked")
     protected Map<Instant, MS_LoggingEvent> doFindAll() {
         String url = getRemoteServerBasePath(serverProperties) + serverProperties.getEndpointGetAllEvents();
-        MS_HttpRequestResult httpResult = MS_HttpClient.get(url, null, MS_CodingUtils.newSingletonMap("Authorization", getEncryptedSecret(serverProperties)));
+        MS_HttpRequestResult httpResult = MS_HttpClient.get(url, null, MS_CodingUtils.newSingletonMap("Authorization",
+                getEncryptedSecret(serverProperties)), serverProperties.getHttpRequestConfig());
         checkResponseAndThrowExceptionIfNeeded(httpResult, "Finding all events failed with HTTP status code " +
                 httpResult.getReponseCode());
         try {
@@ -109,7 +113,8 @@ public class MS_RemoteLoggingRepository extends MS_Repository<MS_LoggingEvent, I
     @Override
     protected void doRemoveAll() {
         String url = getRemoteServerBasePath(serverProperties) + serverProperties.getEndpointClearAllEvents();
-        MS_HttpRequestResult httpResult = MS_HttpClient.delete(url, MS_CodingUtils.newSingletonMap("Authorization", getEncryptedSecret(serverProperties)));
+        Map<String, String> headers = MS_CodingUtils.newSingletonMap("Authorization", getEncryptedSecret(serverProperties));
+        MS_HttpRequestResult httpResult = MS_HttpClient.delete(url, headers, serverProperties.getHttpRequestConfig());
         checkResponseAndThrowExceptionIfNeeded(httpResult, "Removing all events failed with HTTP status code " +
                 httpResult.getReponseCode());
     }

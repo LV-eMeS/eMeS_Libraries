@@ -54,7 +54,7 @@ public class MS_HttpClient {
      * @param params     map of parameters to pass for this URL.
      * @param headers    map of key-value headers to pass for this request.
      * @param connConfig initial configuration of connection. For most of the cases that's enough just to set timeouts.
-     *                   For that {@link MS_IFuncConnectionConfigDefaults#DEFAULT_CONFIG_FOR_CONNECTION} can be used as well.
+     *                   For that {@link MS_HTTPConnectionConfigurations#DEFAULT_CONFIG_FOR_CONNECTION} can be used as well.
      * @return HTTP response from server.
      */
     public static MS_HttpRequestResult get(String requestURL, Map<String, String> params,
@@ -77,7 +77,7 @@ public class MS_HttpClient {
      * @return HTTP response from server.
      */
     public static MS_HttpRequestResult get(String requestURL, Map<String, String> params, Map<String, String> headers) {
-        return get(requestURL, params, headers, MS_IFuncConnectionConfigDefaults.DEFAULT_CONFIG_FOR_CONNECTION);
+        return get(requestURL, params, headers, MS_HTTPConnectionConfigurations.DEFAULT_CONFIG_FOR_CONNECTION);
     }
 
     /**
@@ -88,7 +88,7 @@ public class MS_HttpClient {
      * @return HTTP response from server.
      */
     public static MS_HttpRequestResult get(String requestURL, Map<String, String> params) {
-        return get(requestURL, params, null, MS_IFuncConnectionConfigDefaults.DEFAULT_CONFIG_FOR_CONNECTION);
+        return get(requestURL, params, null, MS_HTTPConnectionConfigurations.DEFAULT_CONFIG_FOR_CONNECTION);
     }
 
     /**
@@ -98,7 +98,7 @@ public class MS_HttpClient {
      * @param requestBody data as whole entity of request body.
      * @param headers     map of key-value headers to pass for this request.
      * @param connConfig  initial configuration of connection. For most of the cases that's enough just to set timeouts.
-     *                    For that {@link MS_IFuncConnectionConfigDefaults#DEFAULT_CONFIG_FOR_CONNECTION} can be used as well.
+     *                    For that {@link MS_HTTPConnectionConfigurations#DEFAULT_CONFIG_FOR_CONNECTION} can be used as well.
      * @return HTTP response from server.
      */
     public static MS_HttpRequestResult post(String requestURL, HttpEntity requestBody, Map<String, String> headers, RequestConfig connConfig) {
@@ -117,7 +117,7 @@ public class MS_HttpClient {
      * @param params     map of parameters to pass for this URL.
      * @param headers    map of key-value headers to pass for this request.
      * @param connConfig initial configuration of connection. For most of the cases that's enough just to set timeouts.
-     *                   For that {@link MS_IFuncConnectionConfigDefaults#DEFAULT_CONFIG_FOR_CONNECTION} can be used as well.
+     *                   For that {@link MS_HTTPConnectionConfigurations#DEFAULT_CONFIG_FOR_CONNECTION} can be used as well.
      * @return HTTP response from server.
      */
     public static MS_HttpRequestResult post(String requestURL, Map<String, String> params, Map<String, String> headers, RequestConfig connConfig) {
@@ -143,7 +143,7 @@ public class MS_HttpClient {
      * @return HTTP response from server.
      */
     public static MS_HttpRequestResult post(String requestURL, Map<String, String> params, Map<String, String> headers) {
-        return post(requestURL, params, headers, MS_IFuncConnectionConfigDefaults.DEFAULT_CONFIG_FOR_CONNECTION);
+        return post(requestURL, params, headers, MS_HTTPConnectionConfigurations.DEFAULT_CONFIG_FOR_CONNECTION);
     }
 
     /**
@@ -153,7 +153,7 @@ public class MS_HttpClient {
      * @param requestBody data as whole entity of request body.
      * @param headers     map of key-value headers to pass for this request.
      * @param connConfig  initial configuration of connection. For most of the cases that's enough just to set timeouts.
-     *                    For that {@link MS_IFuncConnectionConfigDefaults#DEFAULT_CONFIG_FOR_CONNECTION} can be used as well.
+     *                    For that {@link MS_HTTPConnectionConfigurations#DEFAULT_CONFIG_FOR_CONNECTION} can be used as well.
      * @return HTTP response from server.
      */
     public static MS_HttpRequestResult put(String requestURL, HttpEntity requestBody,
@@ -173,7 +173,7 @@ public class MS_HttpClient {
      * @param requestBody data to be sent by request.
      * @param headers     map of key-value headers to pass for this request.
      * @param connConfig  initial configuration of connection. For most of the cases that's enough just to set timeouts.
-     *                    For that {@link MS_IFuncConnectionConfigDefaults#DEFAULT_CONFIG_FOR_CONNECTION} can be used as well.
+     *                    For that {@link MS_HTTPConnectionConfigurations#DEFAULT_CONFIG_FOR_CONNECTION} can be used as well.
      * @return HTTP response from server.
      */
     public static MS_HttpRequestResult put(String requestURL, String requestBody,
@@ -195,7 +195,7 @@ public class MS_HttpClient {
      * @param requestURL  an URL to HTTP server.
      * @param requestBody data to be sent by request.
      * @param connConfig  initial configuration of connection. For most of the cases that's enough just to set timeouts.
-     *                    For that {@link MS_IFuncConnectionConfigDefaults#DEFAULT_CONFIG_FOR_CONNECTION} can be used as well.
+     *                    For that {@link MS_HTTPConnectionConfigurations#DEFAULT_CONFIG_FOR_CONNECTION} can be used as well.
      * @return HTTP response from server.
      */
     public static MS_HttpRequestResult put(String requestURL, String requestBody, RequestConfig connConfig) {
@@ -210,7 +210,7 @@ public class MS_HttpClient {
      * @return HTTP response from server.
      */
     public static MS_HttpRequestResult put(String requestURL, String requestBody) {
-        return put(requestURL, requestBody, MS_IFuncConnectionConfigDefaults.DEFAULT_CONFIG_FOR_CONNECTION);
+        return put(requestURL, requestBody, MS_HTTPConnectionConfigurations.DEFAULT_CONFIG_FOR_CONNECTION);
     }
 
     /**
@@ -219,7 +219,7 @@ public class MS_HttpClient {
      * @param requestURL an URL to HTTP server.
      * @param headers    map of key-value headers to pass for this request.
      * @param connConfig initial configuration of connection. For most of the cases that's enough just to set timeouts.
-     *                   For that {@link MS_IFuncConnectionConfigDefaults#DEFAULT_CONFIG_FOR_CONNECTION} can be used as well.
+     *                   For that {@link MS_HTTPConnectionConfigurations#DEFAULT_CONFIG_FOR_CONNECTION} can be used as well.
      * @return HTTP response from server.
      */
     public static MS_HttpRequestResult delete(String requestURL, Map<String, String> headers, RequestConfig connConfig) {
@@ -235,7 +235,7 @@ public class MS_HttpClient {
      * @return HTTP response from server.
      */
     public static MS_HttpRequestResult delete(String requestURL, Map<String, String> headers) {
-        return delete(requestURL, headers, MS_IFuncConnectionConfigDefaults.DEFAULT_CONFIG_FOR_CONNECTION);
+        return delete(requestURL, headers, MS_HTTPConnectionConfigurations.DEFAULT_CONFIG_FOR_CONNECTION);
     }
 
     /**
@@ -243,7 +243,7 @@ public class MS_HttpClient {
      *
      * @param requestURL an URL to HTTP server.
      * @param connConfig initial configuration of connection. For most of the cases that's enough just to set timeouts.
-     *                   For that {@link MS_IFuncConnectionConfigDefaults#DEFAULT_CONFIG_FOR_CONNECTION} can be used as well.
+     *                   For that {@link MS_HTTPConnectionConfigurations#DEFAULT_CONFIG_FOR_CONNECTION} can be used as well.
      * @return HTTP response from server.
      */
     public static MS_HttpRequestResult delete(String requestURL, RequestConfig connConfig) {
@@ -257,7 +257,7 @@ public class MS_HttpClient {
      * @return HTTP response from server.
      */
     public static MS_HttpRequestResult delete(String requestURL) {
-        return delete(requestURL, MS_IFuncConnectionConfigDefaults.DEFAULT_CONFIG_FOR_CONNECTION);
+        return delete(requestURL, MS_HTTPConnectionConfigurations.DEFAULT_CONFIG_FOR_CONNECTION);
     }
 
     //*** PRIVATE METHODS ***
