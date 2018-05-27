@@ -102,13 +102,16 @@ public class MS_FileSystemToolsTest {
 
     @Test
     public void test07FileNamesAndExtensions() {
-        String extensionWithDot = ".txt";
-        String withoutExtension = MS_StringUtils.replaceInString(tmpFilePath, extensionWithDot, "");
+        final String EXTENSION_WITH_DOT = ".txt";
+        String withoutExtension = MS_StringUtils.replaceInString(tmpFilePath, EXTENSION_WITH_DOT, "");
 
         assertEquals(tmpFileName, getShortFilename(tmpFilePath));
         assertEquals(withoutExtension, getFilenameWithoutExtension(tmpFilePath));
-        assertEquals(extensionWithDot, getFileExtensionWithDot(tmpFilePath));
+        assertEquals(EXTENSION_WITH_DOT, getFileExtensionWithDot(tmpFilePath));
         assertEquals("txt", getFileExtensionWithoutDot(tmpFilePath));
+
+        assertEquals("", getShortFilename(""));
+        assertEquals("abc.", getFilenameWithoutExtension("abc..txt"));
     }
 
     @Test

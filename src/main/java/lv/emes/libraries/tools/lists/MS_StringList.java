@@ -8,8 +8,8 @@ import java.util.List;
 import static lv.emes.libraries.utilities.MS_CodingUtils.inRange;
 
 /**
- * Purpose of this class is to store many different but related texts in a list. It implements number of methods for different actions with elements of the list,
- * including perambulation using methods from <b>MS_IListActions</b>.
+ * Purpose of this class is to store many different but related texts in a list.
+ * It implements number of methods for different operations with elements of the list.
  * <b>Delimiter</b> works to separate elements each from another when convert this list from big string.
  * <b>secondDelimiter</b> helps in cases when a symbol equal to <b>delimiter</b> is already used in big string.
  * <br><u>Note</u>: those delimiters shouldn't be changed unless they are often used in text which operated by this list.
@@ -18,7 +18,7 @@ import static lv.emes.libraries.utilities.MS_CodingUtils.inRange;
  * @version 2.8.
  * @see MS_List
  */
-public final class MS_StringList implements MS_IListActions<String> {
+public final class MS_StringList implements MS_ListActions<String>, MS_ContactableList<String, Integer> {
 
     private boolean flagForLoopBreaking;
     public static final char _DEFAULT_DELIMITER = '#';
@@ -43,7 +43,6 @@ public final class MS_StringList implements MS_IListActions<String> {
      */
     public char secondDelimiter = _SECOND_DEFAULT_DELIM;
     protected List<String> fList = new ArrayList<>(); //this list will be used for all the internal operations
-    public int indexOfCurrent = -1;
 
     /**
      * Creates an String object list from String, which has all the elements delimited with <b>delimiter</b>.
@@ -265,54 +264,6 @@ public final class MS_StringList implements MS_IListActions<String> {
         return count();
     }
 
-    @Override
-    public int getIndexOfCurrent() {
-        return indexOfCurrent;
-    }
-
-    @Override
-    public void setIndexOfCurrent(int indexOfCurrent) {
-        if (listIsEmptyOrIndexNotInRange(indexOfCurrent))
-            this.indexOfCurrent = -1;
-        else
-            this.indexOfCurrent = indexOfCurrent;
-    }
-
-    /**
-     * Returns current element.
-     *
-     * @return empty String if element not found in the list.
-     */
-    @Override
-    public String current() {
-        return this.get(indexOfCurrent);
-    }
-
-    @Override
-    public void first() {
-        setIndexOfCurrent(0);
-    }
-
-    @Override
-    public void last() {
-        setIndexOfCurrent(count() - 1);
-    }
-
-    @Override
-    public void next() {
-        setIndexOfCurrent(indexOfCurrent + 1);
-    }
-
-    @Override
-    public void prev() {
-        setIndexOfCurrent(indexOfCurrent - 1);
-    }
-
-    @Override
-    public boolean currentIndexInsideTheList() {
-        return count() > 0 && getIndexOfCurrent() > -1 && getIndexOfCurrent() < count();
-    }
-
     //NEW METHODS, that aren't coming from interfaces
     //------------------------------------------------------------------------------------------------------------------------
 
@@ -515,26 +466,6 @@ public final class MS_StringList implements MS_IListActions<String> {
     }
 
     /**
-     * Tests if next element can be reached performing method <b>next</b>.
-     *
-     * @return true if not at the end of the list.
-     * @see MS_StringList#next()
-     */
-    public boolean hasNext() {
-        return this.currentIndexInsideTheList();
-    }
-
-    /**
-     * Tests if previous element can be reached performing method <b>prev</b>.
-     *
-     * @return true if not at the beginning of the list.
-     * @see MS_StringList#prev()
-     */
-    public boolean hasPrevious() {
-        return this.currentIndexInsideTheList();
-    }
-
-    /**
      * At the end of this list adds elements of list <b>anotherPart</b>.
      *
      * @param anotherPart list containing elements to add to this list.
@@ -545,9 +476,7 @@ public final class MS_StringList implements MS_IListActions<String> {
     }
 
     @Override
-    public void concatenate(MS_IContactableList<String, Integer> otherList) {
-        otherList.forEachItem((item, index) -> {
-            this.add(item);
-        });
+    public void concatenate(List<String> otherList) {
+        otherList.forEach(this::add);
     }
 }

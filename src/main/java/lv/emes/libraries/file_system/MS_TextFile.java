@@ -377,7 +377,7 @@ public class MS_TextFile {
      * @see MS_TextFile#close()
      */
     public List<String> importStringListFromFile() {
-        List<String> res = new MS_List<String>();
+        List<String> res = new MS_List<>();
         String row;
         close(); //to be sure that whole file will be read
         while ((row = this.readln()) != null)

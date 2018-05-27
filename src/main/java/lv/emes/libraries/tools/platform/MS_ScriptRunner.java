@@ -4,6 +4,7 @@ import lv.emes.libraries.file_system.MS_FileSystemTools;
 import lv.emes.libraries.file_system.MS_TextFile;
 import lv.emes.libraries.tools.MS_BooleanFlag;
 import lv.emes.libraries.tools.MS_KeyCodeDictionary;
+import lv.emes.libraries.tools.lists.MS_ListActionWorker;
 import lv.emes.libraries.tools.lists.MS_StringList;
 import lv.emes.libraries.tools.logging.MS_FileLogger;
 import lv.emes.libraries.tools.logging.MS_MultiLogger;
@@ -575,17 +576,10 @@ public class MS_ScriptRunner {
                     throw new ScriptParsingError(_ERROR_PARAMETER_COUNT, 2);
 
                 //first push all the buttons down
-                params.first();
-                while (params.currentIndexInsideTheList()) {
-                    getInstance().keyDown(params.get(params.getIndexOfCurrent()));
-                    params.next();
-                }
-                //after release all the buttons
-                params.last();
-                while (params.currentIndexInsideTheList()) {
-                    getInstance().keyUp(params.get(params.getIndexOfCurrent()));
-                    params.prev();
-                }
+                params.forEachItem((param, i) -> getInstance().keyDown(param));
+                MS_StringList reverseOrderParams = MS_ListActionWorker.reverseList(params, new MS_StringList());
+                //after release all the buttons in reverse order
+                reverseOrderParams.forEachItem((param, i) -> getInstance().keyUp(param));
                 break;
             case CMD_SEC_SAY:
                 commandParamsAsText = extractCommandContainingVariables(commandParamsAsText);

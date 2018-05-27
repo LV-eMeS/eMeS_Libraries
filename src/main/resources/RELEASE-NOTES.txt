@@ -32,7 +32,6 @@ eMeS libraries Version 2.2.0
 * Bugfix in remote logging repository, when events came in wrong order.
 * Utility methods to copy files / directories and determine file / directory size.
 * Properties file manager that holds singleton property readers, which can be accessed by their file paths.
------------
 * Removed deprecated MS_InMemoryCache, as instead MS_Cache with appropriate MS_CachingRepository
   should be used.
 * Removed deprecated IPerambulateListActions, as instead Iterable can be used.

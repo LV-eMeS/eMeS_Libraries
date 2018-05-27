@@ -100,29 +100,7 @@ public class MS_StringListTest {
     }
 
     @Test
-    public void test12Perambulation() {
-        MS_StringList sl = new MS_StringList("Test#String#List");
-        sl.first();
-        assertEquals("Test", sl.current());
-        sl.last();
-        assertEquals("List", sl.current());
-        sl.setIndexOfCurrent(1);
-        assertEquals("String", sl.current());
-        sl.next();
-        assertEquals("List", sl.current());
-        sl.prev();
-        assertEquals("String", sl.current());
-        sl.prev();
-        assertEquals("Test", sl.current());
-        sl.prev();
-        assertEquals("", sl.current());
-        sl.last();
-        sl.next();
-        assertEquals("", sl.current());
-    }
-
-    @Test
-    public void test13FromListOrArray() {
+    public void test12FromListOrArray() {
         MS_StringList sl = new MS_StringList("Test#String#List");
         List<String> stringList = new ArrayList<>();
         stringList.add("New #list");
@@ -134,7 +112,7 @@ public class MS_StringListTest {
     }
 
     @Test
-    public void test14FromStringWithDifferentDelimiters() {
+    public void test13FromStringWithDifferentDelimiters() {
         MS_StringList sl = new MS_StringList();
         sl.fromString("Test&Something&New!", '&');
         assertEquals('&', sl.delimiter);
@@ -150,7 +128,7 @@ public class MS_StringListTest {
     }
 
     @Test
-    public void test15DoWithEveryStringInList() {
+    public void test14DoWithEveryStringInList() {
         MS_StringList sl = new MS_StringList("One#Two#");
         sl.forEachItem((s, index) -> {
             boolean test = s.equals("One") || s.equals("Two");
@@ -159,7 +137,7 @@ public class MS_StringListTest {
     }
 
     @Test
-    public void test16ToStringWithNoLastDelimiter() {
+    public void test17ToStringWithNoLastDelimiter() {
         MS_StringList sl;
         String res;
         sl = new MS_StringList("");

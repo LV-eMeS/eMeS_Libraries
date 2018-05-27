@@ -8,17 +8,11 @@ import static lv.emes.libraries.utilities.MS_CodingUtils.inRange;
 
 /** 
  * Purpose of this class is to make lists of different objects.
- * //TODO remove on eMeS_Libraries:v2.2.0 It's possible to perambulate list using methods from interface <b>IPerambulateListActions</b>.
  * @version 2.0.
- * @see IPerambulateListActions
  */
-public class MS_List<T> extends ArrayList<T> implements IPerambulateListActions<T> {
+public class MS_List<T> extends ArrayList<T> implements MS_ContactableList<T, Integer> {
 
 	private boolean flagForLoopBreaking;
-	/**
-	 * Makes it possible to set index for the current element.
-	 */
-	public int indexOfCurrent = -1;
 	
 	//PRIVATE METHODS
 	private boolean listIsEmptyOrIndexNotInRange(int aIndex) {
@@ -95,49 +89,6 @@ public class MS_List<T> extends ArrayList<T> implements IPerambulateListActions<
 		MS_ListActionWorker.forEachItem(this, startFromIndex, endIndex, action);
 	}
 
-	@Override
-	public int getIndexOfCurrent() {		
-		return indexOfCurrent;	
-	}
-
-	@Override
-	public void setIndexOfCurrent(int indexOfCurrent) {
-		if (listIsEmptyOrIndexNotInRange(indexOfCurrent))
-			this.indexOfCurrent = -1;
-		else 
-			this.indexOfCurrent = indexOfCurrent;
-	}
-
-	@Override
-	public T current() {
-		return this.get(indexOfCurrent);
-	}
-
-	@Override
-	public void first() {
-		setIndexOfCurrent(0);	
-	}
-
-	@Override
-	public void last() {
-		setIndexOfCurrent(count()-1);			
-	}
-
-	@Override
-	public void next() {
-		setIndexOfCurrent(indexOfCurrent+1);	
-	}
-
-	@Override
-	public void prev() {
-		setIndexOfCurrent(indexOfCurrent-1);	
-	}
-
-	@Override
-	public boolean currentIndexInsideTheList() {
-		return count() > 0 && getIndexOfCurrent() > -1 && getIndexOfCurrent() < count();
-	}
-
 	/**
 	 * Converts list to array of T kind of objects.
 	 */
@@ -150,9 +101,7 @@ public class MS_List<T> extends ArrayList<T> implements IPerambulateListActions<
 	}
 
 	@Override
-	public void concatenate(MS_IContactableList<T, Integer> otherList) {
-		otherList.forEachItem((item, index) -> {
-			this.add(item);
-		});
+	public void concatenate(List<T> otherList) {
+		this.addAll(otherList);
 	}
 }

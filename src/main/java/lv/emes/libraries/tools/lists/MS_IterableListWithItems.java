@@ -6,9 +6,9 @@ package lv.emes.libraries.tools.lists;
  *
  * @param <T> type of list items.
  * @param <I> type of list item index.
- * @version 2.0.
+ * @version 3.0.
  */
-public interface MS_ILoopableListWithItems<T, I> {
+public interface MS_IterableListWithItems<T, I> {
 
     /**
      * @return count of items in list. [0..+]
@@ -19,7 +19,7 @@ public interface MS_ILoopableListWithItems<T, I> {
      * Just an overloaded method of <b>count()</b>.
      *
      * @return count of items in list.
-     * @see MS_ILoopableListWithItems#count()
+     * @see MS_IterableListWithItems#count()
      */
     int size();
 
@@ -27,7 +27,7 @@ public interface MS_ILoopableListWithItems<T, I> {
      * Just an overloaded method of <b>count()</b>.
      *
      * @return count of items in list.
-     * @see MS_ILoopableListWithItems#count()
+     * @see MS_IterableListWithItems#count()
      */
     int length();
 
@@ -108,7 +108,7 @@ public interface MS_ILoopableListWithItems<T, I> {
      * @param startFromIndex 0..count()-1
      * @param action method that describes the actions that every item must do.
      *               Method's incoming parameters are every item of the list and index of item.
-     * @see MS_ILoopableListWithItems#forEachItem(IFuncForEachItemLoopAction)
+     * @see MS_IterableListWithItems#forEachItem(IFuncForEachItemLoopAction)
      */
     void forEachItem(I startFromIndex, IFuncForEachItemLoopAction<T, I> action);
 
@@ -121,7 +121,7 @@ public interface MS_ILoopableListWithItems<T, I> {
      * @param endIndex startFromIndex..count()-1
      * @param action method that describes the actions that every item must do.
      *               Method's incoming parameters are every item of the list and index of item.
-     * @see MS_ILoopableListWithItems#forEachItem(IFuncForEachItemLoopAction)
+     * @see MS_IterableListWithItems#forEachItem(IFuncForEachItemLoopAction)
      */
     void forEachItem(I startFromIndex, I endIndex, IFuncForEachItemLoopAction<T, I> action);
 }

@@ -7,5 +7,6 @@ package lv.emes.libraries.tools.lists;
  */
 @FunctionalInterface
 public interface IFuncForEachItemLoopAction<T, I> {
+
 	void doAction(T item, I itemIndex);
 }

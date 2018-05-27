@@ -57,7 +57,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * <li>extractResourceToTmpFolder</li>
  * </ul>
  *
- * @version 1.9.
+ * @version 2.0.
  * @since 1.1.1
  */
 public class MS_FileSystemTools {
@@ -276,18 +276,11 @@ public class MS_FileSystemTools {
      * @return "test"; "without extension"; "text".
      */
     public static String getFilenameWithoutExtension(String aFilename) {
-        MS_StringList tmp = new MS_StringList(aFilename, '.');
-        if (tmp.count() > 1) {
-            tmp.remove(tmp.count() - 1); //delete last element
-            tmp.first();
-            String res = "";
-            while (tmp.currentIndexInsideTheList()) {
-                res = res.concat(tmp.current());
-                tmp.next();
-                if (tmp.currentIndexInsideTheList())
-                    res = res.concat("."); //add dot, if there will be more elements in the list (case when there is more than one dot in filename)
-            }
-            return res;
+        MS_StringList filenameParts = new MS_StringList(aFilename, '.');
+        if (filenameParts.count() > 1) {
+            filenameParts.removeLast(); //delete last element
+            //add dot, if there will be more elements in the list (case when there is more than one dot in filename)
+            return filenameParts.toStringWithNoLastDelimiter();
         } else
             return aFilename;
     }
@@ -337,9 +330,8 @@ public class MS_FileSystemTools {
             return p.getFileName().toString();
         } catch (Exception r) {
             aFilename = replaceBackslash(aFilename);
-            MS_StringList tmp = new MS_StringList(aFilename, '/');
-            tmp.last();
-            return tmp.current();
+            MS_StringList path = new MS_StringList(aFilename, '/');
+            return path.get(path.size() - 1);
         }
     }
 

@@ -2,6 +2,7 @@ package lv.emes.libraries.utilities;
 
 import lv.emes.libraries.tools.IFuncAction;
 import lv.emes.libraries.tools.MS_BadSetupException;
+import lv.emes.libraries.tools.lists.MS_IterableListWithItems;
 import lv.emes.libraries.tools.lists.MS_ListActionWorker;
 import org.apache.commons.lang.StringUtils;
 
@@ -389,6 +390,17 @@ public final class MS_CodingUtils {
      */
     public static <T> boolean isEmpty(Collection<T> collection) {
         return collection == null || collection.size() == 0;
+    }
+
+    /**
+     * Tests if some iterable list is empty or null.
+     *
+     * @param iterableList collection of iterable elements.
+     * @param <T>        type of elements in collection.
+     * @return true if collection is null or has no elements; false, if there is at least 1 element in collection.
+     */
+    public static <T> boolean isEmpty(MS_IterableListWithItems<T, ?> iterableList) {
+        return iterableList == null || iterableList.size() == 0;
     }
 
     //*** Private (static) methods ***

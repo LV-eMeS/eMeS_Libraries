@@ -247,22 +247,23 @@ public class MS_RepositoryTest {
             <MS_StringList, MS_Repository<String, String>> REPOSITORY_DATA_COMPARE =
             (realEnvironment, repo) -> {
                 MS_EqualityCheckBuilder checker = new MS_EqualityCheckBuilder(true);
-                realEnvironment.first();
+                AtomicInteger realEnvItemIndex = new AtomicInteger(0);
                 repo.forEachItem((item, id) -> {
-                    recursivelyAppendEquality(realEnvironment, item, id, ((MS_RepositoryForTest) repo).repositoryLabel, checker);
-                    realEnvironment.next();
+                    recursivelyAppendEquality(realEnvironment, realEnvItemIndex, item, id, ((MS_RepositoryForTest) repo).repositoryLabel, checker);
+                    realEnvItemIndex.incrementAndGet();
                 });
                 return checker.areEqual();
             };
 
-    private static void recursivelyAppendEquality(MS_StringList realEnvironment, String item, String id, char repoLabel, MS_EqualityCheckBuilder checker) {
-        MS_StringList envElements = new MS_StringList(realEnvironment.current(), DATA_DELIMITER);
+    private static void recursivelyAppendEquality(MS_StringList realEnvironment, AtomicInteger realEnvItemIndex,
+                                                  String item, String id, char repoLabel, MS_EqualityCheckBuilder checker) {
+        MS_StringList envElements = new MS_StringList(realEnvironment.get(realEnvItemIndex.get()), DATA_DELIMITER);
         if (envElements.get(0).charAt(0) == repoLabel) {
             checker.append(envElements.get(2), item);
             checker.append(envElements.get(1), id);
         } else {
-            realEnvironment.next();
-            recursivelyAppendEquality(realEnvironment, item, id, repoLabel, checker);
+            realEnvItemIndex.incrementAndGet();
+            recursivelyAppendEquality(realEnvironment, realEnvItemIndex, item, id, repoLabel, checker);
         }
     }
 }

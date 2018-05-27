@@ -14,23 +14,15 @@ public class MS_ListTest {
 
     @Test
     public void test01ListEngine() {
-        assertTrue(l.count() == 0);
+        assertEquals(0, l.count());
         l.add(1);
-        assertTrue(l.get(0) == 1);
+        assertEquals(1, (int) l.get(0));
         assertTrue(l.count() > 0);
         l.add(2);
         l.add(3);
         l.add(4);
         l.remove(2);
-        assertTrue(l.count() == 3);
-        l.indexOfCurrent = 2;
-        assertTrue(l.current() == 4);
-        //fiziski notestējam apstaigāšanu
-        l.last();
-        while (l.currentIndexInsideTheList()) {
-            System.out.println(l.current());
-            l.prev();
-        }
+        assertEquals(3, l.count());
     }
 
     @Test

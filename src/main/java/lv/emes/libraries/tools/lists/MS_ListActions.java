@@ -6,7 +6,7 @@ package lv.emes.libraries.tools.lists;
  * @param <T> type of list elements.
  * @version 1.8.
  */
-public interface MS_IListActions<T> extends IPerambulateListActions<T> {
+public interface MS_ListActions<T> extends MS_ContactableList<T, Integer> {
 
     /**
      * Add element to the end of T list.
@@ -16,10 +16,12 @@ public interface MS_IListActions<T> extends IPerambulateListActions<T> {
     void add(T aItem);
 
     /**
-     * Insert element T before index <b>aIndex</b>. For example, list [A,C] after inserting(B, 1) becomes [A,B,C]
+     * Insert element T at index <b>aIndex</b>. For example, list [A,C] after inserting(B, 1) becomes [A,B,C].
+     * In other words - shifts the element currently at that position (if any) and any subsequent
+     * elements to the right (adds one to their indices).
      *
-     * @param aItem  = object of type T.
-     * @param aIndex = [0..count-1]
+     * @param aItem  object of type T.
+     * @param aIndex [0..count-1]
      */
     void insert(int aIndex, T aItem);
 
