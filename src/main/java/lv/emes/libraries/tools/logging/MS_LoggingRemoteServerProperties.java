@@ -42,7 +42,7 @@ public class MS_LoggingRemoteServerProperties {
      */
     public static final String SECRET_TO_ENCRYPT_SECRET = "Default remote logger secret 2018";
 
-    private String host = "emeslv.sytes.net";
+    private String host = "http://emeslv.sytes.net";
     private int port = MS_TakenPorts._REMOTE_LOGGING_SERVER_PORT;
     private String secret = SECRET_TO_ENCRYPT_SECRET;
     private String endpointRootName = "RemoteLogger";
