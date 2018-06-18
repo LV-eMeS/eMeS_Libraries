@@ -187,7 +187,7 @@ public class MS_BinaryTools {
         try {
             return MimeMagic.getMagicMatch(file, true).getMimeType();
         } catch (OutOfMemoryError e) {
-            throw new MagicMatchNotFoundException("Magic match not found due to lack heap space");
+            throw new MagicMatchNotFoundException("Magic match not found due to lack of heap space");
         }
     }
 
