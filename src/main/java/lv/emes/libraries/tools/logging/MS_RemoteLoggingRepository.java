@@ -47,6 +47,18 @@ public class MS_RemoteLoggingRepository extends MS_Repository<MS_LoggingEvent, I
         this.serverProperties = props;
     }
 
+    /**
+     * Constructs instance of remote logging repository that will connect to default logging server developed by eMeS.
+     *
+     * @param productOwner product owner name that can be company or product maintainer name,
+     *                     which is responsible for event logging for that specific product.
+     * @param productName  product name that logging is for.
+     * @param secret       secret for this specific product to restrict public access of logs produced by this product.
+     */
+    public MS_RemoteLoggingRepository(String productOwner, String productName, String secret) {
+        this(productOwner, productName, new MS_LoggingRemoteServerProperties().withSecret(secret));
+    }
+
     @Override
     public void logEvent(MS_LoggingEvent event) {
         add(event.getTime().toInstant(), event);
