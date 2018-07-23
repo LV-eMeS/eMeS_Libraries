@@ -1,22 +1,23 @@
 package lv.emes.libraries.communication.http;
 
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.conn.ConnectTimeoutException;
+import okhttp3.OkHttpClient;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
-import static lv.emes.libraries.communication.http.MS_HttpClient.*;
 import static lv.emes.libraries.testdata.TestData.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MS_HttpClientTest {
+
     private static final String URL_STRING_GET = HTTP_PREFIX + TESTING_SERVER_HOSTAME + TESTING_WEB_SERVER_PORT_STRING + "/Test/test_get.php";
     private static final String URL_STRING_POST = HTTP_PREFIX + TESTING_SERVER_HOSTAME + TESTING_WEB_SERVER_PORT_STRING + "/Test/test_post.php";
     private static final String URL_STRING_NO_PARAMS = HTTP_PREFIX + TESTING_SERVER_HOSTAME + TESTING_WEB_SERVER_PORT_STRING + "/Test/test_no_params.php";
@@ -27,10 +28,11 @@ public class MS_HttpClientTest {
     private static final String TEST_NO_PARAMETER_VALUE = TEST_PARAMETER_NAME;
     private static final String TEST_HEADER_NAME = "header1";
     private static final String TEST_HEADER_VALUE = "header value";
+    private static final OkHttpClient CLIENT = MS_HTTPConnectionConfigurations.DEFAULT_HTTP_CONFIG_FOR_CONNECTION.build();
 
     private static Map<String, String> params;
     private static Map<String, String> headers;
-    private static MS_HttpRequestResult response;
+    private MS_HttpRequest request = new MS_HttpRequest().withClientConfigurations(CLIENT).withMethod(MS_HttpRequestMethod.GET).withParameters(params);
 
     @BeforeClass
     //Before even start testing do some preparations!
@@ -43,82 +45,93 @@ public class MS_HttpClientTest {
     }
 
     @Test
-    public void test01GetWithTestVariable() {
-        response = get(URL_STRING_GET, params);
-        assertEquals(200, response.reponseCode);
-        assertEquals(TEST_PARAMETER_VALUE, response.message);
+    public void test01GetWithTestVariable() throws IOException {
+        request.withUrl(URL_STRING_GET);
+        MS_HttpResponse response = MS_HttpCallHandler.call(request);
+        assertEquals(200, response.getStatusCode());
+        assertEquals(TEST_PARAMETER_VALUE, response.getBodyAsString());
 
-        response = get(URL_STRING_GET, params, headers); //test that header passing will not break the request itself
-        assertEquals(200, response.reponseCode);
-        assertEquals(TEST_PARAMETER_VALUE, response.message);
+        //test that header passing will not break the request itself
+        response = MS_HttpCallHandler.call(request.withHeaders(headers));
+        assertEquals(200, response.getStatusCode());
+        assertEquals(TEST_PARAMETER_VALUE, response.getBodyAsString());
     }
 
     @Test
-    public void test02PostWithTestVariable() {
-        response = post(URL_STRING_POST, params, null);
-        assertEquals(200, response.reponseCode);
-        assertEquals(TEST_PARAMETER_VALUE, response.message);
+    public void test02PostWithTestVariable() throws IOException {
+        request.withMethod(MS_HttpRequestMethod.POST).withUrl(URL_STRING_POST);
+        MS_HttpResponse response = MS_HttpCallHandler.call(request);
+        assertEquals(200, response.getStatusCode());
+        assertEquals(TEST_PARAMETER_VALUE, response.getBodyAsString());
     }
 
     @Test
-    public void test03GetWithoutParameters() {
-        response = get(URL_STRING_NO_PARAMS, params);
-        assertEquals(200, response.reponseCode);
-        assertEquals(TEST_NO_PARAMETER_VALUE, response.message);
+    public void test03GetWithoutParameters() throws IOException {
+        request.withMethod(MS_HttpRequestMethod.GET).withUrl(URL_STRING_NO_PARAMS);
+        MS_HttpResponse response = MS_HttpCallHandler.call(request);
+        assertEquals(200, response.getStatusCode());
+        assertEquals(TEST_NO_PARAMETER_VALUE, response.getBodyAsString());
     }
 
     @Test
-    public void test04PostWithoutParameters() {
-        response = post(URL_STRING_NO_PARAMS, params, null);
-        assertEquals(200, response.reponseCode);
-        assertEquals(TEST_NO_PARAMETER_VALUE, response.message);
+    public void test04PostWithoutParameters() throws IOException {
+        request.withMethod(MS_HttpRequestMethod.POST).withUrl(URL_STRING_NO_PARAMS);
+        MS_HttpResponse response = MS_HttpCallHandler.call(request);
+        assertEquals(200, response.getStatusCode());
+        assertEquals(TEST_NO_PARAMETER_VALUE, response.getBodyAsString());
     }
 
     @Test
-    public void test05GetWithEmptyParameters() {
-        response = get(URL_STRING_GET, null);
-        assertNotEquals(TEST_NO_PARAMETER_VALUE, response.message);
+    public void test05GetWithEmptyParameters() throws IOException {
+        request.withMethod(MS_HttpRequestMethod.GET).withUrl(URL_STRING_GET).withParameters(null);
+        MS_HttpResponse response = MS_HttpCallHandler.call(request);
+        assertNotEquals(TEST_NO_PARAMETER_VALUE, response.getBodyAsString());
     }
 
     @Test
-    public void test06PostWithEmptyParameters() {
-        response = post(URL_STRING_GET, null, null);
-        assertNotEquals(TEST_NO_PARAMETER_VALUE, response.message);
+    public void test06PostWithEmptyParameters() throws IOException {
+        request.withMethod(MS_HttpRequestMethod.POST).withUrl(URL_STRING_GET).withParameters(null);
+        MS_HttpResponse response = MS_HttpCallHandler.call(request);
+        assertNotEquals(TEST_NO_PARAMETER_VALUE, response.getBodyAsString());
     }
 
     @Test
-    public void test07GetWrongURLScriptFilename() {
-        response = get(URL_STRING_WRONG_URL, null);
-        assertEquals(404, response.reponseCode);
+    public void test07GetWrongURL() throws IOException {
+        request.withMethod(MS_HttpRequestMethod.GET).withUrl(URL_STRING_WRONG_URL);
+        MS_HttpResponse response = MS_HttpCallHandler.call(request);
+        assertEquals(404, response.getStatusCode());
     }
 
     @Test
-    public void test08PostWrongURLScriptFilename() {
-        response = post(URL_STRING_WRONG_URL, null, null);
-        assertEquals(404, response.reponseCode);
+    public void test08PostWrongURL() throws IOException {
+        request.withMethod(MS_HttpRequestMethod.POST).withUrl(URL_STRING_WRONG_URL);
+        MS_HttpResponse response = MS_HttpCallHandler.call(request);
+        assertEquals(404, response.getStatusCode());
     }
 
     @Test
-    public void test09PutWrongURLScriptFilename() {
-        response = put(URL_STRING_WRONG_URL, null, null);
-        assertEquals(404, response.reponseCode);
+    public void test09PutWrongURL() throws IOException {
+        request.withMethod(MS_HttpRequestMethod.PUT).withUrl(URL_STRING_WRONG_URL).withParameters(null);
+        MS_HttpResponse response = MS_HttpCallHandler.call(request);
+        assertEquals(404, response.getStatusCode());
     }
 
     @Test
-    public void test10DeleteWrongURLScriptFilename() {
-        response = delete(URL_STRING_WRONG_URL, null, null);
-        assertEquals(404, response.reponseCode);
+    public void test10DeleteWrongURL() throws IOException {
+        request.withMethod(MS_HttpRequestMethod.DELETE).withUrl(URL_STRING_WRONG_URL);
+        MS_HttpResponse response = MS_HttpCallHandler.call(request);
+        assertEquals(404, response.getStatusCode());
     }
 
-    @Test
-    public void test00Timeout() {
-        RequestConfig config = RequestConfig.custom()
-                .setConnectTimeout(1).setConnectionRequestTimeout(1).setSocketTimeout(1)
+    @Test(expected = IOException.class)
+    public void test00Timeout() throws IOException {
+        OkHttpClient httpClientConfig = new OkHttpClient().newBuilder()
+                .connectTimeout(1, TimeUnit.MILLISECONDS)
+                .readTimeout(1, TimeUnit.MILLISECONDS)
+                .writeTimeout(1, TimeUnit.MILLISECONDS)
                 .build();
-        response = get(URL_STRING_UNREACHABLE_HOST, null, null, config);
-        assertEquals(ConnectTimeoutException.class, response.exception.getClass());
-
-        response = post(URL_STRING_UNREACHABLE_HOST, (Map<String, String>) null, null, config);
-        assertEquals(ConnectTimeoutException.class, response.exception.getClass());
+        request.withClientConfigurations(httpClientConfig)
+                .withMethod(MS_HttpRequestMethod.GET).withParameters(null).withUrl(URL_STRING_UNREACHABLE_HOST);
+        MS_HttpCallHandler.call(request);
     }
 }

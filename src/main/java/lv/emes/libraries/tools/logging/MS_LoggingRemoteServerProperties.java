@@ -2,7 +2,7 @@ package lv.emes.libraries.tools.logging;
 
 import lv.emes.libraries.communication.MS_TakenPorts;
 import lv.emes.libraries.communication.http.MS_HTTPConnectionConfigurations;
-import org.apache.http.client.config.RequestConfig;
+import okhttp3.OkHttpClient;
 
 /**
  * Properties for Remote logging server.
@@ -51,8 +51,8 @@ public class MS_LoggingRemoteServerProperties {
     private String endpointGetAllEvents = "all";
     private String endpointClearAllEvents = "clear";
 
-    private RequestConfig httpRequestConfig = MS_HTTPConnectionConfigurations.DEFAULT_CONFIG_FOR_CONNECTION;
-    private int httpConnectionTimeout = MS_HTTPConnectionConfigurations.DEFAULT_TIMEOUT_MILISECONDS;
+    private OkHttpClient httpRequestConfig = MS_HTTPConnectionConfigurations.DEFAULT_HTTP_CONFIG_FOR_CONNECTION.build();
+    private int httpConnectionTimeout = MS_HTTPConnectionConfigurations.DEFAULT_TIMEOUT_SECONDS;
 
     public String getHost() {
         return host;
@@ -90,7 +90,7 @@ public class MS_LoggingRemoteServerProperties {
         return httpConnectionTimeout;
     }
 
-    public RequestConfig getHttpRequestConfig() {
+    public OkHttpClient getHttpRequestConfig() {
         return httpRequestConfig;
     }
 
@@ -200,18 +200,18 @@ public class MS_LoggingRemoteServerProperties {
     }
 
     /**
-     * Sets common connection timeout value for any request that is made against remote
+     * Sets common connection timeout value (in seconds) for any request that is made against remote
      * logging server (even for initialization check request). All requests that will take time longer than
      * this timeout will fail with error code 504.
      *
      * @param httpConnectionTimeout desired connection timeout.
-     *                              <p><b>DEFAULT</b>: {@link MS_HTTPConnectionConfigurations#DEFAULT_TIMEOUT_MILISECONDS}.
+     *                              <p><b>DEFAULT</b>: {@link MS_HTTPConnectionConfigurations#DEFAULT_TIMEOUT_SECONDS}.
      * @return reference to properties.
      */
     public MS_LoggingRemoteServerProperties withHttpConnectionTimeout(int httpConnectionTimeout) {
         if (this.httpConnectionTimeout != httpConnectionTimeout) {
             this.httpConnectionTimeout = httpConnectionTimeout;
-            this.httpRequestConfig = MS_HTTPConnectionConfigurations.newTimeoutConfig(httpConnectionTimeout);
+            this.httpRequestConfig = MS_HTTPConnectionConfigurations.newTimeoutConfig(httpConnectionTimeout).build();
         }
         return this;
     }

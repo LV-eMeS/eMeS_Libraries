@@ -72,6 +72,7 @@ public class MS_RemoteLoggingRepositoryTest {
     public void test03FindAllEvents() throws MS_ExecutionFailureException {
         MS_CodingUtils.executeWithRetry(3, () -> {
             Map<Instant, MS_LoggingEvent> events = repository.findAll();
+            assertEquals("There should be 5 events logged at test initialization step", 5, loggedEvents.getEventList().size());
             loggedEvents.getEventList().forEachItem((event, i) -> {
                 if (!event.getType().equals(MS_LoggingEventTypeEnum.UNSPECIFIED))
                     assertEquals("Not found item at index: " + i

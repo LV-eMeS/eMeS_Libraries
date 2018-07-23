@@ -19,8 +19,7 @@ import java.io.IOException;
 
 import static lv.emes.libraries.file_system.MS_FileSystemTools.deleteFile;
 import static lv.emes.libraries.utilities.MS_StringUtils.getTabSpace;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MS_XMLFileTest {
@@ -95,7 +94,7 @@ public class MS_XMLFileTest {
         assertTrue(exceptionCaught);
 
         MS_XMLElementNodeList prices = file.getNodesByTagName("price");
-        assertEquals(null, prices.get(2).getFirstChild("child"));
+        assertNull(prices.get(2).getFirstChild("child"));
     }
 
     @Test
@@ -133,7 +132,7 @@ public class MS_XMLFileTest {
 
         //Janis has no university in records because there is only 1 university registered
         assertEquals(1, file.getNodesByTagName("university").size());
-        assertEquals(null, studentJanis.getFirstChild("university"));
+        assertNull(studentJanis.getFirstChild("university"));
     }
 
     @Test
@@ -146,8 +145,8 @@ public class MS_XMLFileTest {
         MS_XMLElementNode textNode = file1.getRootNode().getAllChildNodes().get(0);
         assertEquals(MS_XMLElementNode._TEXT_NODE_NAME, textNode.getTagName());
         assertEquals(0, textNode.getAllChildNodes().length());
-        assertEquals(null, textNode.getFirstChild(""));
-        assertEquals(null, textNode.getChildList(""));
+        assertNull(textNode.getFirstChild(""));
+        assertNull(textNode.getChildList(""));
     }
 
     @Test

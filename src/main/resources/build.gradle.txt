@@ -1,7 +1,11 @@
 ext {
-    eMeS_LibrariesVersion = "v2.0.1"
+    eMeS_LibrariesVersion = "v2.X.Y"
     jnaVersion = "4.4.0"
     openCSVVersion = '2.3'
+    jsonIoVersion = '4.10.0'
+    googleHttpClientVersion = '1.23.0'
+    okHttpVersion = '3.11.0'
+    mockitoVersion = '1.10.19'
 }
 
 apply plugin: 'java'
@@ -10,12 +14,12 @@ apply plugin: 'idea'
 
 repositories {
     mavenCentral()
-    maven { url "https://jitpack.io" }
+//    maven { url "https://jitpack.io" }
 //    maven { url "https://code.lds.org/nexus/content/groups/main-repo" } //for ojdbc6
 }
 
 dependencies {
-    //This project itself
+    //This project itself (just an example)
 //    compile "com.github.LV-eMeS:eMeS_Libraries:" + eMeS_LibrariesVersion
     //Other dependencies - libraries
     compile "commons-io:commons-io:2.5"
@@ -31,11 +35,13 @@ dependencies {
     }
     compile("org.apache.commons:commons-lang3:3.5") //for EqualsBuilder
     compile 'net.sf.opencsv:opencsv:' + openCSVVersion
+    compile 'com.cedarsoftware:json-io:' + jsonIoVersion
+    compile 'com.squareup.okhttp3:okhttp:' + okHttpVersion
 //    compile "com.oracle:ojdbc6:11.2.0.3"
 //    compile group: 'com.jayway.restassured', name: 'rest-assured', version: '2.9.0'
 
     //For tests:
-    compile group: 'org.mockito', name: 'mockito-all', version: '1.9.5'
+    compile 'org.mockito:mockito-all:' + mockitoVersion
     compile "junit:junit:4.12"
     testCompile "junit:junit:4.12"
 }

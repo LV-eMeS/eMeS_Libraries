@@ -2,13 +2,15 @@ package lv.emes.libraries.tools.logging;
 
 import com.cedarsoftware.util.io.JsonReader;
 import lv.emes.libraries.communication.cryptography.MS_CryptographyUtils;
-import lv.emes.libraries.communication.http.MS_HttpClient;
-import lv.emes.libraries.communication.http.MS_HttpRequestResult;
+import lv.emes.libraries.communication.http.MS_HttpCallHandler;
+import lv.emes.libraries.communication.http.MS_HttpRequest;
+import lv.emes.libraries.communication.http.MS_HttpRequestMethod;
+import lv.emes.libraries.communication.http.MS_HttpResponse;
 import lv.emes.libraries.storage.MS_Repository;
 import lv.emes.libraries.storage.MS_RepositoryDataExchangeException;
 import lv.emes.libraries.tools.MS_ObjectWrapperHelper;
-import lv.emes.libraries.utilities.MS_CodingUtils;
 
+import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.time.Instant;
 import java.time.ZonedDateTime;
@@ -66,10 +68,15 @@ public class MS_RemoteLoggingRepository extends MS_Repository<MS_LoggingEvent, I
 
     @Override
     public boolean isInitialized() {
-        return MS_HttpClient
-                .get(getRemoteServerRoot(serverProperties) + serverProperties.getEndpointStatus(),
-                        null, null, serverProperties.getHttpRequestConfig())
-                .getReponseCode() == 200;
+        try {
+            return MS_HttpCallHandler.call(
+                    new MS_HttpRequest().withMethod(MS_HttpRequestMethod.GET)
+                            .withUrl(getRemoteServerRoot(serverProperties) + serverProperties.getEndpointStatus())
+                            .withClientConfigurations(serverProperties.getHttpRequestConfig()))
+                    .getStatusCode() == 200;
+        } catch (IOException e) {
+            return false;
+        }
     }
 
     @Override
@@ -86,37 +93,55 @@ public class MS_RemoteLoggingRepository extends MS_Repository<MS_LoggingEvent, I
         parameters.put("error", serializedEvent.getError());
 
         String url = getRemoteServerBasePath(serverProperties) + serverProperties.getEndpointLogEvent();
-        MS_HttpRequestResult httpResult = MS_HttpClient.post(url, parameters,
-                MS_CodingUtils.newSingletonMap("Authorization", getEncryptedSecret(serverProperties)),
-                serverProperties.getHttpRequestConfig());
-
-        if (httpResult.getReponseCode() == 400) {
+        MS_HttpRequest req = new MS_HttpRequest().withMethod(MS_HttpRequestMethod.POST).withUrl(url)
+                .withParameters(parameters).withHeader("Authorization", getEncryptedSecret(serverProperties))
+                .withClientConfigurations(serverProperties.getHttpRequestConfig());
+        MS_HttpResponse httpResult;
+        try {
+            httpResult = MS_HttpCallHandler.call(req);
+        } catch (IOException e) {
             MS_Log4Java.getLogger(MS_RemoteLoggingRepository.class)
-                    .error("Serialization error while performing add(" + identifier + ", item). Item data:\n" + item, httpResult.getException());
+                    .error("Connectivity error while performing add(" + identifier + ", item). Item data:\n" + item, e);
+            throw new MS_RepositoryDataExchangeException("Connectivity error happened while trying to log new event");
+        }
+
+        if (httpResult.getStatusCode() == 400) {
+            MS_Log4Java.getLogger(MS_RemoteLoggingRepository.class)
+                    .error("Serialization error while performing add(" + identifier + ", item). Item data:\n" + item);
             throw new MS_RepositoryDataExchangeException("Serialization error happened while trying to log new event");
         }
 
         checkResponseAndThrowExceptionIfNeeded(httpResult, "Log new event operation failed with HTTP status code " +
-                httpResult.getReponseCode());
+                httpResult.getStatusCode());
     }
 
     @Override
     @SuppressWarnings("unchecked")
     protected Map<Instant, MS_LoggingEvent> doFindAll() {
         String url = getRemoteServerBasePath(serverProperties) + serverProperties.getEndpointGetAllEvents();
-        MS_HttpRequestResult httpResult = MS_HttpClient.get(url, null, MS_CodingUtils.newSingletonMap("Authorization",
-                getEncryptedSecret(serverProperties)), serverProperties.getHttpRequestConfig());
+        MS_HttpRequest req = new MS_HttpRequest().withMethod(MS_HttpRequestMethod.GET).withUrl(url)
+                .withHeader("Authorization", getEncryptedSecret(serverProperties))
+                .withClientConfigurations(serverProperties.getHttpRequestConfig());
+        MS_HttpResponse httpResult;
+        try {
+            httpResult = MS_HttpCallHandler.call(req);
+        } catch (IOException e) {
+            MS_Log4Java.getLogger(MS_RemoteLoggingRepository.class)
+                    .error("Connectivity error while performing findAll().", e);
+            throw new MS_RepositoryDataExchangeException("Connectivity error happened while trying to find all events");
+        }
+
         checkResponseAndThrowExceptionIfNeeded(httpResult, "Finding all events failed with HTTP status code " +
-                httpResult.getReponseCode());
+                httpResult.getStatusCode());
         try {
             Map<Instant, MS_LoggingEvent> res = new TreeMap<>(Collections.reverseOrder());
             Map<ZonedDateTime, MS_SerializedLoggingEvent> serializedEvents =
-                    (Map<ZonedDateTime, MS_SerializedLoggingEvent>) JsonReader.jsonToJava(httpResult.getMessage());
+                    (Map<ZonedDateTime, MS_SerializedLoggingEvent>) JsonReader.jsonToJava(httpResult.getBodyAsString());
             serializedEvents.forEach((key, value) -> res.put(key.toInstant(), value.getWrappedObject()));
             return res;
         } catch (Exception e) { //most probably cast exception, but shouldn't happen unless somebody doesn't understand, how to use this
             String message = "Deserialization error while trying to convert found logged events in JSON format to Java objects.";
-            String detailedMessage = " JSON:\n" + httpResult.getMessage();
+            String detailedMessage = " JSON:\n" + httpResult.getBodyAsString();
             MS_Log4Java.getLogger(MS_RemoteLoggingRepository.class).error(message + detailedMessage, e);
             throw new MS_RepositoryDataExchangeException(message, e);
         }
@@ -125,10 +150,19 @@ public class MS_RemoteLoggingRepository extends MS_Repository<MS_LoggingEvent, I
     @Override
     protected void doRemoveAll() {
         String url = getRemoteServerBasePath(serverProperties) + serverProperties.getEndpointClearAllEvents();
-        Map<String, String> headers = MS_CodingUtils.newSingletonMap("Authorization", getEncryptedSecret(serverProperties));
-        MS_HttpRequestResult httpResult = MS_HttpClient.delete(url, headers, serverProperties.getHttpRequestConfig());
+        MS_HttpRequest req = new MS_HttpRequest().withMethod(MS_HttpRequestMethod.DELETE).withUrl(url)
+                .withHeader("Authorization", getEncryptedSecret(serverProperties))
+                .withClientConfigurations(serverProperties.getHttpRequestConfig());
+        MS_HttpResponse httpResult;
+        try {
+            httpResult = MS_HttpCallHandler.call(req);
+        } catch (IOException e) {
+            MS_Log4Java.getLogger(MS_RemoteLoggingRepository.class)
+                    .error("Connectivity error while performing removeAll().", e);
+            throw new MS_RepositoryDataExchangeException("Connectivity error happened while trying to delete/clear all events");
+        }
         checkResponseAndThrowExceptionIfNeeded(httpResult, "Removing all events failed with HTTP status code " +
-                httpResult.getReponseCode());
+                httpResult.getStatusCode());
     }
 
     /**
@@ -214,16 +248,16 @@ public class MS_RemoteLoggingRepository extends MS_Repository<MS_LoggingEvent, I
         }
     }
 
-    private void checkResponseAndThrowExceptionIfNeeded(MS_HttpRequestResult httpResult, String message) {
-        if (httpResult.getReponseCode() == 401) {
+    private void checkResponseAndThrowExceptionIfNeeded(MS_HttpResponse httpResult, String message) {
+        if (httpResult.getStatusCode() == 401) {
             MS_Log4Java.getLogger(MS_RemoteLoggingRepository.class)
-                    .error("Authentication error while performing repository operation.", httpResult.getException());
+                    .error("Authentication error while performing repository operation.");
             throw new MS_RepositoryDataExchangeException("Authentication error happened while performing repository operation.\n" +
                     "Each owner of product should use unique secret key to access product's logging repository.");
-        } else if (httpResult.getReponseCode() != 200) {
+        } else if (httpResult.getStatusCode() != 200) {
             MS_Log4Java.getLogger(MS_RemoteLoggingRepository.class)
-                    .error(message + ". Message:\n" + httpResult.getMessage(), httpResult.getException());
-            throw new MS_RepositoryDataExchangeException(message, httpResult.getException());
+                    .error(message + ". Message:\n" + httpResult.getBodyAsString());
+            throw new MS_RepositoryDataExchangeException(message);
         }
     }
 }

@@ -35,6 +35,7 @@ eMeS libraries Version 2.2.0
 * Removed deprecated MS_InMemoryCache, as instead MS_Cache with appropriate MS_CachingRepository
   should be used.
 * Removed deprecated IPerambulateListActions, as instead Iterable can be used.
+* Android compatible HTTP client with request and response builders.
 ========================================================================================================
 eMeS libraries Version 2.1.0
 ========================================================================================================

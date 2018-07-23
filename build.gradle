@@ -4,7 +4,7 @@ ext {
     openCSVVersion = '2.3'
     jsonIoVersion = '4.10.0'
     googleHttpClientVersion = '1.23.0'
-    apacheHttpComponentsVersion = '4.5.5'
+    okHttpVersion = '3.11.0'
     mockitoVersion = '1.10.19'
 }
 
@@ -36,8 +36,7 @@ dependencies {
     compile("org.apache.commons:commons-lang3:3.5") //for EqualsBuilder
     compile 'net.sf.opencsv:opencsv:' + openCSVVersion
     compile 'com.cedarsoftware:json-io:' + jsonIoVersion
-    compile 'org.apache.httpcomponents:httpclient:' + apacheHttpComponentsVersion
-//    compile 'com.google.http-client:google-http-client:' + googleHttpClientVersion
+    compile 'com.squareup.okhttp3:okhttp:' + okHttpVersion
 //    compile "com.oracle:ojdbc6:11.2.0.3"
 //    compile group: 'com.jayway.restassured', name: 'rest-assured', version: '2.9.0'
 
