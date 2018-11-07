@@ -33,7 +33,8 @@ import okhttp3.OkHttpClient;
  * </ul>
  *
  * @author eMeS
- * @version 1.1.
+ * @version 1.2.
+ * @since 2.0.4
  */
 public class MS_LoggingRemoteServerProperties {
 

@@ -5,6 +5,7 @@ package lv.emes.libraries.communication.http;
  *
  * @author maris.salenieks
  * @version 1.0.
+ * @since 2.1.9
  */
 public enum MS_HttpRequestMethod {
 

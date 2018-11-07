@@ -25,6 +25,7 @@
     <orderEntry type="library" name="Gradle: com.squareup.okhttp3:okhttp:3.11.0" level="project" />
     <orderEntry type="library" name="Gradle: org.mockito:mockito-all:1.10.19" level="project" />
     <orderEntry type="library" name="Gradle: junit:junit:4.12" level="project" />
+    <orderEntry type="library" name="Gradle: org.assertj:assertj-core:3.10.0" level="project" />
     <orderEntry type="library" name="Gradle: net.java.dev.jna:jna:4.4.0" level="project" />
     <orderEntry type="library" name="Gradle: oro:oro:2.0.8" level="project" />
     <orderEntry type="library" name="Gradle: commons-logging:commons-logging:1.0.4" level="project" />

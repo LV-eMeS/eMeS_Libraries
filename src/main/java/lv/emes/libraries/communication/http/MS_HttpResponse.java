@@ -15,6 +15,7 @@ import java.util.Map;
  *
  * @author maris.salenieks
  * @since 2.0.
+ * @since 2.1.9
  */
 public class MS_HttpResponse {
 

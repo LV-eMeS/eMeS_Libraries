@@ -3,6 +3,9 @@ package lv.emes.libraries.utilities;
 import lv.emes.libraries.communication.cryptography.MS_Hash;
 import lv.emes.libraries.tools.lists.MS_StringList;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 import static lv.emes.libraries.utilities.MS_CodingUtils.inRange;
 
 /**
@@ -31,7 +34,7 @@ import static lv.emes.libraries.utilities.MS_CodingUtils.inRange;
  *     <li>getSubstring</li>
  * </ul>
  *
- * @version 1.8.
+ * @version 1.9.
  */
 public final class MS_StringUtils {
 
@@ -448,5 +451,10 @@ public final class MS_StringUtils {
     public static String toQuotedText(String value) {
         value = MS_StringUtils.replaceInString(value, _SINGLE_QUOTE.toString(), _SINGLE_QUOTE_2X);
         return _SINGLE_QUOTE + value + _SINGLE_QUOTE;
+    }
+
+    public static String convertMillisToSecsString(long milliseconds) {
+        BigDecimal res = new BigDecimal(milliseconds).movePointLeft(3);
+        return res.setScale(2, RoundingMode.HALF_UP).toString();
     }
 }

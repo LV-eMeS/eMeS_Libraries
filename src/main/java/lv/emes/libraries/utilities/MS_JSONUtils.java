@@ -18,6 +18,7 @@ import java.util.function.Consumer;
  *
  * @author eMeS
  * @version 1.1.
+ * @since 2.1.9
  */
 public class MS_JSONUtils {
 

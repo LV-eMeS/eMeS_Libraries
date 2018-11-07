@@ -13,6 +13,7 @@ import java.util.Objects;
  *
  * @author maris.salenieks
  * @version 1.0.
+ * @since 2.1.9
  */
 public class MS_HttpCallHandler {
 
