@@ -49,7 +49,7 @@ public class MS_ConnectionSession implements AutoCloseable {
     private boolean workInProgress;
 
     /**
-     * Creates new connection session with presented connection object <b>conn</b>.
+     * Creates new connection session with given connection object <b>conn</b>.
      *
      * @param conn                new or existing connection to specified database <b>db</b>.
      * @param sessionId           identifier defined by {@link MS_JDBCDatabase}.

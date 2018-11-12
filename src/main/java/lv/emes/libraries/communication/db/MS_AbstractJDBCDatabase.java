@@ -5,7 +5,6 @@ import lv.emes.libraries.tools.logging.MS_Log4Java;
 import lv.emes.libraries.tools.threading.MS_Scheduler;
 
 import java.sql.*;
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.Iterator;
@@ -18,7 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * and should be used in successors of this class to implement necessary abstract methods.
  *
  * @author eMeS
- * @version 2.1.
+ * @version 2.2.
  */
 public abstract class MS_AbstractJDBCDatabase implements MS_JDBCDatabase {
 
@@ -197,7 +196,7 @@ public abstract class MS_AbstractJDBCDatabase implements MS_JDBCDatabase {
 
     private void scheduleCleanupJob() {
         cleaningJobScheduler = new MS_Scheduler()
-                .withTriggerTime(ZonedDateTime.now().plus(connParams.getConnPoolCleanupFrequency()))
+                .withTriggerTime(ZonedDateTime.now().plusSeconds(connParams.getConnPoolCleanupFrequency()))
                 .withAction(this::runConnectionCleanup)
                 .withActionOnException((exception, eventExecutionTime) -> {
                     MS_Log4Java.getLogger("MS_AbstractJDBCDatabase.scheduleCleanupJob")
@@ -216,13 +215,13 @@ public abstract class MS_AbstractJDBCDatabase implements MS_JDBCDatabase {
      * Checks for connections, whose TTL is expired and removes them from pool.
      */
     private void runConnectionCleanup(ZonedDateTime execTime) {
-        Duration ttl = connParams.getSessionTTL();
-        if (ttl != null && !connectionPool.isEmpty()) {
+        long ttl = connParams.getSessionTTL();
+        if (ttl != 0 && !connectionPool.isEmpty()) {
             for (Iterator<Map.Entry<Long, MS_ConnectionSession>> it = connectionPool.entrySet().iterator(); it.hasNext(); ) {
                 Map.Entry<Long, MS_ConnectionSession> entry = it.next();
                 MS_ConnectionSession session = entry.getValue();
                 LocalDateTime sessCreationTime = session.getSessionCreated();
-                if (sessCreationTime.plus(ttl).isBefore(execTime.toLocalDateTime())) {
+                if (sessCreationTime.plusSeconds(ttl).isBefore(execTime.toLocalDateTime())) {
                     if (!session.isWorkInProgress()) {
                         try {
                             session.getConnection().close();

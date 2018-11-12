@@ -1,7 +1,5 @@
 package lv.emes.libraries.communication.db;
 
-import java.time.Duration;
-
 /**
  * Connection and configuration parameters for {@link MS_JDBCDatabase}.
  * This also includes default error handler setup.
@@ -21,7 +19,7 @@ import java.time.Duration;
  * </ul>
  *
  * @author eMeS
- * @version 2.1.
+ * @version 2.2.
  */
 public class MS_DBParameters {
 
@@ -47,21 +45,21 @@ public class MS_DBParameters {
     private int port;
 
     /**
-     * Time to live for each database connection session made.
+     * Time to live in seconds for each database connection session made.
      * This parameter is used by database connection pool when cleanup job is being run.
      * All sessions, which time to live is expired are removed from connection pool.
-     * <p>No value set (e.g. <i>null</i> value) means that connection sessions are kept and reused inside DB connection pool forever.
-     * Default value is <b>10 minutes</b>.
+     * <p>Zero value set (e.g. <i>0</i> value) means that connection sessions are kept and reused inside DB connection pool forever.
+     * Default value is <b>600</b> (10 minutes).
      */
-    private Duration sessionTTL = Duration.ofMinutes(10L);
+    private long sessionTTL = 600;
 
     /**
-     * Value describing, how often connection pool cleanup job will be run.
-     * By default it's being ran every <b>10 minutes</b>.
+     * Value in seconds, describing, how often connection pool cleanup job will be run.
+     * By default it's being ran every <b>600</b> (10 minutes).
      * Recommended value is at least few seconds just to let connection pool to fill up with some amount of connections.
-     * This parameter cannot be <i>null</i>.
+     * This parameter cannot be less than <i>1</i> second.
      */
-    private Duration connPoolCleanupFrequency = Duration.ofMinutes(10L);
+    private long connPoolCleanupFrequency = 600;
 
     //*** Getters ***
 
@@ -103,14 +101,14 @@ public class MS_DBParameters {
     /**
      * @return {@link MS_DBParameters#sessionTTL}
      */
-    public Duration getSessionTTL() {
+    public long getSessionTTL() {
         return sessionTTL;
     }
 
     /**
      * @return {@link MS_DBParameters#connPoolCleanupFrequency}
      */
-    public Duration getConnPoolCleanupFrequency() {
+    public long getConnPoolCleanupFrequency() {
         return connPoolCleanupFrequency;
     }
     //*** Setters ***
@@ -176,7 +174,7 @@ public class MS_DBParameters {
      * @param sessionTTL {@link MS_DBParameters#sessionTTL}
      * @return reference to parameters.
      */
-    public MS_DBParameters withSessionTTL(Duration sessionTTL) {
+    public MS_DBParameters withSessionTTL(long sessionTTL) {
         this.sessionTTL = sessionTTL;
         return this;
     }
@@ -187,9 +185,10 @@ public class MS_DBParameters {
      * @param connPoolCleanupFrequency {@link MS_DBParameters#connPoolCleanupFrequency}
      * @return reference to parameters.
      */
-    public MS_DBParameters withConnPoolCleanupFrequency(Duration connPoolCleanupFrequency) {
-        if (connPoolCleanupFrequency != null)
-            this.connPoolCleanupFrequency = connPoolCleanupFrequency;
+    public MS_DBParameters withConnPoolCleanupFrequency(long connPoolCleanupFrequency) {
+        if (connPoolCleanupFrequency < 1)
+            throw new IllegalArgumentException("Connection pool cleanup frequency must at least 1 second");
+        this.connPoolCleanupFrequency = connPoolCleanupFrequency;
         return this;
     }
 }

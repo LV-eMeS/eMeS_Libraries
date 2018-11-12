@@ -136,7 +136,7 @@ public class MS_MySQLDatabaseTest {
     public void test04Editing() throws Exception {
         try (MS_ConnectionSession con = db.getConnectionSession()) {
             MS_PreparedSQLQuery st;
-            String query = "update tests set name='Osvald' where id=1";
+            String query = "update tests set name='Oswald' where id=1";
             ResultSet rs;
 
             st = con.prepareQuery(query);
@@ -147,7 +147,7 @@ public class MS_MySQLDatabaseTest {
             st = con.prepareQuery(query);
             rs = con.getQueryResult(st);
             assertTrue(rs.next());
-            assertEquals("Osvald", rs.getString(2));
+            assertEquals("Oswald", rs.getString(2));
             assertEquals(33, rs.getInt(3));
         }
     }

@@ -174,19 +174,19 @@ public class MS_TpcIPServerTest {
         doSleepForXTimes(1);
         assertTrue(server.cmdToClientByID(CMD3_PRINTLN_PLUS_CLIENT_ID, client1.getId()));
         doSleepForXTimes(1);
-        assertTrue(serverReceived.equals(TEXT5));
+        assertEquals(serverReceived, TEXT5);
 
         //server's empty message
         server.addDataToContainer(TEXT4);
         server.cmdToAll(CMD3_PRINTLN_PLUS_CLIENT_ID);
         doSleepForXTimes(5);
-        assertTrue(serverReceived.equals(TEXT4));
+        assertEquals(serverReceived, TEXT4);
 
         //DC those client!
         server.disconnectAllClients();
         assertEquals(0, getServerConnectionCount());
         assertTrue(serverIsOn);
-        assertTrue(server.getClients().size() == 0);
+        assertEquals(0, server.getClients().size());
         doSleepForXTimes(3);
         assertFalse(client1.isConnected());
     }

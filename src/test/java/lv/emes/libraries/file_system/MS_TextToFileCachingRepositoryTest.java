@@ -130,7 +130,7 @@ public class MS_TextToFileCachingRepositoryTest {
         operThread = cache.store(RandomStringUtils.randomAlphabetic(10), idStorage.get(144), 54L);
         cachingThreads.add(operThread);
 
-        MS_FutureEvent.joinEvents(cachingThreads, TTL / 200, 10);
+        MS_FutureEvent.joinEvents(cachingThreads, TTL / 200, 12);
         assertEquals("After successful caching and waiting for threads to finish there should be number of objects in cache",
                 5, cache.getRepository().size());
         operThread = cache.removeAll();

@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 
 /**
  * As this jMimeMagic library is useful, but requires patching due to {@link OutOfMemoryError} error while
@@ -18,12 +17,12 @@ import java.util.Iterator;
  * functionality, but instead of {@link MagicMatcher} it uses patched matcher class {@link PatchedMagicMatcher}.
  *
  * @author eMeS
- * @version 1.0.
+ * @version 1.1.
  */
 public class MimeMagic extends Magic {
 
     private static Log log = LogFactory.getLog(Magic.class);
-    private static HashMap hintMap = new HashMap();
+    private static HashMap<String, ArrayList<PatchedMagicMatcher>> hintMap = new HashMap<>();
     private static MagicParser magicParser = null;
     private static boolean initialized = false;
 
@@ -48,10 +47,8 @@ public class MimeMagic extends Magic {
             magicParser.initialize();
 
             // build hint map
-            Iterator i = magicParser.getMatchers().iterator();
-
-            while (i.hasNext()) {
-                PatchedMagicMatcher matcher = new PatchedMagicMatcher((MagicMatcher) i.next());
+            for (Object o : magicParser.getMatchers()) {
+                PatchedMagicMatcher matcher = new PatchedMagicMatcher((MagicMatcher) o);
                 String ext = matcher.getMatch().getExtension();
 
                 if ((ext != null) && !ext.trim().equals("")) {
@@ -83,13 +80,12 @@ public class MimeMagic extends Magic {
      * @param extension DOCUMENT ME!
      * @param matcher   DOCUMENT ME!
      */
-    @SuppressWarnings("unchecked")
     private static void addHint(String extension, PatchedMagicMatcher matcher) {
         if (hintMap.keySet().contains(extension)) {
-            ArrayList a = (ArrayList) hintMap.get(extension);
+            ArrayList<PatchedMagicMatcher> a = hintMap.get(extension);
             a.add(matcher);
         } else {
-            ArrayList a = new ArrayList();
+            ArrayList<PatchedMagicMatcher> a = new ArrayList<>();
             a.add(matcher);
             hintMap.put(extension, a);
         }
@@ -210,7 +206,7 @@ public class MimeMagic extends Magic {
         MagicMatch match;
 
         // check for extension hints
-        ArrayList checked = new ArrayList();
+        ArrayList<PatchedMagicMatcher> checked = new ArrayList<>();
 
         if (extensionHints) {
             log.debug("trying to use hints first");
@@ -219,18 +215,18 @@ public class MimeMagic extends Magic {
             int pos = name.lastIndexOf('.');
 
             if (pos > -1) {
-                String ext = name.substring(pos + 1, name.length());
+                String ext = name.substring(pos + 1);
 
-                if ((ext != null) && !ext.equals("")) {
+                if (!ext.equals("")) {
                     if (log.isDebugEnabled()) {
                         log.debug("using extension '" + ext + "' for hinting");
                     }
 
-                    Collection c = (Collection) hintMap.get(ext);
+                    Collection<PatchedMagicMatcher> c = hintMap.get(ext);
 
                     if (c != null) {
-                        for (Object aC : c) {
-                            matcher = new PatchedMagicMatcher((MagicMatcher) aC);
+                        for (PatchedMagicMatcher aC : c) {
+                            matcher = new PatchedMagicMatcher(aC);
 
                             log.debug("getMagicMatch(File): trying to match: " +
                                     matcher.getMatch().getDescription());
