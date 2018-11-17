@@ -93,11 +93,18 @@ public abstract class MS_AbstractJDBCDatabase implements MS_JDBCDatabase {
     }
 
     public final MS_ConnectionSession getConnectionSession() throws SQLException {
-        MS_ConnectionSession session = getConnectionFromPool();
-        if (session == null) {
+        MS_ConnectionSession session;
+        if (connParams.isConnectionPoolEnabled()) {
+            session = getConnectionFromPool();
+            if (session == null) {
+                Connection conn = getConnectionFromDriver();
+                conn.setAutoCommit(false);
+                session = registerNewConnection(conn);
+            }
+        } else {
             Connection conn = getConnectionFromDriver();
             conn.setAutoCommit(false);
-            session = registerNewConnection(conn);
+            session = new MS_ConnectionSession(conn, ++sessionIdCounter);
         }
         return session;
     }
@@ -195,19 +202,21 @@ public abstract class MS_AbstractJDBCDatabase implements MS_JDBCDatabase {
     }
 
     private void scheduleCleanupJob() {
-        cleaningJobScheduler = new MS_Scheduler()
-                .withTriggerTime(ZonedDateTime.now().plusSeconds(connParams.getConnPoolCleanupFrequency()))
-                .withAction(this::runConnectionCleanup)
-                .withActionOnException((exception, eventExecutionTime) -> {
-                    MS_Log4Java.getLogger("MS_AbstractJDBCDatabase.scheduleCleanupJob")
-                            .error(String.format("Database connection pool cleanup job failed at [%s] due to exception", eventExecutionTime), exception);
-                    scheduleCleanupJob();
-                })
-                .withActionOnInterruptedException((eventExecutionTime) -> {
-                    MS_Log4Java.getLogger("MS_AbstractJDBCDatabase.scheduleCleanupJob")
-                            .info(String.format("Database connection pool cleanup job terminated at [%s]", eventExecutionTime));
-                })
-                .schedule();
+        if (connParams.isConnectionPoolEnabled()) {
+            cleaningJobScheduler = new MS_Scheduler()
+                    .withTriggerTime(ZonedDateTime.now().plusSeconds(connParams.getConnPoolCleanupFrequency()))
+                    .withAction(this::runConnectionCleanup)
+                    .withActionOnException((exception, eventExecutionTime) -> {
+                        MS_Log4Java.getLogger("MS_AbstractJDBCDatabase.scheduleCleanupJob")
+                                .error(String.format("Database connection pool cleanup job failed at [%s] due to exception", eventExecutionTime), exception);
+                        scheduleCleanupJob();
+                    })
+                    .withActionOnInterruptedException((eventExecutionTime) -> {
+                        MS_Log4Java.getLogger("MS_AbstractJDBCDatabase.scheduleCleanupJob")
+                                .info(String.format("Database connection pool cleanup job terminated at [%s]", eventExecutionTime));
+                    })
+                    .schedule();
+        }
     }
 
     /**

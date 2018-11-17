@@ -11,6 +11,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
@@ -26,6 +27,7 @@ import static org.junit.Assert.*;
  * @author eMeS
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@Ignore
 public class MS_CacheTest {
 
     public static final String FIRST = "First object will stay there until it will be removed manually";

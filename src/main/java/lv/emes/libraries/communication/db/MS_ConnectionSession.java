@@ -64,6 +64,17 @@ public class MS_ConnectionSession implements AutoCloseable {
     }
 
     /**
+     * Creates new connection session with given connection object <b>conn</b>.
+     * Session creation time is not set, which means that this session cannot be put into connection pool.
+     *
+     * @param conn      new or existing connection to specified database <b>db</b>.
+     * @param sessionId identifier defined by {@link MS_JDBCDatabase}.
+     */
+    public MS_ConnectionSession(Connection conn, Long sessionId) {
+        this(conn, sessionId, null);
+    }
+
+    /**
      * Prepares statement for given SQL query.
      * just set common error handling operations of {@link MS_JDBCDatabase}).
      * <p><code>

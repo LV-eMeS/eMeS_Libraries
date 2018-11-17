@@ -45,6 +45,11 @@ public class MS_DBParameters {
     private int port;
 
     /**
+     * Flag that determines if active connection pooling should be performed at all. Default: <code>true</code>.
+     */
+    private boolean connectionPoolEnabled = true;
+
+    /**
      * Time to live in seconds for each database connection session made.
      * This parameter is used by database connection pool when cleanup job is being run.
      * All sessions, which time to live is expired are removed from connection pool.
@@ -96,6 +101,13 @@ public class MS_DBParameters {
      */
     public int getPort() {
         return port;
+    }
+
+    /**
+     * @return {@link MS_DBParameters#connectionPoolEnabled}
+     */
+    public boolean isConnectionPoolEnabled() {
+        return connectionPoolEnabled;
     }
 
     /**
@@ -165,6 +177,17 @@ public class MS_DBParameters {
      */
     public MS_DBParameters withPort(int port) {
         this.port = port;
+        return this;
+    }
+
+    /**
+     * Sets {@link MS_DBParameters#connectionPoolEnabled}.
+     *
+     * @param value {@link MS_DBParameters#connectionPoolEnabled}
+     * @return reference to parameters.
+     */
+    public MS_DBParameters withConnectionPoolEnabled(boolean value) {
+        this.connectionPoolEnabled = value;
         return this;
     }
 

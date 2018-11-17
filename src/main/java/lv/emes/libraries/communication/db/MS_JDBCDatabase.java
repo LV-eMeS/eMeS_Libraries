@@ -32,7 +32,7 @@ public interface MS_JDBCDatabase {
 
     /**
      * Checks, whether the initialization is successful and connection to DB can be established.
-     * Basically, if this method returns false, {@link MS_JDBCDatabase#getConnectionSession()} will not work either.
+     * Basically, if this method returns false, method {@link MS_JDBCDatabase#getConnectionSession()} call will fail.
      *
      * @return true if database can be connected right now, otherwise - false.
      */
