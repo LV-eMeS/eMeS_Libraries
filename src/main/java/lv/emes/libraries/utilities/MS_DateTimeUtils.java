@@ -14,7 +14,7 @@ import java.util.Date;
  * It includes typical modifications and actions with time formats.
  *
  * @author eMeS
- * @version 1.3.
+ * @version 1.4.
  */
 public final class MS_DateTimeUtils {
 
@@ -102,6 +102,30 @@ public final class MS_DateTimeUtils {
      * @return a text representing passed date and time.
      */
     public static String dateTimeToStr(LocalDateTime date) {
+        return dateTimeToStr(date, _CUSTOM_DATE_TIME_FORMAT_LV);
+    }
+
+    /**
+     * BACKPORTED VERSION OF METHOD.
+     * Converts local date and time to text in presented format.
+     *
+     * @param date   a date containing time part.
+     * @param format format for string representation of date.
+     * @return a text representing passed date and time.
+     */
+    public static String dateTimeToStr(org.threeten.bp.LocalDateTime date, String format) {
+        org.threeten.bp.format.DateTimeFormatter formatter = org.threeten.bp.format.DateTimeFormatter.ofPattern(format);
+        return date.format(formatter);
+    }
+
+    /**
+     * BACKPORTED VERSION OF METHOD.
+     * Converts local date and time to text.
+     *
+     * @param date a date containing time part in format: "dd.MM.yyyy HH:mm:ss:SSS".
+     * @return a text representing passed date and time.
+     */
+    public static String dateTimeToStr(org.threeten.bp.LocalDateTime date) {
         return dateTimeToStr(date, _CUSTOM_DATE_TIME_FORMAT_LV);
     }
 
@@ -252,6 +276,91 @@ public final class MS_DateTimeUtils {
     }
 
     /**
+     * BACKPORTED VERSION OF METHOD.
+     * Returns ZonedDateTime as string formatted in given format.
+     *
+     * @param dateTime date together with time part as ZonedDateTime.
+     * @param format   a date format that can be one of following:
+     *                 <ul>
+     *                 <li>_DEFAULT_DATE_TIME_FORMAT</li>
+     *                 <li>DATE_TIME_FORMAT_WITHOUT_MILISEC</li>
+     *                 <li>DATE_TIME_FORMAT_YYYY_MM_DD</li>
+     *                 </ul>
+     * @return string type representation of given date.
+     */
+    public static String formatDateTime(org.threeten.bp.ZonedDateTime dateTime, String format) {
+        if (dateTime == null || format == null) return null;
+        org.threeten.bp.format.DateTimeFormatter formatter = org.threeten.bp.format.DateTimeFormatter.ofPattern(format);
+        return dateTime.format(formatter);
+    }
+
+    /**
+     * Returns ZonedDateTime from string formatted in presented format <b>format</b>.
+     * Only 5 default formats are supported.
+     * <br>For {@link MS_DateTimeUtils#_DATE_FORMAT_DATE_ONLY} time part is considered as 00:00:00.
+     * <br>For {@link MS_DateTimeUtils#_TIME_FORMAT_TIME_ONLY} date part is considered as Epoch day.
+     *
+     * @param dateTime date as string represented in presented format date time format.
+     * @param format   one of supported date formats:
+     *                 <ul>
+     *                 <li>{@link MS_DateTimeUtils#_DATE_TIME_FORMAT_MILLISEC_ZONE_OFFSET};</li>
+     *                 <li>{@link MS_DateTimeUtils#_DATE_TIME_FORMAT_SECONDS_ZONE_OFFSET};</li>
+     *                 <li>{@link MS_DateTimeUtils#_DATE_TIME_FORMAT_NANOSEC_ZONE_OFFSET};</li>
+     *                 <li>{@link MS_DateTimeUtils#_DATE_TIME_FORMAT_NANOSEC_ZONE_OFFSET_ID} - this might return wrong offset;</li>
+     *                 <li>{@link MS_DateTimeUtils#_DATE_TIME_FORMAT_SECONDS};</li>
+     *                 <li>{@link MS_DateTimeUtils#_DATE_FORMAT_DATE_ONLY};</li>
+     *                 <li>{@link MS_DateTimeUtils#_TIME_FORMAT_TIME_ONLY};</li>
+     *                 <li>{@link MS_DateTimeUtils#_CUSTOM_DATE_TIME_FORMAT_LV}.</li>
+     *                 </ul>
+     * @return ZonedDateTime object.
+     * @throws IllegalArgumentException in case <b>format</b> is illegal for formatter to handle formatting.
+     * @throws DateTimeParseException   in case date <b>dateTime</b> couldn't be parsed in given format <b>format</b>.
+     */
+    public static org.threeten.bp.ZonedDateTime formatDateTimeBackported(String dateTime, String format) throws IllegalArgumentException, DateTimeParseException {
+        switch (format) {
+            case _DATE_TIME_FORMAT_MILLISEC_ZONE_OFFSET:
+            case _DATE_TIME_FORMAT_SECONDS_ZONE_OFFSET:
+            case _DATE_TIME_FORMAT_NANOSEC_ZONE_OFFSET:
+            case _DATE_TIME_FORMAT_NANOSEC_ZONE_OFFSET_ID:
+                return org.threeten.bp.ZonedDateTime.parse(dateTime);
+            case _DATE_TIME_FORMAT_SECONDS:
+                org.threeten.bp.LocalDateTime localDateTime = org.threeten.bp.LocalDateTime.parse(dateTime);
+                return org.threeten.bp.ZonedDateTime.of(localDateTime, org.threeten.bp.ZoneId.systemDefault()).withFixedOffsetZone();
+            case _DATE_FORMAT_DATE_ONLY:
+                org.threeten.bp.LocalDate localDate = org.threeten.bp.LocalDate.parse(dateTime);
+                org.threeten.bp.LocalTime localTime = org.threeten.bp.LocalTime.of(0, 0);
+                return org.threeten.bp.ZonedDateTime.of(localDate, localTime, org.threeten.bp.ZoneId.systemDefault()).withFixedOffsetZone();
+            case _TIME_FORMAT_TIME_ONLY:
+            case _TIME_FORMAT_TIME_ONLY_HH_MM:
+                //1. fix passed time if it's missing leading zeros, like, e.g. "1:4:3", which actually is "01:04:03"
+                MS_StringList parts = new MS_StringList(dateTime, ':');
+                if (parts.size() > 1) {
+                    parts.forEachItem((timePart, i) -> {
+                        if (timePart.length() == 1)
+                            parts.edit(i, "0" + timePart);
+                    });
+                    dateTime = parts.toStringWithNoLastDelimiter();
+                } //if there is no at least 2 elements (like hour and minute part) then string is wrong - let parsing part fail immediately
+
+                //2. try to parse time as string
+                localTime = org.threeten.bp.LocalTime.parse(dateTime);
+                localDate = org.threeten.bp.LocalDate.ofEpochDay(0); //this date part SHOULD NOT be used later on
+                return org.threeten.bp.ZonedDateTime.of(localDate, localTime, org.threeten.bp.ZoneId.systemDefault()).withFixedOffsetZone();
+            case _CUSTOM_DATE_TIME_FORMAT_LV:
+                String datePartFromDateTime = MS_StringUtils.substring(dateTime, 0, 10);
+                String timePartFromDateTime = MS_StringUtils.substring(dateTime, 11, 23);
+                org.threeten.bp.format.DateTimeFormatter dateFormatter = org.threeten.bp.format.DateTimeFormatter.ofPattern(_CUSTOM_DATE_FORMAT_LV);
+                org.threeten.bp.format.DateTimeFormatter timeFormatter = org.threeten.bp.format.DateTimeFormatter.ofPattern(_CUSTOM_TIME_FORMAT_LV);
+                localDate = org.threeten.bp.LocalDate.parse(datePartFromDateTime, dateFormatter);
+                localTime = org.threeten.bp.LocalTime.parse(timePartFromDateTime, timeFormatter);
+                return org.threeten.bp.ZonedDateTime.of(localDate, localTime, org.threeten.bp.ZoneId.systemDefault()).withFixedOffsetZone();
+            default:
+                org.threeten.bp.format.DateTimeFormatter formatter = org.threeten.bp.format.DateTimeFormatter.ofPattern(format);
+                return org.threeten.bp.ZonedDateTime.parse(dateTime, formatter);
+        }
+    }
+
+    /**
      * Returns zone offset as text from date time object.
      *
      * @param dateTime zoned date time object.
@@ -270,6 +379,14 @@ public final class MS_DateTimeUtils {
      */
     public static String getZoneIdText(ZonedDateTime dateTime) {
         return dateTime.getZone().getId();
+    }
+
+    public static Instant instantFromBackported(org.threeten.bp.Instant backported) {
+        return Instant.ofEpochSecond(backported.getEpochSecond(), backported.getNano());
+    }
+
+    public static org.threeten.bp.Instant instantToBackported(Instant instant) {
+        return org.threeten.bp.Instant.ofEpochSecond(instant.getEpochSecond(), instant.getNano());
     }
 
     public static class ZonedDateTimeBuilder {

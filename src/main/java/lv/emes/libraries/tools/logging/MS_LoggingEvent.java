@@ -1,8 +1,7 @@
 package lv.emes.libraries.tools.logging;
 
 import lv.emes.libraries.utilities.MS_CodingUtils;
-
-import java.time.ZonedDateTime;
+import org.threeten.bp.ZonedDateTime;
 
 /**
  * Model for logging events.
@@ -19,12 +18,12 @@ import java.time.ZonedDateTime;
  * </ul>
  *
  * @author eMeS
- * @version 1.0.
+ * @version 1.1.
  */
 public class MS_LoggingEvent {
 
     /**
-     * Time when event happened.
+     * Time when event happened (data type is backported to support Android API < 26).
      */
     private ZonedDateTime time;
     /**

@@ -27,7 +27,7 @@ import java.util.Objects;
  * </ul>
  *
  * @author eMeS
- * @version 1.0.
+ * @version 1.1.
  */
 public class MS_SerializedLoggingEvent implements MS_ObjectWrapper<MS_LoggingEvent> {
 
@@ -116,7 +116,7 @@ public class MS_SerializedLoggingEvent implements MS_ObjectWrapper<MS_LoggingEve
     @Override
     public MS_LoggingEvent unwrap() {
         return wrappedObject = new MS_LoggingEvent()
-                .withTime(time == null ? null : MS_DateTimeUtils.formatDateTime(time, MS_DateTimeUtils._DATE_TIME_FORMAT_NANOSEC_ZONE_OFFSET))
+                .withTime(time == null ? null : MS_DateTimeUtils.formatDateTimeBackported(time, MS_DateTimeUtils._DATE_TIME_FORMAT_NANOSEC_ZONE_OFFSET))
                 .withError(error == null ? null : (Exception) JsonReader.jsonToJava(error))
                 .withType(MS_LoggingEventTypeEnum.valueOf(type))
                 .withMessage(message)

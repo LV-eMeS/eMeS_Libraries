@@ -2,8 +2,7 @@ package lv.emes.libraries.tools.logging;
 
 import lv.emes.libraries.file_system.MS_TextFile;
 import lv.emes.libraries.utilities.MS_DateTimeUtils;
-
-import java.time.LocalDateTime;
+import org.threeten.bp.LocalDateTime;
 
 import static lv.emes.libraries.utilities.MS_StringUtils._LINE_BRAKE;
 
@@ -20,7 +19,7 @@ import static lv.emes.libraries.utilities.MS_StringUtils._LINE_BRAKE;
  * </ul>
  *
  * @author eMeS
- * @version 2.1.
+ * @version 2.2.
  */
 public class MS_FileLogger implements MS_LoggingOperations, MS_LoggingRepository {
 

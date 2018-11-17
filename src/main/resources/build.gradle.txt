@@ -1,13 +1,3 @@
-ext {
-    eMeS_LibrariesVersion = "v2.X.Y"
-    jnaVersion = "4.4.0"
-    openCSVVersion = '2.3'
-    jsonIoVersion = '4.10.0'
-    googleHttpClientVersion = '1.23.0'
-    okHttpVersion = '3.11.0'
-    mockitoVersion = '1.10.19'
-}
-
 apply plugin: 'java'
 apply plugin: 'maven'
 apply plugin: 'idea'
@@ -20,30 +10,32 @@ repositories {
 
 dependencies {
     //This project itself (just an example)
-//    compile "com.github.LV-eMeS:eMeS_Libraries:" + eMeS_LibrariesVersion
+//    compile "com.github.LV-eMeS:eMeS_Libraries:v2.X.Y"
     //Other dependencies - libraries
-    compile "commons-io:commons-io:2.5"
-    compile "commons-lang:commons-lang:2.2"
-    compile "commons-codec:commons-codec:1.10"
-    compile "org.apache.commons:commons-compress:1.9"
+    compile "commons-io:commons-io:2.6"
+    compile "commons-lang:commons-lang:2.6"
+    compile "commons-codec:commons-codec:1.11"
+    compile "org.apache.commons:commons-compress:1.16"
     compile "log4j:log4j:1.2.17"
-    compile "mysql:mysql-connector-java:5.1.5"
-    compile "net.java.dev.jna:jna-platform:" + jnaVersion
-    compile "org.json:json:20160810"
+    compile "mysql:mysql-connector-java:5.1.40"
+    compile "net.java.dev.jna:jna-platform:4.4.0"
+    compile "org.json:json:20180130"
     compile (group: 'jmimemagic', name: 'jmimemagic', version: '0.1.2') {
         exclude group: 'xerces', module: 'xerces'
     }
     compile("org.apache.commons:commons-lang3:3.5") //for EqualsBuilder
-    compile 'net.sf.opencsv:opencsv:' + openCSVVersion
-    compile 'com.cedarsoftware:json-io:' + jsonIoVersion
-    compile 'com.squareup.okhttp3:okhttp:' + okHttpVersion
+    compile 'net.sf.opencsv:opencsv:2.3'
+    compile 'com.cedarsoftware:json-io:4.10.0'
+    compile 'com.squareup.okhttp3:okhttp:3.11.0'
+    compile 'org.threeten:threetenbp:1.3.8' //to backport ZonedDateTime classes in order to use those on Android
 //    compile "com.oracle:ojdbc6:11.2.0.3"
 //    compile group: 'com.jayway.restassured', name: 'rest-assured', version: '2.9.0'
 
     //For tests:
-    compile 'org.mockito:mockito-all:' + mockitoVersion
+    compile 'org.mockito:mockito-all:1.10.19'
     compile "junit:junit:4.12"
     testCompile "junit:junit:4.12"
+    testCompile "org.assertj:assertj-core:3.10.0"
 }
 
 //All the dealing with encoding
@@ -57,7 +49,7 @@ task sourcesJar(type: Jar, dependsOn: classes) {
     from sourceSets.main.allSource
 }
 
-task TestsJar(type: Jar, dependsOn: classes) {
+task testsJar(type: Jar, dependsOn: classes) {
     classifier = 'test'
     from sourceSets.test.allSource
 }
@@ -67,10 +59,17 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
     from javadoc.destinationDir
 }
 
+//Fat JAR:
+//jar {
+//    from {
+//        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+//    }
+//}
+
 artifacts {
     archives sourcesJar
-    archives TestsJar
-    archives javadocJar
+    archives testsJar
+//    archives javadocJar
 }
 
 //----------------------------------------------------------------------------------------------------------------------

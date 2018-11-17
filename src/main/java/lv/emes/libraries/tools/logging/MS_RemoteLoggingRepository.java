@@ -9,11 +9,11 @@ import lv.emes.libraries.communication.http.MS_HttpResponse;
 import lv.emes.libraries.storage.MS_Repository;
 import lv.emes.libraries.storage.MS_RepositoryDataExchangeException;
 import lv.emes.libraries.tools.MS_ObjectWrapperHelper;
+import org.threeten.bp.Instant;
+import org.threeten.bp.ZonedDateTime;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.time.Instant;
-import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,7 +24,7 @@ import java.util.TreeMap;
  * All data exchange is done by HTTP requests.
  *
  * @author eMeS
- * @version 1.1.
+ * @version 1.3.
  * @since 2.0.4
  */
 public class MS_RemoteLoggingRepository extends MS_Repository<MS_LoggingEvent, Instant> implements MS_LoggingRepository {
@@ -63,6 +63,7 @@ public class MS_RemoteLoggingRepository extends MS_Repository<MS_LoggingEvent, I
 
     @Override
     public void logEvent(MS_LoggingEvent event) {
+        //because event's time is backported data type we need to convert it to normal Instant
         add(event.getTime().toInstant(), event);
     }
 

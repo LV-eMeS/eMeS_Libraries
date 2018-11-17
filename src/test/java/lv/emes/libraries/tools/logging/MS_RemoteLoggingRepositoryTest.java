@@ -10,9 +10,9 @@ import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
+import org.threeten.bp.Instant;
+import org.threeten.bp.ZonedDateTime;
 
-import java.time.Instant;
-import java.time.ZonedDateTime;
 import java.util.Map;
 
 import static lv.emes.libraries.tools.logging.MS_RemoteLoggingRepository.MAX_SECRET_LENGTH;

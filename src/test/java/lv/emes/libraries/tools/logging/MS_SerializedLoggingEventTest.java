@@ -6,9 +6,8 @@ import lv.emes.libraries.utilities.MS_DateTimeUtils;
 import lv.emes.libraries.utilities.MS_TestUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Test;
-
-import java.time.ZonedDateTime;
-import java.time.temporal.ChronoUnit;
+import org.threeten.bp.ZonedDateTime;
+import org.threeten.bp.temporal.ChronoUnit;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;

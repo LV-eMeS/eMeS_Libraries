@@ -1,8 +1,7 @@
 package lv.emes.libraries.tools.logging;
 
 import lv.emes.libraries.tools.threading.MS_FutureEvent;
-
-import java.time.ZonedDateTime;
+import org.threeten.bp.ZonedDateTime;
 
 /**
  * This class allows to log events to different repositories simultaneously.
@@ -17,7 +16,7 @@ import java.time.ZonedDateTime;
  * </ul>
  *
  * @author eMeS
- * @version 1.2.
+ * @version 1.3.
  */
 public class MS_MultiLogger implements MS_LoggingOperations {
 
