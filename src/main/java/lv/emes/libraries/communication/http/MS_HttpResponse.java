@@ -6,9 +6,7 @@ import lv.emes.libraries.utilities.MS_JSONUtils;
 import okhttp3.Response;
 import org.json.JSONObject;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Response of REST call made by {@link MS_HttpCallHandler}.
@@ -21,7 +19,7 @@ public class MS_HttpResponse {
 
     private String url;
     private MS_HttpRequestMethod method;
-    private Map<String, String> headers = new HashMap<>();
+    private Map<String, List<String>> headers = new HashMap<>();
     private JSONObject body;
     private String bodyAsString;
     private Response response;
@@ -50,7 +48,19 @@ public class MS_HttpResponse {
     }
 
     MS_HttpResponse withHeader(String headerName, String headerValue) {
-        headers.put(headerName, headerValue);
+        List<String> headerValues = headers.get(headerName);
+        if (headerValues == null) {
+            headerValues = new ArrayList<>(1);
+            headerValues.add(headerValue);
+            headers.put(headerName, headerValues);
+        } else {
+            headerValues.add(headerValue);
+        }
+        return this;
+    }
+
+    MS_HttpResponse withHeader(String headerName, List<String> headerValues) {
+        headers.put(headerName, headerValues);
         return this;
     }
 
@@ -59,8 +69,13 @@ public class MS_HttpResponse {
         return this;
     }
 
-    MS_HttpResponse withHeaders(Map<String, String> headers) {
+    MS_HttpResponse withHeaders(Map<String, List<String>> headers) {
         this.headers = headers;
+        return this;
+    }
+
+    MS_HttpResponse withHeaders(String headerName, List<String> headerValues) {
+        headers.put(headerName, headerValues);
         return this;
     }
 
@@ -86,7 +101,7 @@ public class MS_HttpResponse {
         return bodyAsString;
     }
 
-    public Map<String, String> getHeaders() {
+    public Map<String, List<String>> getHeaders() {
         return headers;
     }
 

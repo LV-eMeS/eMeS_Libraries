@@ -5,6 +5,8 @@ import okhttp3.*;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -12,7 +14,7 @@ import java.util.Objects;
  * return already processed {@link MS_HttpResponse} corresponding to given request.
  *
  * @author maris.salenieks
- * @version 1.0.
+ * @version 1.1.
  * @since 2.1.9
  */
 public class MS_HttpCallHandler {
@@ -43,7 +45,10 @@ public class MS_HttpCallHandler {
             case GET:
                 if (request.getParameters() != null) {
                     HttpUrl.Builder httpBuilder = Objects.requireNonNull(HttpUrl.parse(request.getUrl())).newBuilder();
-                    request.getParameters().forEach(httpBuilder::addQueryParameter);
+//                    request.getParameters().forEach(httpBuilder::addQueryParameter); //Java 8
+                    for (Map.Entry<String, String> parameters : request.getParameters().entrySet()) { //just for Android
+                        httpBuilder.addQueryParameter(parameters.getKey(), parameters.getValue());
+                    }
                     reqBuilder.url(httpBuilder.build());
                 } else {
                     reqBuilder.url(request.getUrl());
@@ -70,7 +75,12 @@ public class MS_HttpCallHandler {
                 throw new MS_BadSetupException("Unsupported HTTP request method " + request.getMethod());
         }
         if (request.getHeaders() != null) {
-            request.getHeaders().forEach(reqBuilder::addHeader);
+            for (Map.Entry<String, List<String>> headers : request.getHeaders().entrySet()) {
+                List<String> headerValues = headers.getValue();
+                for (String value : headerValues) {
+                    reqBuilder.addHeader(headers.getKey(), value);
+                }
+            }
         }
         Response response = request.getClientConfigurations().newCall(reqBuilder.build()).execute();
 
@@ -83,7 +93,11 @@ public class MS_HttpCallHandler {
         res.withBodyAsString(Objects.requireNonNull(response.body()).string());
         if (isResponseJSON(res.getBodyAsString()))
             res.withBody(new JSONObject(res.getBodyAsString()));
-        response.headers().toMultimap().forEach((headerName, headerValues) -> res.withHeader(headerName, headerValues.get(0)));
+//        response.headers().toMultimap().forEach((headerName, headerValues) -> res.withHeader(headerName, headerValues.get(0))); //Java 8
+        for (Map.Entry<String, List<String>> headers : response.headers().toMultimap().entrySet()) { //For Android
+            List<String> headerValues = headers.getValue();
+            res.withHeader(headers.getKey(), headerValues.get(0));
+        }
         return res;
     }
 
@@ -115,7 +129,10 @@ public class MS_HttpCallHandler {
 
         bodyBuilder.addPart(MultipartBody.Part.create(FormBody.create(bodyMediaType, content)));
         if (request.getParameters() != null) {
-            request.getParameters().forEach(bodyBuilder::addFormDataPart);
+//            request.getParameters().forEach(bodyBuilder::addFormDataPart); //Java 8
+            for (Map.Entry<String, String> params : request.getParameters().entrySet()) { //For Android
+                bodyBuilder.addFormDataPart(params.getKey(), params.getValue());
+            }
         }
         return bodyBuilder.build();
     }

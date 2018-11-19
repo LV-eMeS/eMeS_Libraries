@@ -5,7 +5,9 @@ import okhttp3.OkHttpClient;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -20,7 +22,7 @@ public class MS_HttpRequest {
     private OkHttpClient clientConfigurations;
     private String url;
     private MS_HttpRequestMethod method;
-    private Map<String, String> headers = new HashMap<>();
+    private Map<String, List<String>> headers = new HashMap<>();
     private Map<String, String> parameters = new HashMap<>();
     private String bodyAsString;
     private JSONObject body;
@@ -44,7 +46,19 @@ public class MS_HttpRequest {
     }
 
     public MS_HttpRequest withHeader(String headerName, String headerValue) {
-        headers.put(headerName, headerValue);
+        List<String> headerValues = headers.get(headerName);
+        if (headerValues == null) {
+            headerValues = new ArrayList<>(1);
+            headerValues.add(headerValue);
+            headers.put(headerName, headerValues);
+        } else {
+            headerValues.add(headerValue);
+        }
+        return this;
+    }
+
+    public MS_HttpRequest withHeader(String headerName, List<String> headerValues) {
+        headers.put(headerName, headerValues);
         return this;
     }
 
@@ -68,8 +82,13 @@ public class MS_HttpRequest {
         return this;
     }
 
-    public MS_HttpRequest withHeaders(Map<String, String> headers) {
+    public MS_HttpRequest withHeaders(Map<String, List<String>> headers) {
         this.headers = headers;
+        return this;
+    }
+
+    public MS_HttpRequest withHeaders(String headerName, List<String> headerValues) {
+        headers.put(headerName, headerValues);
         return this;
     }
 
@@ -84,7 +103,7 @@ public class MS_HttpRequest {
 
     //*** Getters ***
 
-    public Map<String, String> getHeaders() {
+    public Map<String, List<String>> getHeaders() {
         return headers;
     }
 

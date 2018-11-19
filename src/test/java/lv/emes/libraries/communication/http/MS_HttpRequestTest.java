@@ -13,7 +13,9 @@ public class MS_HttpRequestTest {
             .withUrl("http://google.com")
             .withMethod(MS_HttpRequestMethod.GET)
             .withParameter("env", "TEST")
-            .withParameter("version", "3");
+            .withParameter("version", "3")
+            .withHeader("header", "X")
+            .withHeader("header", "Y");
 
     @Test
     public void testToString() {

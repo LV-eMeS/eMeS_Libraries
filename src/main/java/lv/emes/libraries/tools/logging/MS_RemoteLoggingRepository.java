@@ -241,9 +241,11 @@ public class MS_RemoteLoggingRepository extends MS_Repository<MS_LoggingEvent, I
 
     private String getEncryptedSecret(MS_LoggingRemoteServerProperties props) {
         try {
-            if (props.getSecret().length() > MAX_SECRET_LENGTH)
+            if (props.getSecret().length() <= MAX_SECRET_LENGTH) {
+                return MS_CryptographyUtils.encrypt(props.getSecret(), MS_LoggingRemoteServerProperties.SECRET_TO_ENCRYPT_SECRET);
+            } else {
                 throw new MS_RepositoryDataExchangeException("Failed to encrypt secret for this logging product - length of secret exceeds 255 characters");
-            return MS_CryptographyUtils.encrypt(props.getSecret(), MS_LoggingRemoteServerProperties.SECRET_TO_ENCRYPT_SECRET);
+            }
         } catch (GeneralSecurityException e) {
             throw new MS_RepositoryDataExchangeException("Failed to encrypt secret for this logging product", e);
         }

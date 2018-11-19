@@ -31,7 +31,6 @@ public class MS_HttpClientTest {
     private static final OkHttpClient CLIENT = MS_HTTPConnectionConfigurations.DEFAULT_HTTP_CONFIG_FOR_CONNECTION.build();
 
     private static Map<String, String> params;
-    private static Map<String, String> headers;
     private MS_HttpRequest request = new MS_HttpRequest().withClientConfigurations(CLIENT).withMethod(MS_HttpRequestMethod.GET).withParameters(params);
 
     @BeforeClass
@@ -39,9 +38,6 @@ public class MS_HttpClientTest {
     public static void initTestPreConditions() {
         params = new HashMap<>();
         params.put(TEST_PARAMETER_NAME, TEST_PARAMETER_VALUE);
-
-        headers = new HashMap<>();
-        headers.put(TEST_HEADER_NAME, TEST_HEADER_VALUE);
     }
 
     @Test
@@ -52,7 +48,7 @@ public class MS_HttpClientTest {
         assertEquals(TEST_PARAMETER_VALUE, response.getBodyAsString());
 
         //test that header passing will not break the request itself
-        response = MS_HttpCallHandler.call(request.withHeaders(headers));
+        response = MS_HttpCallHandler.call(request.withHeader(TEST_HEADER_NAME, TEST_HEADER_VALUE));
         assertEquals(200, response.getStatusCode());
         assertEquals(TEST_PARAMETER_VALUE, response.getBodyAsString());
     }

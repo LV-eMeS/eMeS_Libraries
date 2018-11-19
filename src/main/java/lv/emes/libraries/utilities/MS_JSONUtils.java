@@ -83,7 +83,7 @@ public class MS_JSONUtils {
      * @param map key-value map, where keys represents JSON fields, and values - JSON values to corresponding keys.
      * @return non-null JSON object representing given map.
      */
-    public static JSONObject mapToJSONObject(Map<String, String> map) {
+    public static JSONObject mapToJSONObject(Map<String, ?> map) {
         JSONObject json = new JSONObject();
         if (map != null) map.forEach(json::put);
         return json;
