@@ -251,6 +251,34 @@ public class MS_SQLQueryBuilderTest {
     }
 
     @Test
+    public void test24DeleteWhereInStrings() {
+        sql.append("DELETE").from("bookings").where().field("type").in("JOURNEY", "PACKAGE");
+        assertEquals("DELETE FROM bookings\n" +
+                "WHERE type IN ('JOURNEY','PACKAGE');", sql.buildAndToString());
+    }
+
+    @Test
+    public void test25DeleteWhereInIntegers() {
+        sql.append("DELETE").from("bookings").where().field("number").in(1, 3, 5);
+        assertEquals("DELETE FROM bookings\n" +
+                "WHERE number IN (1,3,5);", sql.buildAndToString());
+    }
+
+    @Test
+    public void test26DeleteWhereInEmpty() {
+        sql.append("DELETE").from("bookings").where().field("number").in();
+        assertEquals("DELETE FROM bookings\n" +
+                "WHERE number IN ();", sql.buildAndToString());
+    }
+
+    @Test
+    public void test27DeleteWhereIn1Item() {
+        sql.append("DELETE").from("bookings").where().field("number").in(123456789L);
+        assertEquals("DELETE FROM bookings\n" +
+                "WHERE number IN (123456789);", sql.buildAndToString());
+    }
+
+    @Test
     public void test31Copy() {
         sql.append("CREATE").append("DATABASE").append("logger_events");
         assertEquals(sql.makeCopy().buildAndToString(), sql.buildAndToString());

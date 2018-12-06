@@ -4,6 +4,8 @@ import lv.emes.libraries.tools.MS_LineBuilder;
 import lv.emes.libraries.tools.lists.MS_StringList;
 import lv.emes.libraries.utilities.MS_StringUtils;
 
+import java.util.Objects;
+
 /**
  * SQL query builder to build SQL syntactic statements and set parameter values for them.
  * This class is mainly takes care of quick and easy to use SELECT, INSERT/REPLACE, UPDATE, DELETE statement
@@ -47,7 +49,7 @@ import lv.emes.libraries.utilities.MS_StringUtils;
  * </code></pre>
  *
  * @author eMeS
- * @version 2.3.
+ * @version 2.4.
  */
 public class MS_SQLQueryBuilder extends MS_LineBuilder {
 
@@ -68,6 +70,7 @@ public class MS_SQLQueryBuilder extends MS_LineBuilder {
     /**
      * Creates new instance of {@link MS_SQLQueryBuilder}, which copies from <b>otherBuilder</b> all till this moment
      * built query constructions.
+     *
      * @param otherBuilder another SQL builder.
      * @throws NullPointerException if <b>otherBuilder</b> is null.
      */
@@ -92,7 +95,7 @@ public class MS_SQLQueryBuilder extends MS_LineBuilder {
     private enum Oper {
         SELECT, INSERT_INTO, REPLACE_INTO, UPDATE, SET, FROM, DELETE_FROM,
         FIELD, VALUE, TABLE, WHERE, CONDITION, ORDER_BY, JOIN,
-        VALUES, AND, OR, UNION, BRACKET_OPENING, CUSTOM;
+        VALUES, AND, OR, IN, UNION, BRACKET_OPENING, CUSTOM;
 
         @Override
         public String toString() {
@@ -248,7 +251,7 @@ public class MS_SQLQueryBuilder extends MS_LineBuilder {
      */
     public MS_SQLQueryBuilder field(String fieldName) {
         if (fieldName == null) fieldName = "null";
-        if (Oper.FIELD.equals(previousOperation)) this.appendInternal(_COMMA);
+        if (previousOperation == Oper.FIELD) this.appendInternal(_COMMA);
         return beginOperation(false).appendInternal(fieldName).endOperation(Oper.FIELD);
     }
 
@@ -303,7 +306,7 @@ public class MS_SQLQueryBuilder extends MS_LineBuilder {
     public MS_SQLQueryBuilder value(String fieldName, String fieldValue) {
         if (fieldName == null) fieldName = "null";
         if (fieldValue == null) fieldValue = "null";
-        if (Oper.VALUE.equals(previousOperation)) this.appendInternal(_COMMA);
+        if (previousOperation == Oper.VALUE) this.appendInternal(_COMMA);
         return beginOperation(false)
                 .appendInternal(fieldName).appendInternal(_EQUALS).appendInternal(fieldValue)
                 .endOperation(Oper.VALUE);
@@ -334,7 +337,7 @@ public class MS_SQLQueryBuilder extends MS_LineBuilder {
      * @return reference to this query itself.
      */
     public MS_SQLQueryBuilder from() {
-        return beginOperation(Oper.FIELD.equals(previousOperation) && fieldOperationCalledTimes > 3)
+        return beginOperation(previousOperation == Oper.FIELD && fieldOperationCalledTimes > 3)
                 .appendInternal(Oper.FROM.toString()).endOperation(Oper.FROM);
     }
 
@@ -411,6 +414,37 @@ public class MS_SQLQueryBuilder extends MS_LineBuilder {
      */
     public MS_SQLQueryBuilder or() {
         return beginOperation(false).appendInternal(Oper.OR.toString()).endOperation(Oper.OR);
+    }
+
+    /**
+     * Appends query with "IN('String1', 'String2'...)".
+     *
+     * @return reference to this query itself.
+     */
+    public MS_SQLQueryBuilder in(String... valuesAsStrings) {
+        this.beginOperation(false).appendInternal(Oper.IN.toString()).appendInternal(_SP).bracketOpening();
+        int i = 0;
+        for (String value : valuesAsStrings) {
+            this.appendInternal("'" + value + "'");
+            if (++i < valuesAsStrings.length) this.appendInternal(_COMMA);
+        }
+        return this.bracketClosing().endOperation(Oper.IN);
+    }
+
+    /**
+     * Appends query with "IN(ObjectValue1, ObjectValue2...)". Should be used for any object that is applicable without
+     * adding apostrophes.
+     *
+     * @return reference to this query itself.
+     */
+    public MS_SQLQueryBuilder in(Object... valuesAsObjects) {
+        this.beginOperation(false).appendInternal(Oper.IN.toString()).appendInternal(_SP).bracketOpening();
+        int i = 0;
+        for (Object value : valuesAsObjects) {
+            this.appendInternal(Objects.toString(value));
+            if (++i < valuesAsObjects.length) this.appendInternal(_COMMA);
+        }
+        return this.bracketClosing().endOperation(Oper.IN);
     }
 
     /**
@@ -499,6 +533,7 @@ public class MS_SQLQueryBuilder extends MS_LineBuilder {
 
     /**
      * This method basically clones this SQL builder.
+     *
      * @return new instance of SQL builder with same SQL constructions as this instance already has.
      */
     public MS_SQLQueryBuilder makeCopy() {
@@ -516,12 +551,17 @@ public class MS_SQLQueryBuilder extends MS_LineBuilder {
         if (previousOperation != null) {
             if (newLineOperation)
                 this.appendInternal(MS_StringUtils._LINE_FEED);
-            else if (!Oper.BRACKET_OPENING.equals(previousOperation))
+            else if (previousOperation != Oper.BRACKET_OPENING)
                 this.appendInternal(_SP);
         }
         return this;
     }
 
+    /**
+     * Saves passed operation as previous executed operation.
+     * @param operationId operation.
+     * @return reference to this query itself.
+     */
     private MS_SQLQueryBuilder endOperation(Oper operationId) {
         if (Oper.FIELD.equals(operationId)) {
             fieldOperationCalledTimes++;
