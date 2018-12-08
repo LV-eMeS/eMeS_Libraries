@@ -43,7 +43,7 @@ public class MS_TextToFileCachingRepository extends MS_CachingRepository<String,
      *
      * @param fileRootPath   full path (without ending slash) to folder, where file will be created.
      * @param fileName       short filename (without any slashes) of text file, where text entries will be cached.
-     * @param autoInitialize - if initialization needs to be performed right after successful construction.
+     * @param autoInitialize if initialization needs to be performed right after successful construction.
      */
     public MS_TextToFileCachingRepository(String fileRootPath, String fileName, boolean autoInitialize) {
         super(fileRootPath, fileName, autoInitialize);

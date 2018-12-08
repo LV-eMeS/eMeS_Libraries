@@ -2,6 +2,7 @@ package lv.emes.libraries.utilities;
 
 import lv.emes.libraries.tools.lists.MS_StringList;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
@@ -27,48 +28,16 @@ public final class MS_DateTimeUtils {
     public static final String _DATE_FORMAT_DATE_ONLY = "yyyy-MM-dd";
     public static final String _TIME_FORMAT_TIME_ONLY = "HH:mm:ss";
     public static final String _TIME_FORMAT_TIME_ONLY_HH_MM = "HH:mm";
-    public static final String _CUSTOM_DATE_TIME_FORMAT_LV = "dd.MM.yyyy HH:mm:ss:SSS";
     public static final String _DEFAULT_DATE_TIME_FORMAT = _DATE_TIME_FORMAT_SECONDS_ZONE_OFFSET;
     //Custom formats
+    public static final String _CUSTOM_TIME_FORMAT_SECONDS_LV = "HH:mm:ss";
     public static final String _CUSTOM_TIME_FORMAT_LV = "HH:mm:ss:SSS";
     public static final String _CUSTOM_DATE_FORMAT_LV = "dd.MM.yyyy";
+    public static final String _CUSTOM_DATE_TIME_FORMAT_LV = "dd.MM.yyyy HH:mm:ss:SSS";
     public static final String _CUSTOM_DATE_TIME_FORMAT_EN = "yyyy-MM-dd HH:mm:ss,SSS";
     public static final String _TIME_FORMAT_EN = "HH:mm:ss,SSS";
 
     private MS_DateTimeUtils() {
-    }
-
-    /**
-     * Converts date and time to text.
-     *
-     * @param date a date in format: "dd.MM.yyyy HH:mm:ss:SSS".
-     * @return a text representing passed date and time.
-     */
-    public static String dateTimeToStr(Date date) {
-        SimpleDateFormat formatter = new SimpleDateFormat(_CUSTOM_DATE_TIME_FORMAT_LV);
-        return formatter.format(date);
-    }
-
-    /**
-     * Converts time to text.
-     *
-     * @param date a date in format: "HH:mm:ss:SSS".
-     * @return a text representing passed time.
-     */
-    public static String timeToStr(Date date) {
-        SimpleDateFormat formatter = new SimpleDateFormat(_CUSTOM_TIME_FORMAT_LV);
-        return formatter.format(date);
-    }
-
-    /**
-     * Converts date without time part to text.
-     *
-     * @param date a date in format: "dd.MM.yyyy".
-     * @return a text representing passed date.
-     */
-    public static String dateToStr(Date date) {
-        SimpleDateFormat formatter = new SimpleDateFormat(_CUSTOM_DATE_FORMAT_LV);
-        return formatter.format(date);
     }
 
     /**
@@ -81,6 +50,45 @@ public final class MS_DateTimeUtils {
     public static String dateTimeToStr(Date date, String format) {
         SimpleDateFormat formatter = new SimpleDateFormat(format);
         return formatter.format(date);
+    }
+
+    /**
+     * Converts date and time to text.
+     *
+     * @param date a date in format: "dd.MM.yyyy HH:mm:ss:SSS".
+     * @return a text representing passed date and time.
+     */
+    public static String dateTimeToStr(Date date) {
+        return dateTimeToStr(date, _CUSTOM_DATE_TIME_FORMAT_LV);
+    }
+
+    /**
+     * Converts time to text.
+     *
+     * @param date a date in format: "HH:mm:ss:SSS".
+     * @return a text representing passed time.
+     */
+    public static String timeToStr(Date date) {
+        return dateTimeToStr(date);
+    }
+
+    /**
+     * Converts date without time part to text.
+     *
+     * @param date a date in format: "dd.MM.yyyy".
+     * @return a text representing passed date.
+     */
+    public static String dateToStr(Date date) {
+        return dateTimeToStr(date);
+    }
+
+    public static Date parseDate(String date, String format) throws ParseException {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
+        return simpleDateFormat.parse(date);
+    }
+
+    public static Date parseDate(String date) throws ParseException {
+        return parseDate(date, _CUSTOM_DATE_TIME_FORMAT_LV);
     }
 
     /**
@@ -387,6 +395,10 @@ public final class MS_DateTimeUtils {
 
     public static org.threeten.bp.Instant instantToBackported(Instant instant) {
         return org.threeten.bp.Instant.ofEpochSecond(instant.getEpochSecond(), instant.getNano());
+    }
+
+    public static Date zonedDateTimeToDate(ZonedDateTime zdt) {
+        return new Date(zdt.toInstant().toEpochMilli());
     }
 
     public static class ZonedDateTimeBuilder {

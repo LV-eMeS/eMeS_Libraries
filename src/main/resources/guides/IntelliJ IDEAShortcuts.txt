@@ -1,4 +1,6 @@
-﻿Toggle case: Ctrl + Shift + U
+﻿Move to previous cursor position: Ctrl + Alt + Left
+Move to next cursor position (if went to previous before): Ctrl + Alt + Right
+Toggle case: Ctrl + Shift + U
 Move line up or down: Ctrl + Shift + arrow keys (up or down)
 Copy line: Ctrl + D
 Rename method, class or attribute: Shift + F6
@@ -33,6 +35,7 @@ When in Terminal using Git commands: {
 	p - pastes line from register;
 	ddkkp - moves line up;
 	ddp - moves line down
+	:wq! - exits rebase dialog
 }
 https://www.jetbrains.com/help/idea/2016.2/keyboard-shortcuts-you-cannot-miss.html
 //------------------------------------------------------------------------------------------------------------------------

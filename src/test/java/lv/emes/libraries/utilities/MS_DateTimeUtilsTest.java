@@ -2,6 +2,7 @@ package lv.emes.libraries.utilities;
 
 import org.junit.Test;
 
+import java.text.ParseException;
 import java.time.*;
 import java.util.Date;
 
@@ -148,6 +149,30 @@ public class MS_DateTimeUtilsTest {
         expected = ZonedDateTime.of(2017, 10, 8, 18, 48, 11, 345000000, ZoneOffset.systemDefault()).withFixedOffsetZone();
         dateAndOrTimeString = "08.10.2017 18:48:11:345";
         actual = formatDateTime(dateAndOrTimeString, _CUSTOM_DATE_TIME_FORMAT_LV);
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void testParseDate() throws ParseException {
+        String dateAndOrTimeString;
+        Date expected;
+        Date actual;
+
+        dateAndOrTimeString = "2017-09-27T12:39:45";
+        expected = zonedDateTimeToDate(ZonedDateTime.of(2017, 9, 27, 12, 39, 45, 0, ZoneOffset.systemDefault())) ;
+        actual = parseDate(dateAndOrTimeString, _DATE_TIME_FORMAT_SECONDS);
+        assertEquals(expected, actual);
+
+        //using same date without any time part
+        expected = zonedDateTimeToDate(ZonedDateTime.of(2017, 9, 27, 0, 0, 0, 0, ZoneOffset.systemDefault()));
+        dateAndOrTimeString = "2017-09-27";
+        actual = parseDate(dateAndOrTimeString, _DATE_FORMAT_DATE_ONLY);
+        assertEquals(expected, actual);
+
+        //default date format (_CUSTOM_DATE_TIME_FORMAT_LV)
+        expected = zonedDateTimeToDate(ZonedDateTime.of(2017, 9, 27, 0, 32, 12, 0, ZoneOffset.systemDefault())) ;
+        dateAndOrTimeString = "27.09.2017 00:32:12:000";
+        actual = parseDate(dateAndOrTimeString);
         assertEquals(expected, actual);
     }
 

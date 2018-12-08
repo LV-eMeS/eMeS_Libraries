@@ -36,7 +36,7 @@ public abstract class MS_CachingRepository<T, ID> extends MS_Repository<Pair<T, 
      *
      * @param repositoryRoot name that will identify this repository across other repositories. E.g. "Caches".
      * @param cacheName      name that will identify objects that can be found only in this cache. E.g. "Auth tokens".
-     * @param autoInitialize - if initialization needs to be performed right after successful construction.
+     * @param autoInitialize if initialization needs to be performed right after successful construction.
      */
     public MS_CachingRepository(String repositoryRoot, String cacheName, boolean autoInitialize) {
         super(repositoryRoot, cacheName, autoInitialize);
