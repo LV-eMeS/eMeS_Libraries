@@ -10,6 +10,7 @@ import static org.junit.Assert.*;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MS_ProbabilityEventTest {
+
     private static MS_ProbabilityEvent event = null;
 
     @Before
@@ -58,7 +59,7 @@ public class MS_ProbabilityEventTest {
     public void test03EventHappendsEverySecondTime() {
         event.setProbability(50);
         for (int i = 1; i < 11; i++) {
-            Boolean happened = event.happened();
+            boolean happened = event.happened();
             if (i % 2 == 0)
                 assertTrue(happened);
         }
@@ -68,7 +69,7 @@ public class MS_ProbabilityEventTest {
     public void test04EventHappendsEveryThirdTime() {
         event.setProbability(.3333333333333333); //16 digits after zero are right precision for 1/3
         for (int i = 1; i < 18; i++) {
-            Boolean happened = event.happened();
+            boolean happened = event.happened();
             if (i % 3 == 0)
                 assertTrue(happened);
         }
@@ -77,7 +78,7 @@ public class MS_ProbabilityEventTest {
     @Test
     public void test05EventProbabilityChanges() {
         event.setProbability(25);
-        Boolean happened = false;
+        boolean happened = false;
 
         for (int i = 1; i < 5; i++) { //after 4 times event happens
             happened = event.happened();
