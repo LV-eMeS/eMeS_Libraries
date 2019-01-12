@@ -24,7 +24,7 @@ import static org.junit.Assert.assertTrue;
 public class MS_TpcIPServerTest {
 
     private static final int PORT = MS_TakenPorts._DEFAULT_PORT_FOR_TESTING;
-    private static final int DEFAULT_SLEEP_TIME = 170;
+    private static final int DEFAULT_SLEEP_TIME = 190;
     private static MS_TcpIPServer server;
     private static MS_TcpIPClient client1;
     private static MS_TcpIPClient client2;

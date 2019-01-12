@@ -17,6 +17,7 @@ eMeS libraries Version 2.3.0
 ========================================================================================================
 * Minor improvements in date utils and SQL builder.
 * Introduce MS_LoadingScreen for progress bar screen showing in GUI.
+* Introduce MS_TextToFileRepository to store data in files.
 ========================================================================================================
 eMeS libraries Version 2.2.0
 ========================================================================================================

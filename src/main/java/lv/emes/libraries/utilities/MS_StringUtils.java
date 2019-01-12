@@ -1,6 +1,7 @@
 package lv.emes.libraries.utilities;
 
 import lv.emes.libraries.communication.cryptography.MS_Hash;
+import lv.emes.libraries.tools.MS_BadSetupException;
 import lv.emes.libraries.tools.lists.MS_StringList;
 
 import java.math.BigDecimal;
@@ -13,30 +14,32 @@ import static lv.emes.libraries.utilities.MS_CodingUtils.inRange;
  * Also there is included latvian language customization tools.
  * <p>Methods:
  * <ul>
- *     <li>getRandomString</li>
- *     <li>isSubstring</li>
- *     <li>textContains</li>
- *     <li>replaceInString</li>
- *     <li>getInversedText</li>
- *     <li>getTextWithCapitalizedFirstLetter</li>
- *     <li>hasOnlyDigitsInText</li>
- *     <li>hasOnlyASCIILettersInText</li>
- *     <li>isCharASCIILetter</li>
- *     <li>removeLV</li>
- *     <li>textToWords</li>
- *     <li>removePunctuation</li>
- *     <li>getHashFromString</li>
- *     <li>intToStr</li>
- *     <li>strToInt</li>
- *     <li>chr</li>
- *     <li>ord</li>
- *     <li>pos</li>
- *     <li>getSubstring</li>
+ * <li>getRandomString</li>
+ * <li>isSubstring</li>
+ * <li>textContains</li>
+ * <li>replaceInString</li>
+ * <li>getInversedText</li>
+ * <li>getTextWithCapitalizedFirstLetter</li>
+ * <li>hasOnlyDigitsInText</li>
+ * <li>hasOnlyASCIILettersInText</li>
+ * <li>isCharASCIILetter</li>
+ * <li>removeLV</li>
+ * <li>textToWords</li>
+ * <li>removePunctuation</li>
+ * <li>getHashFromString</li>
+ * <li>intToStr</li>
+ * <li>strToInt</li>
+ * <li>chr</li>
+ * <li>ord</li>
+ * <li>pos</li>
+ * <li>getSubstring</li>
  * </ul>
  *
  * @version 1.9.
  */
 public final class MS_StringUtils {
+
+    public static final String NULL_STRING = "/null";
 
     private MS_StringUtils() {
     }
@@ -187,9 +190,9 @@ public final class MS_StringUtils {
      * Replaces part <b>pattern</b> of text <b>targetString</b> with string <b>replaceWith</b>.
      * Always ignores case.
      *
-     * @param targetString         "ABCDEFG"
-     * @param pattern     "CD"
-     * @param replaceWith "XY"
+     * @param targetString "ABCDEFG"
+     * @param pattern      "CD"
+     * @param replaceWith  "XY"
      * @return "ABXYEFG"
      */
     public static String replaceInString(String targetString, String pattern, String replaceWith) {
@@ -357,6 +360,7 @@ public final class MS_StringUtils {
 
     /**
      * ASCII -&gt; char.
+     *
      * @param ascii ASCII code.
      * @return char matching presented ASCII code <b>ascii</b>.
      */
@@ -366,6 +370,7 @@ public final class MS_StringUtils {
 
     /**
      * Char -&gt; ASCII.
+     *
      * @param aValue a char.
      * @return ASCII code for presented char <b>aValue</b>.
      */
@@ -376,7 +381,7 @@ public final class MS_StringUtils {
     /**
      * Returns a part of another text starting from <b>from</b> symbol in text <b>text</b> and ending with <b>till</b> symbol.
      *
-     * @param text  ["given text"]["AbcdXXXefg"]
+     * @param text ["given text"]["AbcdXXXefg"]
      * @param from [0][4]
      * @param till [5][7]
      * @return ["given"]["XXX"]
@@ -395,7 +400,7 @@ public final class MS_StringUtils {
     /**
      * Returns a part of another text starting from <b>from</b> symbol in text <b>text</b> and ending with <b>till</b> symbol.
      *
-     * @param text  ["given text"]["AbcdXXXefg"]
+     * @param text ["given text"]["AbcdXXXefg"]
      * @param from [0][4]
      * @param till [5][7]
      * @return ["given"]["XXX"]
@@ -435,6 +440,7 @@ public final class MS_StringUtils {
 
     /**
      * This method can be used to form constants that includes many strings related to one particular concept.
+     *
      * @param strings all the strings that will be included to result array.
      * @return an array of strings.
      */
@@ -445,6 +451,7 @@ public final class MS_StringUtils {
     /**
      * Adds single quote characters before and after presented string <b>value</b>.
      * Single quotation marks inside presented string (like this: <b>'</b>) are escaped with extra single quotation mark (like this: <b>''</b>).
+     *
      * @param value preferable value without any quotation.
      * @return value quoted with single quotes from both sides.
      */
@@ -456,5 +463,84 @@ public final class MS_StringUtils {
     public static String convertMillisToSecsString(long milliseconds) {
         BigDecimal res = new BigDecimal(milliseconds).movePointLeft(3);
         return res.setScale(2, RoundingMode.HALF_UP).toString();
+    }
+
+    /**
+     * Parses given String parameter value <b>value</b> and returns it of desired type <b>valueClass</b>.
+     * <p>It also accepts null values passed as string {@link MS_StringUtils#NULL_STRING}.
+     *
+     * @param value      parameter value passed as String. Examples: "Some String value", "999", "true", "/null"
+     * @param valueClass desired class of given <b>parameter</b> to which it will be converted from String.
+     * @param <T>        type of parameter value. Currently only Boolean, Integer, Long and String are supported.
+     * @return <b>parameter</b> (of type <b>T</b>).
+     * @throws MS_BadSetupException if type of <b>value</b> is unsupported, <b>valueClass</b> doesn't match or parse fails.
+     * @since 2.2.2.
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> T stringToPrimitive(String value, Class<T> valueClass) {
+        if (value == null || value.equals(NULL_STRING)) return null;
+
+        T parameterValue;
+        switch (valueClass.getSimpleName()) {
+            case "String":
+                parameterValue = (T) value;
+                break;
+            case "Boolean":
+                if (value.equalsIgnoreCase("false") || value.equalsIgnoreCase("true")) {
+                    parameterValue = (T) Boolean.valueOf(Boolean.parseBoolean(value));
+                } else {
+                    throw new MS_BadSetupException("String value [%s] cannot be parsed, because it is not valid boolean value", value);
+                }
+                break;
+            case "Integer":
+                try {
+                    parameterValue = (T) Integer.valueOf(Integer.parseInt(value));
+                } catch (NumberFormatException e) {
+                    throw new MS_BadSetupException("String value [%s] cannot be parsed as Integer, because it is not a number", value);
+                }
+                break;
+            case "Long":
+                try {
+                    parameterValue = (T) Long.valueOf(Long.parseLong(value));
+                } catch (NumberFormatException e) {
+                    throw new MS_BadSetupException("String value [%s] cannot be parsed as Long, because it is not a number", value);
+                }
+                break;
+            default:
+                throw new MS_BadSetupException("Unsupported class [%s] for String value parsing", valueClass.getSimpleName());
+        }
+        return parameterValue;
+    }
+
+    /**
+     * Reverse operation of {@link MS_StringUtils#stringToPrimitive}.
+     * Converts primitive type to String. In case we are dealing with <tt>null</tt> values,
+     * resulting String will not be <tt>null</tt>, but {@link MS_StringUtils#NULL_STRING} instead.
+     *
+     * @param value value of primitive type. Can be null, in that case result of function will be {@link MS_StringUtils#NULL_STRING}.
+     * @param <T>   type of value. Currently only Boolean, Integer, Long and String are supported.
+     * @return string representation of <b>value</b> or {@link MS_StringUtils#NULL_STRING}.
+     * @throws MS_BadSetupException if type of <b>value</b> is unsupported.
+     * @since 2.2.2.
+     */
+    public static <T> String primitiveToString(T value) {
+        if (value == null) return NULL_STRING;
+
+        String res;
+        switch (value.getClass().getSimpleName()) {
+            case "String":
+                res = (String) value;
+                break;
+            case "Boolean":
+                res = Boolean.TRUE.equals(value) ? "TRUE" : "FALSE";
+                break;
+            case "Integer":
+            case "Long":
+                res = String.valueOf(value);
+                break;
+            default:
+                throw new MS_BadSetupException("Unsupported type [%s] for value conversion to String", value.getClass().getSimpleName());
+        }
+        return res;
     }
 }

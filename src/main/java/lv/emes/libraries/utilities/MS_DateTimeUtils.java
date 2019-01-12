@@ -69,7 +69,8 @@ public final class MS_DateTimeUtils {
      * @return a text representing passed time.
      */
     public static String timeToStr(Date date) {
-        return dateTimeToStr(date);
+        SimpleDateFormat formatter = new SimpleDateFormat(_CUSTOM_TIME_FORMAT_LV);
+        return formatter.format(date);
     }
 
     /**
@@ -79,7 +80,8 @@ public final class MS_DateTimeUtils {
      * @return a text representing passed date.
      */
     public static String dateToStr(Date date) {
-        return dateTimeToStr(date);
+        SimpleDateFormat formatter = new SimpleDateFormat(_CUSTOM_DATE_FORMAT_LV);
+        return formatter.format(date);
     }
 
     public static Date parseDate(String date, String format) throws ParseException {

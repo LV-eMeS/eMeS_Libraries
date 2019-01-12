@@ -1,13 +1,17 @@
 package lv.emes.libraries.file_system;
 
+import lv.emes.libraries.tools.MS_BadSetupException;
+import lv.emes.libraries.utilities.MS_StringUtils;
+
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 
 /**
  * Can be used to work with .properties files.
  * You can either read properties from files or write new properties, or even rewrite existing properties.
  *
- * @version 1.3.
+ * @version 2.0.
  */
 public class MS_PropertiesFile extends Properties {
 
@@ -21,7 +25,7 @@ public class MS_PropertiesFile extends Properties {
      */
     public void load(String aPropertyFilename) throws IOException {
         InputStream in = new FileInputStream(aPropertyFilename);
-        this.load(new InputStreamReader(in, "UTF-8"));
+        this.load(new InputStreamReader(in, StandardCharsets.UTF_8));
         in.close();
     }
 
@@ -65,6 +69,20 @@ public class MS_PropertiesFile extends Properties {
         try {
             return Integer.parseInt(tmp);
         } catch (NumberFormatException nfe) {
+            return defaultValue;
+        }
+    }
+
+    public <T> T getPrimitive(String key, Class<T> valueClass) throws MS_BadSetupException {
+        String tmp = this.getProperty(key);
+        return MS_StringUtils.stringToPrimitive(tmp, valueClass);
+    }
+
+    public <T> T getPrimitive(String key, Class<T> valueClass, T defaultValue) {
+        String tmp = this.getProperty(key, String.valueOf(defaultValue));
+        try {
+            return MS_StringUtils.stringToPrimitive(tmp, valueClass);
+        } catch (MS_BadSetupException e) {
             return defaultValue;
         }
     }
