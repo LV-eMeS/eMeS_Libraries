@@ -2,20 +2,18 @@ package lv.emes.libraries.utilities;
 
 import lv.emes.libraries.tools.MS_BadSetupException;
 import lv.emes.libraries.tools.lists.MS_List;
+import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Supplier;
 
 import static lv.emes.libraries.utilities.MS_CodingUtils.*;
 import static org.junit.Assert.*;
 
-/**
- * @author eMeS
- * @version 1.1.
- */
 public class MS_CodingUtilsTest {
 
     @Test
@@ -95,7 +93,7 @@ public class MS_CodingUtilsTest {
         arr = newArray("", null, 0);
         assertEquals(3, arr.length);
         assertEquals("", arr[0]);
-        assertEquals(null, arr[1]);
+        assertNull(arr[1]);
         assertEquals(0, arr[2]);
     }
 
@@ -307,6 +305,18 @@ public class MS_CodingUtilsTest {
     public void testGetMapItemValueIndexOutOfBounds() {
         Map<Integer, String> map = new LinkedHashMap<>();
         getMapElementKey(map, 6);
+    }
+
+    @Test
+    public void testNullSafe() {
+        Supplier<Supplier<String>> methodThatReturnsNull = () -> null;
+        Assertions.assertThat(nullSafe(() -> methodThatReturnsNull.get().get())).isNull(); //first method call failed
+
+        final String SUCCESS_RESULT = "This time value is there, as first method returned some object, which method also returned value (this String)";
+        Supplier<String> secondMethod = () -> SUCCESS_RESULT;
+        Supplier<Supplier<String>> firstMethod = () -> secondMethod;
+        Assertions.assertThat(nullSafe(() -> firstMethod.get().get())).isEqualTo(SUCCESS_RESULT); //both method calls succeeded
+
     }
 
     //*** getMapElementKey and getMapElementValue test end ***

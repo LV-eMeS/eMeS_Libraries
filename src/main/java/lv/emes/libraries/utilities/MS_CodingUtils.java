@@ -19,11 +19,12 @@ import java.net.UnknownHostException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiConsumer;
+import java.util.function.Supplier;
 
 /**
  * Module is designed to combine different common quick coding operations.
  *
- * @version 2.5.
+ * @version 2.6.
  */
 public final class MS_CodingUtils {
 
@@ -401,6 +402,23 @@ public final class MS_CodingUtils {
      */
     public static <T> boolean isEmpty(MS_IterableListWithItems<T, ?> iterableList) {
         return iterableList == null || iterableList.size() == 0;
+    }
+
+    /**
+     * Null safe method that allows to get result of last method in method chain.
+     * Even if some of methods before returns <tt>null</tt>, whole call will not end up with {@link NullPointerException},
+     * simply <tt>null</tt> value will be returned as the result.
+     *
+     * @param chainedMethods chained method calls.
+     * @param <T> return type of last method in chain.
+     * @return return value of last method call or <tt>null</tt> if {@link NullPointerException} occurred in the process.
+     */
+    public static <T> T nullSafe(Supplier<T> chainedMethods) {
+        try {
+            return chainedMethods.get();
+        } catch (NullPointerException e) {
+            return null;
+        }
     }
 
     //*** Private (static) methods ***

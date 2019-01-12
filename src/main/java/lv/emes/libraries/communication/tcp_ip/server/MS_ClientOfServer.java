@@ -99,7 +99,9 @@ public class MS_ClientOfServer {
      * @return IP address of connected client or <tt>null</tt> if client connection is already closed.
      */
     public String getIp() {
-        return clientSocket != null ? clientSocket.getInetAddress().getHostAddress() : null;
+        return clientSocket == null ? null :
+                clientSocket.getInetAddress() == null ? null :
+                        clientSocket.getInetAddress().getHostAddress();
     }
 
     /**
