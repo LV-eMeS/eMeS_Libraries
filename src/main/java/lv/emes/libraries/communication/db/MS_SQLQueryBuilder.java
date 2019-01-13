@@ -419,6 +419,8 @@ public class MS_SQLQueryBuilder extends MS_LineBuilder {
     /**
      * Appends query with "IN('String1', 'String2'...)".
      *
+     * @param valuesAsStrings values of String type to be inserted comma-separated and enclosed by
+     *                        apostrophes inside braces of IN clause.
      * @return reference to this query itself.
      */
     public MS_SQLQueryBuilder in(String... valuesAsStrings) {
@@ -435,6 +437,8 @@ public class MS_SQLQueryBuilder extends MS_LineBuilder {
      * Appends query with "IN(ObjectValue1, ObjectValue2...)". Should be used for any object that is applicable without
      * adding apostrophes.
      *
+     * @param valuesAsObjects values of any type ({@link Object#toString} is called) to be inserted
+     *                        comma-separated inside braces of IN clause.
      * @return reference to this query itself.
      */
     public MS_SQLQueryBuilder in(Object... valuesAsObjects) {

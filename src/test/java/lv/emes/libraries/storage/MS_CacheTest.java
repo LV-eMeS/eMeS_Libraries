@@ -137,11 +137,11 @@ public class MS_CacheTest {
         verifyCurrentLogCount(0);
 
         operThread = cacheForUnsupportedActions.store(FIRST, 1);
-        MS_FutureEvent.joinEvents(5, 20, operThread);
+        MS_FutureEvent.joinEvents(6, 20, operThread);
         verifyCurrentLogCount(1);
 
         cacheForUnsupportedActions.retrieve(1);
-        MS_CodingUtils.sleep(50);
+        MS_CodingUtils.sleep(60);
         verifyCurrentLogCount(2);
 
         operThread = cacheForUnsupportedActions.clear();
@@ -157,15 +157,15 @@ public class MS_CacheTest {
         verifyCurrentLogCount(0);
 
         operThread = cacheForUnsupportedActions.store(FIRST, 1);
-        MS_FutureEvent.joinEvents(5, 20, operThread);
+        MS_FutureEvent.joinEvents(6, 20, operThread);
         verifyCurrentLogCount(1);
 
         cacheForUnsupportedActions.retrieve(1);
-        MS_CodingUtils.sleep(50);
+        MS_CodingUtils.sleep(60);
         verifyCurrentLogCount(2);
 
         operThread = cacheForUnsupportedActions.clear();
-        MS_FutureEvent.joinEvents(5, 20, operThread);
+        MS_FutureEvent.joinEvents(6, 20, operThread);
         verifyCurrentLogCount(3);
         logs.getEventList().clear(); //restart logger, because in next steps we will need clean logs
     }
@@ -186,7 +186,7 @@ public class MS_CacheTest {
         allThreadsTogether.concatenate(threads401_500);
 
         //wait until last thread executes
-        MS_FutureEvent.joinEvents(allThreadsTogether, 25, 30);
+        MS_FutureEvent.joinEvents(allThreadsTogether, 35, 30);
         verifyCurrentLogCount(0);
         assertEquals(500, cache.getRepository().size());
     }
@@ -210,7 +210,7 @@ public class MS_CacheTest {
         allThreadsTogether.concatenate(threads6);
 
         //wait until last thread executes
-        MS_FutureEvent.joinEvents(allThreadsTogether, 25, 35);
+        MS_FutureEvent.joinEvents(allThreadsTogether, 35, 35);
         verifyCurrentLogCount(0);
         assertEquals(200, cache.getRepository().size());
     }
