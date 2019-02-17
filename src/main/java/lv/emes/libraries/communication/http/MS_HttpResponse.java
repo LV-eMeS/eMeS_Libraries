@@ -1,33 +1,59 @@
 package lv.emes.libraries.communication.http;
 
 import lv.emes.libraries.tools.MS_BadSetupException;
+import lv.emes.libraries.tools.json.JSONTypeEnum;
+import lv.emes.libraries.tools.json.MS_JSONArray;
+import lv.emes.libraries.tools.json.MS_JSONObject;
+import lv.emes.libraries.tools.json.MS_JSONUtils;
 import lv.emes.libraries.utilities.MS_DateTimeUtils;
-import lv.emes.libraries.utilities.MS_JSONUtils;
 import okhttp3.Response;
-import org.json.JSONObject;
 
 import java.util.*;
 
 /**
- * Response of REST call made by {@link MS_HttpCallHandler}.
+ * Immutable response of REST call made by {@link MS_HttpCallHandler}.
  *
  * @author maris.salenieks
- * @since 2.0.
+ * @version 2.1.
  * @since 2.1.9
  */
+//@Immutable
 public class MS_HttpResponse {
 
     private String url;
     private MS_HttpRequestMethod method;
     private Map<String, List<String>> headers = new HashMap<>();
-    private JSONObject body;
-    private String bodyAsString;
+    private String bodyString;
+    private MS_JSONObject bodyObject;
+    private MS_JSONArray bodyArray;
     private Response response;
     private int statusCode;
     private Date timestamp;
+    private JSONTypeEnum bodyJsonType = JSONTypeEnum.STRING;
 
     public MS_HttpResponse() {
         this.timestamp = new Date();
+    }
+
+    /**
+     * Initializes <b>bodyString</b>, <b>bodyObject</b> - if <b>body</b> is a JSON object or
+     * <b>bodyArray</b> - if <b>body</b> is a JSON array.
+     * Unset object values remain <tt>null</tt>.
+     * <b>bodyString</b> will be always set, unless given string is <tt>null</tt>.
+     *
+     * @param body HTTP response body as string.
+     */
+    public void initJSONBody(String body) {
+        this.bodyString = body;
+        this.bodyJsonType = MS_JSONUtils.detectStringJSONType(body);
+        switch (bodyJsonType) {
+            case OBJECT:
+                this.bodyObject = new MS_JSONObject(body);
+                break;
+            case ARRAY:
+                this.bodyArray = new MS_JSONArray(body);
+                break;
+        }
     }
 
     //*** Setters and getters
@@ -39,11 +65,6 @@ public class MS_HttpResponse {
 
     MS_HttpResponse withUrl(String url) {
         this.url = url;
-        return this;
-    }
-
-    MS_HttpResponse withBodyAsString(String bodyString) {
-        this.bodyAsString = bodyString;
         return this;
     }
 
@@ -61,11 +82,6 @@ public class MS_HttpResponse {
 
     MS_HttpResponse withHeader(String headerName, List<String> headerValues) {
         headers.put(headerName, headerValues);
-        return this;
-    }
-
-    MS_HttpResponse withBody(JSONObject body) {
-        this.body = body;
         return this;
     }
 
@@ -97,18 +113,28 @@ public class MS_HttpResponse {
         return url;
     }
 
-    public String getBodyAsString() {
-        return bodyAsString;
+    public String getBodyString() {
+        return bodyString;
     }
 
     public Map<String, List<String>> getHeaders() {
         return headers;
     }
 
-    public JSONObject getBody() {
-        if (body == null)
-            throw new MS_BadSetupException("Response body is not JSON object; Try getBodyAsString()!");
-        return body;
+    public MS_JSONObject getBodyObject() {
+        if (bodyObject == null)
+            throw new MS_BadSetupException("Response body is not JSON object; Try getBodyString() or getBodyArray()!");
+        return bodyObject;
+    }
+
+    public MS_JSONArray getBodyArray() {
+        if (bodyArray == null)
+            throw new MS_BadSetupException("Response body is not JSON array; Try getBodyString() or getBodyObject()!");
+        return bodyArray;
+    }
+
+    public JSONTypeEnum getBodyJsonType() {
+        return bodyJsonType;
     }
 
     public Response getResponse() {
@@ -125,12 +151,13 @@ public class MS_HttpResponse {
 
     @Override
     public String toString() {
-        JSONObject res = MS_JSONUtils.newOrderedJSONObject();
-        res.putOpt("method", method != null ? method.name() : JSONObject.NULL);
+        MS_JSONObject res = new MS_JSONObject();
+        res.putOpt("method", method != null ? method.name() : MS_JSONObject.NULL);
         res.put("statusCode", statusCode);
         res.put("url", url);
-        res.put("headers", MS_JSONUtils.mapToJSONObject(headers));
-        res.put("body", body == null ? bodyAsString : body);
+        res.put("headers", new MS_JSONObject(headers));
+        res.putOpt("bodyType", bodyJsonType != null ? bodyJsonType.name() : MS_JSONObject.NULL);
+        res.put("body", bodyString);
         res.put("timestamp", MS_DateTimeUtils.dateTimeToStr(timestamp, MS_DateTimeUtils._DATE_TIME_FORMAT_MILLISEC_ZONE_OFFSET));
         return res.toString();
     }

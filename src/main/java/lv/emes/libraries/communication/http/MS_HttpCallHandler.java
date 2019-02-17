@@ -2,7 +2,6 @@ package lv.emes.libraries.communication.http;
 
 import lv.emes.libraries.tools.MS_BadSetupException;
 import okhttp3.*;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.List;
@@ -35,10 +34,9 @@ public class MS_HttpCallHandler {
      *                     it is possible that the remote server accepted the request before the failure.
      */
     public static MS_HttpResponse call(MS_HttpRequest request) throws IOException {
-        Objects.requireNonNull(request);
-        Objects.requireNonNull(request.getClientConfigurations());
-        Objects.requireNonNull(request.getUrl());
-        Objects.requireNonNull(request.getMethod());
+        Objects.requireNonNull(request, "HTTP request must not be null");
+        Objects.requireNonNull(request.getUrl(), "URL / hostname must be provided in order to perform HTTP call");
+        Objects.requireNonNull(request.getMethod(), "HTTP method (GET, POST, PUT, DELETE) must be provided in order to perform HTTP call");
 
         Request.Builder reqBuilder = new Request.Builder();
         switch (request.getMethod()) {
@@ -82,7 +80,10 @@ public class MS_HttpCallHandler {
                 }
             }
         }
-        Response response = request.getClientConfigurations().newCall(reqBuilder.build()).execute();
+        OkHttpClient clientConfigurations = request.getClientConfigurations() != null
+                ? request.getClientConfigurations()
+                : MS_HTTPConnectionConfigurations.DEFAULT_HTTP_CONFIG_FOR_CONNECTION.build();
+        Response response = clientConfigurations.newCall(reqBuilder.build()).execute();
 
         MS_HttpResponse res = new MS_HttpResponse()
                 .withUrl(request.getUrl())
@@ -90,24 +91,15 @@ public class MS_HttpCallHandler {
                 .withResponse(response)
                 .withResponseCode(response.code());
 
-        res.withBodyAsString(Objects.requireNonNull(response.body()).string());
-        if (isResponseJSON(res.getBodyAsString()))
-            res.withBody(new JSONObject(res.getBodyAsString()));
+        //body never will be null and will be closed automatically after this line
+        res.initJSONBody(Objects.requireNonNull(response.body()).string());
+
 //        response.headers().toMultimap().forEach((headerName, headerValues) -> res.withHeader(headerName, headerValues.get(0))); //Java 8
         for (Map.Entry<String, List<String>> headers : response.headers().toMultimap().entrySet()) { //For Android
             List<String> headerValues = headers.getValue();
             res.withHeader(headers.getKey(), headerValues.get(0));
         }
         return res;
-    }
-
-    private static boolean isResponseJSON(String response) {
-        if (response != null) {
-            String trimmedResponse = response.trim();
-            return trimmedResponse.startsWith("{") || trimmedResponse.startsWith("[");
-        } else {
-            return false;
-        }
     }
 
     private static RequestBody formBody(MS_HttpRequest request) {
@@ -120,8 +112,10 @@ public class MS_HttpCallHandler {
             content = request.getBodyAsString();
         } else if (request.getBody() != null) {
             bodyMediaType = MEDIA_TYPE_JSON;
-            Objects.requireNonNull(request.getBody());
             content = request.getBody().toString();
+        } else if (request.getBodyAsArray() != null) {
+            bodyMediaType = MEDIA_TYPE_JSON;
+            content = request.getBodyAsArray().toString();
         } else {
             bodyMediaType = MEDIA_TYPE_MARKDOWN;
             content = "";

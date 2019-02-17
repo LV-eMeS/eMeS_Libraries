@@ -1,12 +1,13 @@
 package lv.emes.libraries.communication.http;
 
 import lv.emes.libraries.tools.MS_BadSetupException;
+import lv.emes.libraries.tools.json.JSONTypeEnum;
+import lv.emes.libraries.tools.json.MS_JSONObject;
 import lv.emes.libraries.utilities.MS_DateTimeUtils;
-import lv.emes.libraries.utilities.MS_JSONUtils;
-import org.json.JSONObject;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class MS_HttpResponseTest {
 
@@ -15,20 +16,24 @@ public class MS_HttpResponseTest {
         MS_HttpResponse response = new MS_HttpResponse()
                 .withMethod(MS_HttpRequestMethod.GET)
                 .withResponseCode(200)
-                .withHeader("SessionId", "value")
-                .withBodyAsString("Some response data (not necessarily JSON) here");
+                .withUrl("http://test.url")
+                .withHeader("SessionId", "value");
+        response.initJSONBody("Some response data (not necessarily JSON) here");
 
-        JSONObject expected = MS_JSONUtils.newOrderedJSONObject();
+        MS_JSONObject expected = new MS_JSONObject();
         expected.put("method", response.getMethod().name());
         expected.put("statusCode", response.getStatusCode());
-        expected.put("headers", MS_JSONUtils.mapToJSONObject(response.getHeaders()));
-        expected.putOpt("body", response.getBodyAsString());
+        expected.putOpt("url", response.getUrl());
+        expected.put("headers", new MS_JSONObject(response.getHeaders()));
+        expected.putOpt("bodyType", JSONTypeEnum.STRING.name());
+        expected.putOpt("body", response.getBodyString());
         expected.put("timestamp", MS_DateTimeUtils.dateTimeToStr(response.getTimestamp(), MS_DateTimeUtils._DATE_TIME_FORMAT_MILLISEC_ZONE_OFFSET));
-        assertEquals(expected.toString(), response.toString());
+        assertThat(response.toString()).isEqualTo(expected.toString());
     }
 
-    @Test(expected = MS_BadSetupException.class)
+    @Test
     public void testBodyNotJson() {
-        new MS_HttpResponse().getBody();
+        assertThatThrownBy(() -> new MS_HttpResponse().getBodyObject()).isInstanceOf(MS_BadSetupException.class);
+        assertThatThrownBy(() -> new MS_HttpResponse().getBodyArray()).isInstanceOf(MS_BadSetupException.class);
     }
 }

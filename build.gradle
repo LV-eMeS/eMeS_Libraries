@@ -36,6 +36,7 @@ dependencies {
     compile "junit:junit:4.12"
     testCompile "junit:junit:4.12"
     testCompile "org.assertj:assertj-core:3.10.0"
+    testCompile "com.google.guava:guava:18.0"
 }
 
 //All the dealing with encoding

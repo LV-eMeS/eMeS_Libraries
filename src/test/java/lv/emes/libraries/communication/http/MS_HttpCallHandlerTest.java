@@ -16,7 +16,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class MS_HttpClientTest {
+public class MS_HttpCallHandlerTest {
 
     private static final String URL_STRING_GET = HTTP_PREFIX + TESTING_SERVER_HOSTAME + TESTING_WEB_SERVER_PORT_STRING + "/Test/test_get.php";
     private static final String URL_STRING_POST = HTTP_PREFIX + TESTING_SERVER_HOSTAME + TESTING_WEB_SERVER_PORT_STRING + "/Test/test_post.php";
@@ -45,12 +45,12 @@ public class MS_HttpClientTest {
         request.withUrl(URL_STRING_GET);
         MS_HttpResponse response = MS_HttpCallHandler.call(request);
         assertEquals(200, response.getStatusCode());
-        assertEquals(TEST_PARAMETER_VALUE, response.getBodyAsString());
+        assertEquals(TEST_PARAMETER_VALUE, response.getBodyString());
 
         //test that header passing will not break the request itself
         response = MS_HttpCallHandler.call(request.withHeader(TEST_HEADER_NAME, TEST_HEADER_VALUE));
         assertEquals(200, response.getStatusCode());
-        assertEquals(TEST_PARAMETER_VALUE, response.getBodyAsString());
+        assertEquals(TEST_PARAMETER_VALUE, response.getBodyString());
     }
 
     @Test
@@ -58,7 +58,7 @@ public class MS_HttpClientTest {
         request.withMethod(MS_HttpRequestMethod.POST).withUrl(URL_STRING_POST);
         MS_HttpResponse response = MS_HttpCallHandler.call(request);
         assertEquals(200, response.getStatusCode());
-        assertEquals(TEST_PARAMETER_VALUE, response.getBodyAsString());
+        assertEquals(TEST_PARAMETER_VALUE, response.getBodyString());
     }
 
     @Test
@@ -66,7 +66,7 @@ public class MS_HttpClientTest {
         request.withMethod(MS_HttpRequestMethod.GET).withUrl(URL_STRING_NO_PARAMS);
         MS_HttpResponse response = MS_HttpCallHandler.call(request);
         assertEquals(200, response.getStatusCode());
-        assertEquals(TEST_NO_PARAMETER_VALUE, response.getBodyAsString());
+        assertEquals(TEST_NO_PARAMETER_VALUE, response.getBodyString());
     }
 
     @Test
@@ -74,21 +74,21 @@ public class MS_HttpClientTest {
         request.withMethod(MS_HttpRequestMethod.POST).withUrl(URL_STRING_NO_PARAMS);
         MS_HttpResponse response = MS_HttpCallHandler.call(request);
         assertEquals(200, response.getStatusCode());
-        assertEquals(TEST_NO_PARAMETER_VALUE, response.getBodyAsString());
+        assertEquals(TEST_NO_PARAMETER_VALUE, response.getBodyString());
     }
 
     @Test
     public void test05GetWithEmptyParameters() throws IOException {
         request.withMethod(MS_HttpRequestMethod.GET).withUrl(URL_STRING_GET).withParameters(null);
         MS_HttpResponse response = MS_HttpCallHandler.call(request);
-        assertNotEquals(TEST_NO_PARAMETER_VALUE, response.getBodyAsString());
+        assertNotEquals(TEST_NO_PARAMETER_VALUE, response.getBodyString());
     }
 
     @Test
     public void test06PostWithEmptyParameters() throws IOException {
         request.withMethod(MS_HttpRequestMethod.POST).withUrl(URL_STRING_GET).withParameters(null);
         MS_HttpResponse response = MS_HttpCallHandler.call(request);
-        assertNotEquals(TEST_NO_PARAMETER_VALUE, response.getBodyAsString());
+        assertNotEquals(TEST_NO_PARAMETER_VALUE, response.getBodyString());
     }
 
     @Test

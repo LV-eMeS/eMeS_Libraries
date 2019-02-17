@@ -1,9 +1,8 @@
 package lv.emes.libraries.communication.http;
 
-import lv.emes.libraries.utilities.MS_JSONUtils;
+import lv.emes.libraries.tools.json.MS_JSONArray;
+import lv.emes.libraries.tools.json.MS_JSONObject;
 import okhttp3.OkHttpClient;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,7 +13,7 @@ import java.util.Map;
  * HTTP request object that acts as input to {@link MS_HttpCallHandler#call(MS_HttpRequest)} in order to make HTTP call.
  *
  * @author maris.salenieks
- * @version 1.0.
+ * @version 2.1.
  * @since 2.1.9
  */
 public class MS_HttpRequest {
@@ -25,8 +24,8 @@ public class MS_HttpRequest {
     private Map<String, List<String>> headers = new HashMap<>();
     private Map<String, String> parameters = new HashMap<>();
     private String bodyAsString;
-    private JSONObject body;
-    private JSONArray bodyAsArray;
+    private MS_JSONObject body;
+    private MS_JSONArray bodyAsArray;
 
     //*** Setters ***
 
@@ -67,12 +66,12 @@ public class MS_HttpRequest {
         return this;
     }
 
-    public MS_HttpRequest withBody(JSONObject body) {
+    public MS_HttpRequest withBody(MS_JSONObject body) {
         this.body = body;
         return this;
     }
 
-    public MS_HttpRequest withBody(JSONArray bodyArray) {
+    public MS_HttpRequest withBody(MS_JSONArray bodyArray) {
         this.bodyAsArray = bodyArray;
         return this;
     }
@@ -111,11 +110,11 @@ public class MS_HttpRequest {
         return parameters;
     }
 
-    public JSONObject getBody() {
+    public MS_JSONObject getBody() {
         return body;
     }
 
-    public JSONArray getBodyAsArray() {
+    public MS_JSONArray getBodyAsArray() {
         return bodyAsArray;
     }
 
@@ -143,10 +142,10 @@ public class MS_HttpRequest {
 
     @Override
     public String toString() {
-        JSONObject res = MS_JSONUtils.newOrderedJSONObject();
-        res.putOpt("method", method != null ? method.name() : JSONObject.NULL);
+        MS_JSONObject res = new MS_JSONObject();
+        res.putOpt("method", method != null ? method.name() : MS_JSONObject.NULL);
         res.put("url", url);
-        res.put("parameters", MS_JSONUtils.mapToJSONObject(parameters));
+        res.put("parameters", new MS_JSONObject(parameters));
         if (body != null) {
             res.put("body", body);
         } else if (bodyAsArray != null) {
@@ -154,9 +153,9 @@ public class MS_HttpRequest {
         } else if (bodyAsString != null) {
             res.put("body", bodyAsString);
         } else {
-            res.putOpt("body", JSONObject.NULL);
+            res.putOpt("body", MS_JSONObject.NULL);
         }
-        res.put("headers", MS_JSONUtils.mapToJSONObject(headers));
+        res.put("headers", new MS_JSONObject(headers));
         return res.toString();
     }
 }

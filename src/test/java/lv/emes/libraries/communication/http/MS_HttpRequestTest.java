@@ -1,8 +1,7 @@
 package lv.emes.libraries.communication.http;
 
-import lv.emes.libraries.utilities.MS_JSONUtils;
-import org.json.JSONArray;
-import org.json.JSONObject;
+import lv.emes.libraries.tools.json.MS_JSONArray;
+import lv.emes.libraries.tools.json.MS_JSONObject;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -19,31 +18,31 @@ public class MS_HttpRequestTest {
 
     @Test
     public void testToString() {
-        MS_HttpRequest request = req.withBody(new JSONObject("{\"data\":\"bae08ddc-5001-453d-9d95-a124a352e152\"}"));
+        MS_HttpRequest request = req.withBody(new MS_JSONObject("{\"data\":\"bae08ddc-5001-453d-9d95-a124a352e152\"}"));
 
-        JSONObject expected = MS_JSONUtils.newOrderedJSONObject();
+        MS_JSONObject expected = new MS_JSONObject();
         expected.put("method", request.getMethod().name());
         expected.put("url", request.getUrl());
-        expected.put("parameters", MS_JSONUtils.mapToJSONObject(request.getParameters()));
+        expected.put("parameters", new MS_JSONObject(request.getParameters()));
         expected.putOpt("body", request.getBody());
-        expected.put("headers", MS_JSONUtils.mapToJSONObject(request.getHeaders()));
+        expected.put("headers", new MS_JSONObject(request.getHeaders()));
         assertEquals(expected.toString(), request.toString());
     }
 
     @Test
     public void testToStringWhenBodyIsArray() {
-        JSONArray body = new JSONArray();
-        JSONObject data = new JSONObject();
+        MS_JSONArray body = new MS_JSONArray();
+        MS_JSONObject data = new MS_JSONObject();
         data.put("key", "value");
         body.put(data);
         req.withBody(body);
 
-        JSONObject expected = MS_JSONUtils.newOrderedJSONObject();
+        MS_JSONObject expected = new MS_JSONObject();
         expected.put("method", req.getMethod().name());
         expected.put("url", req.getUrl());
-        expected.put("parameters", MS_JSONUtils.mapToJSONObject(req.getParameters()));
+        expected.put("parameters", new MS_JSONObject(req.getParameters()));
         expected.put("body", req.getBodyAsArray());
-        expected.put("headers", MS_JSONUtils.mapToJSONObject(req.getHeaders()));
+        expected.put("headers", new MS_JSONObject(req.getHeaders()));
         assertEquals(expected.toString(), req.toString());
     }
 
@@ -52,12 +51,12 @@ public class MS_HttpRequestTest {
         String body = "Some request data as string";
         req.withBody(body);
 
-        JSONObject expected = MS_JSONUtils.newOrderedJSONObject();
+        MS_JSONObject expected = new MS_JSONObject();
         expected.put("method", req.getMethod().name());
         expected.put("url", req.getUrl());
-        expected.put("parameters", MS_JSONUtils.mapToJSONObject(req.getParameters()));
+        expected.put("parameters", new MS_JSONObject(req.getParameters()));
         expected.put("body", req.getBodyAsString());
-        expected.put("headers", MS_JSONUtils.mapToJSONObject(req.getHeaders()));
+        expected.put("headers", new MS_JSONObject(req.getHeaders()));
         assertEquals(expected.toString(), req.toString());
     }
 }

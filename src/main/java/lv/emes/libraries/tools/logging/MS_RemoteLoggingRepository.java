@@ -137,12 +137,12 @@ public class MS_RemoteLoggingRepository extends MS_Repository<MS_LoggingEvent, I
         try {
             Map<Instant, MS_LoggingEvent> res = new TreeMap<>(Collections.reverseOrder());
             Map<ZonedDateTime, MS_SerializedLoggingEvent> serializedEvents =
-                    (Map<ZonedDateTime, MS_SerializedLoggingEvent>) JsonReader.jsonToJava(httpResult.getBodyAsString());
+                    (Map<ZonedDateTime, MS_SerializedLoggingEvent>) JsonReader.jsonToJava(httpResult.getBodyString());
             serializedEvents.forEach((key, value) -> res.put(key.toInstant(), value.getWrappedObject()));
             return res;
         } catch (Exception e) { //most probably cast exception, but shouldn't happen unless somebody doesn't understand, how to use this
             String message = "Deserialization error while trying to convert found logged events in JSON format to Java objects.";
-            String detailedMessage = " JSON:\n" + httpResult.getBodyAsString();
+            String detailedMessage = " JSON:\n" + httpResult.getBodyString();
             MS_Log4Java.getLogger(MS_RemoteLoggingRepository.class).error(message + detailedMessage, e);
             throw new MS_RepositoryDataExchangeException(message, e);
         }
@@ -259,7 +259,7 @@ public class MS_RemoteLoggingRepository extends MS_Repository<MS_LoggingEvent, I
                     "Each owner of product should use unique secret key to access product's logging repository.");
         } else if (httpResult.getStatusCode() != 200) {
             MS_Log4Java.getLogger(MS_RemoteLoggingRepository.class)
-                    .error(message + ". Message:\n" + httpResult.getBodyAsString());
+                    .error(message + ". Message:\n" + httpResult.getBodyString());
             throw new MS_RepositoryDataExchangeException(message);
         }
     }
