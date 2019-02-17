@@ -1,54 +1,72 @@
 package lv.emes.libraries.communication.tcp_ip.client;
 
+import lv.emes.libraries.communication.http.MS_Polling;
+import lv.emes.libraries.communication.tcp_ip.IFuncOnIOException;
 import lv.emes.libraries.communication.tcp_ip.MS_ClientServerConstants;
 import lv.emes.libraries.tools.lists.MS_List;
 import lv.emes.libraries.tools.lists.MS_StringList;
 import lv.emes.libraries.tools.threading.MS_FutureEvent;
 import lv.emes.libraries.utilities.MS_CodingUtils;
+import lv.emes.libraries.utilities.MS_ExecutionFailureException;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.net.SocketTimeoutException;
+import java.util.Objects;
+import java.util.Queue;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.function.Consumer;
 
 /**
  * TCP/IP client which operates commands to connect and communicate to server.
  * <p>Public methods:
- * -registerNewCommand
- * -getCommandList
- * -addDataToContainer
- * -cmdToServer
- * -getId
- * -connect
- * -disconnect
+ * <ul>
+ * <li>registerNewCommand</li>
+ * <li>getCommandList</li>
+ * <li>addDataToContainer</li>
+ * <li>cmdToServer</li>
+ * <li>getId</li>
+ * <li>connect</li>
+ * <li>disconnect</li>
+ * <li>stopServer</li>
+ * <li>disconnectClientByID</li>
+ * </ul>
  * <p>Public properties to set:
- * -onServerGoingDown
+ * <ul>
+ * <li>onServerGoingDown</li>
+ * </ul>
  * <p>Protected methods:
- * -onIncomingServerMessage
- * -writeln
+ * <ul>
+ * <li>onIncomingServerMessage</li>
+ * <li>writeln</li>
+ * </ul>
  *
  * @author eMeS
- * @version 1.2.
+ * @version 2.0.
+ * @since 2.2.2
  */
 public class MS_TcpIPClient extends MS_TcpIPClientCore {
 
-    //PUBLIC STRUCTURES, EXCEPTIONS AND CONSTANTS
+    public static final int POLLING_SLEEP_INTERVAL = 50;
+
     /**
      * Set this property with lambda expression to do actions after server went down (disconnected).
      * <br><u>Note</u>: communication with this server is already impossible at this moment.
      * <p>() -&gt; {some action};
      */
     public IFuncOnServerGoingDown onServerGoingDown = null;
-    //PRIVATE VARIABLES
+
     private MS_List<MS_ClientCommand> commandList = new MS_List<>();
     private MS_StringList dataContainer = new MS_StringList();
     private int id = 0;
-
-    //CONTRUCTORS
+    private Queue<String> sentCommandsWaitingForAcknowledgement = new ConcurrentLinkedQueue<>();
 
     /**
      * Creates object and initializes default commands.
      */
     public MS_TcpIPClient() {
-        //set behavior of server disconnecting
+        // Set behavior of server disconnecting
         MS_ClientCommand tmp = new MS_ClientCommand();
         tmp.code = MS_ClientServerConstants._DC_NOTIFY_MESSAGE;
         tmp.doOnCommand = (client, data, out) -> {
@@ -59,16 +77,23 @@ public class MS_TcpIPClient extends MS_TcpIPClientCore {
         };
         this.registerNewCommand(tmp);
 
-        //save this client's ID
+        // Save this client's ID
         tmp = new MS_ClientCommand();
         tmp.code = MS_ClientServerConstants._NEW_CLIENT_ID_NOTIFY_MESSAGE;
         tmp.doOnCommand = (client, data, out) -> {
             id = data.getAsInteger(1); //save the id
         };
         this.registerNewCommand(tmp);
+
+        // Register server acknowledgement of received command
+        tmp = new MS_ClientCommand();
+        tmp.code = MS_ClientServerConstants._SERVER_ACKNOWLEDGEMENT;
+        tmp.doOnCommand = (client, data, out) -> {
+            sentCommandsWaitingForAcknowledgement.remove(data.get(1));
+        };
+        this.registerNewCommand(tmp);
     }
 
-    //PUBLIC METHODS
     @Override
     protected void onIncomingServerMessage(String message, DataOutputStream out) {
         //Every time server sends a message client reads it.
@@ -139,7 +164,7 @@ public class MS_TcpIPClient extends MS_TcpIPClientCore {
 
     /**
      * Use this method to send custom command to server!
-     * If some data added with <b>addDataToContainer</b>, those will also be sent by this message.
+     * If some data added by <b>addDataToContainer</b>, those will also be sent by this message.
      * <p>Data is simply string list with index starting with 1, cause 0 is for <b>cmdCode</b>.
      * Data container is cleared after this method in every case.
      *
@@ -149,33 +174,92 @@ public class MS_TcpIPClient extends MS_TcpIPClientCore {
      */
     public synchronized boolean cmdToServer(String cmdCode) {
         if (!isConnected()) return false;
-        dataContainer.insert(0, cmdCode);
-        try {
-            String message = dataContainer.toString();
-            dataContainer.clear(); //after every message container is cleared
-            this.out.writeUTF(message);
-            return true;
-        } catch (IOException e) {
-            return false;
-        }
+        String message = prepareMessageToSend(cmdCode);
+        return this.writeln(message);
     }
 
     /**
      * Use this method to send custom command to server and expect exception!
-     * If some data added with <b>addDataToContainer</b>, those will also be sent by this message.
+     * If some data added by <b>addDataToContainer</b>, those will also be sent by this message.
      * <p>Data is simply string list with index starting with 1, cause 0 is for <b>cmdCode</b>.
      * Data container is cleared after this method in every case.
      *
      * @param cmdCode command ID.
-     * @throws IOException if message couldn't be sent.
+     * @throws IOException if message couldn't be sent or server is not connected.
      * @see MS_TcpIPClient#addDataToContainer
      */
     public synchronized void cmdToServerExc(String cmdCode) throws IOException {
-        if (!isConnected()) return;
-        dataContainer.insert(0, cmdCode);
-        String message = dataContainer.toString();
-        dataContainer.clear(); //after every message container is cleared
+        if (!isConnected())
+            throw new IOException("Command [" + cmdCode + "] cannot be sent because server is disconnected");
+
+        String message = prepareMessageToSend(cmdCode);
         this.out.writeUTF(message);
+    }
+
+    /**
+     * <u>Warning</u>: This is a thread blocking method.
+     * <p>Use this method to send custom command to server and wait for acknowledgment from server that command is received.
+     * Maximum waiting time (in milliseconds) until {@link SocketTimeoutException} will be thrown is
+     * specified by <b>writeTimeout</b> ({@link MS_TcpIPClient#getWriteTimeout()}).
+     * <p>If some data added by <b>addDataToContainer</b>, those will also be sent by this message.
+     * <p>Data is simply string list with index starting with 1, cause 0 is for <b>cmdCode</b>.
+     * Data container is cleared after this method in every case.
+     *
+     * @param cmdCode command ID.
+     * @throws IOException            if message couldn't be sent or server is not connected.
+     * @throws SocketTimeoutException if server doesn't answer in given time specified by <b>writeTimeout</b> ({@link MS_TcpIPClient#getWriteTimeout()}).
+     * @see MS_TcpIPClient#addDataToContainer
+     */
+    public synchronized void cmdToServerAcknowledge(String cmdCode) throws SocketTimeoutException, IOException {
+        if (!isConnected())
+            throw new IOException("Command [" + cmdCode + "] cannot be sent because server is disconnected");
+
+        String commandId = UUID.randomUUID().toString();
+        sentCommandsWaitingForAcknowledgement.add(commandId);
+        dataContainer.insert(0, commandId);
+        dataContainer.insert(1, cmdCode);
+        this.out.writeUTF(prepareMessageToSend(MS_ClientServerConstants._CLIENT_COMMAND_WITH_ACKNOWLEDGEMENT_MODE));
+        try {
+            new MS_Polling<Queue<String>>()
+                    .withAction(() -> sentCommandsWaitingForAcknowledgement)
+                    .withCheck((commands) -> !commands.contains(commandId))
+                    .withSleepInterval(POLLING_SLEEP_INTERVAL)
+                    .withMaxPollingAttempts(getWriteTimeout() > POLLING_SLEEP_INTERVAL ? getWriteTimeout() / POLLING_SLEEP_INTERVAL : 1)
+                    .poll();
+        } catch (MS_ExecutionFailureException e) {
+            throw new SocketTimeoutException(String.format("Failed to receive server acknowledgement of execution of command [%s]", commandId));
+        }
+    }
+
+    /**
+     * Use this method to send custom command to server and after acknowledgment from server that command is received
+     * perform specific action <b>notificationOnSuccess</b>.
+     * Maximum waiting time (in milliseconds) for thread to wait for is
+     * specified by <b>writeTimeout</b> ({@link MS_TcpIPClient#getWriteTimeout()}).
+     * <p>If some data added by <b>addDataToContainer</b>, those will also be sent by this message.
+     * <p>Data is simply string list with index starting with 1, cause 0 is for <b>cmdCode</b>.
+     * Data container is cleared after this method in every case.
+     *
+     * @param cmdCode               command ID.
+     * @param notificationOnSuccess action to do when command is successfully executed on server side.
+     * @param notificationOnFailure action to do when execution of command fails.
+     * @see MS_TcpIPClient#addDataToContainer
+     */
+    public void cmdToServerNotify(String cmdCode, Consumer<String> notificationOnSuccess, IFuncOnIOException notificationOnFailure) {
+        Objects.requireNonNull(notificationOnSuccess);
+        Objects.requireNonNull(notificationOnFailure);
+        new MS_FutureEvent()
+                .withThreadName("MS_TcpIPClient.cmdToServerNotify")
+                .withTimeout(this.getWriteTimeout())
+                .withAction(() -> {
+                    try {
+                        cmdToServerAcknowledge(cmdCode);
+                        notificationOnSuccess.accept(cmdCode);
+                    } catch (IOException e) {
+                        notificationOnFailure.doOnEvent(e);
+                    }
+                })
+                .schedule();
     }
 
     /**
@@ -212,5 +296,12 @@ public class MS_TcpIPClient extends MS_TcpIPClientCore {
         this.addDataToContainer(MS_CodingUtils.getSystemUserCurrentWorkingDir);
         this.addDataToContainer(MS_CodingUtils.getSystemUserHomeDir);
         this.cmdToServer(MS_ClientServerConstants._INFO_ABOUT_NEW_CLIENT);
+    }
+
+    private String prepareMessageToSend(String cmdHeader) {
+        dataContainer.insert(0, cmdHeader);
+        String message = dataContainer.toString();
+        dataContainer.clear(); //after every message container is cleared
+        return message;
     }
 }

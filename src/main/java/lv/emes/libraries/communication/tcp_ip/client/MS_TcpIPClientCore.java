@@ -1,9 +1,13 @@
 package lv.emes.libraries.communication.tcp_ip.client;
 
+import lv.emes.libraries.communication.tcp_ip.MS_ClientServerConstants;
 import lv.emes.libraries.communication.tcp_ip.MS_TcpIPAbstract;
+import lv.emes.libraries.tools.MS_BadSetupException;
 
 import java.io.*;
+import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.util.Random;
 
@@ -30,12 +34,14 @@ import java.util.Random;
  * </ul>
  *
  * @author eMeS
- * @version 1.3.
+ * @version 2.0.
  */
 abstract class MS_TcpIPClientCore extends MS_TcpIPAbstract {
 
     private final int DEFAULT_THREAD_SLEEP_TIME = 250;
     private Socket server; // server socket
+    private int connectTimeout = MS_ClientServerConstants._DEFAULT_CONNECT_TIMEOUT; //connection to server timeout in milliseconds
+    private int writeTimeout = MS_ClientServerConstants._DEFAULT_WRITE_TIMEOUT; //write timeout (milliseconds)
 
     protected int lastConnectedPort = -1;
     protected String lastConnectedHost = "";
@@ -64,13 +70,15 @@ abstract class MS_TcpIPClientCore extends MS_TcpIPAbstract {
      * @param host hostname or IP address of server.
      * @param port port number in which server can accept connections.
      * @throws UnknownHostException     if the IP address of the host could not be determined.
-     * @throws IOException              if an I/O error occurs when creating the socket or streams.
-     * @throws IllegalArgumentException if the port parameter is outside the specified range of valid port values, which is between 0 and 65535, inclusive.
+     * @throws IOException              if an I/O error occurs when creating the socket or streams (rare case).
+     * @throws SocketTimeoutException   if timeout expires before connecting.
+     * @throws IllegalArgumentException if hostname is <tt>null</tt> or the port parameter is outside the specified range
+     *                                  of valid port values, which is between 0 and 65535, inclusive.
      */
-    public void connect(String host, int port) throws IOException, IllegalArgumentException {
-//			log.error("Failed to connect to server. \n@connectToServer(" + ip + ", " + port + ")");
+    public void connect(String host, int port) throws IOException, SocketTimeoutException, IllegalArgumentException {
         if (this.isConnected()) return;
-        server = new Socket(host, port);
+        server = new Socket();
+        server.connect(new InetSocketAddress(host, port), connectTimeout);
         in = new DataInputStream(server.getInputStream());
         out = new DataOutputStream(server.getOutputStream());
         Thread t = new Thread(this);
@@ -91,8 +99,7 @@ abstract class MS_TcpIPClientCore extends MS_TcpIPAbstract {
             messageThread = null;
             server.close();
             server = null;
-        } catch (Exception e) {
-//			log.error("Failed to close server socket and data streams. \n@disconnectFromServer()");
+        } catch (Exception ignored) {
         }
     }
 
@@ -108,7 +115,6 @@ abstract class MS_TcpIPClientCore extends MS_TcpIPAbstract {
             } catch (EOFException | InterruptedException exc) { //happens when server disconnects client without warning
                 disconnect();
             } catch (UTFDataFormatException exc) {
-//				log.error("Failed to read UTF-8 message from server correctly due to incorrect format. @run()");
                 if (onUTFDataFormatException != null)
                     try {
                         if (this.isConnected()) //many times this error just happens because of client disconnected himself from the server, so check, if he is connected
@@ -117,13 +123,12 @@ abstract class MS_TcpIPClientCore extends MS_TcpIPAbstract {
                         throw new RuntimeException(e);
                     }
             } catch (IOException exc) {
-//				log.info("Connection with server lost. @run()");
                 if (onIOException != null)
                     try {
                         if (this.isConnected()) //many times this error just happens because of client disconnected himself from the server, so check, if he is connected
                             onIOException.doOnEvent(exc);
                     } catch (Exception e) {
-                        throw new RuntimeException(e);
+                        throw new MS_BadSetupException(e);
                     }
                 disconnect();
             }
@@ -141,12 +146,41 @@ abstract class MS_TcpIPClientCore extends MS_TcpIPAbstract {
             this.out.writeUTF(msg);
             return true;
         } catch (IOException e) {
-//			log.error(String.format("Couldn't write UTF-8 message to server. \n. @writeln(%s)", MS_StringUtils.eMeSSubstring(msg, 1, 50) + "..."));
             return false;
         }
     }
 
     public boolean isConnected() {
         return (server != null) && server.isConnected();
+    }
+
+    /**
+     * @return connection to server timeout in milliseconds. A timeout of zero is interpreted as an infinite timeout.
+     */
+    public int getConnectTimeout() {
+        return connectTimeout;
+    }
+
+    /**
+     * @param connectTimeout connection to server timeout in milliseconds. A timeout of zero is interpreted as an infinite timeout.
+     */
+    public void setConnectTimeout(int connectTimeout) {
+        this.connectTimeout = connectTimeout;
+    }
+
+    /**
+     * @return timeout (milliseconds) or TTL of single command "on air", which is not delivered to server yet.
+     * A timeout of zero is interpreted as an infinite timeout.
+     */
+    public int getWriteTimeout() {
+        return writeTimeout;
+    }
+
+    /**
+     * @param writeTimeout timeout (milliseconds) or TTL of single command "on air", which is not delivered to server yet.
+     *                     A timeout of zero is interpreted as an infinite timeout.
+     */
+    public void setWriteTimeout(int writeTimeout) {
+        this.writeTimeout = writeTimeout;
     }
 }

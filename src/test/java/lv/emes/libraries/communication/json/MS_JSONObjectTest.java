@@ -1,4 +1,4 @@
-package lv.emes.libraries.tools.json;
+package lv.emes.libraries.communication.json;
 
 import com.google.common.collect.ImmutableMap;
 import org.json.JSONArray;

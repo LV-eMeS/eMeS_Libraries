@@ -1,27 +1,39 @@
-package lv.emes.libraries.communication.tcp_ip.server;
+package lv.emes.libraries.communication.tcp_ip;
 
 import lv.emes.libraries.communication.MS_TakenPorts;
-import lv.emes.libraries.communication.tcp_ip.MS_ClientServerConstants;
+import lv.emes.libraries.communication.http.MS_Polling;
 import lv.emes.libraries.communication.tcp_ip.client.MS_ClientCommand;
 import lv.emes.libraries.communication.tcp_ip.client.MS_TcpIPClient;
+import lv.emes.libraries.communication.tcp_ip.server.MS_ServerCommand;
+import lv.emes.libraries.communication.tcp_ip.server.MS_TcpIPServer;
 import lv.emes.libraries.file_system.MS_BinaryTools;
 import lv.emes.libraries.file_system.MS_FileSystemTools;
 import lv.emes.libraries.testdata.TestData;
 import lv.emes.libraries.utilities.MS_CodingUtils;
+import lv.emes.libraries.utilities.MS_ExecutionFailureException;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
+import java.io.IOException;
 import java.lang.reflect.Array;
+import java.net.SocketTimeoutException;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static junit.framework.TestCase.assertFalse;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class MS_TpcIPServerTest {
+public class MS_TpcIPClientServerTest {
+
+    private static final String BINARY_SOURCE_FILE = TestData.TEST_FILE_IMAGE;
+    private static final String BINARY_DEST_FILE_CLIENT = TestData.TEST_RESOURCES_DIR + "test_pic_back_from_server.png";
+    private static final String BINARY_DEST_FILE_SERVER = TestData.TEST_RESOURCES_DIR + "test_pic_back.png";
 
     private static final int PORT = MS_TakenPorts._DEFAULT_PORT_FOR_TESTING;
     private static final int DEFAULT_SLEEP_TIME = 190;
@@ -31,19 +43,17 @@ public class MS_TpcIPServerTest {
     private static boolean serverIsOn;
     private static boolean secondReceivedThatServerIsGoingOff = false;
     private static String serverReceived = "";
+    private static boolean serverFinishedCommand = false;
     private static final String CMD1_DISCONNECT_AND_PRINTLN = "sysout with DC";
     private static final String CMD2_SIMPLY_PRINTLN = "writeln";
     private static final String CMD3_PRINTLN_PLUS_CLIENT_ID = "Server sysout";
     private static final String CMD4_SEND_BINARY_FROM_SERVER = "Sending bytes";
+    private static final String CMD5_WAIT_FOR_SOME_WHILE = "Server, please, process something!";
     private static final String TEXT1 = "Test 1";
     private static final String TEXT2 = "Test 2";
     private static final String TEXT3 = "bye";
     private static final String TEXT4 = "I am the mighty server!";
     private static final String TEXT5 = "";
-
-    private static final String BINARY_SOURCE_FILE = TestData.TEST_FILE_IMAGE;
-    private static final String BINARY_DEST_FILE_CLIENT = TestData.TEST_RESOURCES_DIR + "test_pic_back_from_server.png";
-    private static final String BINARY_DEST_FILE_SERVER = TestData.TEST_RESOURCES_DIR + "test_pic_back.png";
 
     private int getServerConnectionCount() {
         return server.getClients().size();
@@ -54,7 +64,7 @@ public class MS_TpcIPServerTest {
     }
 
     @BeforeClass
-    public static void setUp() throws Exception {
+    public static void init() throws Exception {
         //firstly delete all local files!
         MS_FileSystemTools.deleteFile(BINARY_DEST_FILE_SERVER);
         MS_FileSystemTools.deleteFile(BINARY_DEST_FILE_CLIENT);
@@ -82,6 +92,13 @@ public class MS_TpcIPServerTest {
             serverReceived = text;
         };
         server.registerNewCommand(cmdRead);
+
+        server.registerNewCommand(new MS_ServerCommand(CMD5_WAIT_FOR_SOME_WHILE, (server, data, cli, out) -> {
+            serverReceived = data.get(1);
+            MS_CodingUtils.sleep(DEFAULT_SLEEP_TIME * 10);
+            serverFinishedCommand = true;
+        }));
+
         //CLIENT
         client1 = new MS_TcpIPClient();
         client1.connect(MS_ClientServerConstants._DEFAULT_HOST, PORT);
@@ -126,23 +143,23 @@ public class MS_TpcIPServerTest {
         client1.addDataToContainer(TEXT1);
         assertTrue(client1.cmdToServer(CMD1_DISCONNECT_AND_PRINTLN));
         doSleepForXTimes(1);
-        assertTrue(serverReceived.equals(TEXT1));
+        assertEquals(serverReceived, TEXT1);
 
         assertTrue(client1.cmdToServer(CMD2_SIMPLY_PRINTLN));
         doSleepForXTimes(1);
-        assertTrue(serverReceived.equals(TEXT5)); //empty text, cause no data added
+        assertEquals(serverReceived, TEXT5); //empty text, cause no data added
 
         //second client
         client2.addDataToContainer(TEXT2);
         assertTrue(client2.cmdToServer(CMD1_DISCONNECT_AND_PRINTLN));
         doSleepForXTimes(1);
-        assertTrue(serverReceived.equals(TEXT2)); //empty text, cause no data added
+        assertEquals(serverReceived, TEXT2); //empty text, cause no data added
 
         //let's shutdown the server for a sek
         client1.addDataToContainer(TEXT3);
         assertTrue(client1.cmdToServer(CMD1_DISCONNECT_AND_PRINTLN));
         doSleepForXTimes(1);
-        assertTrue(serverReceived.equals(TEXT3));
+        assertEquals(serverReceived, TEXT3);
         assertTrue(!server.isRunning());
         assertTrue(!client1.isConnected());
         assertTrue(!serverIsOn);
@@ -153,6 +170,7 @@ public class MS_TpcIPServerTest {
      * Before this test both clients are disconnected and server is down.
      * In test server is restarted and both clients are connecting back.
      * At the end of test server disconnects clients, but stays online.
+     *
      * @throws Exception on any error.
      */
     @Test
@@ -195,6 +213,7 @@ public class MS_TpcIPServerTest {
      * Before this test both clients are disconnected, but server is still up.
      * In test only first client is connecting back.
      * At the end of test server is on and still 1 client is connected.
+     *
      * @throws Exception on any error.
      */
     @Test
@@ -232,6 +251,7 @@ public class MS_TpcIPServerTest {
     /**
      * In test only first client is connected.
      * At the end of test server is on and still 1 client is connected.
+     *
      * @throws Exception on any error.
      */
     @Test
@@ -264,5 +284,90 @@ public class MS_TpcIPServerTest {
         server.cmdToClientByID(CMD4_SEND_BINARY_FROM_SERVER, client1.getId());
         assertTrue(server.isRunning());
         doSleepForXTimes(8); //w8 till server does his job
+    }
+
+    @Test
+    public void test11ConnectionTimeout() {
+        MS_TcpIPClient impatientClient = new MS_TcpIPClient();
+        impatientClient.setConnectTimeout(1);
+        assertEquals(1, impatientClient.getConnectTimeout());
+        assertThatThrownBy(() -> impatientClient.connect(TestData.TESTING_SERVER_HOSTAME, PORT))
+                .isInstanceOf(SocketTimeoutException.class);
+    }
+
+    /*
+     * Before test server is on and only first client1 is connected, but that doesn't matter, as new client is created here.
+     * When test runs, server gets introduced to new command: wait for 2 seconds.
+     * At the end of test server is on and still 1 client is connected.
+     */
+    @Test
+    public void test12WriteTimeout() throws IOException {
+        MS_TcpIPClient impatientClient = new MS_TcpIPClient();
+        impatientClient.setWriteTimeout(DEFAULT_SLEEP_TIME * 5);
+        assertEquals(DEFAULT_SLEEP_TIME * 5, impatientClient.getWriteTimeout());
+        impatientClient.connect(MS_ClientServerConstants._DEFAULT_HOST, PORT);
+
+        serverFinishedCommand = false; //init value to check afterwards
+        final String DATA_THAT_SERVER_SHOULD_PROCESS = "Some value that needs to be delivered to server";
+
+        impatientClient.addDataToContainer(DATA_THAT_SERVER_SHOULD_PROCESS);
+        impatientClient.cmdToServerAcknowledge(CMD5_WAIT_FOR_SOME_WHILE);
+
+        assertEquals("Server didn't even receive command from client", DATA_THAT_SERVER_SHOULD_PROCESS, serverReceived);
+        assertFalse("Server should not be able to process this command in time, but it does", serverFinishedCommand);
+    }
+
+    @Test
+    public void test13CmdToServerNotifySuccess() throws IOException, MS_ExecutionFailureException {
+        MS_TcpIPClient impatientClient = new MS_TcpIPClient();
+        impatientClient.setWriteTimeout(DEFAULT_SLEEP_TIME * 5);
+        assertEquals(DEFAULT_SLEEP_TIME * 5, impatientClient.getWriteTimeout());
+        impatientClient.connect(MS_ClientServerConstants._DEFAULT_HOST, PORT);
+
+        final String DATA_THAT_SERVER_SHOULD_PROCESS = "Some value that needs to be delivered to server";
+        AtomicBoolean success = new AtomicBoolean(false);
+        AtomicBoolean failure = new AtomicBoolean(false);
+        AtomicReference<String> receivedCmdCode = new AtomicReference<>();
+
+        impatientClient.addDataToContainer(DATA_THAT_SERVER_SHOULD_PROCESS);
+        impatientClient.cmdToServerNotify(CMD5_WAIT_FOR_SOME_WHILE, (code) -> {
+            success.set(true);
+            receivedCmdCode.set(code);
+        }, (exc) -> failure.set(true));
+
+        //wait until things changes
+        new MS_Polling<Boolean>().withAction(success::get).withCheck((a) -> success.get() || failure.get())
+                .withSleepInterval(DEFAULT_SLEEP_TIME / 2).withMaxPollingAttempts(6).poll();
+
+        assertEquals("Server didn't even receive command from client", DATA_THAT_SERVER_SHOULD_PROCESS, serverReceived);
+        assertTrue("Notification on success was not received, but we had enough time to successfully process command", success.get());
+    }
+
+    @Test
+    public void test14CmdToServerNotifyFailure() throws IOException, MS_ExecutionFailureException {
+        MS_TcpIPClient impatientClient = new MS_TcpIPClient();
+        impatientClient.setWriteTimeout(1);
+        assertEquals(1, impatientClient.getWriteTimeout());
+        impatientClient.connect(MS_ClientServerConstants._DEFAULT_HOST, PORT);
+        //make sure that client will be disconnected before sending command to server
+        MS_CodingUtils.sleep(DEFAULT_SLEEP_TIME * 2);
+        server.disconnectClientByID(impatientClient.getId());
+
+        final String DATA_THAT_SERVER_SHOULD_PROCESS = "Some value that needs to be delivered to server";
+        AtomicBoolean success = new AtomicBoolean(false);
+        AtomicBoolean failure = new AtomicBoolean(false);
+        AtomicReference<String> receivedCmdCode = new AtomicReference<>();
+
+        impatientClient.addDataToContainer(DATA_THAT_SERVER_SHOULD_PROCESS);
+        impatientClient.cmdToServerNotify(CMD5_WAIT_FOR_SOME_WHILE, (code) -> {
+            success.set(true);
+            receivedCmdCode.set(code);
+        }, (exc) -> failure.set(true));
+
+        //wait until things changes
+        new MS_Polling<Boolean>().withAction(success::get).withCheck((a) -> success.get() || failure.get())
+                .withSleepInterval(1).withMaxPollingAttempts(100).poll();
+
+        assertTrue("Notification on failure was not received, even though command shouldn't reach server's thread in time", failure.get());
     }
 }

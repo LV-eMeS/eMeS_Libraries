@@ -1,7 +1,7 @@
 package lv.emes.libraries.communication.http;
 
-import lv.emes.libraries.tools.json.MS_JSONArray;
-import lv.emes.libraries.tools.json.MS_JSONObject;
+import lv.emes.libraries.communication.json.MS_JSONArray;
+import lv.emes.libraries.communication.json.MS_JSONObject;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

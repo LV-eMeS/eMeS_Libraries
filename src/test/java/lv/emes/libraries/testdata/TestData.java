@@ -2,9 +2,9 @@ package lv.emes.libraries.testdata;
 
 import com.google.common.collect.ImmutableMap;
 import lv.emes.libraries.communication.MS_TakenPorts;
+import lv.emes.libraries.communication.json.MS_JSONArray;
+import lv.emes.libraries.communication.json.MS_JSONObject;
 import lv.emes.libraries.file_system.MS_FileSystemTools;
-import lv.emes.libraries.tools.json.MS_JSONArray;
-import lv.emes.libraries.tools.json.MS_JSONObject;
 
 import java.util.Arrays;
 import java.util.Collections;

@@ -1,4 +1,4 @@
-package lv.emes.libraries.tools.json;
+package lv.emes.libraries.communication.json;
 
 import lv.emes.libraries.tools.MS_BadSetupException;
 import lv.emes.libraries.utilities.MS_CodingUtils;
@@ -59,6 +59,7 @@ public class MS_JSONArray extends JSONArray {
      * In case list is null or empty, an empty array is created.
      *
      * @param arrays list of JSON arrays, which needs to be combined into one.
+     * @return new array instance containing content of given <b>arrays</b>.
      */
     public static MS_JSONArray newJSONArray(List<? extends JSONArray> arrays) {
         MS_JSONArray res = new MS_JSONArray();
@@ -243,7 +244,7 @@ public class MS_JSONArray extends JSONArray {
      * Filters MS_JSONArray containing only JSON objects according to given predicate.
      * <p><u>Example</u>:<br>
      * <code>MS_JSONArray array = new MS_JSONArray().put(new MS_JSONObject().put("someIntField", 5)).put(new MS_JSONObject().put("someIntField", 0));<br>
-     * MS_JSONArray arrayWithJust1Element = array.filter(MS_JSONObject.class, (jsonObject) -&gt; jsonObject.getInt("someIntField") > 1
+     * MS_JSONArray arrayWithJust1Element = array.filter(MS_JSONObject.class, (jsonObject) -&gt; jsonObject.getInt("someIntField") &gt; 1
      * );<br>
      * </code>
      *
@@ -274,7 +275,7 @@ public class MS_JSONArray extends JSONArray {
      * Filters MS_JSONArray containing only JSON objects according to given predicate with limited count of matching objects returned.
      * <p><u>Example</u>:<br>
      * <code>MS_JSONArray array = new MS_JSONArray().put(new MS_JSONObject().put("someIntField", 5)).put(new MS_JSONObject().put("someIntField", 2));<br>
-     * MS_JSONArray arrayWithJust1Element = array.filter(MS_JSONObject.class, 1, (jsonObject) -&gt; jsonObject.getInt("someIntField") > 1
+     * MS_JSONArray arrayWithJust1Element = array.filter(MS_JSONObject.class, 1, (jsonObject) -&gt; jsonObject.getInt("someIntField") &gt; 1
      * );<br>
      * </code>
      *

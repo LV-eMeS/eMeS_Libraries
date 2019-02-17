@@ -9,5 +9,6 @@ import java.io.UTFDataFormatException;
  */
 @FunctionalInterface
 public interface IFuncOnUTFDataFormatException {
+
 	void doOnEvent(UTFDataFormatException exception);
 }

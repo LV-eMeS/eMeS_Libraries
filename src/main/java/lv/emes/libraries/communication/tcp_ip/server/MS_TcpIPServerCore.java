@@ -40,8 +40,7 @@ import java.util.Vector;
  * @version 1.3.
  */
 abstract class MS_TcpIPServerCore extends MS_TcpIPAbstract {
-    //PRIVĀTIE MAINĪGIE
-//	static Logger log = Logger.getLogger(MS_TcpServerCore.class.getName());
+
     private int port;
     private ServerSocket server;
     private int lastClientId = 0;
@@ -79,10 +78,6 @@ abstract class MS_TcpIPServerCore extends MS_TcpIPAbstract {
         }
     }
 
-    //PUBLISKIE MAINĪGIE
-
-    //KONSTRUKTORI
-
     /**
      * Creates new server instance and sets its port.
      *
@@ -90,14 +85,8 @@ abstract class MS_TcpIPServerCore extends MS_TcpIPAbstract {
      */
     public MS_TcpIPServerCore(int port) {
         this.port = port;
-        clients = new Vector<MS_ClientOfServer>();
+        clients = new Vector<>();
     }
-
-    //STATISKIE KONSTRUKTORI
-
-    //PRIVĀTĀS METODES
-
-    //PUBLISKĀS METODES
 
     /**
      * Changes port in which server will be listening. If this will be done when server is already launched, this will do no effect.
@@ -141,7 +130,7 @@ abstract class MS_TcpIPServerCore extends MS_TcpIPAbstract {
         isActive = false;
         try {
             server.close();
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         server = null;
         if (clients.size() > 0)
@@ -176,7 +165,7 @@ abstract class MS_TcpIPServerCore extends MS_TcpIPAbstract {
                 onNewClientConnected(client); //calls method to do actions after client is successfully connected
             }
         } catch (Exception e) {
-            //everything is ok, because threads are slower that infinite loop, so isRunning didn't catch up with actual situation
+            //everything is ok, because threads are slower than infinite loop, so isActive didn't catch up with actual situation
         } finally {
             stopServer();
         }
@@ -196,8 +185,10 @@ abstract class MS_TcpIPServerCore extends MS_TcpIPAbstract {
      */
     public void disconnectClientByID(int clientId) {
         MS_ClientOfServer cl = this.getClientByID(clientId);
-        cl.disconnect();
-        this.clients.remove(cl);
+        if (cl != null) {
+            cl.disconnect();
+            this.clients.remove(cl);
+        }
     }
 
     /**

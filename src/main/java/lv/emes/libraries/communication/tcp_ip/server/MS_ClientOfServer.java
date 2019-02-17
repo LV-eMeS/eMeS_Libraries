@@ -1,5 +1,7 @@
 package lv.emes.libraries.communication.tcp_ip.server;
 
+import lv.emes.libraries.tools.MS_BadSetupException;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -18,7 +20,7 @@ import java.net.Socket;
  * <li>isConnected</li>
  * </ul>
  *
- * @version 1.5.
+ * @version 1.6.
  */
 public class MS_ClientOfServer {
 
@@ -60,7 +62,7 @@ public class MS_ClientOfServer {
             this.in = new DataInputStream(this.clientSocket.getInputStream());
             this.out = new DataOutputStream(this.clientSocket.getOutputStream());
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new MS_BadSetupException(e);
         }
     }
 

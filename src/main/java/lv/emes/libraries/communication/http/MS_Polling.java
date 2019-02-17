@@ -34,6 +34,18 @@ public class MS_Polling<T> {
     private String statusMessage = "Pooling status: PENDING";
     private T result;
 
+    /**
+     * Performs polling of concrete <b>action</b> (performs action repeatedly)
+     * until specified conditions (in <b>check</b>) are met.
+     * If conditions are not met in given time / attempts an exception is thrown.
+     *
+     * @return value that represents result of performed action - usually after success it is usable for further operations.
+     * @throws MS_ExecutionFailureException <ol>
+     *                                      <li>if some exception happens while performing <b>action</b>;</li>
+     *                                      <li>if given time / attempts to finish polling exceeds;</li>
+     *                                      <li>if polling thread is terminated.</li>
+     *                                      </ol>
+     */
     public T poll() throws MS_ExecutionFailureException {
         // Validation
         Objects.requireNonNull(action, "Polling action is mandatory for performing poll, therefore it cannot be null");
@@ -81,52 +93,97 @@ public class MS_Polling<T> {
 
     //*** Setters (builder syntax) ***
 
+    /**
+     * Sets maximum count of attempts to get polling result.
+     * @param maxPollingAttempts [1..100].
+     * @return reference to polling itself.
+     */
     public MS_Polling<T> withMaxPollingAttempts(int maxPollingAttempts) {
         if (!MS_CodingUtils.inRange(maxPollingAttempts, 1, 100))
-            throw new MS_BadSetupException("Maximum amount of polling attempts must be [1..100]. Please, try something more realistic!");
+            throw new MS_BadSetupException("Maximum amount of polling attempts must be [1..100]. Please, set more realistic value!");
         this.maxPollingAttempts = maxPollingAttempts;
         this.attemptsLeft = maxPollingAttempts;
         return this;
     }
 
+    /**
+     * Sets sleep interval in milliseconds.
+     *
+     * @param sleepInterval time between polling retries when polling is idle.
+     * @return reference to polling itself.
+     */
     public MS_Polling<T> withSleepInterval(long sleepInterval) {
         this.sleepInterval = sleepInterval;
         return this;
     }
 
+    /**
+     * Sets sleep interval in given duration.
+     *
+     * @param sleepInterval time between polling retries when polling is idle.
+     * @return reference to polling itself.
+     */
     public MS_Polling<T> withSleepInterval(Duration sleepInterval) {
         this.sleepInterval = sleepInterval.toMillis();
         return this;
     }
 
+    /**
+     * Sets sleep interval in given amount of time.
+     *
+     * @param amount   units of time.
+     * @param timeUnit time unit measure.
+     * @return reference to polling itself.
+     */
     public MS_Polling<T> withSleepInterval(long amount, TemporalUnit timeUnit) {
         return this.withSleepInterval(Duration.of(amount, timeUnit));
     }
 
+    /**
+     * Sets action of polling.
+     * @param action an action that results as some value that in success scenario can be used after polling.
+     * @return reference to polling itself.
+     */
     public MS_Polling<T> withAction(IFuncHandledSupplier<T> action) {
         Objects.requireNonNull(action, "Polling action is mandatory for performing poll, therefore it cannot be null");
         this.action = action;
         return this;
     }
 
+    /**
+     * @param checker action that is performed between retries and determines if poll is successful.
+     * @return reference to polling itself.
+     */
     public MS_Polling<T> withCheck(Predicate<T> checker) {
         Objects.requireNonNull(checker, "Polling result checking action is mandatory for performing poll, therefore it cannot be null");
         this.check = checker;
         return this;
     }
 
+    /**
+     * @param actionBeforeEachRetry action that is executed before each of polling retries.
+     * @return reference to polling itself.
+     */
     public MS_Polling<T> withActionBeforeEachRetry(Consumer<MS_Polling> actionBeforeEachRetry) {
         if (actionBeforeEachRetry == null) this.actionBeforeEachRetry = NO_POLLING_ACTION;
         else this.actionBeforeEachRetry = actionBeforeEachRetry;
         return this;
     }
 
+    /**
+     * @param actionBetweenRetries action that is executed after each of polling retries.
+     * @return reference to polling itself.
+     */
     public MS_Polling<T> withActionBetweenRetries(Consumer<MS_Polling> actionBetweenRetries) {
         if (actionBetweenRetries == null) this.actionBetweenRetries = NO_POLLING_ACTION;
         else this.actionBetweenRetries = actionBetweenRetries;
         return this;
     }
 
+    /**
+     * @param statusMessage message that will be printed in exception message - it represents context of polling itself.
+     * @return reference to polling itself.
+     */
     public MS_Polling<T> withStatusMessage(String statusMessage) {
         if (statusMessage == null) statusMessage = "";
         this.statusMessage = statusMessage;

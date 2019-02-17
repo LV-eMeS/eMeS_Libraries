@@ -1,6 +1,7 @@
 package lv.emes.libraries.communication.tcp_ip.server;
 
 import lv.emes.libraries.communication.tcp_ip.MS_ClientServerConstants;
+import lv.emes.libraries.tools.MS_BadSetupException;
 import lv.emes.libraries.tools.lists.MS_List;
 import lv.emes.libraries.tools.lists.MS_StringList;
 import lv.emes.libraries.tools.threading.MS_FutureEvent;
@@ -47,11 +48,11 @@ import java.io.IOException;
  * </ul>
  *
  * @author eMeS
- * @version 1.2.
+ * @version 2.0.
+ * @since 2.2.2
  */
 public class MS_TcpIPServer extends MS_TcpIPServerCore {
 
-    //PUBLIC STRUCTURES, EXCEPTIONS, PROPERTIES AND CONSTANTS
     /**
      * Set this property with lambda expression to do actions after client went down (disconnected).
      * <br><u>Note</u>: communication with this client is already impossible at this moment.
@@ -72,15 +73,13 @@ public class MS_TcpIPServer extends MS_TcpIPServerCore {
      * Client also sends data about his device: OS name, system user name, path to working directory and path to home directory.
      */
     public IFuncOnClientDoingSomething onClientSayingHi = null;
-    //PRIVATE VARIABLES
+
     private MS_List<MS_ServerCommand> commandList = new MS_List<>();
     /**
      * If true, all clients will be notified that server is going down when <b>stopServer</b> is called.
      * Default: true.
      */
     public boolean notifyClientsOnDC = true;
-
-    //KONSTRUKTORI
 
     /**
      * Creates new server instance and sets its port.
@@ -89,8 +88,9 @@ public class MS_TcpIPServer extends MS_TcpIPServerCore {
      */
     public MS_TcpIPServer(int port) {
         super(port);
+        MS_ServerCommand tmp;
         //save information about connecting client. Right after connection success client will send some info about himself (OS,
-        MS_ServerCommand tmp = new MS_ServerCommand();
+        tmp = new MS_ServerCommand();
         tmp.code = MS_ClientServerConstants._INFO_ABOUT_NEW_CLIENT;
         tmp.doOnCommand = (server, data, client, out) -> {
             client.os = data.get(1);
@@ -101,7 +101,7 @@ public class MS_TcpIPServer extends MS_TcpIPServerCore {
                 try {
                     onClientSayingHi.doOnEvent(client);
                 } catch (Exception e) {
-                    throw new RuntimeException(e);
+                    throw new MS_BadSetupException(e);
                 }
         };
         this.registerNewCommand(tmp);
@@ -116,13 +116,26 @@ public class MS_TcpIPServer extends MS_TcpIPServerCore {
                 try {
                     onClientGoingOffline.doOnEvent(client);
                 } catch (Exception e) {
-                    throw new RuntimeException(e);
+                    throw new MS_BadSetupException(e);
                 }
+        };
+        this.registerNewCommand(tmp);
+
+        tmp = new MS_ServerCommand();
+        tmp.code = MS_ClientServerConstants._CLIENT_COMMAND_WITH_ACKNOWLEDGEMENT_MODE;
+        tmp.doOnCommand = (server, data, client, out) -> {
+            //1. Respond to client that command is received
+            this.addDataToContainer(data.get(1));
+            this.cmdToClient(MS_ClientServerConstants._SERVER_ACKNOWLEDGEMENT, client);
+
+            //2. React to actual command (actual command code should be at index 2)
+            data.remove(0); //remove MS_ClientServerConstants._CLIENT_COMMAND_WITH_ACKNOWLEDGEMENT_MODE code
+            data.remove(0); //remove commandId
+            this.onIncomingClientMessage(data.toString(), client, out);
         };
         this.registerNewCommand(tmp);
     }
 
-    //PUBLIC METHODS
     @Override
     protected void onIncomingClientMessage(String message, MS_ClientOfServer client, DataOutputStream out) {
         //Every time client sends a message server reads it.

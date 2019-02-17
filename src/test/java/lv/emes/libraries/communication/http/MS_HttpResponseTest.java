@@ -1,8 +1,8 @@
 package lv.emes.libraries.communication.http;
 
+import lv.emes.libraries.communication.json.JSONTypeEnum;
+import lv.emes.libraries.communication.json.MS_JSONObject;
 import lv.emes.libraries.tools.MS_BadSetupException;
-import lv.emes.libraries.tools.json.JSONTypeEnum;
-import lv.emes.libraries.tools.json.MS_JSONObject;
 import lv.emes.libraries.utilities.MS_DateTimeUtils;
 import org.junit.Test;
 

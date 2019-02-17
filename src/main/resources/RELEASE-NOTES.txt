@@ -16,8 +16,11 @@ Changes in versions:
 eMeS libraries Version 2.3.0
 ========================================================================================================
 * Minor improvements in date utils and SQL builder.
-* Introduce MS_LoadingScreen for progress bar screen showing in GUI.
-* Introduce MS_TextToFileRepository to store data in files.
+* Introduced MS_LoadingScreen for progress bar screen showing in GUI.
+* Introduced MS_TextToFileRepository to store data in files.
+* Extended org.json features and added support of JSON arrays as response body of HTTP call.
+* Added capability to TPC/IP client to send command and wait for acknowledgment from server.
+* TCP/IP client and server now operates with JSON objects while processing commands.
 ========================================================================================================
 eMeS libraries Version 2.2.0
 ========================================================================================================

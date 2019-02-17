@@ -6,9 +6,9 @@ import lv.emes.libraries.communication.tcp_ip.client.MS_TcpIPClient;
 import lv.emes.libraries.file_system.MS_BinaryTools;
 
 import java.io.IOException;
-import java.net.UnknownHostException;
 
 public class MSTcpIPClientExample {
+
 	public static final String BINARY_DEST_FILE_CLIENT = "src/main/java/lv/emes/examples/exampleFileFromServer.png";
 	public static final String HOST_TO_CONNECT_TO = "localhost";
 	public static final int PORT_OF_HOST = MS_ClientServerConstants._DEFAULT_PORT_FOR_TESTING;
