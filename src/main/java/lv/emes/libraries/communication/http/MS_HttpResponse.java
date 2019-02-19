@@ -1,5 +1,6 @@
 package lv.emes.libraries.communication.http;
 
+import jdk.nashorn.internal.ir.annotations.Immutable;
 import lv.emes.libraries.communication.json.JSONTypeEnum;
 import lv.emes.libraries.communication.json.MS_JSONArray;
 import lv.emes.libraries.communication.json.MS_JSONObject;
@@ -17,7 +18,7 @@ import java.util.*;
  * @version 2.1.
  * @since 2.1.9
  */
-//@Immutable
+@Immutable
 public class MS_HttpResponse {
 
     private String url;

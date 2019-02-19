@@ -24,7 +24,7 @@ import java.net.Socket;
  */
 public class MS_ClientOfServer {
 
-    protected int id;
+    protected long id;
     protected String osUserName = "";
     protected String os = "";
     protected String currentWorkingDirectory = "";
@@ -55,7 +55,7 @@ public class MS_ClientOfServer {
      * @param id           unique number to identify client in list of clients.
      * @param clientSocket tcp/ip socket for connection operations.
      */
-    public MS_ClientOfServer(int id, Socket clientSocket) {
+    public MS_ClientOfServer(long id, Socket clientSocket) {
         this.id = id;
         this.clientSocket = clientSocket;
         try {
@@ -93,7 +93,7 @@ public class MS_ClientOfServer {
     /**
      * @return server's assigned unique ID of connection.
      */
-    public int getId() {
+    public long getId() {
         return id;
     }
 

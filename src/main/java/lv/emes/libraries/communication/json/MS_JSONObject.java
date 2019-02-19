@@ -9,6 +9,7 @@ import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * JSON object extended from {@link JSONObject} that provides additional utilities and constructors.
@@ -181,6 +182,13 @@ public class MS_JSONObject extends JSONObject {
 
     public boolean isJsonArray(String key) {
         return this.has(key) && this.get(key) instanceof org.json.JSONArray;
+    }
+
+    public String[] getKeyArray() {
+        String[] res = new String[this.keySet().size()];
+        AtomicInteger i = new AtomicInteger(0);
+        this.keySet().forEach(key -> res[i.getAndIncrement()] = key);
+        return res;
     }
 
     //*** Methods from super class to override ***

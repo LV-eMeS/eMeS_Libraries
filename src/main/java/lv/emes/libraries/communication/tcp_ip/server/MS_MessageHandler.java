@@ -43,19 +43,17 @@ class MS_MessageHandler implements Runnable {
             try {
                 Thread.sleep(new Random().nextInt(DEFAULT_THREAD_SLEEP_TIME));
                 String msg = client.getIn().readUTF();
-                server.onIncomingClientMessage(msg, client, client.getOut()); //calls central method of server message reading
+                server.onIncomingClientMessage(msg, client); //calls central method of server message reading
             } catch (SocketException e) {
                 client.disconnect();
             } catch (UTFDataFormatException exc) {
-//					log.error("Failed to read UTF-8 message from client correctly due to incorrect format. @run()");
-                if (server.onUTFDataFormatException != null)
+                if (server.onDataFormatException != null)
                     try {
-                        server.onUTFDataFormatException.doOnEvent(exc);
+                        server.onDataFormatException.doOnEvent(exc);
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
             } catch (IOException exc) {
-//					log.info("Connection with client with id = " + client.id + " lost. @run()");
                 if (server.onIOException != null)
                     try {
                         server.onIOException.doOnEvent(exc);
@@ -64,15 +62,14 @@ class MS_MessageHandler implements Runnable {
                     }
                 client.disconnect();
             } catch (Exception e) { //if another exception then just exit thread
-                server.getClients().remove(client);
+                server.getClients().remove(client.id);
                 return;
             }
         } //while ends here
-        server.getClients().remove(client);
+        server.getClients().remove(client.id);
         try {
             client.disconnect();
-        } catch (Exception e) {
-//			log.error("Something unexcepted when trying to close I/O. @run()", e);
+        } catch (Exception ignored) {
         }
     }
 

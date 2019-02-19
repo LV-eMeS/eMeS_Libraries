@@ -5,8 +5,7 @@ import okhttp3.OkHttpClient;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Due to incompatibility with Android API &lt;24 this class is introduced
- * to hold static interface implementations containing lambda expressions.
+ * HTTP connection configuration builders and defaults.
  *
  * @author eMeS
  * @version 2.0.

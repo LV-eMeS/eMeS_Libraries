@@ -30,13 +30,13 @@ dependencies {
     compile 'org.threeten:threetenbp:1.3.8' //to backport ZonedDateTime classes in order to use those on Android
 //    compile "com.oracle:ojdbc6:11.2.0.3"
 //    compile group: 'com.jayway.restassured', name: 'rest-assured', version: '2.9.0'
+    compile "com.google.guava:guava:18.0"
 
     //For tests:
     compile 'org.mockito:mockito-all:1.10.19'
     compile "junit:junit:4.12"
     testCompile "junit:junit:4.12"
     testCompile "org.assertj:assertj-core:3.10.0"
-    testCompile "com.google.guava:guava:18.0"
 }
 
 //All the dealing with encoding

@@ -1,17 +1,27 @@
 package lv.emes.libraries.communication.tcp_ip.server;
 
 import lv.emes.libraries.communication.tcp_ip.MS_TcpIPAbstract;
+import lv.emes.libraries.patches.android_compat.JavaUtilCompatibility;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Vector;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
+
+import static lv.emes.libraries.communication.tcp_ip.MS_ClientServerConstants.*;
 
 /**
  * Core things of TCP/IP server. Accessible only to package because will be overridden.
  * <p>Public methods:
  * <ul>
+ * <li>registerCommandWithNoData</li>
+ * <li>registerCommandWithStringData</li>
+ * <li>registerCommandWithJsonObjectData</li>
+ * <li>registerCommandWithJsonArrayData</li>
+ * <li>registerCommandWithBinaryData</li>
  * <li>startServer</li>
  * <li>stopServer</li>
  * <li>isRunning</li>
@@ -26,7 +36,7 @@ import java.util.Vector;
  * </ul>
  * <p>Public properties to set:
  * <ul>
- * <li>onUTFDataFormatException</li>
+ * <li>onDataFormatException</li>
  * <li>onIOException</li>
  * </ul>
  * <p>Protected methods:
@@ -37,7 +47,8 @@ import java.util.Vector;
  * </ul>
  *
  * @author eMeS
- * @version 1.3.
+ * @version 2.1.
+ * @since 1.1.1
  */
 abstract class MS_TcpIPServerCore extends MS_TcpIPAbstract {
 
@@ -46,16 +57,24 @@ abstract class MS_TcpIPServerCore extends MS_TcpIPAbstract {
     private int lastClientId = 0;
 
     protected Thread serverThread = null; //thread of server
-    protected Vector<MS_ClientOfServer> clients;
+    protected Map<Long, MS_ClientOfServer> clients;
+
+    /**
+     * Creates new server instance and sets its port.
+     *
+     * @param port 1..~65k.
+     */
+    public MS_TcpIPServerCore(int port) {
+        this.port = port;
+        clients = new ConcurrentHashMap<>();
+    }
 
     /**
      * Set this to define behavior of server when it reads message of client.
-     *
-     * @param message UTF-8 text from client.
+     *  @param message UTF-8 text from client.
      * @param client  sender.
-     * @param out     output stream of client to send server's response back to client.
      */
-    abstract protected void onIncomingClientMessage(String message, MS_ClientOfServer client, DataOutputStream out);
+    abstract protected void onIncomingClientMessage(String message, MS_ClientOfServer client);
 
     /**
      * Set this to define behavior of server when new client is connected.
@@ -63,6 +82,71 @@ abstract class MS_TcpIPServerCore extends MS_TcpIPAbstract {
      * @param client client that just connected to server.
      */
     abstract protected void onNewClientConnected(MS_ClientOfServer client);
+
+    /**
+     * Adds new command to known commands that can be received from any connected client. Commands are identified by code.
+     * All commands must be unique. Commands cannot be deleted, except by clearing command list.
+     *
+     * @param code   unique command code.
+     * @param action method which will be triggered when client receives command with given <b>code</b>.
+     */
+    public void registerCommandWithNoData(String code, IFuncOnIncomingCommandFromClientNoData action) {
+        Objects.requireNonNull(code);
+        Objects.requireNonNull(action);
+        JavaUtilCompatibility.computeIfAbsent(commands, _CMD_WITH_NO_DATA, commands -> new HashMap<>()).put(code, action);
+    }
+
+    /**
+     * Adds new command to known commands that can be received from any connected client. Commands are identified by code.
+     * All commands must be unique. Commands cannot be deleted, except by clearing command list.
+     *
+     * @param code   unique command code.
+     * @param action method which will be triggered when client receives command with given <b>code</b>.
+     */
+    public void registerCommandWithStringData(String code, IFuncOnIncomingCommandFromClientStringData action) {
+        Objects.requireNonNull(code);
+        Objects.requireNonNull(action);
+        JavaUtilCompatibility.computeIfAbsent(commands, _CMD_WITH_STRING_DATA, commands -> new HashMap<>()).put(code, action);
+    }
+
+    /**
+     * Adds new command to known commands that can be received from any connected client. Commands are identified by code.
+     * All commands must be unique. Commands cannot be deleted, except by clearing command list.
+     *
+     * @param code   unique command code.
+     * @param action method which will be triggered when client receives command with given <b>code</b>.
+     */
+    public void registerCommandWithJsonObjectData(String code, IFuncOnIncomingCommandFromClientJsonObjectData action) {
+        Objects.requireNonNull(code);
+        Objects.requireNonNull(action);
+        JavaUtilCompatibility.computeIfAbsent(commands, _CMD_WITH_JSON_OBJECT_DATA, commands -> new HashMap<>()).put(code, action);
+    }
+
+    /**
+     * Adds new command to known commands that can be received from any connected client. Commands are identified by code.
+     * All commands must be unique. Commands cannot be deleted, except by clearing command list.
+     *
+     * @param code   unique command code.
+     * @param action method which will be triggered when client receives command with given <b>code</b>.
+     */
+    public void registerCommandWithJsonArrayData(String code, IFuncOnIncomingCommandFromClientJsonArrayData action) {
+        Objects.requireNonNull(code);
+        Objects.requireNonNull(action);
+        JavaUtilCompatibility.computeIfAbsent(commands, _CMD_WITH_JSON_ARRAY_DATA, commands -> new HashMap<>()).put(code, action);
+    }
+
+    /**
+     * Adds new command to known commands that can be received from any connected client. Commands are identified by code.
+     * All commands must be unique. Commands cannot be deleted, except by clearing command list.
+     *
+     * @param code   unique command code.
+     * @param action method which will be triggered when client receives command with given <b>code</b>.
+     */
+    public void registerCommandWithBinaryData(String code, IFuncOnIncomingCommandFromClientBinaryData action) {
+        Objects.requireNonNull(code);
+        Objects.requireNonNull(action);
+        JavaUtilCompatibility.computeIfAbsent(commands, _CMD_WITH_BINARY_DATA, commands -> new HashMap<>()).put(code, action);
+    }
 
     /**
      * Writes message to particular client.
@@ -73,19 +157,8 @@ abstract class MS_TcpIPServerCore extends MS_TcpIPAbstract {
     protected synchronized void writeln(String msg, int clientID) {
         try {
             this.getClientByID(clientID).getOut().writeUTF(msg);
-        } catch (IOException e) {
-//			log.error(String.format("Couldn't write UTF-8 message to client. \n. @writeln(%s, %d)", MS_StringUtils.eMeSSubstring(msg, 1, 50) + "...", clientID));
+        } catch (IOException ignored) {
         }
-    }
-
-    /**
-     * Creates new server instance and sets its port.
-     *
-     * @param port 1..~65k.
-     */
-    public MS_TcpIPServerCore(int port) {
-        this.port = port;
-        clients = new Vector<>();
     }
 
     /**
@@ -156,7 +229,7 @@ abstract class MS_TcpIPServerCore extends MS_TcpIPAbstract {
             while (isActive) {
                 Socket socket = server.accept(); //incoming client
                 MS_ClientOfServer client = new MS_ClientOfServer(++lastClientId, socket); //assigns id of client and adds it to
-                clients.addElement(client);
+                clients.put(client.id, client);
                 MS_MessageHandler worker = new MS_MessageHandler(client, this);
                 Thread t = new Thread(worker);
                 t.setDaemon(true);
@@ -164,7 +237,7 @@ abstract class MS_TcpIPServerCore extends MS_TcpIPAbstract {
 
                 onNewClientConnected(client); //calls method to do actions after client is successfully connected
             }
-        } catch (Exception e) {
+        } catch (Exception ignored) {
             //everything is ok, because threads are slower than infinite loop, so isActive didn't catch up with actual situation
         } finally {
             stopServer();
@@ -174,7 +247,7 @@ abstract class MS_TcpIPServerCore extends MS_TcpIPAbstract {
     /**
      * @return all the connected clients.
      */
-    public Vector<MS_ClientOfServer> getClients() {
+    public Map<Long, MS_ClientOfServer> getClients() {
         return clients;
     }
 
@@ -183,35 +256,31 @@ abstract class MS_TcpIPServerCore extends MS_TcpIPAbstract {
      *
      * @param clientId id of client.
      */
-    public void disconnectClientByID(int clientId) {
+    public void disconnectClientByID(long clientId) {
         MS_ClientOfServer cl = this.getClientByID(clientId);
         if (cl != null) {
             cl.disconnect();
-            this.clients.remove(cl);
+            this.clients.remove(clientId);
         }
     }
 
     /**
-     * Disconnects all clients. Also removes clients from <b>clients</b> list.
+     * Disconnects all clients. Also removes clients from <b>clients</b> map.
      * Server is still running after execution of this method.
      */
     public synchronized void disconnectAllClients() {
         this.lastClientId = 0; //id counter can be restarted, cause no more clients connected => This way ID's cannot conflict with new connection ID's.
-        for (MS_ClientOfServer cl : clients)
-            cl.disconnect();
+        clients.forEach((id, cl) -> cl.disconnect());
         this.clients.clear();
     }
 
     /**
-     * Goes through the list of connected clients and seeks for particular client.
+     * Goes through the list of connected clients and seeks particular client.
      *
      * @param clientId id (starting with 1) of client to look for.
-     * @return MS_ClientOfServer if client found; otherwise returns null.
+     * @return {@link MS_ClientOfServer} if client found; otherwise returns null.
      */
-    public MS_ClientOfServer getClientByID(int clientId) {
-        for (MS_ClientOfServer cl : clients)
-            if (cl.id == clientId)
-                return cl;
-        return null;
+    public MS_ClientOfServer getClientByID(long clientId) {
+        return clients.get(clientId);
     }
 }

@@ -1,21 +1,31 @@
 package lv.emes.libraries.communication.tcp_ip.server;
 
+import lv.emes.libraries.communication.json.MS_JSONObject;
+import lv.emes.libraries.communication.tcp_ip.MS_ActionOnIncomingTcpIpCommand;
 import lv.emes.libraries.communication.tcp_ip.MS_ClientServerConstants;
+import lv.emes.libraries.communication.tcp_ip.MS_TcpIPCommand;
+import lv.emes.libraries.file_system.MS_BinaryTools;
 import lv.emes.libraries.tools.MS_BadSetupException;
-import lv.emes.libraries.tools.lists.MS_List;
 import lv.emes.libraries.tools.lists.MS_StringList;
 import lv.emes.libraries.tools.threading.MS_FutureEvent;
+import lv.emes.libraries.utilities.MS_StringUtils;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.UTFDataFormatException;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * TCP/IP server which operates commands to communicate to client.
  * <p>Public methods:
  * <ul>
- * <li>registerNewCommand</li>
- * <li>getCommandList</li>
- * <li>addDataToContainer</li>
+ * <li>registerCommandWithNoData</li>
+ * <li>registerCommandWithStringData</li>
+ * <li>registerCommandWithJsonObjectData</li>
+ * <li>registerCommandWithJsonArrayData</li>
+ * <li>registerCommandWithBinaryData</li>
+ * <li>getCommands</li>
  * <li>cmdToClientByID</li>
  * <li>cmdToClient</li>
  * <li>cmdToAll</li>
@@ -39,7 +49,7 @@ import java.io.IOException;
  * <p>Setters and getters:
  * <ul>
  * <li>isRunning</li>
- * <li>getIsActive</li>
+ * <li>isActive</li>
  * <li>getPort</li>
  * <li>getClients</li>
  * <li>getClientByID</li>
@@ -48,8 +58,8 @@ import java.io.IOException;
  * </ul>
  *
  * @author eMeS
- * @version 2.0.
- * @since 2.2.2
+ * @version 2.1.
+ * @since 1.1.1
  */
 public class MS_TcpIPServer extends MS_TcpIPServerCore {
 
@@ -61,6 +71,7 @@ public class MS_TcpIPServer extends MS_TcpIPServerCore {
      * </code>
      */
     public IFuncOnClientDoingSomething onClientGoingOffline = null;
+
     /**
      * Set this property with lambda expression to do actions after client successfully connected to server.
      * <code>
@@ -68,13 +79,13 @@ public class MS_TcpIPServer extends MS_TcpIPServerCore {
      * </code>
      */
     public IFuncOnClientDoingSomething onClientConnecting = null;
+
     /**
      * Right after successful connection client is sending something like "Hi" message that introduces him.
      * Client also sends data about his device: OS name, system user name, path to working directory and path to home directory.
      */
     public IFuncOnClientDoingSomething onClientSayingHi = null;
 
-    private MS_List<MS_ServerCommand> commandList = new MS_List<>();
     /**
      * If true, all clients will be notified that server is going down when <b>stopServer</b> is called.
      * Default: true.
@@ -88,29 +99,23 @@ public class MS_TcpIPServer extends MS_TcpIPServerCore {
      */
     public MS_TcpIPServer(int port) {
         super(port);
-        MS_ServerCommand tmp;
         //save information about connecting client. Right after connection success client will send some info about himself (OS,
-        tmp = new MS_ServerCommand();
-        tmp.code = MS_ClientServerConstants._INFO_ABOUT_NEW_CLIENT;
-        tmp.doOnCommand = (server, data, client, out) -> {
-            client.os = data.get(1);
-            client.osUserName = data.get(2);
-            client.currentWorkingDirectory = data.get(3);
-            client.systemHomeDirectory = data.get(4);
+        this.registerCommandWithJsonObjectData(MS_ClientServerConstants._INFO_ABOUT_NEW_CLIENT, (server, client, data) -> {
+            client.os = data.getString(MS_ClientServerConstants._CMD_DATA_KEY_OS);
+            client.osUserName = data.getString(MS_ClientServerConstants._CMD_DATA_KEY_USER_NAME);
+            client.currentWorkingDirectory = data.getString(MS_ClientServerConstants._CMD_DATA_KEY_WORKING_DIR);
+            client.systemHomeDirectory = data.getString(MS_ClientServerConstants._CMD_DATA_KEY_HOME_DIR);
             if (onClientSayingHi != null)
                 try {
                     onClientSayingHi.doOnEvent(client);
                 } catch (Exception e) {
                     throw new MS_BadSetupException(e);
                 }
-        };
-        this.registerNewCommand(tmp);
+        });
 
         //set behavior of client disconnecting. Note that server and list already is aware that client is missing.
         //Here you need just to set user-defined behavior
-        tmp = new MS_ServerCommand();
-        tmp.code = MS_ClientServerConstants._CLIENT_DISCONNECTS_NOTIFY_MESSAGE;
-        tmp.doOnCommand = (server, data, client, out) -> {
+        this.registerCommandWithNoData(MS_ClientServerConstants._CLIENT_DISCONNECTS_NOTIFY_MESSAGE, (server, client) -> {
             //user can define his own expected behavior when server goes down.
             if (onClientGoingOffline != null)
                 try {
@@ -118,78 +123,103 @@ public class MS_TcpIPServer extends MS_TcpIPServerCore {
                 } catch (Exception e) {
                     throw new MS_BadSetupException(e);
                 }
-        };
-        this.registerNewCommand(tmp);
-
-        tmp = new MS_ServerCommand();
-        tmp.code = MS_ClientServerConstants._CLIENT_COMMAND_WITH_ACKNOWLEDGEMENT_MODE;
-        tmp.doOnCommand = (server, data, client, out) -> {
-            //1. Respond to client that command is received
-            this.addDataToContainer(data.get(1));
-            this.cmdToClient(MS_ClientServerConstants._SERVER_ACKNOWLEDGEMENT, client);
-
-            //2. React to actual command (actual command code should be at index 2)
-            data.remove(0); //remove MS_ClientServerConstants._CLIENT_COMMAND_WITH_ACKNOWLEDGEMENT_MODE code
-            data.remove(0); //remove commandId
-            this.onIncomingClientMessage(data.toString(), client, out);
-        };
-        this.registerNewCommand(tmp);
+        });
     }
 
     @Override
-    protected void onIncomingClientMessage(String message, MS_ClientOfServer client, DataOutputStream out) {
-        //Every time client sends a message server reads it.
-        //Messages are formatted in specific format.
-        MS_StringList data = new MS_StringList(message);
-        String userCmd = data.get(0);
+    protected void onIncomingClientMessage(String message, MS_ClientOfServer client) {
+        // Every time client sends a message server reads it.
+        // Messages are formatted in specific JSON format by client-server contract.
+        // Client might also send acknowledgement command type, which needs to be extracted first and then handled differently
+        MS_JSONObject command = new MS_JSONObject(message);
+        if (command.has(MS_ClientServerConstants._CLIENT_COMMAND_WITH_ACKNOWLEDGEMENT_MODE)) {
+            MS_JSONObject actualAkcCmd = command.getJSONObject(MS_ClientServerConstants._CLIENT_COMMAND_WITH_ACKNOWLEDGEMENT_MODE);
+            //1. Respond to client that command is received
+            this.cmdToClient(new MS_TcpIPCommand(MS_ClientServerConstants._SERVER_ACKNOWLEDGEMENT, actualAkcCmd.getString("id")), client);
+            //2. React to actual command
+            handleIncomingCommand(actualAkcCmd, client);
+        } else {
+            handleIncomingCommand(command, client);
+        }
+    }
 
-        for (MS_ServerCommand cmd : commandList)
-            if (cmd.code.equals(userCmd)) { //command found
-                if (cmd.doOnCommand != null) {
-                    MS_FutureEvent commandExecution = new MS_FutureEvent()
-                            .withThreadName("MS_TcpIPServer.onIncomingClientMessage")
-                            .withAction(() -> cmd.doOnCommand.doMessageHandling(this, data, client, out));
-                    if (this.onExecutionException != null)
-                        commandExecution.withActionOnException((ex) -> this.onExecutionException.doOnError(ex));
-                    commandExecution.schedule();
+    private void handleIncomingCommand(MS_JSONObject command, MS_ClientOfServer client) {
+        int cmdType = command.getInt("type");
+        String cmdCode = command.getString("code");
+        Map<String, MS_ActionOnIncomingTcpIpCommand> commandActionsByCmdCode = this.commands.get(cmdType);
+        MS_ActionOnIncomingTcpIpCommand genericAction = commandActionsByCmdCode == null ? null : commandActionsByCmdCode.get(cmdCode);
+        if (genericAction == null) {
+            if (this.onDataFormatException != null) {
+                // first try to find out, maybe command is registered under different type and inform by exception,
+                // that this kind of type should be used in message exchange
+                List<Map.Entry<Integer, Map<String, MS_ActionOnIncomingTcpIpCommand>>> commandsOfDifferentTypesThatMatchesCode =
+                        this.commands.entrySet().stream()
+                                .filter(entry -> entry.getValue().get(cmdCode) != null)
+                                .collect(Collectors.toList());
+                if (commandsOfDifferentTypesThatMatchesCode.size() > 0) {
+                    MS_StringList validTypes = new MS_StringList();
+                    commandsOfDifferentTypesThatMatchesCode.forEach(commandEntry -> validTypes.add(
+                            MS_ClientServerConstants._CMD_DATA_TYPE_DESCRIPTIONS.get(commandEntry.getKey()))
+                    );
+
+                    this.onDataFormatException.doOnEvent(new UTFDataFormatException("Received command from client with type ["
+                            + MS_ClientServerConstants._CMD_DATA_TYPE_DESCRIPTIONS.get(cmdType) + "] and code: ["
+                            + cmdCode + "], " + MS_StringUtils._LINE_BRAKE +
+                            "but such command code is registered as recognizable only with one " +
+                            "of following data types: [" + validTypes.toStringWithNoLastDelimiter() + "].")
+                    );
                 }
                 return;
             }
-    }
 
-    /**
-     * Adds new command to command list. Commands are recognized by code. All commands must be unique.
-     * Commands cannot be deleted, except by clearing command list.
-     * If client sends particular command to server, server acts just as command's implementation asks.
-     *
-     * @param cmd command code and method which will be triggered when client sends particular command.
-     */
-    public void registerNewCommand(MS_ServerCommand cmd) {
-        commandList.add(cmd);
-    }
+            // if not, simply complain about not found command
+            if (this.onIOException != null)
+                this.onIOException.doOnEvent(new IOException("Received command from client with unknown command code: " + cmdCode));
+        } else { // all good, continue on execution (in separate thread, as execution sometimes might take some while)
+            MS_FutureEvent commandExecutionThread = new MS_FutureEvent().withThreadName("MS_TcpIPServer.onIncomingClientMessage");
 
-    /**
-     * That is recommended not to use this variable.
-     * Use only if really necessary to do manual changes in list of registered commands.
-     *
-     * @return List of all registered commands.
-     * @see MS_TcpIPServer#registerNewCommand
-     */
-    public MS_List<MS_ServerCommand> getCommandList() {
-        return commandList;
-    }
+            switch (cmdType) {
+                case MS_ClientServerConstants._CMD_WITH_NO_DATA:
+                    commandExecutionThread.withAction(() -> {
+                        IFuncOnIncomingCommandFromClientNoData action = (IFuncOnIncomingCommandFromClientNoData) genericAction;
+                        action.handleCommand(this, client);
+                    });
+                    break;
+                case MS_ClientServerConstants._CMD_WITH_STRING_DATA:
+                    commandExecutionThread.withAction(() -> {
+                        IFuncOnIncomingCommandFromClientStringData action = (IFuncOnIncomingCommandFromClientStringData) genericAction;
+                        action.handleCommand(this, client, command.getString("data"));
+                    });
+                    break;
+                case MS_ClientServerConstants._CMD_WITH_JSON_OBJECT_DATA:
+                    commandExecutionThread.withAction(() -> {
+                        IFuncOnIncomingCommandFromClientJsonObjectData action = (IFuncOnIncomingCommandFromClientJsonObjectData) genericAction;
+                        action.handleCommand(this, client, command.getJSONObject("data"));
+                    });
+                    break;
+                case MS_ClientServerConstants._CMD_WITH_JSON_ARRAY_DATA:
+                    commandExecutionThread.withAction(() -> {
+                        IFuncOnIncomingCommandFromClientJsonArrayData action = (IFuncOnIncomingCommandFromClientJsonArrayData) genericAction;
+                        action.handleCommand(this, client, command.getJSONArray("data"));
+                    });
+                    break;
+                case MS_ClientServerConstants._CMD_WITH_BINARY_DATA:
+                    commandExecutionThread.withAction(() -> {
+                        IFuncOnIncomingCommandFromClientBinaryData action = (IFuncOnIncomingCommandFromClientBinaryData) genericAction;
+                        action.handleCommand(this, client, MS_BinaryTools.stringToBytes(command.getString("data")));
+                    });
+                    break;
+                default:
+                    if (this.onIOException != null) {
+                        this.onIOException.doOnEvent(new IOException("Unsupported command type received"));
+                    }
+                    return;
+            }
 
-    /**
-     * Tries to find command in registered command list.
-     *
-     * @param cmdCode code of command.
-     * @return MS_ServerCommand or null if command doesn't exist in registered command list.
-     */
-    public MS_ServerCommand getCommandByCode(String cmdCode) {
-        for (MS_ServerCommand cmd : commandList)
-            if (cmd.code.equals(cmdCode))
-                return cmd;
-        return null;
+            if (this.onExecutionException != null)
+                commandExecutionThread.withActionOnException((ex) -> this.onExecutionException.doOnError(ex));
+            commandExecutionThread.schedule();
+        }
     }
 
     /**
@@ -198,16 +228,13 @@ public class MS_TcpIPServer extends MS_TcpIPServerCore {
      * <p>Data is simply string list with index starting with 1, cause 0 is for <b>cmdCode</b>.
      * Data container is cleared after this method in every case.
      *
-     * @param cmdCode  command ID.
+     * @param command  a command.
      * @param clientID id of addressee.
      * @return false if error occurred during sending message.
-     * @see MS_TcpIPServer#addDataToContainer
      */
-    public synchronized boolean cmdToClientByID(String cmdCode, int clientID) {
-        dataContainer.insert(0, cmdCode);
+    public synchronized boolean cmdToClientByID(MS_TcpIPCommand command, long clientID) {
         try {
-            String message = dataContainer.toString();
-            dataContainer.clear(); //after every message container is cleared
+            String message = command.buildCommand().toString();
             this.getClientByID(clientID).getOut().writeUTF(message);
             return true;
         } catch (IOException e) {
@@ -221,16 +248,13 @@ public class MS_TcpIPServer extends MS_TcpIPServerCore {
      * <p>Data is simply string list with index starting with 1, cause 0 is for <b>cmdCode</b>.
      * Data container is cleared after this method in every case.
      *
-     * @param cmdCode command ID.
+     * @param command a command.
      * @param client  addressee itself.
      * @return false if error occurred during sending message.
-     * @see MS_TcpIPServer#addDataToContainer
      */
-    public synchronized boolean cmdToClient(String cmdCode, MS_ClientOfServer client) {
-        dataContainer.insert(0, cmdCode);
+    public synchronized boolean cmdToClient(MS_TcpIPCommand command, MS_ClientOfServer client) {
         try {
-            String message = dataContainer.toString();
-            dataContainer.clear(); //after every message container is cleared
+            String message = command.buildCommand().toString();
             client.getOut().writeUTF(message);
             return true;
         } catch (IOException e) {
@@ -239,25 +263,20 @@ public class MS_TcpIPServer extends MS_TcpIPServerCore {
     }
 
     /**
-     * Use this method to send custom command to every single connected client!
+     * Use this method to send custom command to every single connected client at once!
      * This method works silently and don't throw any exceptions if something bad happens,
-     * but it tries to send messages to every single client even if IOException happens in the middle of list.<p>
-     * If some data added with <b>addDataToContainer</b>, those will also be sent by this message.
-     * <p>Data is simply string list with index starting with 1, cause 0 is for <b>cmdCode</b>.
-     * Data container is cleared after this method.
+     * but it tries to send messages to every single client even if {@link IOException} happens in the middle of list.
      *
-     * @param cmdCode command ID.
-     * @see MS_TcpIPServer#addDataToContainer
+     * @param command a command.
      */
-    public synchronized void cmdToAll(String cmdCode) {
-        dataContainer.insert(0, cmdCode);
-        String message = dataContainer.toString();
-        dataContainer.clear(); //after every message container is cleared
-        for (MS_ClientOfServer client : clients)
+    public synchronized void cmdToAll(MS_TcpIPCommand command) {
+        String message = command.buildCommand().toString();
+        clients.forEach((id, client) -> {
             try {
                 client.getOut().writeUTF(message);
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
+        });
     }
 
     /**
@@ -269,7 +288,7 @@ public class MS_TcpIPServer extends MS_TcpIPServerCore {
     @Override
     public void stopServer() {
         if (notifyClientsOnDC)
-            this.cmdToAll(MS_ClientServerConstants._DC_NOTIFY_MESSAGE);
+            this.cmdToAll(new MS_TcpIPCommand(MS_ClientServerConstants._DC_NOTIFY_MESSAGE));
         //make them all disconnect themselves too (only server side sockets, not client side sockets)
         this.disconnectAllClients();
         super.stopServer();
@@ -277,14 +296,9 @@ public class MS_TcpIPServer extends MS_TcpIPServerCore {
 
     @Override
     protected void onNewClientConnected(MS_ClientOfServer client) {
-        this.addDataToContainer(Integer.toString(client.id));
-        this.cmdToClient(MS_ClientServerConstants._NEW_CLIENT_ID_NOTIFY_MESSAGE, client);
+        this.cmdToClient(new MS_TcpIPCommand(MS_ClientServerConstants._NEW_CLIENT_ID_NOTIFY_MESSAGE, Long.toString(client.id)), client);
         if (onClientConnecting != null)
-            try {
-                onClientConnecting.doOnEvent(client);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
+            onClientConnecting.doOnEvent(client);
     }
 
     /**
@@ -293,7 +307,7 @@ public class MS_TcpIPServer extends MS_TcpIPServerCore {
      * @return whether server is ready for message exchange or not.
      */
     @Override
-    public boolean getIsActive() {
+    public boolean isActive() {
         return this.isRunning();
     }
 }

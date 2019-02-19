@@ -100,9 +100,9 @@ public class MS_TestUtilsTest {
         assertFalse(rs.next());
 
         Object obj;
-        Integer id;
+        int id;
         String name;
-        Long longNumber;
+        long longNumber;
         Date birthDate;
         Time lastLoggedInAt;
         Boolean isEmployee;
@@ -114,11 +114,11 @@ public class MS_TestUtilsTest {
         Blob blobFail;
 
         id = rs.getInt("id");
-        assertEquals(1, (int) id);
+        assertEquals(1, id);
         name = rs.getString("name");
-        assertEquals(null, name);
+        assertNull(name);
         longNumber = rs.getLong("longNumber");
-        assertEquals(1234567890987654321L, (long) longNumber);
+        assertEquals(1234567890987654321L, longNumber);
         birthDate = rs.getDate("birthDate");
         assertEquals(new Date(12345), birthDate);
         lastLoggedInAt = rs.getTime("lastLoggedInAt");
@@ -128,7 +128,7 @@ public class MS_TestUtilsTest {
         someTimeAgo = rs.getTimestamp("someTimeAgo");
         assertNotNull(someTimeAgo);
         avgSalary = rs.getBigDecimal("avgSalary");
-        assertEquals(null, avgSalary);
+        assertNull(avgSalary);
         zero = rs.getBytes("zero");
         assertEquals(1, zero.length);
         someWeirdObject = rs.getObject("someWeirdObject");
@@ -139,13 +139,13 @@ public class MS_TestUtilsTest {
         assertNotNull(blobFail);
 
         id = rs.getInt("id");
-        assertEquals(2, (int) id);
+        assertEquals(2, id);
         name = rs.getString("name");
         assertEquals("John", name);
         obj = rs.getLong("longNumber");
         assertEquals(0L, obj);
         birthDate = rs.getDate("birthDate");
-        assertEquals(null, birthDate);
+        assertNull(birthDate);
         assertNull(rs.getTime("lastLoggedInAt"));
         isEmployee = rs.getBoolean("isEmployee");
         assertEquals(true, isEmployee);

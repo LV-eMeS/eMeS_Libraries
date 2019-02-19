@@ -5,7 +5,8 @@ import lv.emes.libraries.utilities.MS_CodingUtils;
 import javax.swing.*;
 
 /**
- * Due to incompatibility with Android API &lt;24 this class is introduced to hold static interface implementations containing lambda expressions.
+ * Due to incompatibility with Android API &lt;24 this class is introduced
+ * to hold static interface implementations containing lambda expressions.
  *
  * @author eMeS
  * @version 1.0.

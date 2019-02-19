@@ -8,5 +8,6 @@ package lv.emes.libraries.communication.tcp_ip.server;
  */
 @FunctionalInterface
 public interface IFuncOnClientDoingSomething {
+
     void doOnEvent(MS_ClientOfServer client);
 }

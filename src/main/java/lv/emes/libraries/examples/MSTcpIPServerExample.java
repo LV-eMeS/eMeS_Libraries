@@ -1,7 +1,7 @@
 package lv.emes.libraries.examples;
 
 import lv.emes.libraries.communication.tcp_ip.MS_ClientServerConstants;
-import lv.emes.libraries.communication.tcp_ip.server.MS_ServerCommand;
+import lv.emes.libraries.communication.tcp_ip.MS_TcpIPCommand;
 import lv.emes.libraries.communication.tcp_ip.server.MS_TcpIPServer;
 import lv.emes.libraries.file_system.MS_BinaryTools;
 import lv.emes.libraries.file_system.MS_FileSystemTools;
@@ -13,12 +13,10 @@ public class MSTcpIPServerExample {
 	public static void main(String[] args) {
 		int portNumber = MS_ClientServerConstants._DEFAULT_PORT_FOR_TESTING; //default port for this application
 		try {
-			portNumber = Integer.parseInt(args[0]);
-		} catch (Exception e) {
-			e.printStackTrace();
+			portNumber = Integer.parseInt(args[0]); //set port number if given as an argument
+		} catch (Exception ignored) {
 		}
-		MS_ServerCommand cmd;
-		
+
 		//declare server which will use given port number when it will start
 		MS_TcpIPServer server = new MS_TcpIPServer(portNumber);
 		server.onClientConnecting = (client) -> {
@@ -33,33 +31,26 @@ public class MSTcpIPServerExample {
 		};
 		
 		//init all the commands!
-		//beware of using commands that is defined in MS_ClientServerConstants		
-		cmd = new MS_ServerCommand("Print incoming text!");
-		cmd.doOnCommand = (srvr, data, cli, out) -> {
-			System.out.println(data.get(1)); //data starts with first element. Command code is stored in zero'th element
-		};	
-		server.registerNewCommand(cmd);
-		
-		cmd = new MS_ServerCommand("Do server shutdown!");
-		cmd.doOnCommand = (srvr, data, cli, out) -> {
+		//beware of using commands with codes that are defined in MS_ClientServerConstants
+		server.registerCommandWithStringData("Print incoming text!", (srvr, cli, data) -> System.out.println(data));
+
+		server.registerCommandWithNoData("Do server shutdown now!", (srvr, cli) -> {
 			srvr.stopServer();
 			System.out.println("Job done. Application closes.");
-		};	
-		server.registerNewCommand(cmd);
-		
-		cmd = new MS_ServerCommand("Send binary file to client now!");
-		cmd.doOnCommand = (srvr, data, cli, out) -> {
+		});
+
+		server.registerCommandWithNoData("Send binary file from resources!", (srvr, cli) -> {
 			//load image from resources folder into byte array
+			// Note: Make sure that you copy "test_pic.png" from "src/test/resources/test_pic.png"
+			// to "src/main/resources/test_pic.png" first so that it would be accessible as resource from these Examples classes!
 			byte[] by = MS_BinaryTools.inputToBytes(MS_FileSystemTools.getResourceInputStream("test_pic.png"));
-			//prepare to send byte array as text
-			srvr.addDataToContainer(MS_BinaryTools.bytesToString(by));
-			//send both command "Read binary file that I sent to you!" and binary data to client, which sent command "Send binary file to client now!" to server.
-			srvr.cmdToClient("Read binary file that I sent to you!", cli);			
-		};	
-		server.registerNewCommand(cmd);
+			//send command "Read binary file that I sent to you!" with binary data to client
+			srvr.cmdToClient(new MS_TcpIPCommand("Read binary file that I sent to you!", by), cli);
+		});
 		
 		try {
 			server.startServer();
+			//as new thread is created, app will not be terminated unless that thread will be terminated (on srvr.stopServer())
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.exit(1);

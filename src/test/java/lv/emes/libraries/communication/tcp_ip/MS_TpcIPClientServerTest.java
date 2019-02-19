@@ -2,9 +2,9 @@ package lv.emes.libraries.communication.tcp_ip;
 
 import lv.emes.libraries.communication.MS_TakenPorts;
 import lv.emes.libraries.communication.http.MS_Polling;
-import lv.emes.libraries.communication.tcp_ip.client.MS_ClientCommand;
+import lv.emes.libraries.communication.json.MS_JSONArray;
+import lv.emes.libraries.communication.tcp_ip.client.IFuncOnIncomingCommandFromServerStringData;
 import lv.emes.libraries.communication.tcp_ip.client.MS_TcpIPClient;
-import lv.emes.libraries.communication.tcp_ip.server.MS_ServerCommand;
 import lv.emes.libraries.communication.tcp_ip.server.MS_TcpIPServer;
 import lv.emes.libraries.file_system.MS_BinaryTools;
 import lv.emes.libraries.file_system.MS_FileSystemTools;
@@ -18,12 +18,15 @@ import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
 import java.io.IOException;
+import java.io.UTFDataFormatException;
 import java.lang.reflect.Array;
 import java.net.SocketTimeoutException;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static junit.framework.TestCase.assertFalse;
+import static lv.emes.libraries.communication.tcp_ip.MS_ClientServerConstants.*;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -40,7 +43,7 @@ public class MS_TpcIPClientServerTest {
     private static MS_TcpIPServer server;
     private static MS_TcpIPClient client1;
     private static MS_TcpIPClient client2;
-    private static boolean serverIsOn;
+    private static boolean serverIsUp;
     private static boolean secondReceivedThatServerIsGoingOff = false;
     private static String serverReceived = "";
     private static boolean serverFinishedCommand = false;
@@ -71,60 +74,41 @@ public class MS_TpcIPClientServerTest {
 
         server = new MS_TcpIPServer(PORT);
         server.startServer();
-        serverIsOn = true;
+        serverIsUp = true;
 
-        MS_ServerCommand cmdRead = new MS_ServerCommand();
-        cmdRead.code = CMD1_DISCONNECT_AND_PRINTLN;
-        cmdRead.doOnCommand = (server, data, cli, out) -> {
-            String text = data.get(1);
-            System.out.println("Server received: " + text);
-            serverReceived = text;
-            if (text.equals(TEXT3))
+        server.registerCommandWithStringData(CMD1_DISCONNECT_AND_PRINTLN, (server, client, data) -> {
+            System.out.println("Server received: " + data);
+            serverReceived = data;
+            if (data.equals(TEXT3))
                 server.stopServer();
-        };
-        server.registerNewCommand(cmdRead);
+        });
 
-        cmdRead = new MS_ServerCommand();
-        cmdRead.code = CMD2_SIMPLY_PRINTLN;
-        cmdRead.doOnCommand = (server, data, cli, out) -> {
-            String text = data.get(1);
-            System.out.println("Server received: " + text);
-            serverReceived = text;
-        };
-        server.registerNewCommand(cmdRead);
+        server.registerCommandWithStringData(CMD2_SIMPLY_PRINTLN, (server, client, data) -> {
+            System.out.println("Server received: " + data);
+            serverReceived = data;
+        });
 
-        server.registerNewCommand(new MS_ServerCommand(CMD5_WAIT_FOR_SOME_WHILE, (server, data, cli, out) -> {
-            serverReceived = data.get(1);
+        server.registerCommandWithStringData(CMD5_WAIT_FOR_SOME_WHILE, (server, client, data) -> {
+            serverReceived = data;
             MS_CodingUtils.sleep(DEFAULT_SLEEP_TIME * 10);
             serverFinishedCommand = true;
-        }));
+        });
+
 
         //CLIENT
+        IFuncOnIncomingCommandFromServerStringData cmd3Action = (client, data) -> {
+            System.out.println("Client (id = " + client.getId() + ") received: " + data);
+            serverReceived = data;
+        };
         client1 = new MS_TcpIPClient();
         client1.connect(MS_ClientServerConstants._DEFAULT_HOST, PORT);
-        MS_ClientCommand cmdReadClient = new MS_ClientCommand();
-        cmdReadClient.code = CMD3_PRINTLN_PLUS_CLIENT_ID;
-        cmdReadClient.doOnCommand = (client, data, out) -> {
-            String text = data.get(1);
-            System.out.println("Client (id = " + client.getId() + ") received: " + text);
-            serverReceived = text;
-        };
-        client1.registerNewCommand(cmdReadClient);
-        client1.onServerGoingDown = () -> {
-            serverIsOn = false;
-        };
+        client1.registerCommandWithStringData(CMD3_PRINTLN_PLUS_CLIENT_ID, cmd3Action);
+        client1.onServerGoingDown = () -> serverIsUp = false;
 
         //_SECOND CLIENT
         client2 = new MS_TcpIPClient();
         client2.connect(MS_ClientServerConstants._DEFAULT_HOST, PORT);
-        cmdReadClient = new MS_ClientCommand();
-        cmdReadClient.code = CMD3_PRINTLN_PLUS_CLIENT_ID;
-        cmdReadClient.doOnCommand = (client, data, out) -> {
-            String text = data.get(1);
-            System.out.println("Client (id = " + client.getId() + ") received: " + text);
-            serverReceived = text;
-        };
-        client2.registerNewCommand(cmdReadClient);
+        client2.registerCommandWithStringData(CMD3_PRINTLN_PLUS_CLIENT_ID, cmd3Action);
         client2.onServerGoingDown = () -> {
             secondReceivedThatServerIsGoingOff = true;
             System.out.println("Client with id = " + client2.getId() + " is going down too.");
@@ -140,29 +124,26 @@ public class MS_TpcIPClientServerTest {
     public void test01SimpleMessagging() {
         doSleepForXTimes(2);
         assertEquals(2, getServerConnectionCount());
-        client1.addDataToContainer(TEXT1);
-        assertTrue(client1.cmdToServer(CMD1_DISCONNECT_AND_PRINTLN));
+        assertTrue(client1.cmdToServer(new MS_TcpIPCommand(CMD1_DISCONNECT_AND_PRINTLN, TEXT1)));
         doSleepForXTimes(1);
         assertEquals(serverReceived, TEXT1);
 
-        assertTrue(client1.cmdToServer(CMD2_SIMPLY_PRINTLN));
+        assertTrue(client1.cmdToServer(new MS_TcpIPCommand(CMD2_SIMPLY_PRINTLN, "")));
         doSleepForXTimes(1);
         assertEquals(serverReceived, TEXT5); //empty text, cause no data added
 
         //second client
-        client2.addDataToContainer(TEXT2);
-        assertTrue(client2.cmdToServer(CMD1_DISCONNECT_AND_PRINTLN));
+        assertTrue(client2.cmdToServer(new MS_TcpIPCommand(CMD1_DISCONNECT_AND_PRINTLN, TEXT2)));
         doSleepForXTimes(1);
         assertEquals(serverReceived, TEXT2); //empty text, cause no data added
 
         //let's shutdown the server for a sek
-        client1.addDataToContainer(TEXT3);
-        assertTrue(client1.cmdToServer(CMD1_DISCONNECT_AND_PRINTLN));
+        assertTrue(client1.cmdToServer(new MS_TcpIPCommand(CMD1_DISCONNECT_AND_PRINTLN, TEXT3)));
         doSleepForXTimes(1);
         assertEquals(serverReceived, TEXT3);
         assertTrue(!server.isRunning());
         assertTrue(!client1.isConnected());
-        assertTrue(!serverIsOn);
+        assertTrue(!serverIsUp);
         assertTrue(secondReceivedThatServerIsGoingOff);
     }
 
@@ -179,7 +160,7 @@ public class MS_TpcIPClientServerTest {
         assertEquals(0, getServerConnectionCount());
         server.startServer();
         assertEquals(0, getServerConnectionCount());
-        serverIsOn = true;
+        serverIsUp = true;
         client1.connect(MS_ClientServerConstants._DEFAULT_HOST, PORT);
         doSleepForXTimes(2);
         assertEquals(1, getServerConnectionCount());
@@ -190,20 +171,19 @@ public class MS_TpcIPClientServerTest {
         assertEquals(2, getServerConnectionCount());
 
         doSleepForXTimes(1);
-        assertTrue(server.cmdToClientByID(CMD3_PRINTLN_PLUS_CLIENT_ID, client1.getId()));
+        assertTrue(server.cmdToClientByID(new MS_TcpIPCommand(CMD3_PRINTLN_PLUS_CLIENT_ID, ""), client1.getId()));
         doSleepForXTimes(1);
         assertEquals(serverReceived, TEXT5);
 
-        //server's empty message
-        server.addDataToContainer(TEXT4);
-        server.cmdToAll(CMD3_PRINTLN_PLUS_CLIENT_ID);
+        //server's message
+        server.cmdToAll(new MS_TcpIPCommand(CMD3_PRINTLN_PLUS_CLIENT_ID, TEXT4));
         doSleepForXTimes(5);
         assertEquals(serverReceived, TEXT4);
 
         //DC those client!
         server.disconnectAllClients();
         assertEquals(0, getServerConnectionCount());
-        assertTrue(serverIsOn);
+        assertTrue(serverIsUp);
         assertEquals(0, server.getClients().size());
         doSleepForXTimes(3);
         assertFalse(client1.isConnected());
@@ -225,11 +205,8 @@ public class MS_TpcIPClientServerTest {
         assertEquals(1, getServerConnectionCount());
 
         //make server listen the command that indicates that client is sending bytes to him
-        MS_ServerCommand cmdReceiveBytesFromClient = new MS_ServerCommand();
-        cmdReceiveBytesFromClient.code = CMD4_SEND_BINARY_FROM_SERVER;
-        cmdReceiveBytesFromClient.doOnCommand = (server, data, cli, out) -> {
+        server.registerCommandWithBinaryData(CMD4_SEND_BINARY_FROM_SERVER, (server, cli, bytesFromClient) -> {
             assertTrue(cli.isConnected());
-            byte[] bytesFromClient = MS_BinaryTools.stringToBytes(data.get(1));
 
             try {
                 MS_BinaryTools.writeFile(MS_BinaryTools.bytesToIntput(bytesFromClient), BINARY_DEST_FILE_SERVER);
@@ -237,13 +214,11 @@ public class MS_TpcIPClientServerTest {
                 throw new RuntimeException("Failed to save file locally");
             }
             assertTrue("Server returned no bytes.", Array.getLength(bytesFromClient) > 0);
-        };
-        server.registerNewCommand(cmdReceiveBytesFromClient);
+        });
 
         byte[] by = MS_BinaryTools.inputToBytes(MS_FileSystemTools.getResourceInputStream(BINARY_SOURCE_FILE));
         assertTrue(server.isRunning());
-        client1.addDataToContainer(MS_BinaryTools.bytesToString(by));
-        client1.cmdToServer(CMD4_SEND_BINARY_FROM_SERVER);
+        client1.cmdToServer(new MS_TcpIPCommand(CMD4_SEND_BINARY_FROM_SERVER, by));
         assertTrue(server.isRunning());
         doSleepForXTimes(8); //w8 till server does his job
     }
@@ -263,11 +238,8 @@ public class MS_TpcIPClientServerTest {
         assertEquals("There must be 1 active connection!", 1, getServerConnectionCount());
 
         //make server listen the command that indicates that client is sending bytes to him
-        MS_ClientCommand cmdReceiveBytesFromServer = new MS_ClientCommand();
-        cmdReceiveBytesFromServer.code = CMD4_SEND_BINARY_FROM_SERVER;
-        cmdReceiveBytesFromServer.doOnCommand = (client, data, out) -> {
+        client1.registerCommandWithBinaryData(CMD4_SEND_BINARY_FROM_SERVER, (client, bytesFromServer) -> {
             assertTrue(client.isConnected());
-            byte[] bytesFromServer = MS_BinaryTools.stringToBytes(data.get(1));
 
             try {
                 MS_BinaryTools.writeFile(MS_BinaryTools.bytesToIntput(bytesFromServer), BINARY_DEST_FILE_CLIENT);
@@ -275,13 +247,11 @@ public class MS_TpcIPClientServerTest {
                 throw new RuntimeException("Failed to save file locally");
             }
             assertTrue("Client returned no bytes.", Array.getLength(bytesFromServer) > 0);
-        };
-        client1.registerNewCommand(cmdReceiveBytesFromServer);
+        });
 
-        byte[] by = MS_BinaryTools.inputToBytes(MS_FileSystemTools.getResourceInputStream(BINARY_SOURCE_FILE));
         assertTrue(server.isRunning());
-        server.addDataToContainer(MS_BinaryTools.bytesToString(by));
-        server.cmdToClientByID(CMD4_SEND_BINARY_FROM_SERVER, client1.getId());
+        byte[] by = MS_BinaryTools.inputToBytes(MS_FileSystemTools.getResourceInputStream(BINARY_SOURCE_FILE));
+        server.cmdToClientByID(new MS_TcpIPCommand(CMD4_SEND_BINARY_FROM_SERVER, by), client1.getId());
         assertTrue(server.isRunning());
         doSleepForXTimes(8); //w8 till server does his job
     }
@@ -310,8 +280,7 @@ public class MS_TpcIPClientServerTest {
         serverFinishedCommand = false; //init value to check afterwards
         final String DATA_THAT_SERVER_SHOULD_PROCESS = "Some value that needs to be delivered to server";
 
-        impatientClient.addDataToContainer(DATA_THAT_SERVER_SHOULD_PROCESS);
-        impatientClient.cmdToServerAcknowledge(CMD5_WAIT_FOR_SOME_WHILE);
+        impatientClient.cmdToServerAcknowledge(new MS_TcpIPCommand(CMD5_WAIT_FOR_SOME_WHILE, DATA_THAT_SERVER_SHOULD_PROCESS));
 
         assertEquals("Server didn't even receive command from client", DATA_THAT_SERVER_SHOULD_PROCESS, serverReceived);
         assertFalse("Server should not be able to process this command in time, but it does", serverFinishedCommand);
@@ -329,8 +298,7 @@ public class MS_TpcIPClientServerTest {
         AtomicBoolean failure = new AtomicBoolean(false);
         AtomicReference<String> receivedCmdCode = new AtomicReference<>();
 
-        impatientClient.addDataToContainer(DATA_THAT_SERVER_SHOULD_PROCESS);
-        impatientClient.cmdToServerNotify(CMD5_WAIT_FOR_SOME_WHILE, (code) -> {
+        impatientClient.cmdToServerNotify(new MS_TcpIPCommand(CMD5_WAIT_FOR_SOME_WHILE, DATA_THAT_SERVER_SHOULD_PROCESS), (code) -> {
             success.set(true);
             receivedCmdCode.set(code);
         }, (exc) -> failure.set(true));
@@ -358,8 +326,7 @@ public class MS_TpcIPClientServerTest {
         AtomicBoolean failure = new AtomicBoolean(false);
         AtomicReference<String> receivedCmdCode = new AtomicReference<>();
 
-        impatientClient.addDataToContainer(DATA_THAT_SERVER_SHOULD_PROCESS);
-        impatientClient.cmdToServerNotify(CMD5_WAIT_FOR_SOME_WHILE, (code) -> {
+        impatientClient.cmdToServerNotify(new MS_TcpIPCommand(CMD5_WAIT_FOR_SOME_WHILE, DATA_THAT_SERVER_SHOULD_PROCESS), (code) -> {
             success.set(true);
             receivedCmdCode.set(code);
         }, (exc) -> failure.set(true));
@@ -369,5 +336,45 @@ public class MS_TpcIPClientServerTest {
                 .withSleepInterval(1).withMaxPollingAttempts(100).poll();
 
         assertTrue("Notification on failure was not received, even though command shouldn't reach server's thread in time", failure.get());
+    }
+
+    @Test
+    public void test21CommandToServerOfDifferentTypeThanRegistered() throws IOException {
+        AtomicReference<UTFDataFormatException> caughtExceptionOnServerSide = new AtomicReference<>(null);
+        server.onDataFormatException = (caughtExceptionOnServerSide::set);
+        client1.cmdToServerAcknowledge(new MS_TcpIPCommand(CMD1_DISCONNECT_AND_PRINTLN, new MS_JSONArray())); //wrong type of command
+        assertThatThrownBy(() -> {
+            throw new MS_Polling<UTFDataFormatException>()
+                    .withSleepInterval(DEFAULT_SLEEP_TIME / 2)
+                    .withMaxPollingAttempts(10)
+                    .withAction(caughtExceptionOnServerSide::get)
+                    .withCheck(Objects::nonNull)
+                    .poll();
+        })
+                .hasMessageContaining("Received command from client with type")
+                .hasMessageContaining(CMD1_DISCONNECT_AND_PRINTLN)
+                .hasMessageContaining(_CMD_DATA_TYPE_DESCRIPTIONS.get(_CMD_WITH_JSON_ARRAY_DATA)) //received
+                .hasMessageContaining(_CMD_DATA_TYPE_DESCRIPTIONS.get(_CMD_WITH_STRING_DATA)) //expected
+        ;
+    }
+
+    @Test
+    public void test22CommandToClientOfDifferentTypeThanRegistered() {
+        AtomicReference<UTFDataFormatException> caughtExceptionOnServerSide = new AtomicReference<>(null);
+        client1.onDataFormatException = (caughtExceptionOnServerSide::set);
+        server.cmdToClient(new MS_TcpIPCommand(CMD3_PRINTLN_PLUS_CLIENT_ID, (byte[]) null), server.getClientByID(client1.getId())); //wrong type of command
+        assertThatThrownBy(() -> {
+            throw new MS_Polling<UTFDataFormatException>()
+                    .withSleepInterval(DEFAULT_SLEEP_TIME / 2)
+                    .withMaxPollingAttempts(4)
+                    .withAction(caughtExceptionOnServerSide::get)
+                    .withCheck(Objects::nonNull)
+                    .poll();
+        })
+                .hasMessageContaining("Received command from server with type")
+                .hasMessageContaining(CMD3_PRINTLN_PLUS_CLIENT_ID)
+                .hasMessageContaining(_CMD_DATA_TYPE_DESCRIPTIONS.get(_CMD_WITH_BINARY_DATA)) //received
+                .hasMessageContaining(_CMD_DATA_TYPE_DESCRIPTIONS.get(_CMD_WITH_STRING_DATA)) //expected
+        ;
     }
 }
