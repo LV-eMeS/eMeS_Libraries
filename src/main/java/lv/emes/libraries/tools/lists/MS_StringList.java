@@ -24,7 +24,8 @@ public final class MS_StringList implements MS_ListActions<String>, MS_Contactab
     public static final char _DEFAULT_DELIMITER = '#';
     public static final char _SECOND_DEFAULT_DELIM = '`';//chr(9835);
     /**
-     * Delimiter can be changed and will be used in <b>fromString</b> and <b>toString</b> methods. Default value of this property is <b>_DEFAULT_DELIMITER</b>.
+     * Delimiter can be changed and will be used in <b>fromString</b> and <b>toString</b> methods.
+     * Default value of this property is <b>_DEFAULT_DELIMITER</b>.
      *
      * @see MS_StringList#_DEFAULT_DELIMITER
      * @see MS_StringList#fromString(String)
@@ -357,9 +358,9 @@ public final class MS_StringList implements MS_ListActions<String>, MS_Contactab
         int i = 0;
         StringBuilder res = new StringBuilder();
         while (i < aStringToCheck.length()) {
-            res.append(Character.toString(aStringToCheck.charAt(i)));
+            res.append(aStringToCheck.charAt(i));
             if (aStringToCheck.charAt(i) == delimiter)
-                res.append(Character.toString(secondDelimiter));
+                res.append(secondDelimiter);
             i++;
         }
         return res.toString();
@@ -370,10 +371,12 @@ public final class MS_StringList implements MS_ListActions<String>, MS_Contactab
      * Every pattern in text <b>aString</b> that ends with element <b>delimiter</b> becomes to a new element of this list.
      *
      * @param aString text that is properly delimited with <b>delimiter</b>.
+     * @return this string list.
      * @see MS_StringList#delimiter
      */
-    public void fromString(String aString) {
+    public MS_StringList fromString(String aString) {
         this.fromString(aString, this.delimiter);
+        return this;
     }
 
     /**
@@ -382,13 +385,14 @@ public final class MS_StringList implements MS_ListActions<String>, MS_Contactab
      *
      * @param aString    text that is properly delimited with <b>aDelimiter</b>.
      * @param aDelimiter a delimiter.
+     * @return this string list.
      */
-    public void fromString(String aString, char aDelimiter) {
+    public MS_StringList fromString(String aString, char aDelimiter) {
         this.delimiter = aDelimiter;
         clear(); //clear the list
-        if (aString == null) return; //if no text given, list will be left empty
+        if (aString == null) return this; //if no text given, list will be left empty
         int aStringLen = aString.length();
-        if (aStringLen == 0) return;
+        if (aStringLen == 0) return this;
         StringBuilder el = new StringBuilder(); //text, which will be saved as concrete element of list
         //make sure data ends with delimiter, in case it is not so for input
         if (aString.charAt(aString.length() - 1) != aDelimiter) {
@@ -414,6 +418,7 @@ public final class MS_StringList implements MS_ListActions<String>, MS_Contactab
             }
             i++;
         } //while loop ends here
+        return this;
     }
 
     private boolean listIsEmptyOrIndexNotInRange(int index) {
@@ -424,22 +429,26 @@ public final class MS_StringList implements MS_ListActions<String>, MS_Contactab
      * Loads elements from text file to this kind of list. A <b>delimiter</b> is used also.
      *
      * @param aPathToTextFile path to a file.
+     * @return this string list.
      * @see MS_StringList#delimiter
      */
-    public void fromTextFile(String aPathToTextFile) {
+    public MS_StringList fromTextFile(String aPathToTextFile) {
         this.clear();
         this.fList = new MS_TextFile(aPathToTextFile).importStringListFromFile();
+        return this;
     }
 
     /**
      * Loads elements from text file to this kind of list. A <b>delimiter</b> is used also.
      *
      * @param aTextFile an eMeS text file with already assigned physical file.
+     * @return this string list.
      * @see MS_StringList#delimiter
      */
-    public void fromTextFile(MS_TextFile aTextFile) {
+    public MS_StringList fromTextFile(MS_TextFile aTextFile) {
         this.clear();
         this.fList = aTextFile.importStringListFromFile();
+        return this;
     }
 
     /**

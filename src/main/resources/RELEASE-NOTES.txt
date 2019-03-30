@@ -21,6 +21,8 @@ eMeS libraries Version 2.3.0
 * Extended org.json features and added support of JSON arrays as response body of HTTP call.
 * Added capability to TPC/IP client to send command and wait for acknowledgment from server.
 * TCP/IP client and server now operates with JSON objects while processing commands.
+* Added class for Lazy initialization.
+* Reworked property initialization from file. It's now done through handy enumerations.
 ========================================================================================================
 eMeS libraries Version 2.2.0
 ========================================================================================================

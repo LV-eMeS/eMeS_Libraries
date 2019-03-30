@@ -333,7 +333,7 @@ public class MS_TpcIPClientServerTest {
 
         //wait until things changes
         new MS_Polling<Boolean>().withAction(success::get).withCheck((a) -> success.get() || failure.get())
-                .withSleepInterval(1).withMaxPollingAttempts(100).poll();
+                .withSleepInterval(4).withMaxPollingAttempts(100).poll();
 
         assertTrue("Notification on failure was not received, even though command shouldn't reach server's thread in time", failure.get());
     }

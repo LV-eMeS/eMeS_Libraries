@@ -22,7 +22,7 @@ public class MS_PropertyFileManagerTest {
 
         props = MS_PropertyFileManager.getProperties(testPropsPath2);
         assertEquals("test property 1", props.getProperty("test1"));
-        assertEquals("test property 3", props.getProperty("test3"));
+        assertEquals("tēšt prōpērtī 3", props.getProperty("test3"));
     }
 
     @Test(expected = MS_BadSetupException.class)

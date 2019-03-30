@@ -76,6 +76,8 @@ public class MS_TcpIPCommand {
 
     /**
      * Method to be used by client or server exactly when method to send command is called.
+     *
+     * @return command JSON object.
      */
     public MS_JSONObject buildCommand() {
         return cmdBuilder.withId(UUID.randomUUID()).build(); //generate new ID every time command is sent

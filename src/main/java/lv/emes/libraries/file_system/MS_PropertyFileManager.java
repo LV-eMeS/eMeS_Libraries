@@ -2,7 +2,6 @@ package lv.emes.libraries.file_system;
 
 import lv.emes.libraries.tools.MS_BadSetupException;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -24,9 +23,9 @@ public class MS_PropertyFileManager {
     public static MS_PropertiesFile getProperties(String pathToPropsFile) {
         MS_PropertiesFile properties = propReaders.get(pathToPropsFile);
         if (properties == null) {
-            try (FileInputStream filePath = new FileInputStream(pathToPropsFile)) {
+            try {
                 properties = new MS_PropertiesFile();
-                properties.load(filePath);
+                properties.load(pathToPropsFile);
                 propReaders.put(pathToPropsFile, properties);
             } catch (IOException e) {
                 throw new MS_BadSetupException("Properties file [%s] cannot be read.", e, pathToPropsFile);

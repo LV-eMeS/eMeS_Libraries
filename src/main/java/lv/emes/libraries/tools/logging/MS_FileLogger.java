@@ -19,7 +19,7 @@ import static lv.emes.libraries.utilities.MS_StringUtils._LINE_BRAKE;
  * </ul>
  *
  * @author eMeS
- * @version 2.2.
+ * @version 2.3.
  */
 public class MS_FileLogger implements MS_LoggingOperations, MS_LoggingRepository {
 
@@ -52,6 +52,16 @@ public class MS_FileLogger implements MS_LoggingOperations, MS_LoggingRepository
      */
     public void warn(String msg) {
         pAppendLine(pGetTimePart(LocalDateTime.now()) + pGetMainPart(MS_LoggingEventTypeEnum.WARN, msg));
+    }
+
+    @Override
+    public void warn(String msg, Exception error) {
+        if (error == null)
+            warn(msg);
+        else
+            pAppendLine(pGetTimePart(LocalDateTime.now()) +
+                            pGetMainPart(MS_LoggingEventTypeEnum.WARN, msg) +
+                            pGetErrorPart(error));
     }
 
     /**

@@ -11,7 +11,7 @@ package lv.emes.libraries.tools.logging;
  * </ul>
  *
  * @author eMeS
- * @version 1.1.
+ * @version 1.2.
  */
 public interface MS_LoggingOperations {
 
@@ -37,6 +37,15 @@ public interface MS_LoggingOperations {
     void warn(String msg);
 
     /**
+     * Log warn with message <b>msg</b>.
+     * Word "WARN" will be added before this message while performing logging operation.
+     *
+     * @param msg   informative text to be added to logger entries.
+     * @param error exception that occurred on this warning (stack trace will be logged if error is not null).
+     */
+    void warn(String msg, Exception error);
+
+    /**
      * Log error with message <b>msg</b>.
      * Word "ERROR" will be added before this message while performing logging operation.
      *
@@ -47,7 +56,7 @@ public interface MS_LoggingOperations {
     /**
      * Log error with message <b>msg</b> and add <b>error</b> stack trace as well.
      *
-     * @param msg informative text to be added to logger entries.
+     * @param msg   informative text to be added to logger entries.
      * @param error exception that occurred by this error (stack trace will be logged if error is not null).
      */
     void error(String msg, Exception error);

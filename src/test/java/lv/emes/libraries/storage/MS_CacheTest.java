@@ -210,7 +210,7 @@ public class MS_CacheTest {
         allThreadsTogether.concatenate(threads6);
 
         //wait until last thread executes
-        MS_FutureEvent.joinEvents(allThreadsTogether, 35, 35);
+        MS_FutureEvent.joinEvents(allThreadsTogether, 35, 40);
         verifyCurrentLogCount(0);
         assertEquals(200, cache.getRepository().size());
     }

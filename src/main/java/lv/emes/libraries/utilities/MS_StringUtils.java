@@ -471,7 +471,7 @@ public final class MS_StringUtils {
      *
      * @param value      parameter value passed as String. Examples: "Some String value", "999", "true", "/null"
      * @param valueClass desired class of given <b>parameter</b> to which it will be converted from String.
-     * @param <T>        type of parameter value. Currently only Boolean, Integer, Long and String are supported.
+     * @param <T>        type of parameter value. Currently only Boolean, Integer, Long, String and MS_StringList are supported.
      * @return <b>parameter</b> (of type <b>T</b>).
      * @throws MS_BadSetupException if type of <b>value</b> is unsupported, <b>valueClass</b> doesn't match or parse fails.
      * @since 2.2.2.
@@ -506,6 +506,11 @@ public final class MS_StringUtils {
                     throw new MS_BadSetupException("String value [%s] cannot be parsed as Long, because it is not a number", value);
                 }
                 break;
+            case "MS_StringList":
+                MS_StringList commaDelimitedString = new MS_StringList(',');
+                commaDelimitedString.fromString(value);
+                parameterValue = (T) commaDelimitedString;
+                break;
             default:
                 throw new MS_BadSetupException("Unsupported class [%s] for String value parsing", valueClass.getSimpleName());
         }
@@ -518,7 +523,7 @@ public final class MS_StringUtils {
      * resulting String will not be <tt>null</tt>, but {@link MS_StringUtils#NULL_STRING} instead.
      *
      * @param value value of primitive type. Can be null, in that case result of function will be {@link MS_StringUtils#NULL_STRING}.
-     * @param <T>   type of value. Currently only Boolean, Integer, Long and String are supported.
+     * @param <T>   type of value. Currently only Boolean, Integer, Long, String and MS_StringList are supported.
      * @return string representation of <b>value</b> or {@link MS_StringUtils#NULL_STRING}.
      * @throws MS_BadSetupException if type of <b>value</b> is unsupported.
      * @since 2.2.2.
@@ -537,6 +542,11 @@ public final class MS_StringUtils {
             case "Integer":
             case "Long":
                 res = String.valueOf(value);
+                break;
+            case "MS_StringList":
+                MS_StringList stringList = (MS_StringList) value;
+                stringList.delimiter = ',';
+                res = stringList.toStringWithNoLastDelimiter();
                 break;
             default:
                 throw new MS_BadSetupException("Unsupported type [%s] for value conversion to String", value.getClass().getSimpleName());

@@ -16,7 +16,7 @@ import org.threeten.bp.ZonedDateTime;
  * </ul>
  *
  * @author eMeS
- * @version 1.3.
+ * @version 1.4.
  */
 public class MS_MultiLogger implements MS_LoggingOperations {
 
@@ -39,6 +39,11 @@ public class MS_MultiLogger implements MS_LoggingOperations {
     @Override
     public void warn(String msg) {
         logEventMessageToAllRepos(msg, null, MS_LoggingEventTypeEnum.WARN);
+    }
+
+    @Override
+    public void warn(String msg, Exception error) {
+        logEventMessageToAllRepos(msg, error, MS_LoggingEventTypeEnum.WARN);
     }
 
     @Override
