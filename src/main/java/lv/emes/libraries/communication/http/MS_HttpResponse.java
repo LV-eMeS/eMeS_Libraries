@@ -54,6 +54,8 @@ public class MS_HttpResponse {
             case ARRAY:
                 this.bodyArray = new MS_JSONArray(body);
                 break;
+            default:
+                this.bodyString = body;
         }
     }
 

@@ -1,6 +1,7 @@
 package lv.emes.libraries.communication.http;
 
 import lv.emes.libraries.tools.MS_BadSetupException;
+import lv.emes.libraries.utilities.MS_CodingUtils;
 import okhttp3.*;
 
 import java.io.IOException;
@@ -18,8 +19,8 @@ import java.util.Objects;
  */
 public class MS_HttpCallHandler {
 
-    public static final MediaType MEDIA_TYPE_MARKDOWN = MediaType.parse("text/x-markdown; charset=utf-8");
-    public static final MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json; charset=utf-8");
+    public static final MediaType MEDIA_TYPE_MARKDOWN = MediaType.parse("text/x-markdown;charset=UTF-8");
+    public static final MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json;charset=UTF-8");
 
     private MS_HttpCallHandler() {
     }
@@ -103,31 +104,34 @@ public class MS_HttpCallHandler {
     }
 
     private static RequestBody formBody(MS_HttpRequest request) {
-        MultipartBody.Builder bodyBuilder = new MultipartBody.Builder().setType(MultipartBody.FORM);
         MediaType bodyMediaType;
         String content;
 
-        if (request.getBodyAsString() != null) {
-            bodyMediaType = MEDIA_TYPE_MARKDOWN;
-            content = request.getBodyAsString();
-        } else if (request.getBody() != null) {
+        if (request.getBody() != null) {
             bodyMediaType = MEDIA_TYPE_JSON;
             content = request.getBody().toString();
         } else if (request.getBodyAsArray() != null) {
             bodyMediaType = MEDIA_TYPE_JSON;
             content = request.getBodyAsArray().toString();
+        } else if (request.getBodyAsString() != null) {
+            bodyMediaType = MEDIA_TYPE_MARKDOWN;
+            content = request.getBodyAsString();
         } else {
             bodyMediaType = MEDIA_TYPE_MARKDOWN;
             content = "";
         }
 
-        bodyBuilder.addPart(MultipartBody.Part.create(FormBody.create(bodyMediaType, content)));
-        if (request.getParameters() != null) {
+        RequestBody formBody = FormBody.create(bodyMediaType, content);
+        if (MS_CodingUtils.isEmpty(request.getParameters())) {
+            return formBody;
+        } else {
+            MultipartBody.Builder bodyBuilder = new MultipartBody.Builder().setType(MultipartBody.FORM);
+            bodyBuilder.addPart(MultipartBody.Part.create(formBody));
 //            request.getParameters().forEach(bodyBuilder::addFormDataPart); //Java 8
             for (Map.Entry<String, String> params : request.getParameters().entrySet()) { //For Android
                 bodyBuilder.addFormDataPart(params.getKey(), params.getValue());
             }
+            return bodyBuilder.build();
         }
-        return bodyBuilder.build();
     }
 }

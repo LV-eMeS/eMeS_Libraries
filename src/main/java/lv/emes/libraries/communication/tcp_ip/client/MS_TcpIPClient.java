@@ -229,7 +229,8 @@ public class MS_TcpIPClient extends MS_TcpIPClientCore {
                     .withMaxPollingAttempts(getWriteTimeout() > POLLING_SLEEP_INTERVAL ? getWriteTimeout() / POLLING_SLEEP_INTERVAL : 1)
                     .poll();
         } catch (MS_ExecutionFailureException e) {
-            throw new SocketTimeoutException(String.format("Failed to receive server acknowledgement of execution of command [%s]", commandId));
+            throw new SocketTimeoutException(String.format("Failed to receive server acknowledgement of execution of command [%s][%s]",
+                    cmd.getString("code"), commandId));
         }
     }
 

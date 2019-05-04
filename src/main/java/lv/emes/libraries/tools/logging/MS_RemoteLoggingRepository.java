@@ -1,21 +1,21 @@
 package lv.emes.libraries.tools.logging;
 
-import com.cedarsoftware.util.io.JsonReader;
+import lv.emes.libraries.communication.MS_DTOMappingHelper;
 import lv.emes.libraries.communication.cryptography.MS_CryptographyUtils;
 import lv.emes.libraries.communication.http.MS_HttpCallHandler;
 import lv.emes.libraries.communication.http.MS_HttpRequest;
 import lv.emes.libraries.communication.http.MS_HttpRequestMethod;
 import lv.emes.libraries.communication.http.MS_HttpResponse;
+import lv.emes.libraries.communication.json.MS_JSONArray;
+import lv.emes.libraries.communication.json.MS_JSONObject;
 import lv.emes.libraries.storage.MS_Repository;
 import lv.emes.libraries.storage.MS_RepositoryDataExchangeException;
-import lv.emes.libraries.tools.MS_ObjectWrapperHelper;
+import lv.emes.libraries.utilities.MS_DateTimeUtils;
 import org.threeten.bp.Instant;
-import org.threeten.bp.ZonedDateTime;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -24,7 +24,7 @@ import java.util.TreeMap;
  * All data exchange is done by HTTP requests.
  *
  * @author eMeS
- * @version 1.3.
+ * @version 2.0.
  * @since 2.0.4
  */
 public class MS_RemoteLoggingRepository extends MS_Repository<MS_LoggingEvent, Instant> implements MS_LoggingRepository {
@@ -86,16 +86,11 @@ public class MS_RemoteLoggingRepository extends MS_Repository<MS_LoggingEvent, I
             return; //do nothing for lines, because it doesn't make sense to store them as items with IDs
 
         //serialize event and send it to remote logging server
-        MS_SerializedLoggingEvent serializedEvent = MS_ObjectWrapperHelper.wrap(item, MS_SerializedLoggingEvent.class);
-        Map<String, String> parameters = new HashMap<>();
-        parameters.put("type", serializedEvent.getType());
-        parameters.put("time", serializedEvent.getTime());
-        parameters.put("message", serializedEvent.getMessage());
-        parameters.put("error", serializedEvent.getError());
-
-        String url = getRemoteServerBasePath(serverProperties) + serverProperties.getEndpointLogEvent();
-        MS_HttpRequest req = new MS_HttpRequest().withMethod(MS_HttpRequestMethod.POST).withUrl(url)
-                .withParameters(parameters).withHeader("Authorization", getEncryptedSecret(serverProperties))
+        MS_HttpRequest req = new MS_HttpRequest()
+                .withBody(MS_DTOMappingHelper.serialize(item, MS_LoggingEventDTOAlgorithm.class))
+                .withMethod(MS_HttpRequestMethod.POST)
+                .withUrl(getRemoteServerBasePath(serverProperties) + serverProperties.getEndpointLogEvent())
+                .withHeader("Authorization", getEncryptedSecret(serverProperties))
                 .withClientConfigurations(serverProperties.getHttpRequestConfig());
         MS_HttpResponse httpResult;
         try {
@@ -117,7 +112,6 @@ public class MS_RemoteLoggingRepository extends MS_Repository<MS_LoggingEvent, I
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     protected Map<Instant, MS_LoggingEvent> doFindAll() {
         String url = getRemoteServerBasePath(serverProperties) + serverProperties.getEndpointGetAllEvents();
         MS_HttpRequest req = new MS_HttpRequest().withMethod(MS_HttpRequestMethod.GET).withUrl(url)
@@ -136,11 +130,13 @@ public class MS_RemoteLoggingRepository extends MS_Repository<MS_LoggingEvent, I
                 httpResult.getStatusCode());
         try {
             Map<Instant, MS_LoggingEvent> res = new TreeMap<>(Collections.reverseOrder());
-            Map<ZonedDateTime, MS_SerializedLoggingEvent> serializedEvents =
-                    (Map<ZonedDateTime, MS_SerializedLoggingEvent>) JsonReader.jsonToJava(httpResult.getBodyString());
-            serializedEvents.forEach((key, value) -> res.put(key.toInstant(), value.getWrappedObject()));
+            MS_JSONArray serializedEvents = new MS_JSONArray(httpResult.getBodyString());
+            serializedEvents.forEachElement(MS_JSONObject.class, event -> {
+                Instant instant = MS_DateTimeUtils.formatDateTimeBackported(event.getString("time"), MS_DateTimeUtils._DEFAULT_DATE_TIME_FORMAT).toInstant();
+                res.put(instant, MS_DTOMappingHelper.deserialize(event, MS_LoggingEventDTOAlgorithm.class));
+            });
             return res;
-        } catch (Exception e) { //most probably cast exception, but shouldn't happen unless somebody doesn't understand, how to use this
+        } catch (Exception e) { // According to contract exception should not happen, unless serialized incorrectly in other end
             String message = "Deserialization error while trying to convert found logged events in JSON format to Java objects.";
             String detailedMessage = " JSON:\n" + httpResult.getBodyString();
             MS_Log4Java.getLogger(MS_RemoteLoggingRepository.class).error(message + detailedMessage, e);

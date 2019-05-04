@@ -18,10 +18,6 @@ import java.util.Map;
 import static lv.emes.libraries.tools.logging.MS_RemoteLoggingRepository.MAX_SECRET_LENGTH;
 import static org.junit.Assert.*;
 
-/**
- * @author eMeS
- * @version 1.0.
- */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MS_RemoteLoggingRepositoryTest {
 
@@ -49,8 +45,11 @@ public class MS_RemoteLoggingRepositoryTest {
         logger.info("Info: Starting remote logging repository test");
         logger.warn("Warning: Those logging events will be stored to real logging server");
         logger.error("Error: Tests will fail in initialization part if server will be unreachable. ĀЮ漢");
-        logger.error("Error: Lines as delimiters are not supported for remote logging repository",
-                new MS_TestUtils.MS_UnCheckedException2("Those lines will be ignored there. 語"));
+        try {
+            throw new MS_TestUtils.MS_UnCheckedException2("Those lines will be ignored there. 語");
+        } catch (Exception e) {
+            logger.error("Error: Lines as delimiters are not supported for remote logging repository", e);
+        }
         logger.line();
         MS_CodingUtils.sleep(3500); //lets give some meaningful time for logging server to take requests
     }

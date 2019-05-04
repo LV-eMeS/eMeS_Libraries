@@ -305,7 +305,7 @@ public class MS_TpcIPClientServerTest {
 
         //wait until things changes
         new MS_Polling<Boolean>().withAction(success::get).withCheck((a) -> success.get() || failure.get())
-                .withSleepInterval(DEFAULT_SLEEP_TIME / 2).withMaxPollingAttempts(6).poll();
+                .withSleepInterval(DEFAULT_SLEEP_TIME / 2).withMaxPollingAttempts(8).poll();
 
         assertEquals("Server didn't even receive command from client", DATA_THAT_SERVER_SHOULD_PROCESS, serverReceived);
         assertTrue("Notification on success was not received, but we had enough time to successfully process command", success.get());

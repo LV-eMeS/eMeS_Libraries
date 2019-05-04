@@ -1,6 +1,11 @@
 package lv.emes.libraries.tools.logging;
 
+import lv.emes.libraries.tools.MS_EqualityCheckBuilder;
 import lv.emes.libraries.utilities.MS_CodingUtils;
+import lv.emes.libraries.utilities.MS_DateTimeUtils;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.threeten.bp.ZonedDateTime;
 
 /**
@@ -18,7 +23,7 @@ import org.threeten.bp.ZonedDateTime;
  * </ul>
  *
  * @author eMeS
- * @version 1.1.
+ * @version 2.0.
  */
 public class MS_LoggingEvent {
 
@@ -30,7 +35,7 @@ public class MS_LoggingEvent {
      * Type of event that is being logged.
      * If {@link MS_LoggingEventTypeEnum#UNSPECIFIED} then raw event message (without event type, time and error parts) should be logged.
      */
-    private MS_LoggingEventTypeEnum type;
+    private MS_LoggingEventTypeEnum type = MS_LoggingEventTypeEnum.UNSPECIFIED;
     /**
      * Specific message that will be stored in repository as entry.
      */
@@ -130,32 +135,49 @@ public class MS_LoggingEvent {
 
     @Override
     public String toString() {
-        return "MS_LoggingEvent{" +
-                "time=" + time +
-                ", type=" + type +
-                ", message='" + message + '\'' +
-                ", error=" + error +
-                '}';
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+                .append("time", MS_DateTimeUtils.formatDateTime(time, MS_DateTimeUtils._DEFAULT_DATE_TIME_FORMAT))
+                .append("type", type)
+                .append("message", message)
+                .append("error", error)
+                .toString();
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
+
         if (o == null || getClass() != o.getClass()) return false;
 
         MS_LoggingEvent that = (MS_LoggingEvent) o;
 
-        return (time != null ? time.toInstant().equals(that.time.toInstant()) : that.time == null)
-                && type == that.type && (message != null ? message.equals(that.message) : that.message == null)
-                && (error != null ? error.equals(that.error) : that.error == null);
+        return new MS_EqualityCheckBuilder()
+                .append(time.toInstant(), that.time.toInstant())
+                .append(type, that.type)
+                .append(message, that.message)
+                .append(error, that.error, DIFFERENT_EXCEPTION_COMPARISON_ALGORITHM
+                )
+                .isEquals();
     }
+
+    public static final MS_EqualityCheckBuilder.IComparisonAlgorithm<Throwable, Throwable> DIFFERENT_THROWABLE_COMPARISON_ALGORITHM =
+            (thisThrowable, thatThrowable) -> new MS_EqualityCheckBuilder()
+                    .append(thisThrowable.getMessage(), thatThrowable.getMessage())
+                    .append(thisThrowable.getStackTrace(), thatThrowable.getStackTrace())
+                    .areEqual();
+    public static final MS_EqualityCheckBuilder.IComparisonAlgorithm<Exception, Exception> DIFFERENT_EXCEPTION_COMPARISON_ALGORITHM =
+            (thisError, thatError) -> new MS_EqualityCheckBuilder()
+                    .append(thisError, thatError, DIFFERENT_THROWABLE_COMPARISON_ALGORITHM)
+                    .append(thisError.getCause(), thatError.getCause(), DIFFERENT_THROWABLE_COMPARISON_ALGORITHM)
+                    .areEqual();
 
     @Override
     public int hashCode() {
-        int result = time != null ? time.toInstant().hashCode() : 0;
-        result = 31 * result + (type != null ? type.hashCode() : 0);
-        result = 31 * result + (message != null ? message.hashCode() : 0);
-        result = 31 * result + (error != null ? error.hashCode() : 0);
-        return result;
+        return new HashCodeBuilder(17, 37)
+                .append(time)
+                .append(type)
+                .append(message)
+                .append(error)
+                .toHashCode();
     }
 }

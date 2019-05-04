@@ -398,10 +398,20 @@ public final class MS_CodingUtils {
      *
      * @param iterableList collection of iterable elements.
      * @param <T>        type of elements in collection.
-     * @return true if collection is null or has no elements; false, if there is at least 1 element in collection.
+     * @return true if iterable list is null or has no elements; false, if there is at least 1 element in list.
      */
     public static <T> boolean isEmpty(MS_IterableListWithItems<T, ?> iterableList) {
         return iterableList == null || iterableList.size() == 0;
+    }
+
+    /**
+     * Tests if some map is empty or null.
+     *
+     * @param map collection of iterable elements.
+     * @return true if map is null or has no entries; false, if there is at least 1 element in map.
+     */
+    public static boolean isEmpty(Map<?, ?> map) {
+        return map == null || map.size() == 0;
     }
 
     /**
