@@ -34,7 +34,6 @@ dependencies {
     //For tests:
     compile 'org.mockito:mockito-all:1.10.19'
     compile "junit:junit:4.12"
-    testCompile "junit:junit:4.12"
     testCompile "org.assertj:assertj-core:3.10.0"
 }
 

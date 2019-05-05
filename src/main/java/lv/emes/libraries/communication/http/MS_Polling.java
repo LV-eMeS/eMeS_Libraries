@@ -7,7 +7,6 @@ import lv.emes.libraries.utilities.MS_ExecutionFailureException;
 import lv.emes.libraries.utilities.MS_StringUtils;
 
 import java.time.Duration;
-import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalUnit;
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -18,13 +17,13 @@ import java.util.function.Predicate;
  *
  * @param <T> type of resulting object of the poll.
  * @author eMeS
- * @version 1.1
+ * @version 1.2
  * @since 2.1.10
  */
 public class MS_Polling<T> {
 
-    public static final int DEFAULT_MAX_POLLING_ATTEMPTS = 30 * 2; // 30 seconds running twice per second
-    public static final Duration DEFAULT_SLEEP_INTERVAL = Duration.of(500, ChronoUnit.MILLIS);
+    public static final int DEFAULT_MAX_POLLING_ATTEMPTS = 60; // 30 seconds running twice per second
+    public static final long DEFAULT_SLEEP_INTERVAL = 500;
 
     public static final Consumer<MS_Polling> NO_POLLING_ACTION = (p) -> {
     };

@@ -1,5 +1,6 @@
 package lv.emes.libraries.communication;
 
+import lv.emes.libraries.patches.android_compat.JavaUtilCompatibility;
 import lv.emes.libraries.tools.MS_BadSetupException;
 
 import java.lang.reflect.InvocationTargetException;
@@ -14,7 +15,7 @@ import java.util.*;
  * </ul>
  *
  * @author eMeS
- * @version 1.0.
+ * @version 1.1.
  * @since 2.2.4
  */
 public final class MS_DTOMappingHelper {
@@ -69,7 +70,7 @@ public final class MS_DTOMappingHelper {
     @SuppressWarnings("unchecked")
     private static <T, V> MS_DTOMappingAlgorithm<T, V> getAlgorithmFromCache(Class<? extends MS_DTOMappingAlgorithm<T, V>> algorithmClass) {
         Objects.requireNonNull(algorithmClass);
-        return algorithmCache.computeIfAbsent(algorithmClass, aClass -> {
+        return JavaUtilCompatibility.computeIfAbsent(algorithmCache, algorithmClass, aClass -> {
             try {
                 return (MS_DTOMappingAlgorithm<T, V>) aClass.getConstructor().newInstance();
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
