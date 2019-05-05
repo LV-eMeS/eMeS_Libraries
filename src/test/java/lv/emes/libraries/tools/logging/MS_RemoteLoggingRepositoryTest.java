@@ -1,11 +1,13 @@
 package lv.emes.libraries.tools.logging;
 
+import lv.emes.libraries.communication.http.MS_Polling;
 import lv.emes.libraries.storage.MS_RepositoryDataExchangeException;
 import lv.emes.libraries.testdata.TestData;
 import lv.emes.libraries.utilities.MS_CodingUtils;
 import lv.emes.libraries.utilities.MS_ExecutionFailureException;
 import lv.emes.libraries.utilities.MS_TestUtils;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.assertj.core.api.Assertions;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -72,18 +74,40 @@ public class MS_RemoteLoggingRepositoryTest {
         MS_CodingUtils.executeWithRetry(4, () -> {
             Map<Instant, MS_LoggingEvent> events = repository.findAll();
             assertEquals("There should be 5 events logged at test initialization step", 5, loggedEvents.getEventList().size());
-            loggedEvents.getEventList().forEachItem((event, i) -> {
-                if (!event.getType().equals(MS_LoggingEventTypeEnum.UNSPECIFIED))
-                    assertEquals("Not found item at index: " + i
-                                    + "\nExpected items:\n" + loggedEvents.getEventList().toString()
-                                    + "\nActual items:\n" + events.values().toString() + "\n"
-                            , event, events.get(event.getTime().toInstant()));
-            });
+            assertThatEventsMatchOnesWeAddedOnInitialization(events);
         });
     }
 
     @Test
-    public void test04RemoveAll() {
+    public void test04FindEventsInPages() throws MS_ExecutionFailureException {
+        MS_Polling<Map<Instant, MS_LoggingEvent>> polling = new MS_Polling<Map<Instant, MS_LoggingEvent>>()
+                .withSleepInterval(250)
+                .withMaxPollingAttempts(16)
+                .withAction(() -> repository.findPage(1, 2))
+                .withCheck(events -> events.size() == 2)
+                .withStatusMessageProducer((p) -> "Looking for page with 2 logged events");
+        Map<Instant, MS_LoggingEvent> eventsIn1StPage = polling.poll();
+        assertThatEventsMatchOnesWeAddedOnInitialization(eventsIn1StPage);
+
+        // Second page with rest of elements
+        Map<Instant, MS_LoggingEvent> eventsIn2ndPage = polling
+                .withStatusMessage("Looking for last page with rest of logged events (still should be 2)")
+                .withAction(() -> repository.findPage(2, 2))
+                .poll();
+        assertThatEventsMatchOnesWeAddedOnInitialization(eventsIn2ndPage);
+
+        // Check that in first page there are newest event records
+        Instant timeOfEvent1 = MS_CodingUtils.getMapElementKey(eventsIn1StPage, 0);
+        Instant timeOfEvent2 = MS_CodingUtils.getMapElementKey(eventsIn1StPage, 1);
+        Instant timeOfEvent3 = MS_CodingUtils.getMapElementKey(eventsIn2ndPage, 0);
+        Instant timeOfEvent4 = MS_CodingUtils.getMapElementKey(eventsIn2ndPage, 1);
+        assertTrue("In first page first element should be newer than second element, but it's older", timeOfEvent1.isAfter(timeOfEvent2));
+        assertTrue("Elements in second page should be older than ones in first page, but 1st page 2nd element is before than 1st element in 2nd page", timeOfEvent2.isAfter(timeOfEvent3));
+        assertTrue("In second page first element should be newer than second element, but it's older", timeOfEvent3.isAfter(timeOfEvent4));
+    }
+
+    @Test
+    public void test05RemoveAll() {
         repository.removeAll();
         assertEquals(0, repository.findAll().size());
     }
@@ -154,5 +178,11 @@ public class MS_RemoteLoggingRepositoryTest {
                         .withHost(TestData.HTTP_PREFIX + TestData.TESTING_SERVER_HOSTAME)
                         .withSecret(RandomStringUtils.random(MAX_SECRET_LENGTH + 1)))
                 .removeAll();
+    }
+
+    private void assertThatEventsMatchOnesWeAddedOnInitialization(Map<Instant, MS_LoggingEvent> events) {
+        events.forEach((time, event) -> Assertions.assertThat(loggedEvents.getEventList().contains(event))
+                .withFailMessage("Received event that was not initially logged:" + event)
+                .isTrue());
     }
 }

@@ -1,5 +1,5 @@
 eMeS libraries
-Version 2.2.3
+Version 2.2.4
 Release Notes
 
 INTRODUCTION:
@@ -23,6 +23,7 @@ eMeS libraries Version 2.3.0
 * TCP/IP client and server now operates with JSON objects while processing commands.
 * Added class for Lazy initialization.
 * Reworked property initialization from file. It's now done through handy enumerations.
+* Reworked remote logging data exchange and contract and added paging capabilities.
 ========================================================================================================
 eMeS libraries Version 2.2.0
 ========================================================================================================

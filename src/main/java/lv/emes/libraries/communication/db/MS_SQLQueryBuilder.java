@@ -49,7 +49,7 @@ import java.util.Objects;
  * </code></pre>
  *
  * @author eMeS
- * @version 2.4.
+ * @version 2.5.
  */
 public class MS_SQLQueryBuilder extends MS_LineBuilder {
 
@@ -94,7 +94,7 @@ public class MS_SQLQueryBuilder extends MS_LineBuilder {
 
     private enum Oper {
         SELECT, INSERT_INTO, REPLACE_INTO, UPDATE, SET, FROM, DELETE_FROM,
-        FIELD, VALUE, TABLE, WHERE, CONDITION, ORDER_BY, JOIN,
+        FIELD, VALUE, TABLE, WHERE, CONDITION, ORDER_BY, JOIN, LIMIT,
         VALUES, AND, OR, IN, UNION, BRACKET_OPENING, CUSTOM;
 
         @Override
@@ -469,6 +469,20 @@ public class MS_SQLQueryBuilder extends MS_LineBuilder {
     public MS_SQLQueryBuilder orderBy(String conditions) {
         orderBy();
         return beginOperation(false).appendInternal(conditions).endOperation(Oper.CONDITION);
+    }
+
+    /**
+     * Appends query with "LIMIT <b>offset</b> <b>pageSize</b>".
+     *
+     * @param offset page number multiplied by page size.
+     * @param pageSize count of records that SELECT statement will return when using this LIMIT.
+     * @return reference to this query itself.
+     */
+    public MS_SQLQueryBuilder limit(int offset, int pageSize) {
+        return beginOperation(true).appendInternal(Oper.LIMIT.name())
+                .appendInternal(_SP + offset + _COMMA)
+                .appendInternal(_SP + pageSize)
+                .endOperation(Oper.LIMIT);
     }
 
     /**

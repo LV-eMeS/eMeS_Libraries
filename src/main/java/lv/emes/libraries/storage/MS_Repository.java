@@ -1,5 +1,6 @@
 package lv.emes.libraries.storage;
 
+import lv.emes.libraries.tools.MS_BadSetupException;
 import lv.emes.libraries.tools.lists.IFuncForEachItemLoopAction;
 import lv.emes.libraries.tools.lists.MS_IterableListWithItems;
 
@@ -22,6 +23,7 @@ import java.util.TreeMap;
  * <li>get</li>
  * <li>find</li>
  * <li>findAll</li>
+ * <li>findPage</li>
  * <li>forEachItem</li>
  * <li>removeAll</li>
  * <li>count</li>
@@ -38,6 +40,7 @@ import java.util.TreeMap;
  * <li>doRemove</li>
  * <li>doFind</li>
  * <li>doFindAll</li>
+ * <li>doFindPage</li>
  * <li>doGetSize</li>
  * <li>doRemoveAll</li>
  * </ul>
@@ -50,7 +53,7 @@ import java.util.TreeMap;
  * @param <T>  type of items.
  * @param <ID> type of item identifiers.
  * @author eMeS
- * @version 2.0.
+ * @version 2.1.
  */
 public abstract class MS_Repository<T, ID> implements MS_IRepositoryOperations<T, ID>, MS_IterableListWithItems<T, ID> {
 
@@ -132,6 +135,41 @@ public abstract class MS_Repository<T, ID> implements MS_IRepositoryOperations<T
     protected abstract Map<ID, T> doFindAll();
 
     /**
+     * Standard implementation of page lookup.
+     * <p><u>Warning</u>: this is only imitation of how actually this operation should be performed, as this implementation uses
+     * doFindAll() method and takes only requested page entries from it, which in the end does not give any performance
+     * gain. It's recommended to have proper repository specific implementation.
+     *
+     * @param page requested page (0 and 1 are the same).
+     * @param size item count in this page.
+     * @return specified page of item values mapped by ID. If repository have no items then empty map is returned.
+     * <p><u>Note</u>: that is recommended to use {@link LinkedHashMap} or {@link TreeMap} implementation here to preserve item order.
+     */
+    protected Map<ID, T> doFindPage(int page, int size) {
+        Map<ID, T> allItems = doFindAll();
+        int totalPossiblePages = allItems.size() / size;
+        int itemsInLastPage = allItems.size() - size * totalPossiblePages;
+        if (itemsInLastPage > 0) totalPossiblePages++;
+
+        Map<ID, T> res;
+        if (page < totalPossiblePages) { //we will get full page with "size" count of items
+            res = new LinkedHashMap<>(size);
+        } else { //we will get, what's left from last page
+            res = new LinkedHashMap<>(itemsInLastPage);
+        }
+
+        final int firstItemInPageIndex = (page - 1) * size;
+        int i = 0;
+        int itemsCollected = 0;
+        for (Map.Entry<ID, T> itemEntry : allItems.entrySet()) {
+            if (i++ < firstItemInPageIndex) continue;
+            res.put(itemEntry.getKey(), itemEntry.getValue());
+            if (++itemsCollected == size) break;
+        }
+        return res;
+    }
+
+    /**
      * Removes all the items from the repository.
      * By default <b>doRemove</b> calls are made by this method.
      * If more effective algorithm can be performed to remove all the items, override this method (without calling super)!
@@ -194,6 +232,13 @@ public abstract class MS_Repository<T, ID> implements MS_IRepositoryOperations<T
     public Map<ID, T> findAll() throws UnsupportedOperationException, MS_RepositoryDataExchangeException {
         checkAndThrowNotInitializedException();
         return doFindAll();
+    }
+
+    public Map<ID, T> findPage(int page, int size) throws MS_BadSetupException, UnsupportedOperationException, MS_RepositoryDataExchangeException {
+        if (page < 0 || size < 1)
+            throw new MS_BadSetupException("Invalid page request. Page number must be non-negative, and size of page must be greater than 0");
+        checkAndThrowNotInitializedException();
+        return doFindPage(page == 0 ? 1 : page, size);
     }
 
     @Override
@@ -291,10 +336,19 @@ public abstract class MS_Repository<T, ID> implements MS_IRepositoryOperations<T
         throw new UnsupportedOperationException("Repositories doesn't support looping through just a part of elements.");
     }
 
-    protected void checkAndThrowNotInitializedException() {
+    protected final void checkAndThrowNotInitializedException() {
         if (!isInitialized()) {
-            throw new UnsupportedOperationException("Cannot perform operation. Repository must be initialized first.");
+            throw new UnsupportedOperationException(repositoryNotInitializedErrorMessage());
         }
+    }
+
+    /**
+     * Override this method to change error message on {@link MS_Repository#checkAndThrowNotInitializedException()}.
+     *
+     * @return error message that will be printed when some repository operation is requested while repository is uninitialized.
+     */
+    protected String repositoryNotInitializedErrorMessage() {
+        return "Cannot perform operation. Repository must be initialized first.";
     }
 
     protected void throwUnsupportedWhenNoImplementationNeeded() throws UnsupportedOperationException {

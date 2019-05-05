@@ -3,6 +3,7 @@ package lv.emes.libraries.storage;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
 /**
  * An abstract caching repository, which is meant to cache objects of same type.
@@ -14,7 +15,7 @@ import java.time.LocalDateTime;
  * @param <T>  type of objects that are going to be cached.
  * @param <ID> type of object identifiers.
  * @author eMeS
- * @version 1.0.
+ * @version 1.1.
  * @see MS_Cache
  */
 public abstract class MS_CachingRepository<T, ID> extends MS_Repository<Pair<T, LocalDateTime>, ID> {
@@ -97,4 +98,10 @@ public abstract class MS_CachingRepository<T, ID> extends MS_Repository<Pair<T, 
      */
     @Override
     protected abstract void doRemoveAll();
+
+    @Override
+    protected Map<ID, Pair<T, LocalDateTime>> doFindPage(int page, int size) {
+        throwUnsupportedWhenNoImplementationNeeded();
+        return null;
+    }
 }

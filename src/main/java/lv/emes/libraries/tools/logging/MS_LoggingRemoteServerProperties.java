@@ -33,7 +33,7 @@ import okhttp3.OkHttpClient;
  * </ul>
  *
  * @author eMeS
- * @version 1.2.
+ * @version 1.3.
  * @since 2.0.4
  */
 public class MS_LoggingRemoteServerProperties {
@@ -50,6 +50,7 @@ public class MS_LoggingRemoteServerProperties {
     private String endpointStatus = "status";
     private String endpointLogEvent = "event";
     private String endpointGetAllEvents = "all";
+    private String endpointGetPaginatedEvents = "paginated";
     private String endpointClearAllEvents = "clear";
 
     private OkHttpClient httpRequestConfig = MS_HTTPConnectionConfigurations.DEFAULT_HTTP_CONFIG_FOR_CONNECTION.build();
@@ -73,6 +74,10 @@ public class MS_LoggingRemoteServerProperties {
 
     public String getEndpointGetAllEvents() {
         return endpointGetAllEvents;
+    }
+
+    public String getEndpointGetPaginatedEvents() {
+        return endpointGetPaginatedEvents;
     }
 
     public String getEndpointClearAllEvents() {
@@ -125,7 +130,7 @@ public class MS_LoggingRemoteServerProperties {
      * @return reference to properties.
      */
     public MS_LoggingRemoteServerProperties withEndpointRootName(String endpointRootName) {
-        if (endpointGetAllEvents != null && !endpointGetAllEvents.equals(""))
+        if (endpointRootName != null && !endpointRootName.equals(""))
             this.endpointRootName = endpointRootName;
         return this;
     }
@@ -138,7 +143,7 @@ public class MS_LoggingRemoteServerProperties {
      * @return reference to properties.
      */
     public MS_LoggingRemoteServerProperties withEndpointStatus(String status) {
-        if (endpointGetAllEvents != null && !endpointGetAllEvents.equals(""))
+        if (status != null && !status.equals(""))
             this.endpointStatus = status;
         return this;
     }
@@ -151,7 +156,7 @@ public class MS_LoggingRemoteServerProperties {
      * @return reference to properties.
      */
     public MS_LoggingRemoteServerProperties withEndpointLogEvent(String endpointPutEvent) {
-        if (endpointGetAllEvents != null && !endpointGetAllEvents.equals(""))
+        if (endpointPutEvent != null && !endpointPutEvent.equals(""))
             this.endpointLogEvent = endpointPutEvent;
         return this;
     }
@@ -166,6 +171,19 @@ public class MS_LoggingRemoteServerProperties {
     public MS_LoggingRemoteServerProperties withEndpointGetAllEvents(String endpointGetAllEvents) {
         if (endpointGetAllEvents != null && !endpointGetAllEvents.equals(""))
             this.endpointGetAllEvents = endpointGetAllEvents;
+        return this;
+    }
+
+    /**
+     * Sets endpoint name to get some page of existing events in repository.
+     *
+     * @param endpointGetPaginatedEvents name of endpoint (X) [GET endpointRootName/productOwner/productName/X].
+     *                             <p><b>DEFAULT</b>: "paginated".
+     * @return reference to properties.
+     */
+    public MS_LoggingRemoteServerProperties withEndpointGetPaginatedEvents(String endpointGetPaginatedEvents) {
+        if (endpointGetPaginatedEvents != null && !endpointGetPaginatedEvents.equals(""))
+            this.endpointGetPaginatedEvents = endpointGetPaginatedEvents;
         return this;
     }
 

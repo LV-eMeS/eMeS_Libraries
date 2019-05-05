@@ -136,9 +136,9 @@ public class MS_SQLQueryBuilderTest {
     }
 
     @Test
-    public void test17OrderByAsc() {
-        sql.select().field(field2).field(field3).from().table(tableName).orderBy().field("kabacis").ascending();
-        assertEquals("SELECT kabacis, soda FROM tabula\nORDER BY kabacis ASC;", sql.buildAndToString());
+    public void test17OrderByAscAndLimit() {
+        sql.select().field(field2).field(field3).from().table(tableName).orderBy().field("kabacis").ascending().limit(12, 6);
+        assertEquals("SELECT kabacis, soda FROM tabula\nORDER BY kabacis ASC\nLIMIT 12, 6;", sql.buildAndToString());
     }
 
     @Test

@@ -7,6 +7,7 @@ import lv.emes.libraries.utilities.MS_ExecutionFailureException;
 import lv.emes.libraries.utilities.MS_StringUtils;
 
 import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalUnit;
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -17,12 +18,23 @@ import java.util.function.Predicate;
  *
  * @param <T> type of resulting object of the poll.
  * @author eMeS
- * @since 1.0
+ * @version 1.1
  * @since 2.1.10
  */
 public class MS_Polling<T> {
 
+    public static final int DEFAULT_MAX_POLLING_ATTEMPTS = 30 * 2; // 30 seconds running twice per second
+    public static final Duration DEFAULT_SLEEP_INTERVAL = Duration.of(500, ChronoUnit.MILLIS);
+
     public static final Consumer<MS_Polling> NO_POLLING_ACTION = (p) -> {
+    };
+    public static final Consumer<MS_Polling> DEFAULT_ACTION_BETWEEN_RETRIES_LOG_STATUS_TO_CONSOLE = (p) -> {
+        System.out.println(String.format(
+                "%s.\nAttempts made: " + p.getCurrentAttemptNumber() +
+                        " | Already slept for " +
+                        MS_StringUtils.convertMillisToSecsString(p.getTimeSlept()) + " / (MAX) " +
+                        MS_StringUtils.convertMillisToSecsString(p.getMaximumPollingTime()) + " seconds."
+                , p.getStatusMessageProducer() == null ? p.getStatusMessage() : p.getStatusMessageProducer().produceMessage(p)));
     };
 
     private int maxPollingAttempts, currentAttempt, attemptsLeft;
@@ -32,6 +44,7 @@ public class MS_Polling<T> {
     private Consumer<MS_Polling> actionBeforeEachRetry = NO_POLLING_ACTION;
     private Consumer<MS_Polling> actionBetweenRetries = NO_POLLING_ACTION;
     private String statusMessage = "Pooling status: PENDING";
+    private StatusMessageProducer statusMessageProducer = null;
     private T result;
 
     /**
@@ -56,6 +69,7 @@ public class MS_Polling<T> {
             throw new MS_BadSetupException("Nothing to poll here. Maximum amount of polling attempts must be [1..100]");
 
         attemptsLeft = maxPollingAttempts;
+        currentAttempt = 0;
         boolean isPollStatusPending;
 
         do { // Polling
@@ -82,10 +96,9 @@ public class MS_Polling<T> {
         } while (attemptsLeft > 0 && isPollStatusPending);
 
         if (attemptsLeft == 0 && isPollStatusPending) { //Expiration check
-            throw new MS_ExecutionFailureException(this.getStatusMessage() + ". Poll failed due to expiration in " +
-                    this.getCurrentAttemptNumber() + " attempts ("
-                    + MS_StringUtils.convertMillisToSecsString(this.getMaximumPollingTime()) +
-                    " seconds).");
+            throw new MS_ExecutionFailureException(this.getStatusMessageProducer() == null ? this.getStatusMessage() : this.getStatusMessageProducer().produceMessage(this)
+                    + ". Poll failed due to expiration in " + this.getCurrentAttemptNumber() + " attempts ("
+                    + MS_StringUtils.convertMillisToSecsString(this.getMaximumPollingTime()) + " seconds).");
         }
 
         return this.result;
@@ -93,8 +106,13 @@ public class MS_Polling<T> {
 
     //*** Setters (builder syntax) ***
 
+    public MS_Polling<T> withDefaultAttemptsAndSleepInterval() {
+        return this.withMaxPollingAttempts(DEFAULT_MAX_POLLING_ATTEMPTS).withSleepInterval(DEFAULT_SLEEP_INTERVAL);
+    }
+
     /**
      * Sets maximum count of attempts to get polling result.
+     *
      * @param maxPollingAttempts [1..100].
      * @return reference to polling itself.
      */
@@ -141,6 +159,7 @@ public class MS_Polling<T> {
 
     /**
      * Sets action of polling.
+     *
      * @param action an action that results as some value that in success scenario can be used after polling.
      * @return reference to polling itself.
      */
@@ -190,6 +209,15 @@ public class MS_Polling<T> {
         return this;
     }
 
+    public interface StatusMessageProducer {
+        String produceMessage(MS_Polling poll);
+    }
+
+    public MS_Polling<T> withStatusMessageProducer(StatusMessageProducer producer) {
+        this.statusMessageProducer = producer;
+        return this;
+    }
+
     //*** Getters ***
 
     public int getMaxPollingAttempts() {
@@ -214,6 +242,10 @@ public class MS_Polling<T> {
 
     public String getStatusMessage() {
         return statusMessage;
+    }
+
+    public StatusMessageProducer getStatusMessageProducer() {
+        return statusMessageProducer;
     }
 
     public long getMaximumPollingTime() {

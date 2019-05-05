@@ -150,7 +150,9 @@ public class MS_RepositoryTest {
         assertTrue(repository2.isInitialized()); //it's still initialized
     }
 
-        private static final class MS_RepositoryForTest extends MS_Repository<String, String> {
+    //*** Repository implementation ***
+
+    private static final class MS_RepositoryForTest extends MS_Repository<String, String> {
 
         private char repositoryLabel; //repository content will look like: repositoryLabel|identifier|item
 
@@ -242,6 +244,8 @@ public class MS_RepositoryTest {
             super.doRemoveAll(); //do nothing more than using parent implementation
         }
     }
+
+    // *** Private methods ***
 
     private static final MS_EqualityCheckBuilder.IComparisonAlgorithm
             <MS_StringList, MS_Repository<String, String>> REPOSITORY_DATA_COMPARE =

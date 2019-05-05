@@ -20,11 +20,10 @@ import java.util.Map;
 import java.util.TreeMap;
 
 /**
- * Remote repository to store logging events.
- * All data exchange is done by HTTP requests.
+ * Remote repository to store logging events. Data exchange is done via HTTP requests.
  *
  * @author eMeS
- * @version 2.0.
+ * @version 2.1.
  * @since 2.0.4
  */
 public class MS_RemoteLoggingRepository extends MS_Repository<MS_LoggingEvent, Instant> implements MS_LoggingRepository {
@@ -62,9 +61,8 @@ public class MS_RemoteLoggingRepository extends MS_Repository<MS_LoggingEvent, I
     }
 
     @Override
-    public void logEvent(MS_LoggingEvent event) {
-        //because event's time is backported data type we need to convert it to normal Instant
-        add(event.getTime().toInstant(), event);
+    protected String repositoryNotInitializedErrorMessage() {
+        return "Cannot perform operation. Remote logging server seems to be unreachable";
     }
 
     @Override
@@ -78,6 +76,12 @@ public class MS_RemoteLoggingRepository extends MS_Repository<MS_LoggingEvent, I
         } catch (IOException e) {
             return false;
         }
+    }
+
+    @Override
+    public void logEvent(MS_LoggingEvent event) {
+        //because event's time is backported data type we need to convert it to normal Instant
+        add(event.getTime().toInstant(), event);
     }
 
     @Override
@@ -101,7 +105,7 @@ public class MS_RemoteLoggingRepository extends MS_Repository<MS_LoggingEvent, I
             throw new MS_RepositoryDataExchangeException("Connectivity error happened while trying to log new event");
         }
 
-        if (httpResult.getStatusCode() == 400) {
+        if (httpResult.getStatusCode() == 500) {
             MS_Log4Java.getLogger(MS_RemoteLoggingRepository.class)
                     .error("Serialization error while performing add(" + identifier + ", item). Item data:\n" + item);
             throw new MS_RepositoryDataExchangeException("Serialization error happened while trying to log new event");
@@ -113,10 +117,27 @@ public class MS_RemoteLoggingRepository extends MS_Repository<MS_LoggingEvent, I
 
     @Override
     protected Map<Instant, MS_LoggingEvent> doFindAll() {
-        String url = getRemoteServerBasePath(serverProperties) + serverProperties.getEndpointGetAllEvents();
-        MS_HttpRequest req = new MS_HttpRequest().withMethod(MS_HttpRequestMethod.GET).withUrl(url)
+        MS_HttpRequest req = new MS_HttpRequest()
+                .withMethod(MS_HttpRequestMethod.GET)
+                .withUrl(getRemoteServerBasePath(serverProperties) + serverProperties.getEndpointGetAllEvents())
                 .withHeader("Authorization", getEncryptedSecret(serverProperties))
                 .withClientConfigurations(serverProperties.getHttpRequestConfig());
+        return performFindingOperation(req);
+    }
+
+    @Override
+    protected Map<Instant, MS_LoggingEvent> doFindPage(int page, int size) {
+        MS_HttpRequest req = new MS_HttpRequest()
+                .withMethod(MS_HttpRequestMethod.GET)
+                .withUrl(getRemoteServerBasePath(serverProperties) + serverProperties.getEndpointGetPaginatedEvents())
+                .withParameter("page", String.valueOf(page))
+                .withParameter("size", String.valueOf(size))
+                .withHeader("Authorization", getEncryptedSecret(serverProperties))
+                .withClientConfigurations(serverProperties.getHttpRequestConfig());
+        return performFindingOperation(req);
+    }
+
+    private Map<Instant, MS_LoggingEvent> performFindingOperation(MS_HttpRequest req) {
         MS_HttpResponse httpResult;
         try {
             httpResult = MS_HttpCallHandler.call(req);
@@ -253,6 +274,10 @@ public class MS_RemoteLoggingRepository extends MS_Repository<MS_LoggingEvent, I
                     .error("Authentication error while performing repository operation.");
             throw new MS_RepositoryDataExchangeException("Authentication error happened while performing repository operation.\n" +
                     "Each owner of product should use unique secret key to access product's logging repository.");
+        } else if (httpResult.getStatusCode() == 400) {
+            MS_Log4Java.getLogger(MS_RemoteLoggingRepository.class)
+                    .error("Invalid request. Server response: " + httpResult.getBodyString());
+            throw new MS_RepositoryDataExchangeException("Invalid request. Server response: " + httpResult.getBodyString());
         } else if (httpResult.getStatusCode() != 200) {
             MS_Log4Java.getLogger(MS_RemoteLoggingRepository.class)
                     .error(message + ". Message:\n" + httpResult.getBodyString());
