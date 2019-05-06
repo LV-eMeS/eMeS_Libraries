@@ -26,7 +26,7 @@ public class StackTraceElementDTOAlgorithm extends MS_DTOMappingAlgorithm<StackT
     public StackTraceElement deserialize(MS_JSONObject serializedObject) {
         return new StackTraceElement(serializedObject.getString("declaringClass"),
                 serializedObject.getString("methodName"),
-                serializedObject.getString("fileName"),
+                serializedObject.optString("fileName", null),
                 serializedObject.getInt("lineNumber")
         );
     }
