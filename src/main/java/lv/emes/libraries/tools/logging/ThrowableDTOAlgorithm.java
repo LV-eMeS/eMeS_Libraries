@@ -28,6 +28,7 @@ public class ThrowableDTOAlgorithm extends MS_DTOMappingAlgorithm<Throwable, MS_
             }
         }
         return new MS_JSONObject()
+                .put("name", error.getClass().getName())
                 .put("message", error.getMessage())
                 .put("cause", MS_DTOMappingHelper.serialize(error.getCause(), ThrowableDTOAlgorithm.class))
                 .put("stackTrace", stackTrace)
@@ -36,7 +37,7 @@ public class ThrowableDTOAlgorithm extends MS_DTOMappingAlgorithm<Throwable, MS_
 
     @Override
     public Throwable deserialize(MS_JSONObject error) {
-        Throwable res = newThrowable(error.getString("message"), MS_DTOMappingHelper.deserialize(error.optJSONObject("cause"), ThrowableDTOAlgorithm.class));
+        Throwable res = newThrowable(error.optString("message", null), MS_DTOMappingHelper.deserialize(error.optJSONObject("cause"), ThrowableDTOAlgorithm.class));
 
         if (error.isNotNull("stackTrace")) {
             MS_JSONArray stackTrace = error.getJSONArray("stackTrace");

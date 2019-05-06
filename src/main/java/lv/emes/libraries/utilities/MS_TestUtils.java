@@ -29,6 +29,10 @@ public class MS_TestUtils {
             super(msg);
         }
 
+        public MS_CheckedException(String message, Throwable cause) {
+            super(message, cause);
+        }
+
         public MS_CheckedException(Throwable cause) {
             super(cause);
         }
