@@ -1,5 +1,6 @@
 package lv.emes.libraries.tools.threading;
 
+import lv.emes.libraries.tools.IFuncAction;
 import lv.emes.libraries.tools.lists.MS_List;
 import lv.emes.libraries.tools.lists.MS_StringList;
 import lv.emes.libraries.utilities.MS_CodingUtils;
@@ -77,7 +78,7 @@ public class MS_FutureEvent {
      * @param action an preferable lambda expression defining actions to be performed on execution.
      * @return reference to an event itself.
      */
-    public MS_FutureEvent withAction(IFuncEvent action) {
+    public MS_FutureEvent withAction(IFuncAction action) {
         worker.actionOnExecution = action;
         return this;
     }
@@ -286,7 +287,7 @@ public class MS_FutureEvent {
     private static class WorkerThread extends MS_Thread<WorkerThread> {
 
         private long executeAfter = 0;
-        private IFuncEvent actionOnExecution = null;
+        private IFuncAction actionOnExecution = null;
         private IFuncOnSomeException actionOnException = null;
         IFuncOnInterruptedException onInterruption = null;
 

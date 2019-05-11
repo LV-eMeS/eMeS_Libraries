@@ -14,7 +14,7 @@ import java.util.Objects;
  * return already processed {@link MS_HttpResponse} corresponding to given request.
  *
  * @author maris.salenieks
- * @version 1.1.
+ * @version 3.0.
  * @since 2.1.9
  */
 public class MS_HttpCallHandler {

@@ -14,14 +14,10 @@ import java.time.temporal.ChronoUnit;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-/**
- * @author eMeS
- * @version 1.0.
- */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MS_SchedulerTest {
 
-    private final int DEFAULT_SLEEPING_TIME = 300; //fair enough time to run 2 (in future) scheduled events
+    private final int DEFAULT_SLEEPING_TIME = 350; //fair enough time to run 2 (in future) scheduled events
     private ZonedDateTime timePresent;
     private ZonedDateTime timePast;
     private ZonedDateTime timeFuture;

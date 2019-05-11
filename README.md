@@ -29,4 +29,4 @@ dependencies {
      ...
  }
 ```
-Precise version of artifact can be found in [JitPack.](https://jitpack.io/#LV-eMeS/eMeS_Libraries/)
+Precise version of artifact can be found in [![](https://jitpack.io/v/LV-eMeS/eMeS_Libraries.svg)](https://jitpack.io/#LV-eMeS/eMeS_Libraries)

@@ -3,17 +3,17 @@ package lv.emes.libraries.communication.http;
 import lv.emes.libraries.communication.json.MS_JSONArray;
 import lv.emes.libraries.communication.json.MS_JSONObject;
 import okhttp3.OkHttpClient;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * HTTP request object that acts as input to {@link MS_HttpCallHandler#call(MS_HttpRequest)} in order to make HTTP call.
  *
  * @author maris.salenieks
- * @version 2.1.
+ * @version 3.0.
  * @since 2.1.9
  */
 public class MS_HttpRequest {
@@ -21,8 +21,9 @@ public class MS_HttpRequest {
     private OkHttpClient clientConfigurations;
     private String url;
     private MS_HttpRequestMethod method;
-    private Map<String, List<String>> headers = new HashMap<>();
-    private Map<String, String> parameters = new HashMap<>();
+    private Map<String, List<String>> headers = new LinkedHashMap<>();
+    private Map<String, String> parameters = new LinkedHashMap<>();
+    private Map<String, List<String>> urlQueryParameters = new LinkedHashMap<>();
     private String bodyAsString;
     private MS_JSONObject body;
     private MS_JSONArray bodyAsArray;
@@ -47,7 +48,7 @@ public class MS_HttpRequest {
     public MS_HttpRequest withHeader(String headerName, String headerValue) {
         List<String> headerValues = headers.get(headerName);
         if (headerValues == null) {
-            headerValues = new ArrayList<>(1);
+            headerValues = new ArrayList<>(5);
             headerValues.add(headerValue);
             headers.put(headerName, headerValues);
         } else {
@@ -96,6 +97,28 @@ public class MS_HttpRequest {
         return this;
     }
 
+    public MS_HttpRequest withUrlQueryParameters(Map<String, String> parameters) {
+        Objects.requireNonNull(parameters);
+        this.urlQueryParameters.clear();
+        parameters.forEach((key, value) -> this.urlQueryParameters.computeIfAbsent(key, (k) -> new ArrayList<>()).add(value));
+        return this;
+    }
+
+    public MS_HttpRequest withUrlQueryMultiParameters(Map<String, List<String>> parameters) {
+        this.urlQueryParameters = Objects.requireNonNull(parameters);
+        return this;
+    }
+
+    public MS_HttpRequest withUrlQueryParameter(Pair<String, String> parameter) {
+        this.urlQueryParameters.computeIfAbsent(parameter.getLeft(), (key) -> new ArrayList<>()).add(parameter.getRight());
+        return this;
+    }
+
+    public MS_HttpRequest withUrlQueryParameter(String parameterKey, String parameterValue) {
+        this.urlQueryParameters.computeIfAbsent(parameterKey, (key) -> new ArrayList<>()).add(parameterValue);
+        return this;
+    }
+
     public OkHttpClient getClientConfigurations() {
         return clientConfigurations;
     }
@@ -108,6 +131,10 @@ public class MS_HttpRequest {
 
     public Map<String, String> getParameters() {
         return parameters;
+    }
+
+    public Map<String, List<String>> getUrlQueryParameters() {
+        return urlQueryParameters;
     }
 
     public MS_JSONObject getBody() {
@@ -135,16 +162,54 @@ public class MS_HttpRequest {
     }
 
     public String getUrl() {
+        return url == null ? null : url + MS_HttpUtils.formMultiUrlQueryParams(getUrlQueryParameters());
+    }
+
+    public String getRawUrl() {
         return url;
     }
 
     //*** Equals, toString, hashCode ***
 
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+
+        if (o == null || getClass() != o.getClass()) return false;
+
+        MS_HttpRequest that = (MS_HttpRequest) o;
+
+        return new EqualsBuilder()
+                .append(clientConfigurations, that.clientConfigurations)
+                .append(getUrl(), that.getUrl())
+                .append(method, that.method)
+                .append(headers, that.headers)
+                .append(parameters, that.parameters)
+                .append(getBodyAsString(), that.getBodyAsString())
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37)
+                .append(clientConfigurations)
+                .append(url)
+                .append(method)
+                .append(headers)
+                .append(parameters)
+                .append(urlQueryParameters)
+                .append(bodyAsString)
+                .append(body)
+                .append(bodyAsArray)
+                .toHashCode();
+    }
+
     @Override
     public String toString() {
         MS_JSONObject res = new MS_JSONObject();
         res.putOpt("method", method != null ? method.name() : MS_JSONObject.NULL);
-        res.put("url", url);
+        res.put("url", getUrl());
         res.put("parameters", new MS_JSONObject(parameters));
         if (body != null) {
             res.put("body", body);
