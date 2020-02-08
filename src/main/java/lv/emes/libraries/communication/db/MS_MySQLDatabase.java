@@ -31,7 +31,7 @@ public class MS_MySQLDatabase extends MS_AbstractJDBCDatabase {
 
     @Override
     protected String getDriverClassName() {
-        return "com.mysql.jdbc.Driver";
+        return "com.mysql.cj.jdbc.Driver";
     }
 
     @Override

@@ -25,6 +25,7 @@ eMeS libraries Version 2.3.0
 * Reworked property initialization from file. It's now done through handy enumerations.
 * Reworked remote logging data exchange and contract and added paging capabilities.
 * Added support for HTTP request URL query parameters.
+* Upgraded to MySQL 8 connector.
 ========================================================================================================
 eMeS libraries Version 2.2.0
 ========================================================================================================
