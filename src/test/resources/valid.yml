@@ -1,0 +1,20 @@
+allProperties:
+  testStr: test
+  testInt: 123
+  testBool: true
+  testFloat: 3.14
+  testMap:
+    nested: value
+
+differentRoot:
+  testInt: 456
+
+differentRoot2:
+  testInt: 789
+  testStr: "abc"
+
+differentRootList:
+  - Something
+  - Something else
+  - 14
+  - Yet something else

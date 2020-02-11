@@ -30,6 +30,9 @@ public final class TestData {
     public static final String TESTING_WEB_SERVER_PORT_STRING = ":" + MS_TakenPorts._SPRING_WEB_SERVER_PORT;
     public static final String HTTP_PREFIX = "http://";
 
+    public static final String PATH_VALID_YAML = TEST_RESOURCES_DIR + "valid.yml";
+    public static final String PATH_BAD_YAML = TEST_RESOURCES_DIR + "incorrect.yml";
+
     public static final String TEST_FILE_IMAGE = "test_pic.png";
     public static final String TEST_FILE_TEXT = "sampleTextFile4Testing.txt";
     public static final String TEST_FILE_BAT = "test.bat";

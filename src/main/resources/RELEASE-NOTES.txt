@@ -26,6 +26,7 @@ eMeS libraries Version 2.3.0
 * Reworked remote logging data exchange and contract and added paging capabilities.
 * Added support for HTTP request URL query parameters.
 * Upgraded to MySQL 8 connector.
+* Added yaml file reading support.
 ========================================================================================================
 eMeS libraries Version 2.2.0
 ========================================================================================================
