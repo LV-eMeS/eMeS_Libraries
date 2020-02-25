@@ -1,13 +1,16 @@
 package lv.emes.libraries.communication.json;
 
+import org.assertj.core.util.Lists;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import static lv.emes.libraries.testdata.TestData.OBJECT_MAP;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -212,5 +215,47 @@ public class MS_JSONArrayTest {
 
         List<Integer> actual = MS_JSONArray.extract(MS_JSONObject.class, (numbers -> numbers.getInt("number")));
         assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    public void testConcat() {
+        MS_JSONArray first = new MS_JSONArray().put(1);
+        MS_JSONArray second = new MS_JSONArray().put(2);
+        MS_JSONArray third = new MS_JSONArray().put(3);
+        MS_JSONArray res = MS_JSONArray.concat(first, second, third);
+        assertThat(res).isEqualTo(new MS_JSONArray().concat(first).concat(second).concat(third));
+
+        assertThat(MS_JSONArray.concat(null, (MS_JSONArray) null)).isEqualTo(new MS_JSONArray());
+
+        res = MS_JSONArray.concat(null, first, null);
+        assertThat(res).isEqualTo(first);
+        assertThat(res).isNotSameAs(first);
+    }
+
+    @Test
+    public void testStream() {
+        MS_JSONArray arr = new MS_JSONArray().put(1).put("2").put(new JSONObject()).put(4).put(5).put(6).put(7);
+        MS_JSONArray evenNumbers = arr.streamOf(Integer.class).filter(i -> i % 2 == 0).collect(MS_JSONArray.toJSONArray());
+        assertThat(evenNumbers).containsExactly(4, 6);
+    }
+
+    @Test
+    public void testCollectionToJsonArrayInStream() {
+        ArrayList<String> arrayList = Lists.newArrayList("Child");
+        LinkedList<String> linkedList = new LinkedList<>();
+        linkedList.add("Parent");
+        MS_JSONArray arr = new MS_JSONArray().put(arrayList).put(linkedList);
+        List<String> infoStrings = arr.streamOf(MS_JSONArray.class).map(obj -> obj.getString(0)).collect(Collectors.toList());
+        assertThat(infoStrings).hasSize(2).contains("Parent", "Child");
+    }
+
+    @Test
+    public void testCollectionsNotConvertsToJSONObject() {
+        ArrayList<String> arrayList = Lists.newArrayList("Child");
+        LinkedList<String> linkedList = new LinkedList<>();
+        linkedList.add("Parent");
+        MS_JSONArray arr = new MS_JSONArray().put(arrayList).put(linkedList);
+        List<MS_JSONObject> infoStrings = arr.stream().collect(Collectors.toList());
+        assertThat(infoStrings).isEmpty();
     }
 }

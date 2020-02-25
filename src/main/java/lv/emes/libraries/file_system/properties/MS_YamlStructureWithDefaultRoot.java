@@ -1,4 +1,4 @@
-package lv.emes.libraries.file_system;
+package lv.emes.libraries.file_system.properties;
 
 import lv.emes.libraries.tools.MS_BadSetupException;
 import lv.emes.libraries.utilities.MS_StringUtils;
@@ -6,7 +6,7 @@ import lv.emes.libraries.utilities.MS_StringUtils;
 import java.util.Map;
 
 /**
- * Class that defines properties file, registered in {@link MS_YamlFileManager}, structure with default root properties node.
+ * Class that defines properties file, registered in {@link  MS_YamlFileManager}, structure with default root properties node.
  * It has common methods that allows to browse property of any supported type by its path in yaml.
  * Successors of the class must define a variable that will hold <code>Map&lt;String, Object&gt;</code> structure in it
  * and the setter for this variable. Getter should be direct implementation of the method <b>getRootProperties</b>.

@@ -1,4 +1,4 @@
-package lv.emes.libraries.file_system;
+package lv.emes.libraries.file_system.properties;
 
 import lv.emes.libraries.tools.MS_BadSetupException;
 import org.junit.Test;

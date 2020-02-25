@@ -15,7 +15,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * JSON object extended from {@link JSONObject} that provides additional utilities and constructors.
  *
  * @author eMeS
- * @version 1.0.
+ * @version 2.3.
  * @since 2.2.2
  */
 public class MS_JSONObject extends JSONObject {
@@ -78,6 +78,11 @@ public class MS_JSONObject extends JSONObject {
         super(x);
     }
 
+    /**
+     * <u>Caution</u>: use only with real object beans that has valid field getters, as this method is using those
+     * to populate JSON fields. In other cases, please, prefer: {@link MS_JSONObject#MS_JSONObject(Map)}!
+     * @param bean bean object with getters.
+     */
     public MS_JSONObject(Object bean) {
         super(bean);
     }
@@ -250,10 +255,48 @@ public class MS_JSONObject extends JSONObject {
         return o instanceof org.json.JSONArray ? (MS_JSONArray) o : null;
     }
 
+    public MS_JSONArray optJSONArray(String key, MS_JSONArray defaultValue) {
+        MS_JSONArray res = optJSONArray(key);
+        return res == null ? defaultValue : res;
+    }
+
     @Override
     public MS_JSONObject optJSONObject(String key) {
         Object object = this.opt(key);
         return object instanceof JSONObject ? (MS_JSONObject) object : null;
+    }
+
+    public MS_JSONObject optJSONObject(String key, MS_JSONObject defaultValue) {
+        MS_JSONObject res = optJSONObject(key);
+        return res == null ? defaultValue : res;
+    }
+
+    /**
+     * Gets nested object or primitive from objects that this object holds.
+     * It supports only navigation through types of {@link MS_JSONObject} and {@link MS_JSONArray} to get till target.
+     * <p><u>Example</u>:
+     *
+     * @param jsonPath JSON path to target object.
+     * @param typeOfObject class representing type of return value.
+     * @param <T> type of return value.
+     * @return object value of type <b>typeOfObject</b> according to given <b>jsonPath</b>.
+     * @since 2.3
+     */
+    public <T> T getNested(String jsonPath, Class<T> typeOfObject) {
+        Objects.requireNonNull(typeOfObject);
+        return typeOfObject.cast(getString(jsonPath));
+    }
+
+    @Override
+    public MS_JSONObject put(String key, Object value) throws JSONException {
+        super.put(key, wrap(value));
+        return this;
+    }
+
+    @Override
+    public MS_JSONObject putOnce(String key, Object value) throws JSONException {
+        super.putOnce(key, wrap(value));
+        return this;
     }
 
     @Override
@@ -319,18 +362,6 @@ public class MS_JSONObject extends JSONObject {
     @Override
     public MS_JSONObject put(String key, Map<?, ?> value) throws JSONException {
         super.put(key, wrap(value));
-        return this;
-    }
-
-    @Override
-    public MS_JSONObject put(String key, Object value) throws JSONException {
-        super.put(key, wrap(value));
-        return this;
-    }
-
-    @Override
-    public MS_JSONObject putOnce(String key, Object value) throws JSONException {
-        super.putOnce(key, wrap(value));
         return this;
     }
 

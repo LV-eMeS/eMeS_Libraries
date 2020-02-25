@@ -1,6 +1,6 @@
 package lv.emes.libraries.tools;
 
-import lv.emes.libraries.file_system.MS_PropertyFileManager;
+import lv.emes.libraries.file_system.properties.MS_PropertyFileManager;
 import lv.emes.libraries.utilities.MS_StringUtils;
 
 import java.util.Properties;

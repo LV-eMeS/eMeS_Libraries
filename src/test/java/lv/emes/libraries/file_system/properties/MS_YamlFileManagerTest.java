@@ -1,5 +1,6 @@
-package lv.emes.libraries.file_system;
+package lv.emes.libraries.file_system.properties;
 
+import lv.emes.libraries.communication.json.MS_JSONObject;
 import lv.emes.libraries.testdata.TestData;
 import lv.emes.libraries.tools.MS_BadSetupException;
 import org.junit.Test;
@@ -119,5 +120,32 @@ public class MS_YamlFileManagerTest {
         protected Map<String, Object> getRootProperties() {
             return allProperties;
         }
+    }
+
+    // *** JSON file properties ***
+
+    @Test
+    public void testLoadJsonConfigurationMostCommonProperties() {
+        MS_JSONObject loadedConfigs = MS_YamlFileManager.loadProperties(TestData.PATH_VALID_YAML);
+        assertThat(loadedConfigs).isNotNull();
+        // Verify that this is immutable JSON object
+        assertThatThrownBy(() -> loadedConfigs.put("test", "anything")).isInstanceOf(UnsupportedOperationException.class);
+        assertThat(loadedConfigs.getString("testStr")).isEqualTo("test");
+        assertThat(loadedConfigs.getInt("testInt")).isEqualTo(123);
+        assertThat(loadedConfigs.getBoolean("testBool")).isEqualTo(true);
+        assertThat(loadedConfigs.getDouble("testFloat")).isEqualTo(3.14d);
+        assertThat(loadedConfigs.getNested("testMap.nested", String.class)).isEqualTo("value");
+        assertThatThrownBy(() -> loadedConfigs.getNested("testMap.unknown", String.class))
+                .isInstanceOf(MS_BadSetupException.class)
+                .hasMessage("Property cannot be found by given key [testMap.unknown], node [unknown] doesn't exist");
+        assertThatThrownBy(() -> loadedConfigs.getString("testNotExist"))
+                .isInstanceOf(MS_BadSetupException.class)
+                .hasMessage("Property cannot be found by given key: testNotExist");
+
+        // Test properties that are not located in the file
+        assertThat(loadedConfigs.optInt("outsideRoot")).isNull();
+        System.getProperties().put("outsideRoot", "78");
+        assertThat(loadedConfigs.getInt("outsideRoot")).isEqualTo(78);
+        assertThat(loadedConfigs.getString("outsideRoot")).isEqualTo("78");
     }
 }

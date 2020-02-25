@@ -1,5 +1,6 @@
-package lv.emes.libraries.file_system;
+package lv.emes.libraries.file_system.properties;
 
+import lv.emes.libraries.communication.json.MS_JSONObject;
 import lv.emes.libraries.tools.MS_BadSetupException;
 import org.apache.commons.lang3.tuple.Pair;
 import org.yaml.snakeyaml.Yaml;
@@ -31,9 +32,10 @@ import java.util.Map;
 public class MS_YamlFileManager {
 
     protected static Map<Pair<String, Class<?>>, Object> configurations = new HashMap<>();
+    protected static Map<String, MS_JSONObject> jsonConfigurations = new HashMap<>();
 
     @SuppressWarnings("unchecked")
-    protected static <T> T loadProperties(String pathToPropsFile, Class<T> configStructureClass) {
+    public static <T> T loadProperties(String pathToPropsFile, Class<T> configStructureClass) {
         Pair<String, Class<?>> configUniqueKey = Pair.of(pathToPropsFile, configStructureClass);
         Object existingProperty = configurations.get(configUniqueKey);
         if (existingProperty != null) return (T) existingProperty;
@@ -48,6 +50,24 @@ public class MS_YamlFileManager {
             T config = yaml.loadAs(fileStream, configStructureClass);
             configurations.put(configUniqueKey, config);
             return config;
+        } catch (FileNotFoundException e) {
+            throw new MS_BadSetupException("Properties file [" + pathToPropsFile + "] doesn't exist.", e);
+        } catch (IOException | ConstructorException e) {
+            throw new MS_BadSetupException("Properties file [" + pathToPropsFile + "] cannot be read.", e);
+        }
+    }
+
+    public static MS_JSONObject loadProperties(String pathToPropsFile) {
+        MS_JSONObject existingProperty = jsonConfigurations.get(pathToPropsFile);
+        if (existingProperty != null) return existingProperty;
+
+        try (FileInputStream fileStream = new FileInputStream(pathToPropsFile)) {
+            Yaml yaml = new Yaml();
+            Map<String, Object> map = yaml.load(fileStream);
+
+            MS_JSONObject jsonObject = new MS_YamlContentJSONObject(map);
+            jsonConfigurations.put(pathToPropsFile, jsonObject);
+            return jsonObject;
         } catch (FileNotFoundException e) {
             throw new MS_BadSetupException("Properties file [" + pathToPropsFile + "] doesn't exist.", e);
         } catch (IOException | ConstructorException e) {

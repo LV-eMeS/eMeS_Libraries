@@ -1,5 +1,6 @@
-package lv.emes.libraries.file_system;
+package lv.emes.libraries.file_system.properties;
 
+import lv.emes.libraries.file_system.MS_FileSystemTools;
 import org.junit.AfterClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;

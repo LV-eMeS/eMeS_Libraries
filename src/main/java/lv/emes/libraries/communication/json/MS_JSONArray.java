@@ -9,12 +9,15 @@ import org.json.JSONTokener;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.*;
+import java.util.stream.Collector;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * JSON array extended from {@link JSONArray} that provides additional utilities.
  *
  * @author eMeS
- * @version 1.0.
+ * @version 1.1.
  * @since 2.2.2.
  */
 public class MS_JSONArray extends JSONArray {
@@ -143,6 +146,22 @@ public class MS_JSONArray extends JSONArray {
     }
 
     /**
+     * Creates new array that contains of content of all presented arrays (starting from <b>head</b> till rest of <b>tails</b>).
+     *
+     * @param first first array, which elements will be added to resulting array.
+     * @param rest  arrays, which elements will be added sequentially to resulting array.
+     * @return new array containing <b>head</b> + <b>tails</b> contents.
+     */
+    public static MS_JSONArray concat(org.json.JSONArray first, org.json.JSONArray... rest) {
+        Objects.requireNonNull(rest);
+        MS_JSONArray res = new MS_JSONArray().concat(first);
+        for (org.json.JSONArray array : rest) {
+            res.concat(array);
+        }
+        return res;
+    }
+
+    /**
      * Extracts all elements from array and treat them as JSON objects.
      * <p><u>Warning</u>: <u>all</u> objects in this array <u>must</u> be JSON objects.
      *
@@ -178,6 +197,31 @@ public class MS_JSONArray extends JSONArray {
      */
     public List<MS_JSONObject> toJSONObjectList() {
         return toJSONObjectList(false);
+    }
+
+    /**
+     * Creates stream of {@link MS_JSONObject} in this array.
+     * <p>If there are different elements in array than specified with type {@link MS_JSONObject} then they will be filtered out.
+     *
+     * @return stream of JSONObjects.
+     */
+    public Stream<MS_JSONObject> stream() {
+        return streamOf(MS_JSONObject.class);
+    }
+
+    /**
+     * Creates stream of specific type <b>T</b>.
+     * <p>If there are different elements in array than specified with type <b>T</b> then they will be filtered out.
+     *
+     * @param clazz class of elements that will be included in Stream.
+     * @param <T>   optional type parameter to {@link #spliterator()}, by default will be taken from <b>clazz</b>.
+     * @return a sequential Stream over the elements in this JSONArray.
+     */
+    @SuppressWarnings("unchecked")
+    public <T> Stream<T> streamOf(Class<T> clazz) {
+        Objects.requireNonNull(clazz);
+        return StreamSupport.stream((Spliterator<T>) spliterator(), false)
+                .filter(elem -> clazz.isAssignableFrom(elem.getClass()));
     }
 
     /**
@@ -527,6 +571,19 @@ public class MS_JSONArray extends JSONArray {
         return this;
     }
 
+    /**
+     * Get the number of elements in the JSONArray, included nulls.
+     *
+     * @return the length (or size).
+     */
+    public int size() {
+        return this.length();
+    }
+
+    public boolean isEmpty() {
+        return isEmpty(this);
+    }
+
     //*** Private methods ***
 
     private static Object getObjectNode(org.json.JSONObject obj, String nodePath) {
@@ -591,5 +648,25 @@ public class MS_JSONArray extends JSONArray {
             }
         }
         throw new MS_BadSetupException("Empty path to node"); //should not happen unless implementation changed
+    }
+
+    /**
+     * Returns a {@link Collector} that accumulates the input elements into a new {@link JSONArray}.
+     *
+     * @param <T> the type of the input elements.
+     * @return a {@link Collector} which collects all the input elements into a {@link List}, in encounter order.
+     */
+    public static <T> Collector<T, ?, MS_JSONArray> toJSONArray() {
+        return Collector.of(MS_JSONArray::new,
+                MS_JSONArray::put,
+                (left, right) -> {
+                    left.concat(right);
+                    return left;
+                }
+        );
+    }
+
+    private static boolean isEmpty(org.json.JSONArray array) {
+        return array == null || array.length() == 0;
     }
 }

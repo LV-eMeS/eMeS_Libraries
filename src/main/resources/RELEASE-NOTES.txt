@@ -1,5 +1,5 @@
 eMeS libraries
-Version 2.2.8
+Version 2.3.0
 Release Notes
 
 INTRODUCTION:
@@ -27,6 +27,7 @@ eMeS libraries Version 2.3.0
 * Added support for HTTP request URL query parameters.
 * Upgraded to MySQL 8 connector.
 * Added yaml file reading support.
+* Reading Yaml files as JSON objects.
 ========================================================================================================
 eMeS libraries Version 2.2.0
 ========================================================================================================
