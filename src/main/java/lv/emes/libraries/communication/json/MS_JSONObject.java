@@ -2,12 +2,9 @@ package lv.emes.libraries.communication.json;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONString;
 import org.json.JSONTokener;
 
 import java.lang.reflect.Field;
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -18,7 +15,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @version 2.3.
  * @since 2.2.2
  */
-public class MS_JSONObject extends JSONObject {
+public class MS_JSONObject extends JSONObject implements MS_JSON {
 
     private static boolean setupDone = false;
     private static Field JSONObjectMapField = null;
@@ -59,7 +56,7 @@ public class MS_JSONObject extends JSONObject {
         if (map != null) map.forEach((key, value) -> {
             if (key != null) {
                 String k = key.toString();
-                put(k, wrap(value));
+                put(k, this.wrapInternal(value));
             }
         });
     }
@@ -81,6 +78,7 @@ public class MS_JSONObject extends JSONObject {
     /**
      * <u>Caution</u>: use only with real object beans that has valid field getters, as this method is using those
      * to populate JSON fields. In other cases, please, prefer: {@link MS_JSONObject#MS_JSONObject(Map)}!
+     *
      * @param bean bean object with getters.
      */
     public MS_JSONObject(Object bean) {
@@ -114,60 +112,6 @@ public class MS_JSONObject extends JSONObject {
             return new MS_JSONObject(fromObject.toString());
         } else {
             return (MS_JSONObject) fromObject; //let ClassCastException fly in case of problems
-        }
-    }
-
-    public static Object wrap(Object object) {
-        try {
-            if (object == null) {
-                return NULL;
-            }
-
-            if (object instanceof MS_JSONObject || object instanceof MS_JSONArray
-                    || NULL.equals(object) || object instanceof JSONString
-                    || object instanceof Byte || object instanceof Character
-                    || object instanceof Short || object instanceof Integer
-                    || object instanceof Long || object instanceof Boolean
-                    || object instanceof Float || object instanceof Double
-                    || object instanceof String || object instanceof BigInteger
-                    || object instanceof BigDecimal || object instanceof Enum) {
-                return object;
-            }
-
-            if (object instanceof Collection) {
-                Collection<?> coll = (Collection<?>) object;
-                return new MS_JSONArray(coll);
-            }
-
-            if (object.getClass().isArray()) {
-                return new MS_JSONArray(object);
-            }
-
-            //org.JSON ignores those map null values, but we will treat those as objects
-            if (object instanceof Map) {
-                Map<?, ?> map = (Map<?, ?>) object;
-                return new MS_JSONObject(map);
-            }
-
-            Package objectPackage = object.getClass().getPackage();
-            String objectPackageName = objectPackage != null ? objectPackage
-                    .getName() : "";
-            if (objectPackageName.startsWith("java.")
-                    || objectPackageName.startsWith("javax.")
-                    || object.getClass().getClassLoader() == null) {
-                return object.toString();
-            }
-
-            //upgrade org.JSON objects and arrays to ours
-            if (MS_JSONUtils.isOrgJsonObject(object)) {
-                return new MS_JSONObject((JSONObject) object);
-            } else if (MS_JSONUtils.isOrgJsonArray(object)) {
-                return new MS_JSONArray((org.json.JSONArray) object);
-            }
-
-            return new MS_JSONObject(object);
-        } catch (Exception exception) {
-            return null;
         }
     }
 
@@ -249,6 +193,16 @@ public class MS_JSONObject extends JSONObject {
         throw new JSONException("MS_JSONObject[" + quote(key) + "] is not a MS_JSONObject.");
     }
 
+    public MS_JSON getJSON(String key) throws JSONException {
+        Object object = this.get(key);
+        if (object instanceof MS_JSONObject) {
+            return (MS_JSONObject) object;
+        } else if (object instanceof MS_JSONArray) {
+            return (MS_JSONArray) object;
+        }
+        throw new JSONException("MS_JSONObject[" + quote(key) + "] is not a MS_JSON.");
+    }
+
     @Override
     public MS_JSONArray optJSONArray(String key) {
         Object o = this.opt(key);
@@ -271,38 +225,22 @@ public class MS_JSONObject extends JSONObject {
         return res == null ? defaultValue : res;
     }
 
-    /**
-     * Gets nested object or primitive from objects that this object holds.
-     * It supports only navigation through types of {@link MS_JSONObject} and {@link MS_JSONArray} to get till target.
-     * <p><u>Example</u>:
-     *
-     * @param jsonPath JSON path to target object.
-     * @param typeOfObject class representing type of return value.
-     * @param <T> type of return value.
-     * @return object value of type <b>typeOfObject</b> according to given <b>jsonPath</b>.
-     * @since 2.3
-     */
-    public <T> T getNested(String jsonPath, Class<T> typeOfObject) {
-        Objects.requireNonNull(typeOfObject);
-        return typeOfObject.cast(getString(jsonPath));
-    }
-
     @Override
     public MS_JSONObject put(String key, Object value) throws JSONException {
-        super.put(key, wrap(value));
+        super.put(key, this.wrapInternal(value));
         return this;
     }
 
     @Override
     public MS_JSONObject putOnce(String key, Object value) throws JSONException {
-        super.putOnce(key, wrap(value));
+        super.putOnce(key, this.wrapInternal(value));
         return this;
     }
 
     @Override
     public MS_JSONObject accumulate(String key, Object value) throws JSONException {
         testValidity(value);
-        value = wrap(value);
+        value = this.wrapInternal(value);
         Object object = this.opt(key);
         if (object == null) {
             this.put(key, value instanceof MS_JSONArray ? new MS_JSONArray().put(value) : value);
@@ -317,7 +255,7 @@ public class MS_JSONObject extends JSONObject {
     @Override
     public MS_JSONObject append(String key, Object value) throws JSONException {
         testValidity(value);
-        value = wrap(value);
+        value = this.wrapInternal(value);
         Object object = this.opt(key);
         if (object == null) {
             this.put(key, new MS_JSONArray().put(value));
@@ -361,13 +299,13 @@ public class MS_JSONObject extends JSONObject {
 
     @Override
     public MS_JSONObject put(String key, Map<?, ?> value) throws JSONException {
-        super.put(key, wrap(value));
+        super.put(key, this.wrapInternal(value));
         return this;
     }
 
     @Override
     public MS_JSONObject putOpt(String key, Object value) throws JSONException {
-        super.putOpt(key, wrap(value));
+        super.putOpt(key, this.wrapInternal(value));
         return this;
     }
 

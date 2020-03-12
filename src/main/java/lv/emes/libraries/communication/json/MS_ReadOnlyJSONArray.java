@@ -3,20 +3,20 @@ package lv.emes.libraries.communication.json;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONTokener;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 /**
- * Immutable JSON object.
- * All the put and removal methods are unsupported for this type of JSON object.
+ * Immutable JSON array.
+ * All the put and removal methods are unsupported for this type of JSON array.
  *
  * @author eMeS
  * @version 1.0.
  * @since 2.3.0.
  */
-public class MS_ReadOnlyJSONObject extends MS_JSONObject {
+public class MS_ReadOnlyJSONArray extends MS_JSONArray {
 
     private boolean initiated = true; // gets its value assigned after constructor, therefore makes methods from
     // super used in constructors to run without an exception
@@ -53,112 +53,111 @@ public class MS_ReadOnlyJSONObject extends MS_JSONObject {
 
     // *** Constructors ***
 
-    public MS_ReadOnlyJSONObject(JSONObject obj) {
-        super(obj);
+    public MS_ReadOnlyJSONArray(JSONArray arr) {
+        super(arr);
     }
 
-    public MS_ReadOnlyJSONObject(Map<?, ?> map) {
-        super(map);
+    public MS_ReadOnlyJSONArray(Object array) throws JSONException {
+        super(array);
     }
 
-    public MS_ReadOnlyJSONObject(JSONObject jo, String... names) {
-        super(jo, names);
+    public MS_ReadOnlyJSONArray(List<? extends JSONObject> objects) {
+        super(objects);
     }
 
-    public MS_ReadOnlyJSONObject(JSONTokener x) throws JSONException {
-        super(x);
+    public MS_ReadOnlyJSONArray() {
+        super();
     }
 
-    public MS_ReadOnlyJSONObject(Object bean) {
-        super(bean);
-    }
-
-    public MS_ReadOnlyJSONObject(Object object, String[] names) {
-        super(object, names);
-    }
-
-    public MS_ReadOnlyJSONObject(String source) throws JSONException {
-        super(source);
+    public MS_ReadOnlyJSONArray(Collection<?> collection) {
+        super(collection);
     }
 
     // *** Restricted modification methods ***
 
     @Override
-    public MS_JSONObject put(String key, Object value) throws JSONException {
+    public MS_JSONArray put(int index, Object value) throws JSONException {
         if (initiated)
             throw new UnsupportedOperationException();
         else
-            return super.put(key, value);
+            return super.put(index, value);
     }
 
     @Override
-    public MS_JSONObject putOnce(String key, Object value) throws JSONException {
+    public MS_JSONArray put(Object value) {
         if (initiated)
             throw new UnsupportedOperationException();
         else
-            return super.putOnce(key, value);
+            return super.put(value);
     }
 
     @Override
-    public MS_JSONObject putOpt(String key, Object value) throws JSONException {
-        if (initiated)
-            throw new UnsupportedOperationException();
-        else
-            return super.putOpt(key, value);
-    }
-
-    @Override
-    public MS_JSONObject accumulate(String key, Object value) throws JSONException {
+    public MS_JSONArray put(boolean value) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public MS_JSONObject append(String key, Object value) throws JSONException {
+    public MS_JSONArray put(Collection<?> value) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public MS_JSONObject put(String key, boolean value) throws JSONException {
+    public MS_JSONArray put(double value) throws JSONException {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public MS_JSONObject put(String key, Collection<?> value) throws JSONException {
+    public MS_JSONArray put(int value) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public MS_JSONObject put(String key, double value) throws JSONException {
+    public MS_JSONArray put(long value) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public MS_JSONObject put(String key, int value) throws JSONException {
+    public MS_JSONArray put(Map<?, ?> value) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public MS_JSONObject put(String key, long value) throws JSONException {
+    public MS_JSONArray put(int index, boolean value) throws JSONException {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public MS_JSONObject put(String key, Map<?, ?> value) throws JSONException {
+    public MS_JSONArray put(int index, Collection<?> value) throws JSONException {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public JSONObject increment(String key) throws JSONException {
+    public MS_JSONArray put(int index, double value) throws JSONException {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public JSONObject put(String key, float value) throws JSONException {
+    public MS_JSONArray put(int index, int value) throws JSONException {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public Object remove(String key) {
+    public MS_JSONArray put(int index, long value) throws JSONException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public MS_JSONArray put(int index, Map<?, ?> value) throws JSONException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Object remove(int index) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public MS_JSONArray concat(JSONArray tail) {
         throw new UnsupportedOperationException();
     }
 }

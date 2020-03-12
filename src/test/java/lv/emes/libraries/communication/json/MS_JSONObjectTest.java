@@ -1,7 +1,6 @@
 package lv.emes.libraries.communication.json;
 
 import com.google.common.collect.ImmutableMap;
-import lv.emes.libraries.tools.MS_BadSetupException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -238,46 +237,5 @@ public class MS_JSONObjectTest {
         assertThat(object.isJsonArray("nullObject")).isFalse();
         assertThat(object.isJsonArray("object")).isFalse();
         assertThat(object.isJsonArray("array")).isTrue();
-    }
-
-    @Test
-    public void testGetJsonPathNestedJSONObject() {
-        MS_JSONObject objectWithNestedObjectAndArray = new MS_JSONObject()
-                .put("obj", new JSONObject()
-                        .put("key", "abc")
-                        .put("arrOfObj", new MS_JSONArray()
-                                .put("efg")
-                                .put(new JSONObject().put("test", "value"))
-                        )
-                )
-                .put("arr", new MS_JSONArray().put(1).put(2).put(3).put(new JSONObject().put("key", "value")))
-                .put("primitive", true)
-                ;
-
-        assertThat(objectWithNestedObjectAndArray.getNested("obj.key", String.class)).isEqualTo("abc");
-        assertThat(objectWithNestedObjectAndArray.getNested("obj.arrOfObj", MS_JSONArray.class))
-                .isEqualTo(new MS_JSONArray()
-                        .put("efg")
-                        .put(new JSONObject().put("test", "value"))
-                );
-        assertThat(objectWithNestedObjectAndArray.getNested("obj.arrOfObj[0]", String.class))
-                .isEqualTo("efg");
-        assertThat(objectWithNestedObjectAndArray.getNested("obj.arrOfObj[1]", String.class))
-                .isEqualTo(new JSONObject().put("test", "value"));
-        assertThat(objectWithNestedObjectAndArray.getNested("obj.arrOfObj[1].test", String.class))
-                .isEqualTo("value");
-
-        assertThat(objectWithNestedObjectAndArray.getNested("arr[0]", Integer.class)).isEqualTo(1);
-        assertThat(objectWithNestedObjectAndArray.getNested("arr[1]", Integer.class)).isEqualTo(2);
-        assertThat(objectWithNestedObjectAndArray.getNested("arr[2]", Integer.class)).isEqualTo(3);
-        assertThat(objectWithNestedObjectAndArray.getNested("arr[3].key", String.class)).isEqualTo("value");
-
-        // Erroneous cases
-        assertThatThrownBy(() -> objectWithNestedObjectAndArray.getNested("primitive", Integer.class))
-                .isInstanceOf(MS_BadSetupException.class);
-        assertThatThrownBy(() -> objectWithNestedObjectAndArray.getNested("primitive.imaginaryBoolHere", Boolean.class))
-                .isInstanceOf(MS_BadSetupException.class);
-        assertThatThrownBy(() -> objectWithNestedObjectAndArray.getNested("primitive[3].imaginaryDoubleHere", Double.class))
-                .isInstanceOf(MS_BadSetupException.class);
     }
 }

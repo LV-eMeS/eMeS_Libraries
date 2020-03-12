@@ -20,7 +20,7 @@ import java.util.stream.StreamSupport;
  * @version 1.1.
  * @since 2.2.2.
  */
-public class MS_JSONArray extends JSONArray {
+public class MS_JSONArray extends JSONArray implements MS_JSON {
 
     //*** Constructors ***
 
@@ -475,6 +475,16 @@ public class MS_JSONArray extends JSONArray {
         throw new JSONException("MS_JSONArray[" + index + "] is not a MS_JSONObject.");
     }
 
+    public MS_JSON getJSON(int index) throws JSONException {
+        Object element = super.get(index);
+        if (element instanceof MS_JSONObject) {
+            return (MS_JSONObject) element;
+        } else if (element instanceof MS_JSONArray) {
+            return (MS_JSONArray) element;
+        }
+        throw new JSONException("MS_JSONArray[" + index + "] is not a MS_JSON.");
+    }
+
     @Override
     public MS_JSONArray optJSONArray(int index) {
         return (MS_JSONArray) super.optJSONArray(index);
@@ -495,7 +505,7 @@ public class MS_JSONArray extends JSONArray {
 
     @Override
     public MS_JSONArray put(Collection<?> value) {
-        super.put(MS_JSONObject.wrap(value));
+        super.put(wrapInternal(value));
         return this;
     }
 
@@ -519,13 +529,13 @@ public class MS_JSONArray extends JSONArray {
 
     @Override
     public MS_JSONArray put(Map<?, ?> value) {
-        super.put(MS_JSONObject.wrap(value));
+        super.put(wrapInternal(value));
         return this;
     }
 
     @Override
     public MS_JSONArray put(Object value) {
-        super.put(MS_JSONObject.wrap(value));
+        super.put(wrapInternal(value));
         return this;
     }
 
@@ -537,7 +547,7 @@ public class MS_JSONArray extends JSONArray {
 
     @Override
     public MS_JSONArray put(int index, Collection<?> value) throws JSONException {
-        super.put(index, MS_JSONObject.wrap(value));
+        super.put(index, wrapInternal(value));
         return this;
     }
 
@@ -561,13 +571,13 @@ public class MS_JSONArray extends JSONArray {
 
     @Override
     public MS_JSONArray put(int index, Map<?, ?> value) throws JSONException {
-        super.put(index, MS_JSONObject.wrap(value));
+        super.put(index, wrapInternal(value));
         return this;
     }
 
     @Override
     public MS_JSONArray put(int index, Object value) throws JSONException {
-        super.put(index, MS_JSONObject.wrap(value));
+        super.put(index, wrapInternal(value));
         return this;
     }
 

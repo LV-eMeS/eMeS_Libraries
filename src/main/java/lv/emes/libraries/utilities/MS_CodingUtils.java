@@ -24,7 +24,8 @@ import java.util.function.Supplier;
 /**
  * Module is designed to combine different common quick coding operations.
  *
- * @version 2.6.
+ * @author eMeS
+ * @version 2.7.
  */
 public final class MS_CodingUtils {
 
@@ -318,9 +319,9 @@ public final class MS_CodingUtils {
      *                      is thrown.
      * @param action        action to execute.
      * @throws MS_ExecutionFailureException if execution failed within given amount of <b>maxTimesToRun</b>
-     *                                   or, if any exception occurred while performing execution of action.
-     *                                   In that case cause exception is added to this exception as well.
-     * @throws MS_BadSetupException if action is not provided or <b>maxTimesToRun</b> is negative or 0.
+     *                                      or, if any exception occurred while performing execution of action.
+     *                                      In that case cause exception is added to this exception as well.
+     * @throws MS_BadSetupException         if action is not provided or <b>maxTimesToRun</b> is negative or 0.
      */
     public static void executeWithRetry(int maxTimesToRun, IFuncAction action) throws MS_ExecutionFailureException {
         executeWithRetry(maxTimesToRun, action, null);
@@ -335,9 +336,9 @@ public final class MS_CodingUtils {
      * @param action               action to execute.
      * @param actionBetweenRetries action to be performed between retries in case retry is needed.
      * @throws MS_ExecutionFailureException if execution failed within given amount of <b>maxTimesToRun</b>
-     *                                   or, if any exception occurred while performing execution of action.
-     *                                   In that case cause exception is added to this exception as well.
-     * @throws MS_BadSetupException if action is not provided or <b>maxTimesToRun</b> is negative or 0.
+     *                                      or, if any exception occurred while performing execution of action.
+     *                                      In that case cause exception is added to this exception as well.
+     * @throws MS_BadSetupException         if action is not provided or <b>maxTimesToRun</b> is negative or 0.
      */
     public static void executeWithRetry(int maxTimesToRun, IFuncAction action, IFuncAction actionBetweenRetries) throws MS_ExecutionFailureException {
         if (action == null)
@@ -355,7 +356,7 @@ public final class MS_CodingUtils {
      * @param index index (starting from 0) of Map's element, whose key we are trying to find.
      * @param <T>   type of Map's keys.
      * @return key of Map's element at index <b>index</b>.
-     * @throws NullPointerException      in case given <b>map</b> is null.
+     * @throws NullPointerException in case given <b>map</b> is null.
      * @throws MS_BadSetupException in case index is out of Map's element index bounds.
      */
     public static <T> T getMapElementKey(Map<T, ?> map, int index) {
@@ -397,7 +398,7 @@ public final class MS_CodingUtils {
      * Tests if some iterable list is empty or null.
      *
      * @param iterableList collection of iterable elements.
-     * @param <T>        type of elements in collection.
+     * @param <T>          type of elements in collection.
      * @return true if iterable list is null or has no elements; false, if there is at least 1 element in list.
      */
     public static <T> boolean isEmpty(MS_IterableListWithItems<T, ?> iterableList) {
@@ -420,7 +421,7 @@ public final class MS_CodingUtils {
      * simply <tt>null</tt> value will be returned as the result.
      *
      * @param chainedMethods chained method calls.
-     * @param <T> return type of last method in chain.
+     * @param <T>            return type of last method in chain.
      * @return return value of last method call or <tt>null</tt> if {@link NullPointerException} occurred in the process.
      */
     public static <T> T nullSafe(Supplier<T> chainedMethods) {
@@ -429,6 +430,33 @@ public final class MS_CodingUtils {
         } catch (NullPointerException e) {
             return null;
         }
+    }
+
+    /**
+     * Looks for the value of <b>key</b> registered in either system either environment properties.
+     *
+     * @param key property name or path (delimited by dots).
+     * @param propertyClass expected class of property value.
+     * @param <T>           expected type of property value.
+     * @return <ol>
+     *     <li>Optional containing value of registered system or environment property;</li>
+     *     <li>optional of <tt>null</tt> if there is a system or environment property registered with value {@link MS_StringUtils#NULL_STRING}</li>
+     *     <li>an empty optional if there is nothing registered under system nor environment property.</li>
+     * </ol>
+     */
+    public static <T> Optional<T> getFromSysOrEnvProperty(String key, Class<T> propertyClass) {
+        // Try to find key passed as system property or environment variable
+        if (propertyClass != null) {
+            String envPropertyForKey = System.getenv(key);
+            if (StringUtils.isNotEmpty(envPropertyForKey)) {
+                return Optional.ofNullable(MS_StringUtils.stringToPrimitive(envPropertyForKey, propertyClass));
+            }
+            String sysPropertyForKey = System.getProperty(key);
+            if (StringUtils.isNotEmpty(sysPropertyForKey)) {
+                return Optional.ofNullable(MS_StringUtils.stringToPrimitive(sysPropertyForKey, propertyClass));
+            }
+        }
+        return Optional.empty();
     }
 
     //*** Private (static) methods ***

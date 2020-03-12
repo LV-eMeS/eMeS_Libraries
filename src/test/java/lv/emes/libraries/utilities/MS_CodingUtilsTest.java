@@ -2,99 +2,101 @@ package lv.emes.libraries.utilities;
 
 import lv.emes.libraries.tools.MS_BadSetupException;
 import lv.emes.libraries.tools.lists.MS_List;
-import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 
 import static lv.emes.libraries.utilities.MS_CodingUtils.*;
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.data.Offset.offset;
 
 public class MS_CodingUtilsTest {
 
     @Test
     public void testGetIPAddress() {
-        assertNotNull(getIPAddress());
+        assertThat(getIPAddress()).isNotNull();
     }
 
     @Test
     public void testRandomNumber() {
         int res = randomNumber(5, -5);
-        assertTrue("Generated random number is not in range [-5..5]", inRange(res, -5, 5));
+        assertThat(inRange(res, -5, 5)).as("Generated random number is not in range [-5..5]").isTrue();
     }
 
     @Test
     public void testInRange() {
-        assertTrue(inRange(2, 1, 3));
-        assertTrue(inRange(-2, -1, -3));
-        assertTrue(inRange(1, 1, 1));
-        assertFalse(inRange(10, 1, 1));
-        assertFalse(inRange(10, -1, 5));
+        assertThat(inRange(2, 1, 3)).isTrue();
+        assertThat(inRange(-2, -1, -3)).isTrue();
+        assertThat(inRange(1, 1, 1)).isTrue();
+        assertThat(inRange(10, 1, 1)).isFalse();
+        assertThat(inRange(10, -1, 5)).isFalse();
     }
 
     @SuppressWarnings("all")
     @Test
     public void testInverseBoolean() {
-        assertTrue(inverseBoolean(false));
-        assertFalse(inverseBoolean(true));
+        assertThat(inverseBoolean(false)).isTrue();
+        assertThat(inverseBoolean(true)).isFalse();
     }
 
     @Test
     public void testBooleanToChar() {
-        assertEquals((Character) '1', booleanToChar(true));
-        assertEquals((Character) '0', booleanToChar(false));
+        assertThat(booleanToChar(true)).isEqualTo((Character) '1');
+        assertThat(booleanToChar(false)).isEqualTo((Character) '0');
     }
 
     @Test
     public void testCharToBoolean() {
-        assertEquals(true, charToBoolean('1'));
-        assertEquals(false, charToBoolean('0'));
+        assertThat(charToBoolean('1')).isEqualTo(true);
+        assertThat(charToBoolean('0')).isEqualTo(false);
     }
 
     @Test
     public void testRound() {
-        assertEquals(-6, round(-6.4444, 0), 0.0);
-        assertEquals(1, round(1.17, 0), 0.0);
-        assertEquals(1.17, round(1.17, 2), 0.0);
-        assertEquals(0.17, round(0.17, 2), 0.0);
-        assertEquals(0.2, round(0.17, 1), 0.0);
+        assertThat(round(-6.4444, 0)).isCloseTo(-6, offset(0.0));
+        assertThat(round(1.17, 0)).isCloseTo(1, offset(0.0));
+        assertThat(round(1.17, 2)).isCloseTo(1.17, offset(0.0));
+        assertThat(round(0.17, 2)).isCloseTo(0.17, offset(0.0));
+        assertThat(round(0.17, 1)).isCloseTo(0.2, offset(0.0));
     }
 
     @Test
     public void testTruncate() {
-        assertEquals(0, truncate(0.17));
-        assertEquals(-6, truncate(-6.17));
-        assertEquals(1, truncate(1.11111111111111111111111111111111111111111111111111));
-        assertEquals(9, truncate(9.999999999999999));
+        assertThat(truncate(0.17)).isEqualTo(0);
+        assertThat(truncate(-6.17)).isEqualTo(-6);
+        assertThat(truncate(1.11111111111111111111111111111111111111111111111111)).isEqualTo(1);
+        assertThat(truncate(9.999999999999999)).isEqualTo(9);
     }
 
     @Test
     public void testFractionalPart() {
-        assertEquals(0.14, fractionalPart(3.14, 2), 0.0);
-        assertEquals(0.1, fractionalPart(3.14, 1), 0.0);
-        assertEquals(0, fractionalPart(3.14, 0), 0.0);
+        assertThat(fractionalPart(3.14, 2)).isCloseTo(0.14, offset(0.0));
+        assertThat(fractionalPart(3.14, 1)).isCloseTo(0.1, offset(0.0));
+        assertThat(fractionalPart(3.14, 0)).isCloseTo(0, offset(0.0));
 
-        assertEquals(-0.1, fractionalPart(-10.1, 1), 0.0);
-        assertEquals(0.0, fractionalPart(0.0, 0), 0.0);
-        assertEquals(0.013001985, fractionalPart(27.013001985, 10), 0.0);
-        assertEquals(0.999999999, fractionalPart(0.999999999, 9), 0.0);
+        assertThat(fractionalPart(-10.1, 1)).isCloseTo(-0.1, offset(0.0));
+        assertThat(fractionalPart(0.0, 0)).isCloseTo(0.0, offset(0.0));
+        assertThat(fractionalPart(27.013001985, 10)).isCloseTo(0.013001985, offset(0.0));
+        assertThat(fractionalPart(0.999999999, 9)).isCloseTo(0.999999999, offset(0.0));
     }
 
     @Test
     public void testGetArray() {
         Object[] arr;
         arr = newArray();
-        assertEquals(0, arr.length);
+        assertThat(arr.length).isEqualTo(0);
 
         arr = newArray("", null, 0);
-        assertEquals(3, arr.length);
-        assertEquals("", arr[0]);
-        assertNull(arr[1]);
-        assertEquals(0, arr[2]);
+        assertThat(arr.length).isEqualTo(3);
+        assertThat(arr[0]).isEqualTo("");
+        assertThat(arr[1]).isNull();
+        assertThat(arr[2]).isEqualTo(0);
     }
 
     @Test
@@ -102,7 +104,7 @@ public class MS_CodingUtilsTest {
         int key = 2;
         Object value = new Object();
         Map<Integer, Object> map = newSingletonMap(key, value);
-        assertEquals(value, map.get(key));
+        assertThat(map.get(key)).isEqualTo(value);
     }
 
     @Test
@@ -121,8 +123,8 @@ public class MS_CodingUtilsTest {
             count.incrementAndGet();
         });
 
-        assertEquals(4, count.get());
-        assertEquals(234, sum.get());
+        assertThat(count.get()).isEqualTo(4);
+        assertThat(sum.get()).isEqualTo(234);
 
         //break right away
         sum.set(0);
@@ -133,8 +135,8 @@ public class MS_CodingUtilsTest {
             breakLoop.set(true);
         });
 
-        assertEquals(1, count.get());
-        assertEquals(17, sum.get());
+        assertThat(count.get()).isEqualTo(1);
+        assertThat(sum.get()).isEqualTo(17);
 
         //break when sum is greater than 20
         sum.set(0);
@@ -145,8 +147,8 @@ public class MS_CodingUtilsTest {
             if (sum.get() > 20) breakLoop.set(true);
         });
 
-        assertEquals(3, count.get());
-        assertEquals(238, sum.get());
+        assertThat(count.get()).isEqualTo(3);
+        assertThat(sum.get()).isEqualTo(238);
     }
 
     //*** executeWithRetry tests ***
@@ -159,8 +161,8 @@ public class MS_CodingUtilsTest {
             success.set(true);
             executionTimes.incrementAndGet();
         });
-        assertTrue(success.get());
-        assertEquals(1, executionTimes.get());
+        assertThat(success.get()).isTrue();
+        assertThat(executionTimes.get()).isEqualTo(1);
     }
 
     @Test
@@ -173,8 +175,8 @@ public class MS_CodingUtilsTest {
             }
             success.set(true);
         });
-        assertTrue(success.get());
-        assertEquals(2, executionTimes.get());
+        assertThat(success.get()).isTrue();
+        assertThat(executionTimes.get()).isEqualTo(2);
     }
 
     @Test
@@ -187,9 +189,9 @@ public class MS_CodingUtilsTest {
                 throw new MS_BadSetupException("This is a complete failure");
             });
         } catch (Exception e) {
-            assertTrue(e instanceof MS_BadSetupException);
-            assertFalse(success.get());
-            assertEquals(1, executionTimes.get());
+            assertThat(e instanceof MS_BadSetupException).isTrue();
+            assertThat(success.get()).isFalse();
+            assertThat(executionTimes.get()).isEqualTo(1);
         }
     }
 
@@ -203,10 +205,10 @@ public class MS_CodingUtilsTest {
                 throw new IllegalAccessException("This is a complete failure");
             });
         } catch (Exception e) {
-            assertTrue(e instanceof MS_ExecutionFailureException);
-            assertTrue(e.getCause() instanceof IllegalAccessException);
-            assertFalse(success.get());
-            assertEquals(2, executionTimes.get());
+            assertThat(e instanceof MS_ExecutionFailureException).isTrue();
+            assertThat(e.getCause() instanceof IllegalAccessException).isTrue();
+            assertThat(success.get()).isFalse();
+            assertThat(executionTimes.get()).isEqualTo(2);
         }
     }
 
@@ -223,9 +225,9 @@ public class MS_CodingUtilsTest {
         }, () -> {
             actionBetweenRetriesPerformed.set(true);
         });
-        assertEquals(2, executionTimes.get());
-        assertTrue(success.get());
-        assertTrue(actionBetweenRetriesPerformed.get());
+        assertThat(executionTimes.get()).isEqualTo(2);
+        assertThat(success.get()).isTrue();
+        assertThat(actionBetweenRetriesPerformed.get()).isTrue();
     }
 
     @Test
@@ -243,10 +245,10 @@ public class MS_CodingUtilsTest {
                 throw new InterruptedException();
             });
         } catch (MS_ExecutionFailureException e) {
-            assertTrue(e.getCause() instanceof InterruptedException);
-            assertEquals(1, executionTimes.get());
-            assertFalse(success.get());
-            assertFalse(actionBetweenRetriesPerformed.get());
+            assertThat(e.getCause() instanceof InterruptedException).isTrue();
+            assertThat(executionTimes.get()).isEqualTo(1);
+            assertThat(success.get()).isFalse();
+            assertThat(actionBetweenRetriesPerformed.get()).isFalse();
         }
     }
 
@@ -278,15 +280,15 @@ public class MS_CodingUtilsTest {
 
         Integer expected;
         expected = 5;
-        assertEquals(expected, getMapElementKey(map, 0));
+        assertThat(getMapElementKey(map, 0)).isEqualTo(expected);
         expected = 6;
-        assertEquals(expected, getMapElementKey(map, 1));
+        assertThat(getMapElementKey(map, 1)).isEqualTo(expected);
         expected = 1;
-        assertEquals(expected, getMapElementKey(map, 2));
+        assertThat(getMapElementKey(map, 2)).isEqualTo(expected);
 
-        assertEquals("Test", getMapElementValue(map, 0));
-        assertEquals("6", getMapElementValue(map, 1));
-        assertEquals("XYZ", getMapElementValue(map, 2));
+        assertThat(getMapElementValue(map, 0)).isEqualTo("Test");
+        assertThat(getMapElementValue(map, 1)).isEqualTo("6");
+        assertThat(getMapElementValue(map, 2)).isEqualTo("XYZ");
     }
 
     @Test(expected = MS_BadSetupException.class)
@@ -310,13 +312,32 @@ public class MS_CodingUtilsTest {
     @Test
     public void testNullSafe() {
         Supplier<Supplier<String>> methodThatReturnsNull = () -> null;
-        Assertions.assertThat(nullSafe(() -> methodThatReturnsNull.get().get())).isNull(); //first method call failed
+        assertThat(nullSafe(() -> methodThatReturnsNull.get().get())).isNull(); //first method call failed
 
         final String SUCCESS_RESULT = "This time value is there, as first method returned some object, which method also returned value (this String)";
         Supplier<String> secondMethod = () -> SUCCESS_RESULT;
         Supplier<Supplier<String>> firstMethod = () -> secondMethod;
-        Assertions.assertThat(nullSafe(() -> firstMethod.get().get())).isEqualTo(SUCCESS_RESULT); //both method calls succeeded
+        assertThat(nullSafe(() -> firstMethod.get().get())).isEqualTo(SUCCESS_RESULT); //both method calls succeeded
 
+    }
+
+    @Test
+    public void testGetFromSysOrEnvProperty() {
+        final String existingIntegerKey = "testGetFromSysOrEnvProperty.existingIntegerKey";
+        final String existingNullKey = "testGetFromSysOrEnvProperty.existingNullKey";
+        final Integer existingIntegerValue = 5;
+        final String notExistingKey = UUID.randomUUID().toString();
+        System.getProperties().put(existingIntegerKey, existingIntegerValue.toString());
+        System.getProperties().put(existingNullKey, MS_StringUtils.NULL_STRING);
+
+        assertThat(MS_CodingUtils.getFromSysOrEnvProperty(existingIntegerKey, Integer.class)).isExactlyInstanceOf(Optional.class)
+                .isEqualTo(Optional.of(existingIntegerValue));
+        assertThat(MS_CodingUtils.getFromSysOrEnvProperty(existingIntegerKey, String.class)).isExactlyInstanceOf(Optional.class)
+                .isEqualTo(Optional.of(existingIntegerValue.toString()));
+        assertThat(MS_CodingUtils.getFromSysOrEnvProperty(existingNullKey, String.class)).isExactlyInstanceOf(Optional.class)
+                .isEqualTo(Optional.empty());
+        assertThat(MS_CodingUtils.getFromSysOrEnvProperty(notExistingKey, String.class)).isExactlyInstanceOf(Optional.class)
+                .isEqualTo(Optional.empty());
     }
 
     //*** getMapElementKey and getMapElementValue test end ***

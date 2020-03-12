@@ -5,6 +5,10 @@ allProperties:
   testFloat: 3.14
   testMap:
     nested: value
+    nestedList:
+      - 1
+      - 2
+      - 3
 
 differentRoot:
   testInt: 456

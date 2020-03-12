@@ -1,8 +1,11 @@
 package lv.emes.libraries.file_system.properties;
 
+import lv.emes.libraries.communication.json.MS_JSONArray;
 import lv.emes.libraries.communication.json.MS_JSONObject;
 import lv.emes.libraries.testdata.TestData;
 import lv.emes.libraries.tools.MS_BadSetupException;
+import org.json.JSONException;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.List;
@@ -12,6 +15,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class MS_YamlFileManagerTest {
+
+    @Before
+    public void setUp() {
+        System.getProperties().remove("outsideRoot");
+    }
 
     @Test
     public void testGetConfigurationMostCommonProperties() {
@@ -127,25 +135,38 @@ public class MS_YamlFileManagerTest {
     @Test
     public void testLoadJsonConfigurationMostCommonProperties() {
         MS_JSONObject loadedConfigs = MS_YamlFileManager.loadProperties(TestData.PATH_VALID_YAML);
-        assertThat(loadedConfigs).isNotNull();
+        assertThat(loadedConfigs).isNotNull().isInstanceOf(MS_YamlContentJSONObject.class);
         // Verify that this is immutable JSON object
         assertThatThrownBy(() -> loadedConfigs.put("test", "anything")).isInstanceOf(UnsupportedOperationException.class);
-        assertThat(loadedConfigs.getString("testStr")).isEqualTo("test");
-        assertThat(loadedConfigs.getInt("testInt")).isEqualTo(123);
-        assertThat(loadedConfigs.getBoolean("testBool")).isEqualTo(true);
-        assertThat(loadedConfigs.getDouble("testFloat")).isEqualTo(3.14d);
-        assertThat(loadedConfigs.getNested("testMap.nested", String.class)).isEqualTo("value");
-        assertThatThrownBy(() -> loadedConfigs.getNested("testMap.unknown", String.class))
-                .isInstanceOf(MS_BadSetupException.class)
-                .hasMessage("Property cannot be found by given key [testMap.unknown], node [unknown] doesn't exist");
-        assertThatThrownBy(() -> loadedConfigs.getString("testNotExist"))
-                .isInstanceOf(MS_BadSetupException.class)
-                .hasMessage("Property cannot be found by given key: testNotExist");
+        assertThat(loadedConfigs.getString("allProperties.testStr")).isEqualTo("test");
+        assertThat(loadedConfigs.getInt("allProperties.testInt")).isEqualTo(123);
+        assertThat(loadedConfigs.getBoolean("allProperties.testBool")).isEqualTo(true);
+        assertThat(loadedConfigs.getDouble("allProperties.testFloat")).isEqualTo(3.14d);
+        assertThat(loadedConfigs.getNested("allProperties.testMap.nested", String.class)).isEqualTo("value");
+        assertThat(loadedConfigs.getNested("allProperties.testMap.nestedList", MS_JSONArray.class))
+                .isEqualTo(new MS_JSONArray().put(1).put(2).put(3));
+
+        // Verify that nested objects are also immutable JSON objects
+        MS_JSONObject allProperties = loadedConfigs.getJSONObject("allProperties");
+        assertThatThrownBy(() -> allProperties.put("test", "anything")).isInstanceOf(UnsupportedOperationException.class);
+        assertThat(allProperties.getString("testStr")).isEqualTo("test");
+        assertThat(allProperties.getInt("testInt")).isEqualTo(123);
+        assertThat(allProperties.getBoolean("testBool")).isEqualTo(true);
+        assertThat(allProperties.getDouble("testFloat")).isEqualTo(3.14d);
+        assertThat(allProperties.getNested("testMap.nested", String.class)).isEqualTo("value");
+        assertThatThrownBy(() -> allProperties.getNested("testMap.unknown", String.class))
+                .isInstanceOf(JSONException.class)
+                .hasMessage("JSONObject[\"unknown\"] not found.");
+        assertThatThrownBy(() -> allProperties.getString("testNotExist"))
+                .isInstanceOf(JSONException.class)
+                .hasMessage("JSONObject[\"testNotExist\"] not found.");
 
         // Test properties that are not located in the file
-        assertThat(loadedConfigs.optInt("outsideRoot")).isNull();
+        assertThat(allProperties.optInt("outsideRoot")).isEqualTo(0);
         System.getProperties().put("outsideRoot", "78");
-        assertThat(loadedConfigs.getInt("outsideRoot")).isEqualTo(78);
-        assertThat(loadedConfigs.getString("outsideRoot")).isEqualTo("78");
+        assertThat(allProperties.getNested("outsideRoot", Integer.class)).isEqualTo(78);
+        assertThat(allProperties.getNested("outsideRoot", String.class)).isEqualTo("78");
+        assertThat(allProperties.getInt("outsideRoot")).isEqualTo(78);
+        assertThat(allProperties.getString("outsideRoot")).isEqualTo("78");
     }
 }
