@@ -70,7 +70,8 @@ public class MS_TcpIPClient extends MS_TcpIPClientCore {
     public IFuncOnServerGoingDown onServerGoingDown = null;
 
     private long id = 0; //client ID
-    private Queue<String> sentCommandsWaitingForAcknowledgement = new ConcurrentLinkedQueue<>();
+    private final Queue<String> sentCommandsWaitingForAcknowledgement = new ConcurrentLinkedQueue<>();
+    private boolean autoRestartIfDisconnected = true;
 
     /**
      * Creates object and initializes default commands.
@@ -185,7 +186,16 @@ public class MS_TcpIPClient extends MS_TcpIPClientCore {
      * @return false if error occurred during sending message or connection is not established.
      */
     public boolean cmdToServer(MS_TcpIPCommand command) {
-        if (!isConnected()) return false;
+        if (!isConnected()) {
+            if (autoRestartIfDisconnected) {
+                try {
+                    restartConnection();
+                } catch (IOException e) {
+                    return false;
+                }
+            } else
+                return false;
+        }
         return this.writeln(command.buildCommand().toString());
     }
 
@@ -196,8 +206,12 @@ public class MS_TcpIPClient extends MS_TcpIPClientCore {
      * @throws IOException if message couldn't be sent or server is not connected.
      */
     public void cmdToServerExc(MS_TcpIPCommand command) throws IOException {
-        if (!isConnected())
-            throw new IOException("Command [" + command.getCmdCode() + "] cannot be sent because server is disconnected");
+        if (!isConnected()) {
+            if (autoRestartIfDisconnected)
+                restartConnection();
+            else
+                throw new IOException("Command [" + command.getCmdCode() + "] cannot be sent because server is disconnected");
+        }
 
         this.out.writeUTF(command.buildCommand().toString());
     }
@@ -213,8 +227,12 @@ public class MS_TcpIPClient extends MS_TcpIPClientCore {
      * @throws SocketTimeoutException if server doesn't answer in given time specified by <b>writeTimeout</b> ({@link MS_TcpIPClient#getWriteTimeout()}).
      */
     public void cmdToServerAcknowledge(MS_TcpIPCommand command) throws SocketTimeoutException, IOException {
-        if (!isConnected())
-            throw new IOException("Command [" + command.getCmdCode() + "] cannot be sent because server is disconnected");
+        if (!isConnected()) {
+            if (autoRestartIfDisconnected)
+                restartConnection();
+            else
+                throw new IOException("Command [" + command.getCmdCode() + "] cannot be sent because server is disconnected");
+        }
 
         MS_JSONObject cmd = command.buildCommand();
         String commandId = cmd.getString("id");
@@ -286,6 +304,14 @@ public class MS_TcpIPClient extends MS_TcpIPClientCore {
 
     public long getId() {
         return id;
+    }
+
+    public boolean isAutoRestartIfDisconnected() {
+        return autoRestartIfDisconnected;
+    }
+
+    public void setAutoRestartIfDisconnected(boolean autoRestartIfDisconnected) {
+        this.autoRestartIfDisconnected = autoRestartIfDisconnected;
     }
 
     /**

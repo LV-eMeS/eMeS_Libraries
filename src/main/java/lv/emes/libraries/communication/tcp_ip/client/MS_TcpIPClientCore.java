@@ -114,6 +114,17 @@ abstract class MS_TcpIPClientCore extends MS_TcpIPAbstract {
     }
 
     /**
+     * Disconnects from the server if connected and attempts to establish new connection.
+     *
+     * @throws IOException              if an I/O error occurs when creating the socket or streams (rare case).
+     * @throws SocketTimeoutException   if timeout expires before re-connecting.
+     */
+    public void restartConnection() throws IOException, SocketTimeoutException {
+        if (isConnected()) disconnect();
+        connect(lastConnectedHost, lastConnectedPort);
+    }
+
+    /**
      * Adds new command to known commands that can be received from server. Commands are identified by code.
      * All commands must be unique. Commands cannot be deleted, except by clearing command list.
      *
