@@ -44,7 +44,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class MS_FutureEvent {
 
-    private WorkerThread worker = new WorkerThread().withThreadName("MS_FutureEvent");
+    private final WorkerThread worker = new WorkerThread().withThreadName("MS_FutureEvent");
 
     /**
      * Sets time till execution (default is 0 meaning that event will execute instantly).

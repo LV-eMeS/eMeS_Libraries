@@ -13,13 +13,13 @@ import java.util.UUID;
  * side (correspondingly - server or client).
  *
  * @author eMeS
- * @version 1.0.
+ * @version 1.1.
  * @since 2.2.3
  */
 @Immutable
-public class MS_TcpIPCommand {
+public final class MS_TcpIPCommand {
 
-    private MS_TcpIPCommandBuilder cmdBuilder;
+    private final MS_TcpIPCommandBuilder cmdBuilder;
 
     /**
      * Creates new TCP/IP command with specified <b>code</b> and no data to send to receiver.

@@ -3,6 +3,7 @@ package lv.emes.libraries.communication.http;
 import okhttp3.OkHttpClient;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
@@ -15,6 +16,8 @@ import static lv.emes.libraries.testdata.TestData.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
+@Ignore // ignored because eMeS HTTP server is no longer running;
+// set up new http server in order for it to be possible to run these tests!
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MS_HttpCallHandlerTest {
 
