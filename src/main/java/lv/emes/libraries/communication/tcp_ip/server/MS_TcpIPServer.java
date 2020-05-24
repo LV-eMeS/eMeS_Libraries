@@ -7,8 +7,12 @@ import lv.emes.libraries.communication.tcp_ip.MS_TcpIPCommand;
 import lv.emes.libraries.file_system.MS_BinaryTools;
 import lv.emes.libraries.tools.MS_BadSetupException;
 import lv.emes.libraries.tools.lists.MS_StringList;
+import lv.emes.libraries.tools.logging.MS_Log4Java;
 import lv.emes.libraries.tools.threading.MS_FutureEvent;
+import lv.emes.libraries.utilities.MS_DateTimeUtils;
 import lv.emes.libraries.utilities.MS_StringUtils;
+import org.apache.log4j.Logger;
+import org.threeten.bp.ZonedDateTime;
 
 import java.io.IOException;
 import java.io.UTFDataFormatException;
@@ -58,10 +62,12 @@ import java.util.stream.Collectors;
  * </ul>
  *
  * @author eMeS
- * @version 2.1.
+ * @version 2.2.
  * @since 1.1.1
  */
 public class MS_TcpIPServer extends MS_TcpIPServerCore {
+
+    private static final Logger LOGGER = MS_Log4Java.getLogger(MS_TcpIPServer.class);
 
     /**
      * Set this property with lambda expression to do actions after client went down (disconnected).
@@ -113,6 +119,11 @@ public class MS_TcpIPServer extends MS_TcpIPServerCore {
                 }
         });
 
+        this.registerCommandWithStringData(MS_ClientServerConstants._REFRESH_CLIENT_CURRENT_TIME, (server, client, timeStr) -> {
+            ZonedDateTime clientCurrentTime = MS_DateTimeUtils.formatDateTimeBackported(timeStr, MS_DateTimeUtils._DATE_TIME_FORMAT_NANOSEC_ZONE_OFFSET);
+            client.setClientTime(clientCurrentTime);
+        });
+
         //set behavior of client disconnecting. Note that server and list already is aware that client is missing.
         //Here you need just to set user-defined behavior
         this.registerCommandWithNoData(MS_ClientServerConstants._CLIENT_DISCONNECTS_NOTIFY_MESSAGE, (server, client) -> {
@@ -130,9 +141,24 @@ public class MS_TcpIPServer extends MS_TcpIPServerCore {
     protected void onIncomingClientMessage(String message, MS_ClientOfServer client) {
         // Every time client sends a message server reads it.
         // Messages are formatted in specific JSON format by client-server contract.
-        // Client might also send acknowledgement command type, which needs to be extracted first and then handled differently
+        // Client might also send acknowledgement command type, which has metadata information that needs to be
+        // extracted first and then handled differently
         MS_JSONObject command = new MS_JSONObject(message);
         if (command.has(MS_ClientServerConstants._CLIENT_COMMAND_WITH_ACKNOWLEDGEMENT_MODE)) {
+            if (client.getTimeDiffFromServer() != null && command.isNotNull(MS_ClientServerConstants._CURRENT_CLIENT_TIME)) {
+                String timeStr = command.getString(MS_ClientServerConstants._CURRENT_CLIENT_TIME);
+                ZonedDateTime clientTime = MS_DateTimeUtils.formatDateTimeBackported(timeStr, MS_DateTimeUtils._DATE_TIME_FORMAT_NANOSEC_ZONE_OFFSET);
+                ZonedDateTime timeNow;
+                if (clientTime
+                        .plusNanos(client.getTimeDiffFromServer())
+                        // Client gave time when he sent the command. _CLIENT_TIMEOUT is max allowed time on the fly
+                        // between point when client sent command and server received it
+                        .minusNanos(command.optInt(MS_ClientServerConstants._CLIENT_TIMEOUT, 0) * 1000_000)
+                        .isBefore(timeNow = ZonedDateTime.now())) {
+                    LOGGER.warn(String.format("Client message has timed out and not been executed. Server time: %s; client message:\n%s", timeNow, message));
+                    return;
+                }
+            }
             MS_JSONObject actualAkcCmd = command.getJSONObject(MS_ClientServerConstants._CLIENT_COMMAND_WITH_ACKNOWLEDGEMENT_MODE);
             //1. Respond to client that command is received
             this.cmdToClient(new MS_TcpIPCommand(MS_ClientServerConstants._SERVER_ACKNOWLEDGEMENT, actualAkcCmd.getString("id")), client);

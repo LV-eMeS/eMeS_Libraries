@@ -16,13 +16,10 @@ public class MS_InputOutputMethodDefaults {
     //some default input methods
     public static final MS_IFuncStringInputMethod _INPUT_CONSOLE = MS_CodingUtils::readStringFromConsole;
     public static final MS_IFuncStringInputMethod _INPUT_JOPTION_PANE = MS_CodingUtils::readStringFromJOptionPane;
-    //TODO input method for JavaFX
     //masked inputs
     public static final MS_IFuncStringInputMethod _INPUT_JOPTION_PANE_MASKED = MS_CodingUtils::readStringFromJPasswordField;
-    //TODO input method for JavaFX with input mask *****
 
     //some default output methods
     public static final MS_IFuncStringOutputMethod _OUTPUT_CONSOLE = System.out::println;
     public static final MS_IFuncStringOutputMethod _OUTPUT_JOPTION_PANE = (str) -> JOptionPane.showMessageDialog(null, str);
-    //TODO output method for JavaFX
 }

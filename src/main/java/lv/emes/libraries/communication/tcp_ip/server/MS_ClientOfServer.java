@@ -1,6 +1,8 @@
 package lv.emes.libraries.communication.tcp_ip.server;
 
 import lv.emes.libraries.tools.MS_BadSetupException;
+import org.threeten.bp.ZonedDateTime;
+import org.threeten.bp.temporal.ChronoUnit;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -20,7 +22,7 @@ import java.net.Socket;
  * <li>isConnected</li>
  * </ul>
  *
- * @version 1.6.
+ * @version 1.7.
  */
 public class MS_ClientOfServer {
 
@@ -34,6 +36,8 @@ public class MS_ClientOfServer {
     // I/O
     protected DataInputStream in; // for reading from socket
     protected DataOutputStream out; // for writing to socket
+
+    private Long timeDiffFromServer;
 
     /**
      * @return input stream for client message reading.
@@ -132,5 +136,32 @@ public class MS_ClientOfServer {
      */
     public String getSystemHomeDirectory() {
         return systemHomeDirectory;
+    }
+
+    /**
+     * If client ever sent his current time to server this method returns calculated time difference between server and client.
+     *
+     * @return <tt>null</tt> if client time was never set.
+     * Value in nanoseconds that is positive if server time is closer to the future than client time (client is behind)
+     * or negative if server time is closer to the past (client is ahead).
+     */
+    public Long getTimeDiffFromServer() {
+        return timeDiffFromServer;
+    }
+
+    public void setClientTime(ZonedDateTime clientTime) {
+        ZonedDateTime serverCurrentTime = ZonedDateTime.now();
+        long diff = ChronoUnit.NANOS.between(clientTime, serverCurrentTime);
+        if (this.timeDiffFromServer != null) {
+            // Try to adjust the value based on previous one in order to make it to be more precise
+            // Take smallest gap if the difference between previous and current diff is greater than 1 second
+            long differenceBetweenDiffs = Math.abs(this.timeDiffFromServer) - Math.abs(diff);
+            if (Math.abs(differenceBetweenDiffs) > 1_000_000_000L) {
+                diff = differenceBetweenDiffs > 0L ? diff : this.timeDiffFromServer;
+            } else { // Otherwise we can simply take avg value
+                diff = (this.timeDiffFromServer + diff) / 2;
+            }
+        }
+        this.timeDiffFromServer = diff;
     }
 }
