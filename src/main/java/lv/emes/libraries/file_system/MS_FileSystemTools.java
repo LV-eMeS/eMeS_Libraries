@@ -26,6 +26,7 @@ import java.awt.*;
 import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
@@ -73,7 +74,6 @@ public class MS_FileSystemTools {
      * @return true if successfully opened, false, if not.
      */
     public static boolean openLinkInWebBrowser(String aLink) {
-        //TODO check on Android!
         if (Desktop.isDesktopSupported()) {
             Desktop desktop = Desktop.getDesktop();
             try {
@@ -641,7 +641,7 @@ public class MS_FileSystemTools {
         try {
             readerFile = new File(pathToFile);
             reader = new CSVReader(
-                    new InputStreamReader(new FileInputStream(readerFile.getAbsolutePath()), "UTF-8"),
+                    new InputStreamReader(new FileInputStream(readerFile.getAbsolutePath()), StandardCharsets.UTF_8),
                     elementSeparator, quoteChar, 0);
             while ((line = reader.readNext()) != null) fileContent.add(line);
             return fileContent;

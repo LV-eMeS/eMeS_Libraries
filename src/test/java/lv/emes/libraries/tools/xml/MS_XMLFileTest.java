@@ -74,7 +74,6 @@ public class MS_XMLFileTest {
     public void test02DocumentObject() throws ParserConfigurationException, SAXException, IOException {
         MS_XMLReader file = new MS_XMLReader(PATH_TO_XML_FILE);
         Document doc = file.getDocument();
-        //TODO test on different machine, cause following commented code fails
 //        assertEquals("1.0", doc.getXmlVersion());
 //        assertEquals("UTF-8", doc.getInputEncoding());
 //        doc.setXmlVersion("1.1");

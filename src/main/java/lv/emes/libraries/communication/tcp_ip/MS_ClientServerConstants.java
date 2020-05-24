@@ -17,6 +17,9 @@ public final class MS_ClientServerConstants {
     public static final String _CLIENT_DISCONNECTS_NOTIFY_MESSAGE = "_CLIENT_DISCONNECTS_NOTIFY_MESSAGE";
     public static final String _CLIENT_COMMAND_WITH_ACKNOWLEDGEMENT_MODE = "_CLIENT_COMMAND_WITH_ACKNOWLEDGEMENT_MODE";
     public static final String _SERVER_ACKNOWLEDGEMENT = "_SERVER_ACKNOWLEDGEMENT";
+    public static final String _REFRESH_CLIENT_CURRENT_TIME = "_REFRESH_CLIENT_CURRENT_TIME";
+    public static final String _CURRENT_CLIENT_TIME = "_CURRENT_CLIENT_TIME";
+    public static final String _CLIENT_TIMEOUT = "_CLIENT_TIMEOUT";
 
     public static final int _CMD_WITH_NO_DATA = 1;
     public static final int _CMD_WITH_STRING_DATA = 2;

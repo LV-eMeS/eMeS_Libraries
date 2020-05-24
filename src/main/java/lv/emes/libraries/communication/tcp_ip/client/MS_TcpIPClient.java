@@ -10,8 +10,10 @@ import lv.emes.libraries.file_system.MS_BinaryTools;
 import lv.emes.libraries.tools.lists.MS_StringList;
 import lv.emes.libraries.tools.threading.MS_FutureEvent;
 import lv.emes.libraries.utilities.MS_CodingUtils;
+import lv.emes.libraries.utilities.MS_DateTimeUtils;
 import lv.emes.libraries.utilities.MS_ExecutionFailureException;
 import lv.emes.libraries.utilities.MS_StringUtils;
+import org.threeten.bp.ZonedDateTime;
 
 import java.io.IOException;
 import java.io.UTFDataFormatException;
@@ -55,7 +57,7 @@ import java.util.stream.Collectors;
  * </ul>
  *
  * @author eMeS
- * @version 2.0.
+ * @version 2.2.
  * @since 2.2.2
  */
 public class MS_TcpIPClient extends MS_TcpIPClientCore {
@@ -72,6 +74,8 @@ public class MS_TcpIPClient extends MS_TcpIPClientCore {
     private long id = 0; //client ID
     private final Queue<String> sentCommandsWaitingForAcknowledgement = new ConcurrentLinkedQueue<>();
     private boolean autoRestartIfDisconnected = true;
+    private boolean abortAcknowledgementCmdsOnTimeOut = false;
+    private byte timesCurrentTimeSent = 0;
 
     /**
      * Creates object and initializes default commands.
@@ -94,6 +98,12 @@ public class MS_TcpIPClient extends MS_TcpIPClientCore {
         this.registerCommandWithStringData(MS_ClientServerConstants._SERVER_ACKNOWLEDGEMENT,
                 (client, data) -> sentCommandsWaitingForAcknowledgement.remove(data)
         );
+    }
+
+    @Override
+    public void connect(String host, int port) throws IOException, IllegalArgumentException {
+        super.connect(host, port);
+        timesCurrentTimeSent = 0;
     }
 
     @Override
@@ -238,7 +248,12 @@ public class MS_TcpIPClient extends MS_TcpIPClientCore {
         String commandId = cmd.getString("id");
         sentCommandsWaitingForAcknowledgement.add(commandId);
         // Send ack type command, which actually will contain original command
-        this.out.writeUTF(new MS_JSONObject().put(MS_ClientServerConstants._CLIENT_COMMAND_WITH_ACKNOWLEDGEMENT_MODE, cmd).toString());
+        MS_JSONObject payload = new MS_JSONObject().put(MS_ClientServerConstants._CLIENT_COMMAND_WITH_ACKNOWLEDGEMENT_MODE, cmd);
+        if (abortAcknowledgementCmdsOnTimeOut) {
+            payload.put(MS_ClientServerConstants._CURRENT_CLIENT_TIME, getCurrentTimeNow());
+            payload.put(MS_ClientServerConstants._CLIENT_TIMEOUT, this.getWriteTimeout());
+        }
+        this.out.writeUTF(payload.toString());
         try {
             new MS_Polling<Queue<String>>()
                     .withAction(() -> sentCommandsWaitingForAcknowledgement)
@@ -247,9 +262,11 @@ public class MS_TcpIPClient extends MS_TcpIPClientCore {
                     .withMaxPollingAttempts(getWriteTimeout() > POLLING_SLEEP_INTERVAL ? getWriteTimeout() / POLLING_SLEEP_INTERVAL : 1)
                     .poll();
         } catch (MS_ExecutionFailureException e) {
+            sentCommandsWaitingForAcknowledgement.remove(commandId); // this command is already lost, it will never be needed again
             throw new SocketTimeoutException(String.format("Failed to receive server acknowledgement of execution of command [%s][%s]",
                     cmd.getString("code"), commandId));
         }
+        sendCurrentTimeToTheServer();
     }
 
     /**
@@ -314,6 +331,14 @@ public class MS_TcpIPClient extends MS_TcpIPClientCore {
         this.autoRestartIfDisconnected = autoRestartIfDisconnected;
     }
 
+    public boolean isAbortAcknowledgementCmdsOnTimeOut() {
+        return abortAcknowledgementCmdsOnTimeOut;
+    }
+
+    public void setAbortAcknowledgementCmdsOnTimeOut(boolean abortAcknowledgementCmdsOnTimeOut) {
+        this.abortAcknowledgementCmdsOnTimeOut = abortAcknowledgementCmdsOnTimeOut;
+    }
+
     /**
      * There is 4 things that server must know about client:
      * <ol>
@@ -332,5 +357,18 @@ public class MS_TcpIPClient extends MS_TcpIPClientCore {
                 .put(MS_ClientServerConstants._CMD_DATA_KEY_WORKING_DIR, MS_CodingUtils.getSystemUserCurrentWorkingDir)
                 .put(MS_ClientServerConstants._CMD_DATA_KEY_HOME_DIR, MS_CodingUtils.getSystemUserHomeDir)
         ));
+    }
+
+    private void sendCurrentTimeToTheServer() {
+        if (abortAcknowledgementCmdsOnTimeOut && (timesCurrentTimeSent++ < 3)) {
+            new MS_FutureEvent().withAction(() -> {
+                String currentTime = getCurrentTimeNow();
+                this.cmdToServer(new MS_TcpIPCommand(MS_ClientServerConstants._REFRESH_CLIENT_CURRENT_TIME, currentTime));
+            }).schedule();
+        }
+    }
+
+    private String getCurrentTimeNow() {
+        return MS_DateTimeUtils.formatDateTime(ZonedDateTime.now(), MS_DateTimeUtils._DATE_TIME_FORMAT_NANOSEC_ZONE_OFFSET);
     }
 }
