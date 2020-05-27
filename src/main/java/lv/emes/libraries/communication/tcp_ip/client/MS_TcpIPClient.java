@@ -7,6 +7,8 @@ import lv.emes.libraries.communication.tcp_ip.MS_ActionOnIncomingTcpIpCommand;
 import lv.emes.libraries.communication.tcp_ip.MS_ClientServerConstants;
 import lv.emes.libraries.communication.tcp_ip.MS_TcpIPCommand;
 import lv.emes.libraries.file_system.MS_BinaryTools;
+import lv.emes.libraries.tools.decision.MS_ConditionalDecision;
+import lv.emes.libraries.tools.decision.MS_FibonacciDecision;
 import lv.emes.libraries.tools.lists.MS_StringList;
 import lv.emes.libraries.tools.threading.MS_FutureEvent;
 import lv.emes.libraries.utilities.MS_CodingUtils;
@@ -73,9 +75,9 @@ public class MS_TcpIPClient extends MS_TcpIPClientCore {
 
     private long id = 0; //client ID
     private final Queue<String> sentCommandsWaitingForAcknowledgement = new ConcurrentLinkedQueue<>();
+    private final MS_ConditionalDecision<Long> needToSendCurrentTime = new MS_FibonacciDecision();
     private boolean autoRestartIfDisconnected = true;
     private boolean abortAcknowledgementCmdsOnTimeOut = false;
-    private byte timesCurrentTimeSent = 0;
 
     /**
      * Creates object and initializes default commands.
@@ -103,7 +105,7 @@ public class MS_TcpIPClient extends MS_TcpIPClientCore {
     @Override
     public void connect(String host, int port) throws IOException, IllegalArgumentException {
         super.connect(host, port);
-        timesCurrentTimeSent = 0;
+        needToSendCurrentTime.reset();
     }
 
     @Override
@@ -360,7 +362,7 @@ public class MS_TcpIPClient extends MS_TcpIPClientCore {
     }
 
     private void sendCurrentTimeToTheServer() {
-        if (abortAcknowledgementCmdsOnTimeOut && (timesCurrentTimeSent++ < 3)) {
+        if (abortAcknowledgementCmdsOnTimeOut && (needToSendCurrentTime.verify())) {
             new MS_FutureEvent().withAction(() -> {
                 String currentTime = getCurrentTimeNow();
                 this.cmdToServer(new MS_TcpIPCommand(MS_ClientServerConstants._REFRESH_CLIENT_CURRENT_TIME, currentTime));

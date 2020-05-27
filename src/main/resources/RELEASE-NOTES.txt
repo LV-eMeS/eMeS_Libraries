@@ -1,5 +1,5 @@
 eMeS libraries
-Version 2.3.2
+Version 2.3.3
 Release Notes
 
 INTRODUCTION:
@@ -17,6 +17,7 @@ eMeS libraries Version 2.4.0
 ========================================================================================================
 * TCP/IP client gets 1 reconnect attempt if disconnected before trying to execute some command.
 * TCP/IP server does not execute client commands if those times out.
+* Introduced conditional decision mechanism.
 ========================================================================================================
 eMeS libraries Version 2.3.0
 ========================================================================================================
