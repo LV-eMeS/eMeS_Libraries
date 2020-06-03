@@ -107,10 +107,11 @@ import static lv.emes.libraries.tools.platform.ScriptParsingError.*;
  * <li><code>WRITELN#D:/file1.txt&amp;Some text#</code> - Creates file "file1.txt" in directory "D:/" and there writes a line "Some text".</li>
  * <li><code>APPENDLN#D:/file2.txt&amp;Some text#</code> - If doesn't exist, creates file "file2.txt" in directory "D:/" and there writes a line "Some text".
  * If file exists, it's next line is appended by this text.</li>
+ * <li><code>NIRCMD#setdefaultsounddevice "Speakers" 1#</code> - executes command <b>nircmd setdefaultsounddevice "Speakers" 1</b></li>
  * </ul>
  *
  * @author eMeS
- * @version 3.0.
+ * @version 3.1.
  * @since 1.3.0
  */
 public class MS_ScriptRunner {
@@ -148,6 +149,7 @@ public class MS_ScriptRunner {
     private final static int CMD_NR_KILL_TASK = 30;
     private final static int CMD_NR_WRITELN = 31;
     private final static int CMD_NR_APPENDLN = 32;
+    private final static int CMD_NR_NIRCMD = 33;
 
     static {
         COMMANDS.put("TEXT", CMD_NR_WRITE_TEXT);
@@ -190,6 +192,7 @@ public class MS_ScriptRunner {
         COMMANDS.put("TASKKILL", CMD_NR_KILL_TASK);
         COMMANDS.put("WRITELN", CMD_NR_WRITELN);
         COMMANDS.put("APPENDLN", CMD_NR_APPENDLN);
+        COMMANDS.put("NIRCMD", CMD_NR_NIRCMD);
     }
 
     private final static int CMD_SEC_EXECUTE_TEXT_INPUT_SIMULATION = 101;
@@ -218,6 +221,7 @@ public class MS_ScriptRunner {
     private final static int CMD_SEC_KILL_TASK = 124;
     private final static int CMD_SEC_WRITELN = 125;
     private final static int CMD_SEC_APPENDLN = 126;
+    private final static int CMD_SEC_NIRCMD = 127;
 
     private final static char DELIMITER_OF_CMDS = '#';
     private final static char DELIMITER_OF_CMDS_SECOND = ';';
@@ -227,8 +231,8 @@ public class MS_ScriptRunner {
     private String fscript = "";
     private MS_StringList fCommandList;
     private boolean isScriptRunningTerminated = false;
-    private MS_StringList fScriptTerminationShortcutKeyCombination;
-    private Map<String, String> userVariables = new HashMap<>();
+    private final MS_StringList fScriptTerminationShortcutKeyCombination;
+    private final Map<String, String> userVariables = new HashMap<>();
     private boolean commandNotFoundTryKeyPressing = false;
     private boolean paused = false;
     private long delay = 0;
@@ -238,7 +242,7 @@ public class MS_ScriptRunner {
     private MS_IFuncStringInputMethod passwordInputMethod = MS_InputOutputMethodDefaults._INPUT_CONSOLE;
     private MS_IFuncStringOutputMethod outputMethod = MS_InputOutputMethodDefaults._OUTPUT_CONSOLE;
     private String pathToLoggerFile = "";
-    private MS_BooleanFlag continueOnError = new MS_BooleanFlag(true);
+    private final MS_BooleanFlag continueOnError = new MS_BooleanFlag(true);
 
     public MS_ScriptRunner() {
         fScriptTerminationShortcutKeyCombination = new MS_StringList("ctrl+alt+shift+4", '+');
@@ -353,6 +357,9 @@ public class MS_ScriptRunner {
             case CMD_NR_MONITOR:
                 //read on or off parameter
                 directControlToSecondaryCommand(CMD_SEC_MONITOR);
+                break;
+            case CMD_NR_NIRCMD:
+                directControlToSecondaryCommand(CMD_SEC_NIRCMD);
                 break;
             case CMD_NR_MUSIC:
                 //read play, pause, stop, next, prev parameters
@@ -563,6 +570,9 @@ public class MS_ScriptRunner {
                     MS_WindowsAPIManager.turnMonitor(commandParamsAsText);
                 else
                     throw new ScriptParsingError(_ERROR_FAILED_TO_SWITCH_MONITOR);
+                break;
+            case CMD_SEC_NIRCMD:
+                MS_WindowsAPIManager.executeNircmd(commandParamsAsText);
                 break;
             case CMD_SEC_MUSIC:
                 MediaEventTypeEnum eventType = MediaEventTypeEnum.getByKey(commandParamsAsText);
