@@ -44,7 +44,7 @@ import static lv.emes.libraries.communication.tcp_ip.MS_ClientServerConstants.*;
  * </ul>
  *
  * @author eMeS
- * @version 2.1.
+ * @version 2.2.
  * @since 1.1.1
  */
 abstract class MS_TcpIPClientCore extends MS_TcpIPAbstract {
@@ -88,9 +88,14 @@ abstract class MS_TcpIPClientCore extends MS_TcpIPAbstract {
     public void connect(String host, int port) throws IOException, SocketTimeoutException, IllegalArgumentException {
         if (this.isConnected()) return;
         server = new Socket();
-        server.connect(new InetSocketAddress(host, port), connectTimeout);
-        in = new DataInputStream(server.getInputStream());
-        out = new DataOutputStream(server.getOutputStream());
+        try {
+            server.connect(new InetSocketAddress(host, port), connectTimeout);
+            in = new DataInputStream(server.getInputStream());
+            out = new DataOutputStream(server.getOutputStream());
+        } catch (Exception e) {
+            server = null;
+            throw e;
+        }
         Thread t = new Thread(this);
         messageThread = t;
         t.start();
@@ -103,13 +108,17 @@ abstract class MS_TcpIPClientCore extends MS_TcpIPAbstract {
 
     public void disconnect() {
         onDisconnectingFromServer();
-        // close all data streams
+        closeAllDataStreams();
+    }
+
+    private void closeAllDataStreams() {
         try {
             messageThread.interrupt();
-            messageThread = null;
             server.close();
-            server = null;
         } catch (Exception ignored) {
+        } finally {
+            messageThread = null;
+            server = null;
         }
     }
 
