@@ -1,3 +1,7 @@
+plugins {
+    id "com.github.onslip.gradle-one-jar" version "1.0.5"
+}
+
 apply plugin: 'java'
 apply plugin: 'maven'
 apply plugin: 'idea'
@@ -74,17 +78,11 @@ artifacts {
 
 //----------------------------------------------------------------------------------------------------------------------
 //Things to create runnable JARs
-apply plugin: 'gradle-one-jar'
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath 'com.github.rholder:gradle-one-jar:1.0.4'
-    }
-}
+//plugins {
+//    id "com.github.onslip.gradle-one-jar" version "1.0.5"
+//}
 task jarScriptRunner(type: OneJar) {
     mainClass = 'lv.emes.libraries.examples.MSScriptRunnerExecutable'
 //    archiveName = "eMeS_Libraries-"+eMeS_LibrariesVersion+".jar"
-    archiveName = "ScriptRunner.jar"
+    archiveName = "ScriptRunner_4_0.jar"
 }

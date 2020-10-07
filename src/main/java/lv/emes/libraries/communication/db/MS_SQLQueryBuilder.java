@@ -33,9 +33,9 @@ import java.util.Objects;
  *     String tableName = "users";
  *     MS_SQLQueryBuilder sql = new MS_SQLQueryBuilder()
  *         .insertInto(tableName, new MS_StringList("id,counter,text_field3", ','))
- *         .values(new MS_StringList("null#123#check"));
+ *         .values(new MS_StringList("null#123#" + MS_SQLQueryBuilder.toSQLText("check")));
  *     System.out.println(sql.buildAndToString()); //prints: INSERT INTO users(id, counter, text_field3)
- *     //and in new line: VALUES(null, 123, check);
+ *     //and in new line: VALUES(null, 123, 'check');
  * }
  * </code></pre>
  * <u>Example 4</u>:

@@ -6,6 +6,9 @@ import lv.emes.libraries.tools.lists.MS_StringList;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 import static lv.emes.libraries.utilities.MS_CodingUtils.inRange;
 
@@ -33,9 +36,10 @@ import static lv.emes.libraries.utilities.MS_CodingUtils.inRange;
  * <li>ord</li>
  * <li>pos</li>
  * <li>getSubstring</li>
+ * <li>extractAllSubstrings</li>
  * </ul>
  *
- * @version 1.9.
+ * @version 2.0.
  */
 public final class MS_StringUtils {
 
@@ -303,8 +307,7 @@ public final class MS_StringUtils {
      * @return list of words.
      */
     public static MS_StringList textToWords(String aText) {
-        MS_StringList res = new MS_StringList(aText, ' ');
-        return res;
+        return new MS_StringList(aText, ' ');
     }
 
     /**
@@ -375,7 +378,7 @@ public final class MS_StringUtils {
      * @return ASCII code for presented char <b>aValue</b>.
      */
     public static int ord(char aValue) {
-        return (int) aValue;
+        return aValue;
     }
 
     /**
@@ -413,8 +416,8 @@ public final class MS_StringUtils {
      * Returns position of pattern <b>pattern</b> in text <b>text</b>.
      *
      * @param text    "Pattern X in this text"
-     * @param pattern "X"
-     * @return 8
+     * @param pattern "X";"Z"
+     * @return 8; -1
      */
     public static int pos(String text, String pattern) {
         return text.indexOf(pattern);
@@ -551,6 +554,51 @@ public final class MS_StringUtils {
             default:
                 throw new MS_BadSetupException("Unsupported type [%s] for value conversion to String", value.getClass().getSimpleName());
         }
+        return res;
+    }
+
+    /**
+     * Looks for first occurrence of any <b>substringVariants</b> in string <b>text</b>.
+     *
+     * @param text string from which substrings are gathered.
+     * @param substringVariants set of strings that can occur in string <b>text</b>.
+     * @return first occurring substring variant or <tt>null</tt> if there are no occurrences.
+     * @since 2.4.0.
+     */
+    public static String getFirstOccurrence(String text, Set<String> substringVariants) {
+        int minimalPosOfOccurrence = Integer.MAX_VALUE;
+        String res = null;
+        for (String substring : substringVariants) {
+            int pos = MS_StringUtils.pos(text, substring);
+            if (pos == -1) continue;
+            if (pos < minimalPosOfOccurrence) {
+                res = substring;
+                minimalPosOfOccurrence = pos;
+            }
+        }
+        return res;
+    }
+
+    /**
+     * Looks for any of <b>substringVariants</b> in string <b>text</b> and gathers them in same order.
+     *
+     * @param text string from which substrings are gathered.
+     * @param substringVariants set of strings that can occur in string <b>text</b>.
+     * @return list of substrings in exact order in which are they occurring in string <b>text</b>.
+     * @since 2.4.0.
+     */
+    public static List<String> extractAllSubstrings(String text, Set<String> substringVariants) {
+        List<String> res = new ArrayList<>();
+        StringBuilder sb = new StringBuilder(text);
+        String foundSubstring;
+        do {
+            foundSubstring = getFirstOccurrence(sb.toString(), substringVariants);
+            if (foundSubstring == null) break;
+
+            res.add(foundSubstring);
+            int i = sb.indexOf(foundSubstring);
+            sb.delete(i, foundSubstring.length() + i);
+        } while (true); // eventually will be broken out
         return res;
     }
 }

@@ -8,7 +8,7 @@ package lv.emes.libraries.tools.platform;
  */
 class MS_ScriptRunnerTerminateConditionChecker implements Runnable {
 
-    private MS_ScriptRunner runner;
+    private final MS_ScriptRunner runner;
 
     public MS_ScriptRunnerTerminateConditionChecker(MS_ScriptRunner runner) {
         this.runner = runner;
@@ -27,7 +27,7 @@ class MS_ScriptRunnerTerminateConditionChecker implements Runnable {
             keyStrokeDetected = runner.scriptRunningTerminated();
         }
 
-        //if went out of loop then it's definately terminated by user, so inform runner about it!
+        //if went out of loop then it's definitely terminated by user, so inform runner about it!
         runner.terminateScriptRunning();
     }
 }

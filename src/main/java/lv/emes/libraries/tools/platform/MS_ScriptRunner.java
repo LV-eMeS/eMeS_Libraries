@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.UnaryOperator;
 
 import static lv.emes.libraries.tools.platform.MS_RobotKeyStrokeExecutor.getInstance;
 import static lv.emes.libraries.tools.platform.ScriptParsingError.*;
@@ -243,6 +244,7 @@ public class MS_ScriptRunner {
     private MS_IFuncStringOutputMethod outputMethod = MS_InputOutputMethodDefaults._OUTPUT_CONSOLE;
     private String pathToLoggerFile = "";
     private final MS_BooleanFlag continueOnError = new MS_BooleanFlag(true);
+    private UnaryOperator<String> preProcessor;
 
     public MS_ScriptRunner() {
         fScriptTerminationShortcutKeyCombination = new MS_StringList("ctrl+alt+shift+4", '+');
@@ -663,7 +665,11 @@ public class MS_ScriptRunner {
                 .withRepository(new MS_FileLogger(pathToLoggerFile))
                 .withRepository(MS_RepositoryUtils.newConsoleLoggerRepository())
         );
-        fCommandList.forEachItem((cmd, index) -> {
+
+        UnaryOperator<String> preProcessor = this.preProcessor == null ? UnaryOperator.identity() : this.preProcessor;
+
+        fCommandList.forEachItem((rawCmd, index) -> {
+            String cmd = preProcessor.apply(rawCmd);
             if (isScriptRunningTerminated) {
                 logFile.warn("Script running terminated by user's request.");
                 fCommandList.breakOngoingForLoop();
@@ -764,6 +770,10 @@ public class MS_ScriptRunner {
      */
     public void setScriptTerminationShortcutKeyCombination(MS_StringList scriptTerminationShortcutKeyCombinationList) {
         this.fScriptTerminationShortcutKeyCombination.fromList(scriptTerminationShortcutKeyCombinationList);
+    }
+
+    public void setPreProcessor(UnaryOperator<String> preProcessor) {
+        this.preProcessor = preProcessor;
     }
 
     public synchronized void terminateScriptRunning() {

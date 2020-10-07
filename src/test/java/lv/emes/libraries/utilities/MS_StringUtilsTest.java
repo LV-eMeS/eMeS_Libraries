@@ -1,10 +1,13 @@
 package lv.emes.libraries.utilities;
 
+import com.google.common.collect.Sets;
 import lv.emes.libraries.tools.lists.MS_StringList;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
+
+import java.util.Collections;
 
 import static lv.emes.libraries.utilities.MS_StringUtils.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -173,5 +176,13 @@ public class MS_StringUtilsTest {
             softly.assertThat(actual).isEqualTo("like,an,animal");
             softly.assertThat(list.delimiter).isEqualTo(',');
         });
+    }
+
+    @Test
+    public void testExtractAllSubstrings() {
+        assertThat(extractAllSubstrings("AbcdX efgAAXXAA", Sets.newHashSet("AA", "X")))
+                .containsExactly("X", "AA", "X", "X", "AA");
+        assertThat(extractAllSubstrings("AbcdX efgAAXXAA", Collections.emptySet())).hasSize(0);
+        assertThat(extractAllSubstrings("AbcdX efgAAXXAA", Sets.newHashSet("Nothing"))).hasSize(0);
     }
 }

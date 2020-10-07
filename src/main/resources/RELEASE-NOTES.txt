@@ -1,5 +1,5 @@
 eMeS libraries
-Version 2.3.5
+Version 2.4.0
 Release Notes
 
 INTRODUCTION:
@@ -19,6 +19,7 @@ eMeS libraries Version 2.4.0
 * TCP/IP server does not execute client commands if those times out.
 * Introduced conditional decision mechanism.
 * Support native nircmd commands in the script runner.
+* Support pre-processing and arithmetical operations with integers (+,-,*,/) in script runner.
 ========================================================================================================
 eMeS libraries Version 2.3.0
 ========================================================================================================
