@@ -3,7 +3,7 @@ package lv.emes.libraries.communication.http;
 /**
  * Type of HTTP request method.
  *
- * @author maris.salenieks
+ * @author eMeS
  * @version 1.0.
  * @since 2.1.9
  */

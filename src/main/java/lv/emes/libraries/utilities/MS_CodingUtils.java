@@ -433,15 +433,53 @@ public final class MS_CodingUtils {
     }
 
     /**
+     * Null safe method that allows to get result of last method in method chain.
+     * Even if some of methods before returns <tt>null</tt>, whole call will not end up with {@link NullPointerException},
+     * simply <tt>null</tt> value will be returned as the result.
+     *
+     * @param chainedMethods chained method calls.
+     * @param <T>            return type of last method in chain.
+     * @return return value of last method call or <tt>null</tt> if {@link NullPointerException} occurred in the process.
+     */
+    public static <T> T nullSafe(Supplier<T> chainedMethods, T defaultValue) {
+        T res = nullSafe(chainedMethods);
+        return res == null ? defaultValue : res;
+    }
+
+    /**
+     * Null safe check method for {@code List} collections. If the provided list is not equal to <tt>null</tt>, the
+     * same instance is returned. Otherwise, an empty list is returned.
+     *
+     * @param list nullable list.
+     * @return provided list instance or empty set if <b>set</b> is <tt>null</tt>.
+     * @since 2.4.1
+     */
+    public static <T> List<T> nullSafe(List<T> list) {
+        return list == null ? new ArrayList<>() : list;
+    }
+
+    /**
+     * Null safe check method for {@code Set} collections. If the provided set is not equal to <tt>null</tt> the same
+     * instance is returned. Otherwise, an empty set is returned.
+     *
+     * @param set nullable set.
+     * @return provided set instance or empty set if <b>set</b> is <tt>null</tt>.
+     * @since 2.4.1
+     */
+    public static <T> Set<T> nullSafe(Set<T> set) {
+        return set == null ? Collections.emptySet() : set;
+    }
+
+    /**
      * Looks for the value of <b>key</b> registered in either system either environment properties.
      *
-     * @param key property name or path (delimited by dots).
+     * @param key           property name or path (delimited by dots).
      * @param propertyClass expected class of property value.
      * @param <T>           expected type of property value.
      * @return <ol>
-     *     <li>Optional containing value of registered system or environment property;</li>
-     *     <li>optional of <tt>null</tt> if there is a system or environment property registered with value {@link MS_StringUtils#NULL_STRING}</li>
-     *     <li>an empty optional if there is nothing registered under system nor environment property.</li>
+     * <li>Optional containing value of registered system or environment property;</li>
+     * <li>optional of <tt>null</tt> if there is a system or environment property registered with value {@link MS_StringUtils#NULL_STRING}</li>
+     * <li>an empty optional if there is nothing registered under system nor environment property.</li>
      * </ol>
      */
     public static <T> Optional<T> getFromSysOrEnvProperty(String key, Class<T> propertyClass) {

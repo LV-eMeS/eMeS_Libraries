@@ -14,7 +14,7 @@ import java.util.*;
 /**
  * Immutable response of REST call made by {@link MS_HttpCallHandler}.
  *
- * @author maris.salenieks
+ * @author eMeS
  * @version 2.1.
  * @since 2.1.9
  */
@@ -29,7 +29,7 @@ public class MS_HttpResponse {
     private MS_JSONArray bodyArray;
     private Response response;
     private int statusCode;
-    private Date timestamp;
+    private final Date timestamp;
     private JSONTypeEnum bodyJsonType = JSONTypeEnum.STRING;
 
     public MS_HttpResponse() {

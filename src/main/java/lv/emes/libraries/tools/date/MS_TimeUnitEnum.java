@@ -3,7 +3,7 @@ package lv.emes.libraries.tools.date;
 /**
  * Time unit for DateBuilder.
  *
- * @author maris.salenieks
+ * @author eMeS
  * @see MS_DateBuilder
  */
 public enum MS_TimeUnitEnum {

@@ -12,7 +12,7 @@ import java.util.*;
 /**
  * HTTP request object that acts as input to {@link MS_HttpCallHandler#call(MS_HttpRequest)} in order to make HTTP call.
  *
- * @author maris.salenieks
+ * @author eMeS
  * @version 3.0.
  * @since 2.1.9
  */

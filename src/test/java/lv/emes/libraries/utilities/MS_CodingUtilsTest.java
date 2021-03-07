@@ -318,7 +318,6 @@ public class MS_CodingUtilsTest {
         Supplier<String> secondMethod = () -> SUCCESS_RESULT;
         Supplier<Supplier<String>> firstMethod = () -> secondMethod;
         assertThat(nullSafe(() -> firstMethod.get().get())).isEqualTo(SUCCESS_RESULT); //both method calls succeeded
-
     }
 
     @Test

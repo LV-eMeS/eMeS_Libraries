@@ -1,12 +1,13 @@
 package lv.emes.libraries.communication.cryptography;
 
 import lv.emes.libraries.utilities.MS_DateTimeUtils;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.Test;
 
 import java.time.Duration;
 import java.time.LocalTime;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class MS_HashTest {
 
@@ -24,28 +25,28 @@ public class MS_HashTest {
 		String str6 = MS_Hash.getHash(TEXT, "a");
 		String str7 = MS_Hash.getHash(TEXT, 0);
 
-		assertEquals(0, str0.length());
-		assertEquals(44, str1.length());
-		assertEquals(88, str2.length());
-		assertEquals(172, str3.length());
-		assertEquals(344, str4.length());
+		assertThat(str0.length()).isEqualTo(0);
+		assertThat(str1.length()).isEqualTo(44);
+		assertThat(str2.length()).isEqualTo(88);
+		assertThat(str3.length()).isEqualTo(172);
+		assertThat(str4.length()).isEqualTo(344);
 
-		assertTrue(str1.length() < str2.length());
-		assertTrue(str2.length() < str22.length());
-		assertEquals(str1.length(), str11.length());
-		assertNotEquals(str1, str11); //if length is changed hash will differ as well
-		assertNotEquals(str2, str22); //same goes for different base key length
-		assertTrue(! str1.equals(str3));
-		assertEquals("", str5);
-		assertNotEquals("", str6);
-		assertEquals(44, str6.length());
-		assertEquals("", str7);
+		assertThat(str1.length() < str2.length()).isTrue();
+		assertThat(str2.length() < str22.length()).isTrue();
+		assertThat(str11.length()).isEqualTo(str1.length());
+		assertThat(str11).isNotEqualTo(str1); //if length is changed hash will differ as well
+		assertThat(str22).isNotEqualTo(str2); //same goes for different base key length
+		assertThat(str3).isNotEqualTo(str1);
+		assertThat(str5).isEqualTo("");
+		assertThat(str6).isNotEqualTo("");
+		assertThat(str6.length()).isEqualTo(44);
+		assertThat(str7).isEqualTo("");
 
 		String str71 = MS_Hash.getHash("aa", "a");
 		String str72 = MS_Hash.getHash("a", "aa");
 		String str73 = MS_Hash.getHash("a", "aa");
-		assertTrue(! str71.equals(str72));
-		assertTrue(str73.equals(str72)); 
+		assertThat(!str71.equals(str72)).isTrue();
+		assertThat(str73.equals(str72)).isTrue();
 	}
 
 	@Test
@@ -62,7 +63,7 @@ public class MS_HashTest {
 
 		endTime = LocalTime.now();
 		System.out.println("Hashing performance test ended at: " + MS_DateTimeUtils.timeToStr(endTime));
-		assertTrue(ASSERTION_MESSAGE, startTime.plus(Duration.ofMillis(600)).isAfter(endTime));
+		assertThat(startTime.plus(Duration.ofMillis(600)).isAfter(endTime)).as(ASSERTION_MESSAGE).isTrue();
 
 		//test with KEY_LENGTH_MINIMUM
 		startTime = LocalTime.now();
@@ -72,7 +73,7 @@ public class MS_HashTest {
 
 		endTime = LocalTime.now();
 		System.out.println("Hashing performance test ended at: " + MS_DateTimeUtils.timeToStr(endTime));
-		assertTrue(ASSERTION_MESSAGE, startTime.plus(Duration.ofSeconds(1)).isAfter(endTime));
+		assertThat(startTime.plus(Duration.ofSeconds(1)).isAfter(endTime)).as(ASSERTION_MESSAGE).isTrue();
 
 		//test with KEY_LENGTH_MAXIMUM
 		startTime = LocalTime.now();
@@ -82,6 +83,34 @@ public class MS_HashTest {
 
 		endTime = LocalTime.now();
 		System.out.println("Hashing performance test ended at: " + MS_DateTimeUtils.timeToStr(endTime));
-		assertTrue(ASSERTION_MESSAGE, startTime.plus(Duration.ofMillis(1250)).isAfter(endTime));
+		assertThat(startTime.plus(Duration.ofMillis(1250)).isAfter(endTime)).as(ASSERTION_MESSAGE).isTrue();
+	}
+
+	@Test
+	public void testStaticHashingVsHashInstance() {
+		final String aTextToHash = "Test how are different hashes generated in different ways";
+		final String aTextToHash2 = "Alternative text";
+		SoftAssertions.assertSoftly(softly -> {
+			String staticHash1 = MS_Hash.getHash(aTextToHash, MS_Hash.KEY_LENGTH_MINIMUM);
+			MS_Hash instance1 = new MS_Hash(null, MS_Hash.KEY_LENGTH_MINIMUM, null, true);
+			softly.assertThat(instance1.hash(aTextToHash)).isEqualTo(staticHash1);
+
+			softly.assertThat(instance1.hash(aTextToHash2)).isEqualTo(MS_Hash.getHash(aTextToHash2, MS_Hash.KEY_LENGTH_MINIMUM));
+
+			MS_Hash instance2 = new MS_Hash(null, MS_Hash.KEY_LENGTH_MINIMUM + 1, null, true);
+			softly.assertThat(instance2.hash(aTextToHash)).isNotEqualTo(staticHash1);
+
+			// Test encoding
+			MS_Hash instance3 = new MS_Hash(null, MS_Hash.KEY_LENGTH_MINIMUM, null, false);
+			String hash3 = instance3.hash(aTextToHash);
+			System.out.println(hash3);
+			softly.assertThat(hash3).isNotEqualTo(staticHash1);
+
+			// Test different salt
+			MS_Hash instance4 = new MS_Hash(aTextToHash2, MS_Hash.KEY_LENGTH_MINIMUM, null, false);
+			String hash4 = instance4.hash(aTextToHash);
+			System.out.println(hash4);
+			softly.assertThat(instance4.hash(aTextToHash)).isNotEqualTo(hash3);
+		});
 	}
 }

@@ -13,7 +13,7 @@ import java.util.Objects;
  * REST call handler as utility class, which uses REST assured to perform {@link MS_HttpRequest} and
  * return already processed {@link MS_HttpResponse} corresponding to given request.
  *
- * @author maris.salenieks
+ * @author eMeS
  * @version 3.0.
  * @since 2.1.9
  */
