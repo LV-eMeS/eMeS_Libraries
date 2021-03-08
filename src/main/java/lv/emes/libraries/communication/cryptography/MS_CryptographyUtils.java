@@ -1,17 +1,22 @@
 package lv.emes.libraries.communication.cryptography;
 
-import javax.crypto.*;
+import javax.crypto.Cipher;
+import javax.crypto.Mac;
+import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
-import java.security.*;
+import java.security.GeneralSecurityException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 import java.util.Arrays;
 import java.util.Base64;
 
 /**
- * Class for encryption/decryption processes.
+ * Class for symmetric encryption/decryption processes.
  * http://netnix.org/2015/04/19/aes-encryption-with-hmac-integrity-in-java/
  * @author eMeS
  * @version 1.1.
