@@ -12,13 +12,12 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
 
 public class MS_HttpRequestTest {
 
     private static final String HTTP_GOOGLE_COM = "http://google.com";
 
-    private MS_HttpRequest req = new MS_HttpRequest()
+    private final MS_HttpRequest req = new MS_HttpRequest()
             .withUrl(HTTP_GOOGLE_COM)
             .withMethod(MS_HttpRequestMethod.GET)
             .withParameter("env", "TEST")
@@ -36,7 +35,7 @@ public class MS_HttpRequestTest {
         expected.put("parameters", new MS_JSONObject(request.getParameters()));
         expected.putOpt("body", request.getBody());
         expected.put("headers", new MS_JSONObject(request.getHeaders()));
-        assertEquals(expected.toString(), request.toString());
+        assertThat(request.toString()).isEqualTo(expected.toString());
     }
 
     @Test
@@ -53,7 +52,7 @@ public class MS_HttpRequestTest {
         expected.put("parameters", new MS_JSONObject(req.getParameters()));
         expected.put("body", req.getBodyAsArray());
         expected.put("headers", new MS_JSONObject(req.getHeaders()));
-        assertEquals(expected.toString(), req.toString());
+        assertThat(req.toString()).isEqualTo(expected.toString());
     }
 
     @Test
@@ -67,7 +66,7 @@ public class MS_HttpRequestTest {
         expected.put("parameters", new MS_JSONObject(req.getParameters()));
         expected.put("body", req.getBodyAsString());
         expected.put("headers", new MS_JSONObject(req.getHeaders()));
-        assertEquals(expected.toString(), req.toString());
+        assertThat(req.toString()).isEqualTo(expected.toString());
     }
 
     @Test

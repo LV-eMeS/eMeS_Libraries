@@ -22,7 +22,7 @@ import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * These tests are partly integration tests with {@link lv.emes.libraries.storage.MS_Cache} class.
@@ -66,26 +66,23 @@ public class MS_TextToFileCachingRepositoryTest {
 
     @AfterClass
     public static void finalizeTestConditions() {
-        assertTrue("Cleanup failed because folder cannot be deleted ATM",
-                MS_FileSystemTools.deleteDirectory(PROJECT_NAME));
+        assertThat(MS_FileSystemTools.deleteDirectory(PROJECT_NAME)).as("Cleanup failed because folder cannot be deleted ATM").isTrue();
     }
 
     @Test
     public void test01CheckSetParams() {
-        assertEquals(TTL / 1000, cache.getDefaultTTL());
-        assertEquals(logger, cache.getLogger());
-        assertTrue("Repository is not initialized, but it should've been on init() step",
-                cache.getRepository().isInitialized());
+        assertThat(cache.getDefaultTTL()).isEqualTo(TTL / 1000);
+        assertThat(cache.getLogger()).isEqualTo(logger);
+        assertThat(cache.getRepository().isInitialized()).as("Repository is not initialized, but it should've been on init() step").isTrue();
     }
 
     @Test
     public void test11StoreAndRetrieveFirst() throws MS_ExecutionFailureException {
         operThread = cache.cache(FIRST, idStorage.get(1), 0L);
         MS_FutureEvent.joinEvents(TTL, 10, operThread);
-        assertEquals("After first object caching there should be 1 object cached",
-                1, cache.getRepository().size());
+        assertThat(cache.getRepository().size()).as("After first object caching there should be 1 object cached").isEqualTo(1);
 
-        assertEquals(FIRST, cache.get(idStorage.get(1)));
+        assertThat(cache.get(idStorage.get(1))).isEqualTo(FIRST);
         verifyThatCurrentLogCountIs0();
     }
 
@@ -93,26 +90,24 @@ public class MS_TextToFileCachingRepositoryTest {
     public void test12StoreSecondAndBothAreStillThere() throws MS_ExecutionFailureException {
         operThread = cache.cache(SECOND, idStorage.get(2));
         MS_FutureEvent.joinEvents(TTL / 10, 10, operThread);
-        assertEquals(2, cache.getRepository().size());
+        assertThat(cache.getRepository().size()).isEqualTo(2);
 
         verifyThatCurrentLogCountIs0();
-        assertEquals("Second object suddenly disappeared from repository", SECOND, cache.get(idStorage.get(2)));
-        assertEquals("First object is not removed manually, so it still should've been there",
-                FIRST, cache.get(idStorage.get(1)));
+        assertThat(cache.get(idStorage.get(2))).as("Second object suddenly disappeared from repository").isEqualTo(SECOND);
+        assertThat(cache.get(idStorage.get(1))).as("First object is not removed manually, so it still should've been there").isEqualTo(FIRST);
     }
 
     @Test
     public void test13CleanupAfter1SecondSecondObjectIsGoneBut1stRemains() {
-        assertNotNull("Performance issues: Second object shouldn't be expired yet", cache.get(idStorage.get(2)));
+        assertThat(cache.get(idStorage.get(2))).as("Performance issues: Second object shouldn't be expired yet").isNotNull();
         MS_CodingUtils.sleep(TTL * 2);
-        assertNull("Second object is still in cache after 2 seconds, which was its TTL. ", cache.get(idStorage.get(2)));
+        assertThat(cache.get(idStorage.get(2))).as("Second object is still in cache after 2 seconds, which was its TTL. ").isNull();
         //if this call will be fast enough we might still find object in real cache
-        assertNotNull("Performance issues: As expired object cleanup takes some time " +
-                        "while new thread is created, actual repository should've been returned second object," +
-                        "which still should've been there.",
-                cache.getRepository().get(idStorage.get(2)));
+        assertThat(cache.getRepository().get(idStorage.get(2))).as("Performance issues: As expired object cleanup takes some time " +
+                "while new thread is created, actual repository should've been returned second object," +
+                "which still should've been there.").isNotNull();
 
-        assertEquals("First object should stay in cache forever", FIRST, cache.get(idStorage.get(1)));
+        assertThat(cache.get(idStorage.get(1))).as("First object should stay in cache forever").isEqualTo(FIRST);
         verifyThatCurrentLogCountIs0();
 
         verifyThatCurrentLogCountIs0(); //hopefully, Concurrent modification exception will not arise here!
@@ -131,14 +126,12 @@ public class MS_TextToFileCachingRepositoryTest {
         cachingThreads.add(operThread);
 
         MS_FutureEvent.joinEvents(cachingThreads, TTL / 200, 12);
-        assertEquals("After successful caching and waiting for threads to finish there should be number of objects in cache",
-                5, cache.getRepository().size());
+        assertThat(cache.getRepository().size()).as("After successful caching and waiting for threads to finish there should be number of objects in cache").isEqualTo(5);
         operThread = cache.removeAll();
         MS_FutureEvent.joinEvents(TTL / 200, 10, operThread);
-        assertEquals("After clearing cache there should not have been any object left",
-                0, cache.getRepository().size());
-        assertNull(cache.get(idStorage.get(1)));
-        assertNull(cache.get(idStorage.get(144)));
+        assertThat(cache.getRepository().size()).as("After clearing cache there should not have been any object left").isEqualTo(0);
+        assertThat(cache.get(idStorage.get(1))).isNull();
+        assertThat(cache.get(idStorage.get(144))).isNull();
         verifyThatCurrentLogCountIs0();
     }
 
@@ -160,13 +153,12 @@ public class MS_TextToFileCachingRepositoryTest {
     @Test
     public void test41AddAndPutComparison() {
         fileRepository.add(idStorage.get(401), Pair.of(THIRD, LocalDateTime.now().plusHours(1)));
-        assertEquals(THIRD, fileRepository.get(idStorage.get(401)).getLeft());
+        assertThat(fileRepository.get(idStorage.get(401)).getLeft()).isEqualTo(THIRD);
         fileRepository.put(idStorage.get(401), Pair.of(THIRD_AFTER_PUT, LocalDateTime.now().plusHours(1)));
-        assertEquals(THIRD_AFTER_PUT, fileRepository.get(idStorage.get(401)).getLeft());
+        assertThat(fileRepository.get(idStorage.get(401)).getLeft()).isEqualTo(THIRD_AFTER_PUT);
         //test that add will not overwrite existing object
         fileRepository.add(idStorage.get(401), Pair.of(THIRD, LocalDateTime.now().plusHours(1)));
-        assertEquals("Calling 'add' on existing ID should not do a thing",
-                THIRD_AFTER_PUT, fileRepository.get(idStorage.get(401)).getLeft());
+        assertThat(fileRepository.get(idStorage.get(401)).getLeft()).as("Calling 'add' on existing ID should not do a thing").isEqualTo(THIRD_AFTER_PUT);
     }
 
     @Test(expected = MS_RepositoryDataExchangeException.class)
@@ -179,7 +171,6 @@ public class MS_TextToFileCachingRepositoryTest {
     //*** Private methods ***
 
     private void verifyThatCurrentLogCountIs0() {
-        assertEquals("Error and warning log count differs from expected at this point",
-                0, logs.getEventList().size());
+        assertThat(logs.getEventList().size()).as("Error and warning log count differs from expected at this point").isEqualTo(0);
     }
 }

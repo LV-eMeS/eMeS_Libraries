@@ -10,7 +10,7 @@ import org.junit.runners.MethodSorters;
 import java.rmi.activation.ActivationException;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author eMeS
@@ -31,7 +31,7 @@ public class MS_FutureEventTest {
                 })
                 .schedule();
         MS_CodingUtils.sleep(DEFAULT_SLEEP_TIME); //it takes some time for event thread to execute
-        assertTrue(threadExecuted);
+        assertThat(threadExecuted).isTrue();
     }
 
     @Test
@@ -43,7 +43,7 @@ public class MS_FutureEventTest {
                 })
                 .schedule();
         MS_CodingUtils.sleep(DEFAULT_SLEEP_TIME);
-        assertFalse(threadExecuted);
+        assertThat(threadExecuted).isFalse();
     }
 
     @Test
@@ -55,7 +55,7 @@ public class MS_FutureEventTest {
                 .withTimeTillExecution(DEFAULT_SLEEP_TIME * 2)
                 .schedule();
         MS_CodingUtils.sleep(DEFAULT_SLEEP_TIME);
-        assertFalse(threadExecuted);
+        assertThat(threadExecuted).isFalse();
     }
 
     @Test(expected = ActivationException.class)
@@ -86,7 +86,7 @@ public class MS_FutureEventTest {
                 .withTimeout(DEFAULT_SLEEP_TIME)
                 .schedule();
         MS_CodingUtils.sleep(DEFAULT_SLEEP_TIME * 3); //lets give much more time for this event to try to execute!
-        assertFalse(threadExecuted);
+        assertThat(threadExecuted).isFalse();
     }
 
     @Test
@@ -104,7 +104,7 @@ public class MS_FutureEventTest {
                 .schedule()
                 .terminate();
         MS_CodingUtils.sleep(DEFAULT_SLEEP_TIME * 3); //lets give much more time for this event to try to execute!
-        assertFalse(threadExecuted);
+        assertThat(threadExecuted).isFalse();
     }
 
     @Test
@@ -128,9 +128,9 @@ public class MS_FutureEventTest {
 
         MS_FutureEvent.waitUntilOneFinished(DEFAULT_SLEEP_TIME / 2, 5, true,
                 longLastingEvent, normalEvent);
-        assertTrue("After waiting thread should've been executed", threadExecuted);
-        assertTrue("After waiting normalEvent should've been finished its work", normalEvent.isFinished());
-        assertTrue("longLastingEvent should've been stopped at this point", longLastingEvent.isFinished());
+        assertThat(threadExecuted).as("After waiting thread should've been executed").isTrue();
+        assertThat(normalEvent.isFinished()).as("After waiting normalEvent should've been finished its work").isTrue();
+        assertThat(longLastingEvent.isFinished()).as("longLastingEvent should've been stopped at this point").isTrue();
     }
 
     @Test
@@ -154,9 +154,9 @@ public class MS_FutureEventTest {
 
         MS_FutureEvent.waitUntilOneFinished(DEFAULT_SLEEP_TIME, 10, false,
                 longLastingEvent, normalEvent);
-        assertTrue("After waiting thread should've been executed", threadExecuted);
-        assertTrue("After waiting normalEvent should've been finished its work", normalEvent.isFinished());
-        assertFalse("longLastingEvent should've been stopped at this point", longLastingEvent.isFinished());
+        assertThat(threadExecuted).as("After waiting thread should've been executed").isTrue();
+        assertThat(normalEvent.isFinished()).as("After waiting normalEvent should've been finished its work").isTrue();
+        assertThat(longLastingEvent.isFinished()).as("longLastingEvent should've been stopped at this point").isFalse();
         longLastingEvent.terminate();
     }
 
@@ -187,9 +187,9 @@ public class MS_FutureEventTest {
                 .schedule();
 
         MS_List<Thread> threads = MS_Thread.getThreadsByName(threadName);
-        assertEquals(1, threads.size());
+        assertThat(threads.size()).isEqualTo(1);
         Thread eventThread = threads.get(0);
-        assertTrue(eventThread.isAlive());
-        assertEquals(event.getThreadName(), eventThread.getName());
+        assertThat(eventThread.isAlive()).isTrue();
+        assertThat(eventThread.getName()).isEqualTo(event.getThreadName());
     }
 }

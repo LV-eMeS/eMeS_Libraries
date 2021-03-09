@@ -6,7 +6,8 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.data.Offset.offset;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MS_ProbabilityEventTest {
@@ -27,32 +28,32 @@ public class MS_ProbabilityEventTest {
 
     @Test
     public void test00GettersAndSetters() {
-        assertEquals(0, event.getCurrentProgress(), 0.01);
-        assertEquals(0, event.getProbability(), 0.01);
-        assertEquals(0, event.getCurrentProgressAsPercent());
-        assertEquals(0, event.getProbabilityAsPercent());
+        assertThat(event.getCurrentProgress()).isCloseTo(0, offset(0.01));
+        assertThat(event.getProbability()).isCloseTo(0, offset(0.01));
+        assertThat(event.getCurrentProgressAsPercent()).isEqualTo(0);
+        assertThat(event.getProbabilityAsPercent()).isEqualTo(0);
 
         event.setProbability(5);
-        assertEquals(0.05, event.getProbability(), 0.001);
-        assertEquals(5, event.getProbabilityAsPercent());
+        assertThat(event.getProbability()).isCloseTo(0.05, offset(0.001));
+        assertThat(event.getProbabilityAsPercent()).isEqualTo(5);
 
         event.happened(); //try to make it happen 2 times to increase current progress
-        assertEquals(5, event.getCurrentProgressAsPercent());
+        assertThat(event.getCurrentProgressAsPercent()).isEqualTo(5);
         event.happened();
-        assertEquals(0.1, event.getCurrentProgress(), 0.01);
+        assertThat(event.getCurrentProgress()).isCloseTo(0.1, offset(0.01));
     }
 
     @Test
     public void test01EventNeverHappens() {
         for (int i = 1; i < 102; i++)
-            assertFalse(event.happened());
+            assertThat(event.happened()).isFalse();
     }
 
     @Test
     public void test02EventHappensEveryTime() {
         event.setProbability(1d);
         for (int i = 1; i < 102; i++)
-            assertTrue(event.happened());
+            assertThat(event.happened()).isTrue();
     }
 
     @Test
@@ -61,7 +62,7 @@ public class MS_ProbabilityEventTest {
         for (int i = 1; i < 11; i++) {
             boolean happened = event.happened();
             if (i % 2 == 0)
-                assertTrue(happened);
+                assertThat(happened).isTrue();
         }
     }
 
@@ -71,7 +72,7 @@ public class MS_ProbabilityEventTest {
         for (int i = 1; i < 18; i++) {
             boolean happened = event.happened();
             if (i % 3 == 0)
-                assertTrue(happened);
+                assertThat(happened).isTrue();
         }
     }
 
@@ -83,26 +84,26 @@ public class MS_ProbabilityEventTest {
         for (int i = 1; i < 5; i++) { //after 4 times event happens
             happened = event.happened();
         }
-        assertTrue(happened);
+        assertThat(happened).isTrue();
 
         event.happened();
         //now to change prob
         event.setProbability(75);
         happened = event.happened();
-        assertTrue(happened); //once again it happens
+        assertThat(happened).isTrue(); //once again it happens
 
         event.setProbability(2);
         happened = event.happened();
-        assertFalse(happened);
+        assertThat(happened).isFalse();
         event.setProbability(99);
         happened = event.happened();
-        assertTrue(happened); //now it happens for sure
+        assertThat(happened).isTrue(); //now it happens for sure
 
         happened = event.happened();
-        assertTrue(happened); //now it happens too
+        assertThat(happened).isTrue(); //now it happens too
 
         happened = event.happened();
-        assertFalse(happened); //now it cannot happen because lacking 1%
-        assertEquals(99, event.getCurrentProgressAsPercent());
+        assertThat(happened).isFalse(); //now it cannot happen because lacking 1%
+        assertThat(event.getCurrentProgressAsPercent()).isEqualTo(99);
     }
 }

@@ -11,8 +11,7 @@ import org.junit.runners.MethodSorters;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MS_SchedulerTest {
@@ -43,9 +42,9 @@ public class MS_SchedulerTest {
                 .withAction((time) -> executionTimes++)
                 .schedule();
 
-        assertEquals(2, scheduler.getScheduledEventCount());
+        assertThat(scheduler.getScheduledEventCount()).isEqualTo(2);
         scheduler.waitFor(DEFAULT_SLEEPING_TIME);
-        assertEquals(2, executionTimes);
+        assertThat(executionTimes).isEqualTo(2);
     }
 
     @Test(expected = MS_TestUtils.MS_CheckedException.class)
@@ -59,10 +58,10 @@ public class MS_SchedulerTest {
                 .withActionOnException((e, time) -> occurredException = e)
                 .schedule();
 
-        assertEquals(0, executionTimes);
+        assertThat(executionTimes).isEqualTo(0);
         scheduler.waitFor(DEFAULT_SLEEPING_TIME);
-        assertEquals(1, executionTimes);
-        assertEquals("Exception in scheduler's action", occurredException.getMessage());
+        assertThat(executionTimes).isEqualTo(1);
+        assertThat(occurredException.getMessage()).isEqualTo("Exception in scheduler's action");
         throw occurredException;
     }
 
@@ -75,10 +74,10 @@ public class MS_SchedulerTest {
                 .schedule();
 
         MS_CodingUtils.sleep(DEFAULT_SLEEPING_TIME); //let it initialize
-        assertEquals(0, executionTimes);
+        assertThat(executionTimes).isEqualTo(0);
         scheduler.terminate();
         MS_CodingUtils.sleep(DEFAULT_SLEEPING_TIME); //let it interrupt
-        assertEquals("Specific event didn't interrupt", timeFuture, timeCheck);
+        assertThat(timeCheck).as("Specific event didn't interrupt").isEqualTo(timeFuture);
     }
 
     @Test(expected = IllegalStateException.class)
@@ -109,9 +108,9 @@ public class MS_SchedulerTest {
                 .withActionOnInterruptedException((t) -> System.out.println("Interrupted."))
                 .schedule();
 
-        assertEquals(2, scheduler.getScheduledEventCount());
+        assertThat(scheduler.getScheduledEventCount()).isEqualTo(2);
         scheduler.waitFor(DEFAULT_SLEEPING_TIME);
-        assertEquals(2, executionTimes);
+        assertThat(executionTimes).isEqualTo(2);
     }
 
     @Test
@@ -126,8 +125,8 @@ public class MS_SchedulerTest {
             throw new MS_TestUtils.MS_UnCheckedException1("Event didn't manage to execute in default sleeping time.");
         } else {
             long timeDifference = timeCheck.toInstant().toEpochMilli() - timeFuture.toInstant().toEpochMilli();
-            assertTrue(String.format("Execution time (%d milliseconds) slightly differs from configured",
-                    timeDifference), timeDifference <= 100);
+            assertThat(timeDifference <= 100).as(String.format("Execution time (%d milliseconds) slightly differs from configured",
+                    timeDifference)).isTrue();
         }
     }
 }

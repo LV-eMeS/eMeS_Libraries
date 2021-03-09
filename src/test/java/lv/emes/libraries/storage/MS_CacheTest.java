@@ -17,7 +17,7 @@ import org.junit.runners.MethodSorters;
 import java.time.LocalDateTime;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * These tests are using {@link MS_InMemoryLoggingRepository} in order to test caching functionality with some
@@ -52,10 +52,9 @@ public class MS_CacheTest {
 
     @Test
     public void test01CheckSetParams() {
-        assertEquals(1, cache.getDefaultTTL());
-        assertEquals(logger, cache.getLogger());
-        assertTrue("Repository is not initialized, but it should've been on init() step",
-                cache.getRepository().isInitialized());
+        assertThat(cache.getDefaultTTL()).isEqualTo(1);
+        assertThat(cache.getLogger()).isEqualTo(logger);
+        assertThat(cache.getRepository().isInitialized()).as("Repository is not initialized, but it should've been on init() step").isTrue();
     }
 
     @Test(expected = NullPointerException.class)
@@ -67,9 +66,9 @@ public class MS_CacheTest {
     public void test11StoreAndRetrieveFirst() throws Exception {
         operThread = cache.cache(FIRST, ++lastId, 0L);
         MS_FutureEvent.joinEvents(5, 20, operThread);
-        assertEquals(1, cache.getRepository().size());
+        assertThat(cache.getRepository().size()).isEqualTo(1);
 
-        assertEquals(FIRST, cache.get(lastId));
+        assertThat(cache.get(lastId)).isEqualTo(FIRST);
         verifyCurrentLogCount(0);
     }
 
@@ -77,37 +76,35 @@ public class MS_CacheTest {
     public void test12StoreSecondAndBothAreStillThere() throws MS_ExecutionFailureException {
         operThread = cache.cache(SECOND, ++lastId);
         MS_FutureEvent.joinEvents(5, 20, operThread);
-        assertEquals(2, cache.getRepository().size());
+        assertThat(cache.getRepository().size()).isEqualTo(2);
 
-        assertEquals(SECOND, cache.get(lastId));
-        assertEquals(FIRST, cache.get(lastId - 1));
+        assertThat(cache.get(lastId)).isEqualTo(SECOND);
+        assertThat(cache.get(lastId - 1)).isEqualTo(FIRST);
         verifyCurrentLogCount(0);
     }
 
     @Test
     public void test13CleanupAfter1SecondSecondObjectIsGoneBut1stRemains() {
-        assertNotNull("Performance issues: Second object shouldn't be expired yet", cache.get(lastId));
+        assertThat(cache.get(lastId)).as("Performance issues: Second object shouldn't be expired yet").isNotNull();
         MS_CodingUtils.sleep(1000);
-        assertNull("Second object is still in cache after 1 second, which was its TTL. ", cache.get(lastId));
+        assertThat(cache.get(lastId)).as("Second object is still in cache after 1 second, which was its TTL. ").isNull();
         //if this call will be fast enough we might still find object in real cache
-        assertNotNull("Performance issues: As expired object cleanup takes some time " +
-                        "while new thread is created, actual repository should've been returned second object," +
-                        "which still should've been there.",
-                cache.getRepository().get(lastId));
+        assertThat(cache.getRepository().get(lastId)).as("Performance issues: As expired object cleanup takes some time " +
+                "while new thread is created, actual repository should've been returned second object," +
+                "which still should've been there.").isNotNull();
 
-        assertEquals("First object should stay in cache forever", FIRST, cache.get(lastId - 1));
+        assertThat(cache.get(lastId - 1)).as("First object should stay in cache forever").isEqualTo(FIRST);
         verifyCurrentLogCount(0);
 
         MS_CodingUtils.sleep(100); //sleep a bit more until cleanup will be completed
-        assertNull("Performance issues: After additional waiting second object should've been already removed" +
-                        "from cache repository completely, but it doesn't",
-                cache.getRepository().get(lastId));
+        assertThat(cache.getRepository().get(lastId)).as("Performance issues: After additional waiting second object should've been already removed" +
+                "from cache repository completely, but it doesn't").isNull();
         verifyCurrentLogCount(0); //hopefully, Concurrent modification exception will not arise here!
     }
 
     @Test
     public void test14ClearingBunchOfObjectsHappensInSameThread() throws MS_ExecutionFailureException {
-        assertEquals(1, cache.getRepository().size()); //first element is still there
+        assertThat(cache.getRepository().size()).isEqualTo(1); //first element is still there
         MS_List<MS_FutureEvent> cachingThreads = new MS_List<>();
         operThread = cache.cache(RandomStringUtils.randomAlphabetic(10), ++lastId);
         cachingThreads.add(operThread);
@@ -119,13 +116,12 @@ public class MS_CacheTest {
         cachingThreads.add(operThread);
 
         MS_FutureEvent.joinEvents(cachingThreads, 5, 20);
-        assertEquals(5, cache.getRepository().size());
+        assertThat(cache.getRepository().size()).isEqualTo(5);
         operThread = cache.removeAll();
         MS_FutureEvent.joinEvents(5, 20, operThread);
-        assertEquals("After clearing cache there should not have been any object left",
-                0, cache.getRepository().size());
-        assertNull(cache.get(1));
-        assertNull(cache.get(lastId));
+        assertThat(cache.getRepository().size()).as("After clearing cache there should not have been any object left").isEqualTo(0);
+        assertThat(cache.get(1)).isNull();
+        assertThat(cache.get(lastId)).isNull();
         verifyCurrentLogCount(0);
         lastId = 0; //restart ID counter, cause at this point all logs are cleared
     }
@@ -188,7 +184,7 @@ public class MS_CacheTest {
         //wait until last thread executes
         MS_FutureEvent.joinEvents(allThreadsTogether, 35, 30);
         verifyCurrentLogCount(0);
-        assertEquals(500, cache.getRepository().size());
+        assertThat(cache.getRepository().size()).isEqualTo(500);
     }
 
     @Test
@@ -212,14 +208,13 @@ public class MS_CacheTest {
         //wait until last thread executes
         MS_FutureEvent.joinEvents(allThreadsTogether, 45, 45);
         verifyCurrentLogCount(0);
-        assertEquals(200, cache.getRepository().size());
+        assertThat(cache.getRepository().size()).isEqualTo(200);
     }
 
     //*** Private methods ***
 
     private void verifyCurrentLogCount(int expectedCount) {
-        assertEquals("Error and warning log count differs from expected at this point",
-                expectedCount, logs.getEventList().size());
+        assertThat(logs.getEventList().size()).as("Error and warning log count differs from expected at this point").isEqualTo(expectedCount);
     }
 
     private MS_List<MS_FutureEvent> newThreadListToStoreAndRetrieveObjects(int idStartingFrom, int idEndingAt) {

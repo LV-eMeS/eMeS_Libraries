@@ -3,8 +3,7 @@ package lv.emes.libraries.file_system.properties;
 import lv.emes.libraries.tools.MS_BadSetupException;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class MS_PropertyFileManagerTest {
 
@@ -16,13 +15,13 @@ public class MS_PropertyFileManagerTest {
         MS_PropertiesFile props;
 
         props = MS_PropertyFileManager.getProperties(testPropsPath1);
-        assertEquals("test property", props.getProperty("test"));
-        assertNull(props.getProperty("test2"));
-        assertEquals(5, props.getInt("number", 0));
+        assertThat(props.getProperty("test")).isEqualTo("test property");
+        assertThat(props.getProperty("test2")).isNull();
+        assertThat(props.getInt("number", 0)).isEqualTo(5);
 
         props = MS_PropertyFileManager.getProperties(testPropsPath2);
-        assertEquals("test property 1", props.getProperty("test1"));
-        assertEquals("tēšt prōpērtī 3", props.getProperty("test3"));
+        assertThat(props.getProperty("test1")).isEqualTo("test property 1");
+        assertThat(props.getProperty("test3")).isEqualTo("tēšt prōpērtī 3");
     }
 
     @Test(expected = MS_BadSetupException.class)

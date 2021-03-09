@@ -4,8 +4,7 @@ import lv.emes.libraries.tools.MS_BadSetupException;
 import org.junit.Test;
 
 import static lv.emes.libraries.utilities.MS_RepositoryUtils.retrieveObject;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  *
@@ -21,7 +20,7 @@ public class MS_RepositoryUtilsTest {
         final String expected = "Object";
         String retrievedObject;
         retrievedObject = retrieveObject(objectToRetrieveId, true, (id) -> expected);
-        assertEquals(expected, retrievedObject);
+        assertThat(retrievedObject).isEqualTo(expected);
     }
 
     @Test
@@ -29,7 +28,7 @@ public class MS_RepositoryUtilsTest {
         final Integer objectToRetrieveId = 1;
         String retrievedObject;
         retrievedObject = retrieveObject(objectToRetrieveId, true, (id) -> null);
-        assertNull(retrievedObject);
+        assertThat(retrievedObject).isNull();
     }
 
     @Test
@@ -42,7 +41,7 @@ public class MS_RepositoryUtilsTest {
             else
                 return null;
         });
-        assertNull(retrievedObject);
+        assertThat(retrievedObject).isNull();
     }
 
     @Test
@@ -54,7 +53,7 @@ public class MS_RepositoryUtilsTest {
                 (id) -> null,
                 (id) -> "Second operation worked"
         );
-        assertEquals(expected, retrievedObject);
+        assertThat(retrievedObject).isEqualTo(expected);
     }
 
     @Test
@@ -67,7 +66,7 @@ public class MS_RepositoryUtilsTest {
                 },
                 (id) -> "Second operation worked"
         );
-        assertEquals(expected, retrievedObject);
+        assertThat(retrievedObject).isEqualTo(expected);
     }
 
     @Test(expected = MS_ObjectRetrievalFailureException.class)

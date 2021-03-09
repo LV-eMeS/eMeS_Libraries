@@ -13,7 +13,7 @@ import java.io.InputStream;
 import java.util.List;
 
 import static lv.emes.libraries.file_system.MS_FileSystemTools.*;
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MS_TextFileTest {
@@ -43,11 +43,11 @@ public class MS_TextFileTest {
     public static void cleanUp() {
         deleteFile(FIRST_FILE);
         deleteFile(SECOND_FILE);
-        assertFalse(fileExists(FIRST_FILE));
-        assertFalse(fileExists(SECOND_FILE));
+        assertThat(fileExists(FIRST_FILE)).isFalse();
+        assertThat(fileExists(SECOND_FILE)).isFalse();
 
         deleteDirectory(directoryUp(MISSING_DIRECTORY_NAME));
-        assertFalse(directoryExists(MISSING_DIRECTORY_NAME));
+        assertThat(directoryExists(MISSING_DIRECTORY_NAME)).isFalse();
     }
 
     @Test
@@ -55,14 +55,14 @@ public class MS_TextFileTest {
         MS_TextFile writer = new MS_TextFile(FIRST_FILE);
         writer.writeln(TEXT1, false);
         writer.writeln(TEXT2, true);
-        assertTrue(fileExists(FIRST_FILE));
+        assertThat(fileExists(FIRST_FILE)).isTrue();
     }
 
     @Test
     public void test02AppendFirstFile() {
         MS_TextFile appender = new MS_TextFile(FIRST_FILE);
         appender.appendln(TEXT3, true);
-        assertTrue(fileExists(FIRST_FILE)); //if it still exists after appending
+        assertThat(fileExists(FIRST_FILE)).isTrue(); //if it still exists after appending
     }
 
     @Test
@@ -74,11 +74,11 @@ public class MS_TextFileTest {
             contentsOfFile.add(str);
         }
         reader.close();
-        assertEquals(3, contentsOfFile.size());
-        assertEquals(TEXT1, contentsOfFile.get(0));
-        assertEquals(TEXT2, contentsOfFile.get(1));
-        assertEquals(TEXT3, contentsOfFile.get(2));
-        assertTrue(fileExists(FIRST_FILE));
+        assertThat(contentsOfFile.size()).isEqualTo(3);
+        assertThat(contentsOfFile.get(0)).isEqualTo(TEXT1);
+        assertThat(contentsOfFile.get(1)).isEqualTo(TEXT2);
+        assertThat(contentsOfFile.get(2)).isEqualTo(TEXT3);
+        assertThat(fileExists(FIRST_FILE)).isTrue();
     }
 
     @Test
@@ -94,25 +94,25 @@ public class MS_TextFileTest {
         writer.exportStringListToFile(sList); //export to file using instance of MS_TextFile
         MS_TextFile.exportStringListToFile(SECOND_FILE, sList); //export to file using static method of MS_TextFile
         writer.close();
-        assertTrue(fileExists(FIRST_FILE));
-        assertTrue(fileExists(SECOND_FILE));
+        assertThat(fileExists(FIRST_FILE)).isTrue();
+        assertThat(fileExists(SECOND_FILE)).isTrue();
     }
 
     @Test
     public void test05FromFileToStringList() {
         List<String> sList = MS_TextFile.importStringListFromFile(FIRST_FILE);
-        assertEquals(3, sList.size());
-        assertEquals(TEXT4, sList.get(0));
-        assertEquals(TEXT5, sList.get(1));
-        assertEquals(TEXT6, sList.get(2));
+        assertThat(sList.size()).isEqualTo(3);
+        assertThat(sList.get(0)).isEqualTo(TEXT4);
+        assertThat(sList.get(1)).isEqualTo(TEXT5);
+        assertThat(sList.get(2)).isEqualTo(TEXT6);
         sList.clear();
 
         MS_TextFile reader = new MS_TextFile(SECOND_FILE);
         sList = reader.importStringListFromFile();
-        assertEquals(3, sList.size());
-        assertEquals(TEXT4, sList.get(0));
-        assertEquals(TEXT5, sList.get(1));
-        assertEquals(TEXT6, sList.get(2));
+        assertThat(sList.size()).isEqualTo(3);
+        assertThat(sList.get(0)).isEqualTo(TEXT4);
+        assertThat(sList.get(1)).isEqualTo(TEXT5);
+        assertThat(sList.get(2)).isEqualTo(TEXT6);
     }
 
     @Test
@@ -120,19 +120,19 @@ public class MS_TextFileTest {
         InputStream iStream = getResourceInputStream(FILE_AS_RESOURCE);
         MS_TextFile text = new MS_TextFile(iStream);
 
-        assertEquals(TEXT7_AS_RESOURCE, text.readln());
-        assertEquals(TEXT8_AS_RESOURCE, text.readln());
+        assertThat(text.readln()).isEqualTo(TEXT7_AS_RESOURCE);
+        assertThat(text.readln()).isEqualTo(TEXT8_AS_RESOURCE);
     }
 
     @Test
     public void test07ReadingFileAsString() {
         String str = MS_TextFile.getFileTextAsString(FIRST_FILE, "");
-        assertEquals(TEXT4 + TEXT5 + TEXT6, str);
+        assertThat(str).isEqualTo(TEXT4 + TEXT5 + TEXT6);
 
         //now to test same file as resource
-        assertTrue(fileExists(FIRST_FILE));
+        assertThat(fileExists(FIRST_FILE)).isTrue();
         str = MS_TextFile.getResourceFileTextAsString(FILE_AS_RESOURCE);
-        assertEquals(TEXT7_AS_RESOURCE + "\r\n" + TEXT8_AS_RESOURCE, str);
+        assertThat(str).isEqualTo(TEXT7_AS_RESOURCE + "\r\n" + TEXT8_AS_RESOURCE);
     }
 
     @Test
@@ -141,14 +141,14 @@ public class MS_TextFileTest {
         mixed.write(TEXT1, false);
         mixed.writeln(TEXT2, true);
         //additional test for static method
-        assertTrue(MS_TextFile.isTextFile(FIRST_FILE));
+        assertThat(MS_TextFile.isTextFile(FIRST_FILE)).isTrue();
         mixed.append(TEXT3);
         mixed.appendln(TEXT4, true);
-        assertEquals(TEXT1 + TEXT2, mixed.readln());
-        assertEquals(TEXT3 + TEXT4, mixed.readln());
+        assertThat(mixed.readln()).isEqualTo(TEXT1 + TEXT2);
+        assertThat(mixed.readln()).isEqualTo(TEXT3 + TEXT4);
 
         mixed.writeln(TEXT4, true); //once again new line
-        assertEquals(TEXT4, mixed.readln());
+        assertThat(mixed.readln()).isEqualTo(TEXT4);
         mixed.close();
     }
 }

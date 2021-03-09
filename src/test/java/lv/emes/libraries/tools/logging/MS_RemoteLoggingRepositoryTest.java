@@ -18,7 +18,7 @@ import org.threeten.bp.ZonedDateTime;
 import java.util.Map;
 
 import static lv.emes.libraries.tools.logging.MS_RemoteLoggingRepository.MAX_SECRET_LENGTH;
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MS_RemoteLoggingRepositoryTest {
@@ -58,22 +58,22 @@ public class MS_RemoteLoggingRepositoryTest {
 
     @Test
     public void test01RepoInitialized() {
-        assertTrue("Repository is not initialized", repository.isInitialized());
+        assertThat(repository.isInitialized()).as("Repository is not initialized").isTrue();
     }
 
     @Test
     public void test02ConstructorParametersSetProperly() {
-        assertEquals(PRODUCT_OWNER, repository.getProductOwner());
-        assertEquals(PRODUCT_NAME, repository.getProductName());
-        assertEquals(PRODUCT_OWNER, repository.getRepositoryRoot());
-        assertEquals(PRODUCT_NAME, repository.getRepositoryCategoryName());
+        assertThat(repository.getProductOwner()).isEqualTo(PRODUCT_OWNER);
+        assertThat(repository.getProductName()).isEqualTo(PRODUCT_NAME);
+        assertThat(repository.getRepositoryRoot()).isEqualTo(PRODUCT_OWNER);
+        assertThat(repository.getRepositoryCategoryName()).isEqualTo(PRODUCT_NAME);
     }
 
     @Test
     public void test03FindAllEvents() throws MS_ExecutionFailureException {
         MS_CodingUtils.executeWithRetry(4, () -> {
             Map<Instant, MS_LoggingEvent> events = repository.findAll();
-            assertEquals("There should be 5 events logged at test initialization step", 5, loggedEvents.getEventList().size());
+            assertThat(loggedEvents.getEventList().size()).as("There should be 5 events logged at test initialization step").isEqualTo(5);
             assertThatEventsMatchOnesWeAddedOnInitialization(events);
         });
     }
@@ -101,15 +101,15 @@ public class MS_RemoteLoggingRepositoryTest {
         Instant timeOfEvent2 = MS_CodingUtils.getMapElementKey(eventsIn1StPage, 1);
         Instant timeOfEvent3 = MS_CodingUtils.getMapElementKey(eventsIn2ndPage, 0);
         Instant timeOfEvent4 = MS_CodingUtils.getMapElementKey(eventsIn2ndPage, 1);
-        assertTrue("In first page first element should be newer than second element, but it's older", timeOfEvent1.isAfter(timeOfEvent2));
-        assertTrue("Elements in second page should be older than ones in first page, but 1st page 2nd element is before than 1st element in 2nd page", timeOfEvent2.isAfter(timeOfEvent3));
-        assertTrue("In second page first element should be newer than second element, but it's older", timeOfEvent3.isAfter(timeOfEvent4));
+        assertThat(timeOfEvent1.isAfter(timeOfEvent2)).as("In first page first element should be newer than second element, but it's older").isTrue();
+        assertThat(timeOfEvent2.isAfter(timeOfEvent3)).as("Elements in second page should be older than ones in first page, but 1st page 2nd element is before than 1st element in 2nd page").isTrue();
+        assertThat(timeOfEvent3.isAfter(timeOfEvent4)).as("In second page first element should be newer than second element, but it's older").isTrue();
     }
 
     @Test
     public void test05RemoveAll() {
         repository.removeAll();
-        assertEquals(0, repository.findAll().size());
+        assertThat(repository.findAll().size()).isEqualTo(0);
     }
 
     @Test(expected = UnsupportedOperationException.class)
@@ -152,7 +152,7 @@ public class MS_RemoteLoggingRepositoryTest {
         } catch (MS_RepositoryDataExchangeException e) {
             requestPassed = false;
         }
-        assertFalse(requestPassed);
+        assertThat(requestPassed).isFalse();
         requestPassed = true;
 
         try {
@@ -160,7 +160,7 @@ public class MS_RemoteLoggingRepositoryTest {
         } catch (MS_RepositoryDataExchangeException e) {
             requestPassed = false;
         }
-        assertFalse(requestPassed);
+        assertThat(requestPassed).isFalse();
         requestPassed = true;
 
         try {
@@ -168,7 +168,7 @@ public class MS_RemoteLoggingRepositoryTest {
         } catch (MS_RepositoryDataExchangeException e) {
             requestPassed = false;
         }
-        assertFalse(requestPassed);
+        assertThat(requestPassed).isFalse();
     }
 
     @Test(expected = MS_RepositoryDataExchangeException.class)

@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Unit test for MS_EqualityCheckBuilder utility.
@@ -29,7 +29,7 @@ public class MS_EqualityCheckBuilderTest {
         longs.add(3L);
         longs.add(6L);
         builder = buildLists(integers, longs, false);
-        assertTrue(builder.isEquals());
+        assertThat(builder.isEquals()).isTrue();
     }
 
     @Test
@@ -41,7 +41,7 @@ public class MS_EqualityCheckBuilderTest {
         longs.add(3L);
         longs.add(6L);
         builder = buildLists(integers, longs, false);
-        assertFalse(builder.areEqual());
+        assertThat(builder.areEqual()).isFalse();
     }
 
     @Test
@@ -50,7 +50,7 @@ public class MS_EqualityCheckBuilderTest {
         integers.add(3);
         List<Long> longs = new ArrayList<>();
         builder = buildLists(integers, longs, false);
-        assertFalse(builder.areEqual());
+        assertThat(builder.areEqual()).isFalse();
     }
 
     @Test
@@ -58,27 +58,27 @@ public class MS_EqualityCheckBuilderTest {
         List<Integer> integers = new ArrayList<>();
         List<Long> longs = new ArrayList<>();
         builder = buildLists(integers, longs, false);
-        assertTrue(builder.areEqual());
+        assertThat(builder.areEqual()).isTrue();
     }
 
     @Test
     public void testBothListsNull() {
         builder = buildLists(null, null, false);
-        assertTrue(builder.areEqual());
+        assertThat(builder.areEqual()).isTrue();
     }
 
     @Test
     public void testFirstListNull() {
         List<Long> longs = new ArrayList<>();
         builder = buildLists(null, longs, false);
-        assertFalse(builder.areEqual());
+        assertThat(builder.areEqual()).isFalse();
     }
 
     @Test
     public void testSecondListNull() {
         List<Integer> integers = new ArrayList<>();
         builder = buildLists(integers, null, false);
-        assertFalse(builder.areEqual());
+        assertThat(builder.areEqual()).isFalse();
     }
 
     @Test(expected = AssertionError.class)
@@ -110,7 +110,7 @@ public class MS_EqualityCheckBuilderTest {
         longs.add(6L);
         builder = buildLists(integers, longs, false);
         builder.append(true, true, (f, s) -> true); //a call just to
-        assertFalse(builder.areEqual());
+        assertThat(builder.areEqual()).isFalse();
     }
 
     @Test
@@ -118,19 +118,19 @@ public class MS_EqualityCheckBuilderTest {
         builder = new MS_EqualityCheckBuilder()
                 .append(true, false)
                 .append(new Object(), new Object());
-        assertFalse(builder.areEqual());
+        assertThat(builder.areEqual()).isFalse();
     }
 
     @Test
     public void testConstructorWithNoParams() {
         builder = new MS_EqualityCheckBuilder();
-        assertFalse(builder.getMustBeEqual());
+        assertThat(builder.getMustBeEqual()).isFalse();
     }
 
     @Test
     public void testMustBeEqualsSetter() {
         builder = new MS_EqualityCheckBuilder(true).setMustBeEqual(false);
-        assertFalse(builder.getMustBeEqual());
+        assertThat(builder.getMustBeEqual()).isFalse();
     }
 
     @Test
@@ -153,7 +153,7 @@ public class MS_EqualityCheckBuilderTest {
                 .append(new float[]{}, new float[]{})
                 .append(new boolean[]{}, new boolean[]{})
         ;
-        assertTrue(builder.areEqual());
+        assertThat(builder.areEqual()).isTrue();
     }
 
     @Test
@@ -163,35 +163,35 @@ public class MS_EqualityCheckBuilderTest {
 
         exc1 = new MS_TestUtils.MS_UnCheckedException2();
         exc2 = new MS_TestUtils.MS_UnCheckedException2();
-        assertEquals(exc1, exc2);
+        assertThat(exc2).isEqualTo(exc1);
 
         exc1 = new MS_TestUtils.MS_UnCheckedException2("");
         exc2 = new MS_TestUtils.MS_UnCheckedException2();
-        assertNotEquals(exc1, exc2);
+        assertThat(exc2).isNotEqualTo(exc1);
 
         exc1 = new MS_TestUtils.MS_UnCheckedException2();
         exc2 = new MS_TestUtils.MS_UnCheckedException2((String) null);
-        assertEquals(exc1, exc2);
+        assertThat(exc2).isEqualTo(exc1);
 
         exc1 = new MS_TestUtils.MS_UnCheckedException2();
         exc2 = new MS_TestUtils.MS_UnCheckedException1();
-        assertNotEquals(exc1, exc2);
+        assertThat(exc2).isNotEqualTo(exc1);
 
         exc1 = new MS_TestUtils.MS_UnCheckedException2(new RuntimeException());
         exc2 = new MS_TestUtils.MS_UnCheckedException2(new RuntimeException());
-        assertEquals(exc1, exc2);
+        assertThat(exc2).isEqualTo(exc1);
 
         exc1 = new MS_TestUtils.MS_UnCheckedException2(new RuntimeException());
         exc2 = new MS_TestUtils.MS_UnCheckedException2();
-        assertNotEquals(exc1, exc2);
+        assertThat(exc2).isNotEqualTo(exc1);
 
         exc1 = new MS_TestUtils.MS_UnCheckedException2(new RuntimeException("test"));
         exc2 = new MS_TestUtils.MS_UnCheckedException2(new RuntimeException("test"));
-        assertEquals(exc1, exc2);
+        assertThat(exc2).isEqualTo(exc1);
 
         exc1 = new MS_TestUtils.MS_UnCheckedException2(new RuntimeException("test"));
         exc2 = new MS_TestUtils.MS_UnCheckedException2(new RuntimeException(""));
-        assertNotEquals(exc1, exc2);
+        assertThat(exc2).isNotEqualTo(exc1);
     }
 
     //*** Map equality comparison ***
@@ -205,7 +205,7 @@ public class MS_EqualityCheckBuilderTest {
         longs.put(1, 3L);
         longs.put(2, 6L);
         builder = buildMaps(integers, longs);
-        assertTrue(builder.isEquals());
+        assertThat(builder.isEquals()).isTrue();
     }
 
     @Test
@@ -217,7 +217,7 @@ public class MS_EqualityCheckBuilderTest {
         longs.put(1, 3L);
         longs.put(2, 6L);
         builder = buildMaps(integers, longs);
-        assertFalse(builder.areEqual());
+        assertThat(builder.areEqual()).isFalse();
     }
 
     @Test
@@ -228,7 +228,7 @@ public class MS_EqualityCheckBuilderTest {
         longs.put(1, 3L);
         longs.put(2, 6L);
         builder = buildMaps(integers, longs);
-        assertFalse(builder.areEqual());
+        assertThat(builder.areEqual()).isFalse();
     }
 
     @Test
@@ -236,27 +236,27 @@ public class MS_EqualityCheckBuilderTest {
         Map<Integer, Integer> integers = new HashMap<>();
         Map<Integer, Long> longs = new HashMap<>();
         builder = buildMaps(integers, longs);
-        assertTrue(builder.areEqual());
+        assertThat(builder.areEqual()).isTrue();
     }
 
     @Test
     public void testBothMapsNull() {
         builder = buildMaps(null, null);
-        assertTrue(builder.areEqual());
+        assertThat(builder.areEqual()).isTrue();
     }
 
     @Test
     public void testFirstMapNull() {
         Map<Integer, Long> longs = new HashMap<>();
         builder = buildMaps(null, longs);
-        assertFalse(builder.areEqual());
+        assertThat(builder.areEqual()).isFalse();
     }
 
     @Test
     public void testSecondMapNull() {
         Map<Integer, Integer> integers = new HashMap<>();
         builder = buildMaps(integers, null);
-        assertFalse(builder.areEqual());
+        assertThat(builder.areEqual()).isFalse();
     }
 
     //*** Map with different types of IDs equality comparison ***
@@ -270,7 +270,7 @@ public class MS_EqualityCheckBuilderTest {
         longs.put(1L, 3L);
         longs.put(2L, 6L);
         builder = buildMapsDifferentIdTypes(integers, longs);
-        assertTrue(builder.isEquals());
+        assertThat(builder.isEquals()).isTrue();
     }
 
     @Test
@@ -282,7 +282,7 @@ public class MS_EqualityCheckBuilderTest {
         longs.put(1L, 3L);
         longs.put(2L, 6L);
         builder = buildMapsDifferentIdTypes(integers, longs);
-        assertFalse(builder.areEqual());
+        assertThat(builder.areEqual()).isFalse();
     }
 
     @Test
@@ -293,7 +293,7 @@ public class MS_EqualityCheckBuilderTest {
         longs.put(1L, 3L);
         longs.put(2L, 6L);
         builder = buildMapsDifferentIdTypes(integers, longs);
-        assertFalse(builder.areEqual());
+        assertThat(builder.areEqual()).isFalse();
     }
 
     @Test
@@ -301,14 +301,14 @@ public class MS_EqualityCheckBuilderTest {
         Map<Integer, Integer> integers = new HashMap<>();
         Map<Long, Long> longs = new HashMap<>();
         builder = buildMapsDifferentIdTypes(integers, longs);
-        assertTrue(builder.areEqual());
+        assertThat(builder.areEqual()).isTrue();
     }
 
     @Test
     public void testFirstMapDifferentIdNull() {
         Map<Long, Long> longs = new HashMap<>();
         builder = buildMapsDifferentIdTypes(null, longs);
-        assertFalse(builder.areEqual());
+        assertThat(builder.areEqual()).isFalse();
     }
 
     private static final MS_EqualityCheckBuilder.IComparisonAlgorithm<Integer, Long> INTEGER_AND_LONG_COMPARISON =

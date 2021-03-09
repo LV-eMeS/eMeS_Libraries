@@ -10,8 +10,7 @@ import org.junit.runners.MethodSorters;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * All tests depends on previous test data.
@@ -39,19 +38,19 @@ public class MS_FileRepositoryTest {
     public void test01BothReposInCorrectLocations() {
         repository1 = new MS_FileRepositoryForTest(PROJECT_NAME, CATEGORY_NAME1);
         repository2 = new MS_FileRepositoryForTest(PROJECT_NAME, CATEGORY_NAME2);
-        assertTrue(MS_FileSystemTools.directoryExists(repository1.getPathToRepository()));
-        assertTrue(MS_FileSystemTools.directoryExists(repository2.getPathToRepository()));
+        assertThat(MS_FileSystemTools.directoryExists(repository1.getPathToRepository())).isTrue();
+        assertThat(MS_FileSystemTools.directoryExists(repository2.getPathToRepository())).isTrue();
     }
 
     @Test
     public void test02BasicOperations() {
         repository1 = new MS_FileRepositoryForTest(PROJECT_NAME, CATEGORY_NAME1);
         repository1.put(ITEM_IDS[0], ITEMS[0]);
-        assertEquals(1, repository1.size());
-        assertEquals(ITEMS[0], repository1.get(ITEM_IDS[0]));
+        assertThat(repository1.size()).isEqualTo(1);
+        assertThat(repository1.get(ITEM_IDS[0])).isEqualTo(ITEMS[0]);
         repository1.remove(ITEM_IDS[0]);
         repository1.remove(ITEM_IDS[0]); //same item cannot be removed again
-        assertEquals(0, repository1.size());
+        assertThat(repository1.size()).isEqualTo(0);
     }
 
     @Test
@@ -60,35 +59,35 @@ public class MS_FileRepositoryTest {
         repository2 = new MS_FileRepositoryForTest(PROJECT_NAME, CATEGORY_NAME2);
 
         repository1.put(ITEM_IDS[0], ITEMS[0]);
-        assertEquals(1, repository1.size());
-        assertEquals(0, repository2.size());
+        assertThat(repository1.size()).isEqualTo(1);
+        assertThat(repository2.size()).isEqualTo(0);
 
         repository2.put(ITEM_IDS[0], ITEMS[0]);
         repository2.put(ITEM_IDS[1], ITEMS[1]);
-        assertEquals(1, repository1.size());
-        assertEquals(2, repository2.size());
-        assertEquals(ITEMS[0], repository1.find(ITEM_IDS[0]));
-        assertEquals(ITEMS[0], repository2.find(ITEM_IDS[0]));
-        assertEquals(null, repository1.find(ITEM_IDS[1]));
-        assertEquals(ITEMS[1], repository2.find(ITEM_IDS[1]));
+        assertThat(repository1.size()).isEqualTo(1);
+        assertThat(repository2.size()).isEqualTo(2);
+        assertThat(repository1.find(ITEM_IDS[0])).isEqualTo(ITEMS[0]);
+        assertThat(repository2.find(ITEM_IDS[0])).isEqualTo(ITEMS[0]);
+        assertThat(repository1.find(ITEM_IDS[1])).isEqualTo(null);
+        assertThat(repository2.find(ITEM_IDS[1])).isEqualTo(ITEMS[1]);
 
         repository2.remove(ITEM_IDS[0]);
-        assertEquals(1, repository1.size());
-        assertEquals(1, repository2.size());
-        assertEquals(ITEMS[0], repository1.find(ITEM_IDS[0]));
-        assertEquals(null, repository2.find(ITEM_IDS[0]));
-        assertEquals(null, repository1.find(ITEM_IDS[1]));
-        assertEquals(ITEMS[1], repository2.find(ITEM_IDS[1]));
+        assertThat(repository1.size()).isEqualTo(1);
+        assertThat(repository2.size()).isEqualTo(1);
+        assertThat(repository1.find(ITEM_IDS[0])).isEqualTo(ITEMS[0]);
+        assertThat(repository2.find(ITEM_IDS[0])).isEqualTo(null);
+        assertThat(repository1.find(ITEM_IDS[1])).isEqualTo(null);
+        assertThat(repository2.find(ITEM_IDS[1])).isEqualTo(ITEMS[1]);
     }
 
     @Test
     public void test04RemoveAllRepositoryItems() {
         repository2 = new MS_FileRepositoryForTest(PROJECT_NAME, CATEGORY_NAME2);
-        assertEquals(1, repository2.size());
+        assertThat(repository2.size()).isEqualTo(1);
         repository2.removeAll();
-        assertEquals(0, repository2.size());
-        assertTrue(repository2.isInitialized());
-        assertTrue(MS_FileSystemTools.directoryExists(PROJECT_NAME + "/" + CATEGORY_NAME2));
+        assertThat(repository2.size()).isEqualTo(0);
+        assertThat(repository2.isInitialized()).isTrue();
+        assertThat(MS_FileSystemTools.directoryExists(PROJECT_NAME + "/" + CATEGORY_NAME2)).isTrue();
     }
 
     /**

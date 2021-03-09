@@ -9,8 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MS_MySQLDatabaseTest {
@@ -29,7 +28,7 @@ public class MS_MySQLDatabaseTest {
         );
         db.initialize();
 
-        assertTrue(db.isOnline());
+        assertThat(db.isOnline()).isTrue();
     }
 
     @AfterClass
@@ -67,11 +66,11 @@ public class MS_MySQLDatabaseTest {
         try (MS_ConnectionSession con = db.getConnectionSession()) {
             String query = "select * from tests";
             ResultSet rs = con.getQueryResult(query);
-            assertTrue(rs.next());
-            assertEquals("1", rs.getString("id"));
-            assertEquals(1, rs.getInt("id"));
-            assertEquals("test1", rs.getString("name"));
-            assertEquals(33, rs.getInt("count"));
+            assertThat(rs.next()).isTrue();
+            assertThat(rs.getString("id")).isEqualTo("1");
+            assertThat(rs.getInt("id")).isEqualTo(1);
+            assertThat(rs.getString("name")).isEqualTo("test1");
+            assertThat(rs.getInt("count")).isEqualTo(33);
         }
     }
 
@@ -82,21 +81,21 @@ public class MS_MySQLDatabaseTest {
             String query = "select * from tests";
             st = con.prepareQuery(query);
             ResultSet rs = con.getQueryResult(st);
-            assertTrue(rs.next());
-            assertEquals("1", rs.getString("id"));
-            assertEquals(1, rs.getInt("id"));
-            assertEquals("test1", rs.getString("name"));
-            assertEquals(33, rs.getInt("count"));
+            assertThat(rs.next()).isTrue();
+            assertThat(rs.getString("id")).isEqualTo("1");
+            assertThat(rs.getInt("id")).isEqualTo(1);
+            assertThat(rs.getString("name")).isEqualTo("test1");
+            assertThat(rs.getInt("count")).isEqualTo(33);
 
-            assertTrue(rs.next()); //second record
-            assertEquals(22, rs.getInt("count"));
-            assertEquals("test2", rs.getString("name"));
-            assertEquals(2, rs.getInt("id"));
+            assertThat(rs.next()).isTrue(); //second record
+            assertThat(rs.getInt("count")).isEqualTo(22);
+            assertThat(rs.getString("name")).isEqualTo("test2");
+            assertThat(rs.getInt("id")).isEqualTo(2);
 
-            assertTrue(rs.next()); //third record
-            assertEquals(11, rs.getInt(3));
-            assertEquals("test3", rs.getString(2));
-            assertEquals(3, rs.getInt(1));
+            assertThat(rs.next()).isTrue(); //third record
+            assertThat(rs.getInt(3)).isEqualTo(11);
+            assertThat(rs.getString(2)).isEqualTo("test3");
+            assertThat(rs.getInt(1)).isEqualTo(3);
         }
     }
 
@@ -107,11 +106,11 @@ public class MS_MySQLDatabaseTest {
             String query = "select * from tests where id=2";
             st = con.prepareQuery(query);
             ResultSet rs = con.getQueryResult(st);
-            assertTrue(rs.next());
-            assertEquals(2, rs.getInt(1));
-            assertEquals("test2", rs.getString(2));
-            assertEquals("22", rs.getString(3));
-            assertEquals(22, rs.getInt(3));
+            assertThat(rs.next()).isTrue();
+            assertThat(rs.getInt(1)).isEqualTo(2);
+            assertThat(rs.getString(2)).isEqualTo("test2");
+            assertThat(rs.getString(3)).isEqualTo("22");
+            assertThat(rs.getInt(3)).isEqualTo(22);
         }
     }
 
@@ -125,10 +124,10 @@ public class MS_MySQLDatabaseTest {
             st = con.prepareQuery(query);
             st.setInt(1, 3);
             rs = con.getQueryResult(st);
-            assertTrue(rs.next());
-            assertEquals("3", rs.getString(1));
-            assertEquals("test3", rs.getString(2));
-            assertEquals(11, rs.getInt(3));
+            assertThat(rs.next()).isTrue();
+            assertThat(rs.getString(1)).isEqualTo("3");
+            assertThat(rs.getString(2)).isEqualTo("test3");
+            assertThat(rs.getInt(3)).isEqualTo(11);
         }
     }
 
@@ -146,9 +145,9 @@ public class MS_MySQLDatabaseTest {
             query = "select * from tests where id=1";
             st = con.prepareQuery(query);
             rs = con.getQueryResult(st);
-            assertTrue(rs.next());
-            assertEquals("Oswald", rs.getString(2));
-            assertEquals(33, rs.getInt(3));
+            assertThat(rs.next()).isTrue();
+            assertThat(rs.getString(2)).isEqualTo("Oswald");
+            assertThat(rs.getInt(3)).isEqualTo(33);
         }
     }
 
@@ -164,10 +163,10 @@ public class MS_MySQLDatabaseTest {
             int i = 0;
             while (rs.next()) {
                 i++;
-                assertEquals(i, rs.getInt(1));
-                assertEquals("test" + i, rs.getString(2));
+                assertThat(rs.getInt(1)).isEqualTo(i);
+                assertThat(rs.getString(2)).isEqualTo("test" + i);
             }
-            assertEquals(3, i);
+            assertThat(i).isEqualTo(3);
         }
     }
 
@@ -182,10 +181,10 @@ public class MS_MySQLDatabaseTest {
             rs = con.getQueryResult(st);
 
             MS_List<Table_tests_Row> testsTable = MS_ResultSetExtractingUtils.extractList(rs, Table_tests_Row.class);
-            assertEquals(3, testsTable.count());
+            assertThat(testsTable.count()).isEqualTo(3);
             for (int i = 0; i < testsTable.count(); i++) {
-                assertEquals(i + 1, testsTable.get(i).id);
-                assertEquals("test" + (i + 1), testsTable.get(i).name);
+                assertThat(testsTable.get(i).id).isEqualTo(i + 1);
+                assertThat(testsTable.get(i).name).isEqualTo("test" + (i + 1));
             }
         }
     }
@@ -202,13 +201,13 @@ public class MS_MySQLDatabaseTest {
 
 
             Map<Integer, Table_tests_Row> testsTable = MS_ResultSetExtractingUtils.extractMap(rs, Table_tests_Row.class);
-            assertEquals(3, testsTable.size());
-            assertEquals("test1", testsTable.get(1).name);
-            assertEquals("test2", testsTable.get(2).name);
-            assertEquals("test3", testsTable.get(3).name);
-            assertEquals(33, testsTable.get(1).count);
-            assertEquals(2, testsTable.get(2).id);
-            assertEquals(11, testsTable.get(3).count);
+            assertThat(testsTable.size()).isEqualTo(3);
+            assertThat(testsTable.get(1).name).isEqualTo("test1");
+            assertThat(testsTable.get(2).name).isEqualTo("test2");
+            assertThat(testsTable.get(3).name).isEqualTo("test3");
+            assertThat(testsTable.get(1).count).isEqualTo(33);
+            assertThat(testsTable.get(2).id).isEqualTo(2);
+            assertThat(testsTable.get(3).count).isEqualTo(11);
         }
     }
 
@@ -222,7 +221,7 @@ public class MS_MySQLDatabaseTest {
             st = con.prepareQuery(query);
             rs = con.getQueryResult(st);
 
-            assertEquals(3, MS_ResultSetExtractingUtils.extractRecord(rs, MS_TableRecordCount.class).getCount());
+            assertThat(MS_ResultSetExtractingUtils.extractRecord(rs, MS_TableRecordCount.class).getCount()).isEqualTo(3);
         }
     }
 

@@ -10,8 +10,7 @@ import org.junit.runners.MethodSorters;
 
 import static lv.emes.libraries.file_system.MS_FileSystemTools.deleteDirectory;
 import static lv.emes.libraries.file_system.MS_FileSystemTools.directoryUp;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MS_FileWriteConcurrencyTest {
@@ -21,8 +20,8 @@ public class MS_FileWriteConcurrencyTest {
     private final static int WAITING_TIMEOUT = 2000;
     private final static int MAX_WAITING_TIMES = 4; //after double timeout all threads must finish their work for sure
 
-    private static MS_List<MS_FileLogger> loggersForTest = new MS_List<>();
-    private MS_List<MS_FutureEvent> threads = new MS_List<>();
+    private static final MS_List<MS_FileLogger> loggersForTest = new MS_List<>();
+    private final MS_List<MS_FutureEvent> threads = new MS_List<>();
     private static Boolean exceptionOnThreadLevel = false;
     private static Boolean interruptedExceptionOnThreadLevel = false;
     private int waitedXTimesForThreadsToFinish;
@@ -37,9 +36,9 @@ public class MS_FileWriteConcurrencyTest {
 
     @AfterClass
     public static void cleanUp() {
-        assertTrue(deleteDirectory(directoryUp(FILE_NAME)));
-        assertFalse(exceptionOnThreadLevel);
-        assertFalse(interruptedExceptionOnThreadLevel);
+        assertThat(deleteDirectory(directoryUp(FILE_NAME))).isTrue();
+        assertThat(exceptionOnThreadLevel).isFalse();
+        assertThat(interruptedExceptionOnThreadLevel).isFalse();
     }
 
     @Before

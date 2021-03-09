@@ -12,8 +12,7 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tests multi logger functionality by using {@link MS_FileLogger} and custom repositories, which
@@ -33,7 +32,7 @@ public class MS_MultiLoggerTest {
     private MS_MultiLogger logger;
     private MS_InMemoryLoggingRepository inMemoryLogger1;
     private MS_InMemoryLoggingRepository inMemoryLogger2;
-    private static MS_TextFile checkerFile = new MS_TextFile(FILE_LOGGER_PATH);
+    private static final MS_TextFile checkerFile = new MS_TextFile(FILE_LOGGER_PATH);
 
     @Before
     public void setUp() {
@@ -56,17 +55,17 @@ public class MS_MultiLoggerTest {
         MS_CodingUtils.sleep(TIME_FOR_LOGGERS_TO_EXECUTE);
         String lineInFile = checkerFile.readln();
 
-        assertEquals(DELIMITER_LINE, lineInFile);
+        assertThat(lineInFile).isEqualTo(DELIMITER_LINE);
         MS_LoggingEvent loggedEvent1 = inMemoryLogger1.getEventList().get(0);
         MS_LoggingEvent loggedEvent2 = inMemoryLogger2.getEventList().get(0);
-        assertEquals(DELIMITER_LINE, loggedEvent1.getMessage());
-        assertEquals(DELIMITER_LINE, loggedEvent2.getMessage());
+        assertThat(loggedEvent1.getMessage()).isEqualTo(DELIMITER_LINE);
+        assertThat(loggedEvent2.getMessage()).isEqualTo(DELIMITER_LINE);
 
         //check some rules regarding what should not be logged in this case
-        assertEquals(MS_LoggingEventTypeEnum.UNSPECIFIED, loggedEvent1.getType());
-        assertEquals(MS_LoggingEventTypeEnum.UNSPECIFIED, loggedEvent2.getType());
-        assertEquals(null, loggedEvent1.getError());
-        assertEquals(null, loggedEvent2.getError());
+        assertThat(loggedEvent1.getType()).isEqualTo(MS_LoggingEventTypeEnum.UNSPECIFIED);
+        assertThat(loggedEvent2.getType()).isEqualTo(MS_LoggingEventTypeEnum.UNSPECIFIED);
+        assertThat(loggedEvent1.getError()).isEqualTo(null);
+        assertThat(loggedEvent2.getError()).isEqualTo(null);
     }
 
     @Test
@@ -83,22 +82,22 @@ public class MS_MultiLoggerTest {
         MS_CodingUtils.sleep(TIME_FOR_LOGGERS_TO_EXECUTE);
 
         //compare both in-memory lists
-        assertEquals(3, inMemoryLogger1.getEventList().count());
-        assertEquals(inMemoryLogger1.getEventList().count(), inMemoryLogger2.getEventList().count());
+        assertThat(inMemoryLogger1.getEventList().count()).isEqualTo(3);
+        assertThat(inMemoryLogger2.getEventList().count()).isEqualTo(inMemoryLogger1.getEventList().count());
 
         //compare file content with events that should've been logged
         String lineInFile;
         lineInFile = checkerFile.readln();
-        assertTrue(MS_StringUtils.textContains(lineInFile, MS_LoggingEventTypeEnum.INFO.name()));
-        assertTrue(MS_StringUtils.textContains(lineInFile, infoEvent));
+        assertThat(MS_StringUtils.textContains(lineInFile, MS_LoggingEventTypeEnum.INFO.name())).isTrue();
+        assertThat(MS_StringUtils.textContains(lineInFile, infoEvent)).isTrue();
 
         lineInFile = checkerFile.readln();
-        assertTrue(MS_StringUtils.textContains(lineInFile, MS_LoggingEventTypeEnum.WARN.name()));
-        assertTrue(MS_StringUtils.textContains(lineInFile, warningEvent));
+        assertThat(MS_StringUtils.textContains(lineInFile, MS_LoggingEventTypeEnum.WARN.name())).isTrue();
+        assertThat(MS_StringUtils.textContains(lineInFile, warningEvent)).isTrue();
 
         lineInFile = checkerFile.readln();
-        assertTrue(MS_StringUtils.textContains(lineInFile, MS_LoggingEventTypeEnum.ERROR.name()));
-        assertTrue(MS_StringUtils.textContains(lineInFile, errorEvent));
+        assertThat(MS_StringUtils.textContains(lineInFile, MS_LoggingEventTypeEnum.ERROR.name())).isTrue();
+        assertThat(MS_StringUtils.textContains(lineInFile, errorEvent)).isTrue();
     }
 
     @Test
@@ -111,16 +110,16 @@ public class MS_MultiLoggerTest {
 
         MS_LoggingEvent loggedEvent1 = inMemoryLogger1.getEventList().get(0);
         MS_LoggingEvent loggedEvent2 = inMemoryLogger2.getEventList().get(0);
-        assertEquals(MS_LoggingEventTypeEnum.ERROR, loggedEvent1.getType());
-        assertEquals(MS_LoggingEventTypeEnum.ERROR, loggedEvent2.getType());
-        assertEquals(errorEvent, loggedEvent1.getMessage());
-        assertEquals(errorEvent, loggedEvent2.getMessage());
-        assertEquals(MS_TestUtils.MS_CheckedException.class, loggedEvent1.getError().getClass());
-        assertEquals(MS_TestUtils.MS_CheckedException.class, loggedEvent2.getError().getClass());
-        assertEquals(errorMessage, loggedEvent1.getError().getMessage());
-        assertEquals(errorMessage, loggedEvent2.getError().getMessage());
+        assertThat(loggedEvent1.getType()).isEqualTo(MS_LoggingEventTypeEnum.ERROR);
+        assertThat(loggedEvent2.getType()).isEqualTo(MS_LoggingEventTypeEnum.ERROR);
+        assertThat(loggedEvent1.getMessage()).isEqualTo(errorEvent);
+        assertThat(loggedEvent2.getMessage()).isEqualTo(errorEvent);
+        assertThat(loggedEvent1.getError().getClass()).isEqualTo(MS_TestUtils.MS_CheckedException.class);
+        assertThat(loggedEvent2.getError().getClass()).isEqualTo(MS_TestUtils.MS_CheckedException.class);
+        assertThat(loggedEvent1.getError().getMessage()).isEqualTo(errorMessage);
+        assertThat(loggedEvent2.getError().getMessage()).isEqualTo(errorMessage);
         //check if time is equal for both loggers, cause time should be taken
         //from multi logger instead of generating it at logger repository level
-        assertEquals(loggedEvent1.getTime(), loggedEvent2.getTime());
+        assertThat(loggedEvent2.getTime()).isEqualTo(loggedEvent1.getTime());
     }
 }

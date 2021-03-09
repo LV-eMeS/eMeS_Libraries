@@ -5,24 +5,24 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MS_ListTest {
-    private MS_List<Integer> l = new MS_List<>();
+    private final MS_List<Integer> l = new MS_List<>();
     private int count, sum, indexSum;
 
     @Test
     public void test01ListEngine() {
-        assertEquals(0, l.count());
+        assertThat(l.count()).isEqualTo(0);
         l.add(1);
-        assertEquals(1, (int) l.get(0));
-        assertTrue(l.count() > 0);
+        assertThat((int) l.get(0)).isEqualTo(1);
+        assertThat(l.count() > 0).isTrue();
         l.add(2);
         l.add(3);
         l.add(4);
         l.remove(2);
-        assertEquals(3, l.count());
+        assertThat(l.count()).isEqualTo(3);
     }
 
     @Test
@@ -31,9 +31,9 @@ public class MS_ListTest {
         l.add(5);
         l.add(3);
         Object[] intArr = l.toArray();
-        assertEquals(5, intArr[0]);
-        assertEquals(5, intArr[1]);
-        assertEquals(3, intArr[2]);
+        assertThat(intArr[0]).isEqualTo(5);
+        assertThat(intArr[1]).isEqualTo(5);
+        assertThat(intArr[2]).isEqualTo(3);
     }
 
     @Test
@@ -50,9 +50,9 @@ public class MS_ListTest {
             indexSum += index;
             count++;
         });
-        assertEquals(14, sum);
-        assertEquals(3, indexSum);
-        assertEquals(3, count);
+        assertThat(sum).isEqualTo(14);
+        assertThat(indexSum).isEqualTo(3);
+        assertThat(count).isEqualTo(3);
 
         //now to test for loop starting from second element
         sum = 0;
@@ -63,9 +63,9 @@ public class MS_ListTest {
             indexSum += index;
             count++;
         });
-        assertEquals(-3, sum); //1-4
-        assertEquals(3, indexSum); //1+2
-        assertEquals(2, count); //only 2 elements should be scanned (second and third)
+        assertThat(sum).isEqualTo(-3); //1-4
+        assertThat(indexSum).isEqualTo(3); //1+2
+        assertThat(count).isEqualTo(2); //only 2 elements should be scanned (second and third)
 
         //now to test for loop starting from last element
         sum = 0;
@@ -76,9 +76,9 @@ public class MS_ListTest {
             indexSum += index;
             count++;
         });
-        assertEquals(-4, sum);
-        assertEquals(2, indexSum);
-        assertEquals(1, count);
+        assertThat(sum).isEqualTo(-4);
+        assertThat(indexSum).isEqualTo(2);
+        assertThat(count).isEqualTo(1);
 
         //now to test for loop starting from non existing element
         sum = 0;
@@ -90,9 +90,9 @@ public class MS_ListTest {
             count++;
         });
         //nothing should be changed
-        assertEquals(0, sum);
-        assertEquals(0, indexSum);
-        assertEquals(0, count);
+        assertThat(sum).isEqualTo(0);
+        assertThat(indexSum).isEqualTo(0);
+        assertThat(count).isEqualTo(0);
 
         //now try to work with non existing elements from lower index boundary
         l.forEachItem(-15, (i, index) -> {
@@ -101,9 +101,9 @@ public class MS_ListTest {
             count++;
         });
         //still nothing should be changed
-        assertEquals(0, sum);
-        assertEquals(0, indexSum);
-        assertEquals(0, count);
+        assertThat(sum).isEqualTo(0);
+        assertThat(indexSum).isEqualTo(0);
+        assertThat(count).isEqualTo(0);
 
         //now to test for loop starting from 2nd element and ending with the same element
         sum = 0;
@@ -114,9 +114,9 @@ public class MS_ListTest {
             indexSum += index;
             count++;
         });
-        assertEquals(1, sum);
-        assertEquals(1, indexSum);
-        assertEquals(1, count);
+        assertThat(sum).isEqualTo(1);
+        assertThat(indexSum).isEqualTo(1);
+        assertThat(count).isEqualTo(1);
 
         //test when start and end elements are switched
         sum = 0;
@@ -127,9 +127,9 @@ public class MS_ListTest {
             indexSum += index;
             count++;
         });
-        assertEquals(18, sum);
-        assertEquals(1, indexSum);
-        assertEquals(2, count);
+        assertThat(sum).isEqualTo(18);
+        assertThat(indexSum).isEqualTo(1);
+        assertThat(count).isEqualTo(2);
 
         //test when end element is out of range
         sum = 0;
@@ -140,9 +140,9 @@ public class MS_ListTest {
             indexSum += index;
             count++;
         });
-        assertEquals(0, sum);
-        assertEquals(0, indexSum);
-        assertEquals(0, count);
+        assertThat(sum).isEqualTo(0);
+        assertThat(indexSum).isEqualTo(0);
+        assertThat(count).isEqualTo(0);
     }
 
     @Test
@@ -155,7 +155,7 @@ public class MS_ListTest {
         sum = 0;
         indexSum = 0;
         count = 0;
-        assertEquals(false, l.getBreakOngoingForLoop());
+        assertThat(l.getBreakOngoingForLoop()).isEqualTo(false);
         l.forEachItem((i, index) -> {
             sum += i;
             indexSum += index;
@@ -163,10 +163,10 @@ public class MS_ListTest {
             if (i == 1)
                 l.breakOngoingForLoop();
         });
-        assertEquals(18, sum);
-        assertEquals(2, count);
-        assertEquals(1, indexSum);
-        assertEquals(true, l.getBreakOngoingForLoop());
+        assertThat(sum).isEqualTo(18);
+        assertThat(count).isEqualTo(2);
+        assertThat(indexSum).isEqualTo(1);
+        assertThat(l.getBreakOngoingForLoop()).isEqualTo(true);
 
         //test break when loop started from specific index
         sum = 0;
@@ -179,10 +179,10 @@ public class MS_ListTest {
             if (i == 1)
                 l.breakOngoingForLoop();
         });
-        assertEquals(1, sum);
-        assertEquals(1, count);
-        assertEquals(1, indexSum);
-        assertEquals(true, l.getBreakOngoingForLoop());
+        assertThat(sum).isEqualTo(1);
+        assertThat(count).isEqualTo(1);
+        assertThat(indexSum).isEqualTo(1);
+        assertThat(l.getBreakOngoingForLoop()).isEqualTo(true);
     }
 
     @Test
@@ -194,7 +194,7 @@ public class MS_ListTest {
         sum = 0;
         indexSum = 0;
         count = 0;
-        assertEquals(false, l.getBreakOngoingForLoop());
+        assertThat(l.getBreakOngoingForLoop()).isEqualTo(false);
         l.forEachItem((i, index) -> {
             sum += i;
             indexSum += index;
@@ -202,29 +202,29 @@ public class MS_ListTest {
             //second way to do break
             l.setBreakOngoingForLoop(true); //breaks right after first iteration (because if statement is lacking)
         });
-        assertEquals(17, sum);
-        assertEquals(1, count);
-        assertEquals(0, indexSum);
-        assertEquals(true, l.getBreakOngoingForLoop());
+        assertThat(sum).isEqualTo(17);
+        assertThat(count).isEqualTo(1);
+        assertThat(indexSum).isEqualTo(0);
+        assertThat(l.getBreakOngoingForLoop()).isEqualTo(true);
 
         l.forEachItem((i, index) -> {
-            assertEquals(false, l.getBreakOngoingForLoop());
+            assertThat(l.getBreakOngoingForLoop()).isEqualTo(false);
         });
     }
 
     @Test
     public void test06ConcatenateLists() {
         MS_List<Integer> l2 = new MS_List<>();
-        assertEquals(0, l.count());
+        assertThat(l.count()).isEqualTo(0);
         l.add(1);
         l.add(3);
         l2.add(2);
         l2.add(4);
         l2.add(5);
-        assertEquals(2, l.count());
+        assertThat(l.count()).isEqualTo(2);
         l.concatenate(l2);
-        assertEquals(5, l.count());
-        assertEquals(5, l.get(4).intValue());
+        assertThat(l.count()).isEqualTo(5);
+        assertThat(l.get(4).intValue()).isEqualTo(5);
     }
 
     @Test
@@ -232,26 +232,26 @@ public class MS_ListTest {
         String[] stringArr = new String[2];
         stringArr[0] = "te"; stringArr[1] = "test";
         MS_List<String> strings = MS_List.newInstance(stringArr);
-        assertEquals(2, strings.count());
-        assertEquals("te", strings.get(0));
-        assertEquals("test", strings.get(1));
+        assertThat(strings.count()).isEqualTo(2);
+        assertThat(strings.get(0)).isEqualTo("te");
+        assertThat(strings.get(1)).isEqualTo("test");
 
         Boolean[] boolArr = new Boolean[2];
         boolArr[0] = true; boolArr[1] = false;
         MS_List<Boolean> booleans = MS_List.newInstance(boolArr);
-        assertEquals(2, booleans.count());
-        assertTrue(booleans.get(0));
-        assertFalse(booleans.get(1));
+        assertThat(booleans.count()).isEqualTo(2);
+        assertThat(booleans.get(0)).isTrue();
+        assertThat(booleans.get(1)).isFalse();
 
         MS_List<Object> numbers = MS_List.newInstance(MS_CodingUtils.newArray(1, 3L, 5.0f, 2.17355767892d));
-        assertEquals(4, numbers.count());
-        assertEquals(Integer.class, numbers.get(0).getClass());
-        assertEquals(Long.class, numbers.get(1).getClass());
-        assertEquals(Float.class, numbers.get(2).getClass());
-        assertEquals(Double.class, numbers.get(3).getClass());
-        assertEquals(1, numbers.get(0));
-        assertEquals(3L, numbers.get(1));
-        assertEquals(5f, numbers.get(2));
-        assertEquals(2.17355767892d, numbers.get(3));
+        assertThat(numbers.count()).isEqualTo(4);
+        assertThat(numbers.get(0).getClass()).isEqualTo(Integer.class);
+        assertThat(numbers.get(1).getClass()).isEqualTo(Long.class);
+        assertThat(numbers.get(2).getClass()).isEqualTo(Float.class);
+        assertThat(numbers.get(3).getClass()).isEqualTo(Double.class);
+        assertThat(numbers.get(0)).isEqualTo(1);
+        assertThat(numbers.get(1)).isEqualTo(3L);
+        assertThat(numbers.get(2)).isEqualTo(5f);
+        assertThat(numbers.get(3)).isEqualTo(2.17355767892d);
     }
 }

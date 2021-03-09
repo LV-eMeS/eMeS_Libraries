@@ -4,7 +4,7 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MS_BooleanDecisionTest {
@@ -14,18 +14,18 @@ public class MS_BooleanDecisionTest {
         String result;
 
         result = MS_BooleanDecision.getCase(true, false);
-        assertEquals(MS_BooleanDecision._FIRST, result);
+        assertThat(result).isEqualTo(MS_BooleanDecision._FIRST);
 
         result = MS_BooleanDecision.getCase(false, true);
-        assertEquals(MS_BooleanDecision._SECOND, result);
+        assertThat(result).isEqualTo(MS_BooleanDecision._SECOND);
 
         result = MS_BooleanDecision.getCase(false, false);
-        assertEquals(MS_BooleanDecision._NONE, result);
+        assertThat(result).isEqualTo(MS_BooleanDecision._NONE);
 
         result = MS_BooleanDecision.getCase(true, true);
-        assertEquals(MS_BooleanDecision._BOTH, result);
+        assertThat(result).isEqualTo(MS_BooleanDecision._BOTH);
 
-        assertEquals(2, result.length());
+        assertThat(result.length()).isEqualTo(2);
     }
 
     @Test
@@ -33,30 +33,30 @@ public class MS_BooleanDecisionTest {
         String result;
 
         result = MS_BooleanDecision.getCase(false, false, false);
-        assertEquals(MS_BooleanDecision._NONE_OF_3, result);
+        assertThat(result).isEqualTo(MS_BooleanDecision._NONE_OF_3);
 
         result = MS_BooleanDecision.getCase(true, false, false);
-        assertEquals(MS_BooleanDecision._FIRST_OF_3, result);
+        assertThat(result).isEqualTo(MS_BooleanDecision._FIRST_OF_3);
 
         result = MS_BooleanDecision.getCase(false, true, false);
-        assertEquals(MS_BooleanDecision._SECOND_OF_3, result);
+        assertThat(result).isEqualTo(MS_BooleanDecision._SECOND_OF_3);
 
         result = MS_BooleanDecision.getCase(false, false, true);
-        assertEquals(MS_BooleanDecision._THIRD_OF_3, result);
+        assertThat(result).isEqualTo(MS_BooleanDecision._THIRD_OF_3);
 
         result = MS_BooleanDecision.getCase(true, true, false);
-        assertEquals(MS_BooleanDecision._FIRST_AND_SECOND_OF_3, result);
+        assertThat(result).isEqualTo(MS_BooleanDecision._FIRST_AND_SECOND_OF_3);
 
         result = MS_BooleanDecision.getCase(false, true, true);
-        assertEquals(MS_BooleanDecision._SECOND_AND_THIRD_OF_3, result);
+        assertThat(result).isEqualTo(MS_BooleanDecision._SECOND_AND_THIRD_OF_3);
 
         result = MS_BooleanDecision.getCase(true, false, true);
-        assertEquals(MS_BooleanDecision._FIRST_AND_THIRD_OF_3, result);
+        assertThat(result).isEqualTo(MS_BooleanDecision._FIRST_AND_THIRD_OF_3);
 
         result = MS_BooleanDecision.getCase(true, true, true);
-        assertEquals(MS_BooleanDecision._ALL_3, result);
+        assertThat(result).isEqualTo(MS_BooleanDecision._ALL_3);
 
-        assertEquals(3, result.length());
+        assertThat(result.length()).isEqualTo(3);
     }
 
     @Test
@@ -64,17 +64,17 @@ public class MS_BooleanDecisionTest {
         String result;
 
         result = MS_BooleanDecision.getCase(true, false, false, true);
-        assertEquals("1001", result);
+        assertThat(result).isEqualTo("1001");
 
         result = MS_BooleanDecision.getCase(false, true, false, true);
-        assertEquals("0101", result);
+        assertThat(result).isEqualTo("0101");
 
         result = MS_BooleanDecision.getCase(false, false, false, true);
-        assertEquals("0001", result);
+        assertThat(result).isEqualTo("0001");
 
         result = MS_BooleanDecision.getCase(true, true, true, true);
-        assertEquals("1111", result);
+        assertThat(result).isEqualTo("1111");
 
-        assertEquals(4, result.length());
+        assertThat(result.length()).isEqualTo(4);
     }
 }

@@ -8,7 +8,7 @@ import org.junit.runners.MethodSorters;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MS_ThreadTest {
@@ -22,14 +22,14 @@ public class MS_ThreadTest {
 
         //check that Thread is running for a while
         MS_CodingUtils.sleep(100);
-        assertTrue(thread.isStarted());
-        assertFalse(thread.isInterrupted());
-        assertFalse(thread.isWorkCompleted());
+        assertThat(thread.isStarted()).isTrue();
+        assertThat(thread.isInterrupted()).isFalse();
+        assertThat(thread.isWorkCompleted()).isFalse();
 
         thread.waitFor();
-        assertFalse(thread.isStarted());
-        assertFalse(thread.isInterrupted());
-        assertTrue(thread.isWorkCompleted());
+        assertThat(thread.isStarted()).isFalse();
+        assertThat(thread.isInterrupted()).isFalse();
+        assertThat(thread.isWorkCompleted()).isTrue();
     }
 
     @Test
@@ -40,9 +40,9 @@ public class MS_ThreadTest {
                 .start();
 
         thread.stop(); //interrupt thread
-        assertFalse(thread.isStarted());
-        assertTrue(thread.isInterrupted());
-        assertFalse(thread.isWorkCompleted());
+        assertThat(thread.isStarted()).isFalse();
+        assertThat(thread.isInterrupted()).isTrue();
+        assertThat(thread.isWorkCompleted()).isFalse();
     }
 
     @Test
@@ -53,10 +53,10 @@ public class MS_ThreadTest {
                 .start();
 
         thread.waitFor();
-        assertEquals(50, thread.getTimeout());
-        assertTrue(thread.isInterrupted());
-        assertFalse(thread.isStarted());
-        assertFalse(thread.isWorkCompleted());
+        assertThat(thread.getTimeout()).isEqualTo(50);
+        assertThat(thread.isInterrupted()).isTrue();
+        assertThat(thread.isStarted()).isFalse();
+        assertThat(thread.isWorkCompleted()).isFalse();
     }
 
     @Test(expected = IllegalStateException.class)
@@ -89,9 +89,9 @@ public class MS_ThreadTest {
 
         MS_CodingUtils.sleep(20);
         thread.stop();
-        assertTrue(thread.isInterrupted());
-        assertFalse(thread.isStarted());
-        assertFalse(thread.isWorkCompleted());
+        assertThat(thread.isInterrupted()).isTrue();
+        assertThat(thread.isStarted()).isFalse();
+        assertThat(thread.isWorkCompleted()).isFalse();
     }
 
     @Test(expected = ClassCastException.class)
@@ -128,15 +128,15 @@ public class MS_ThreadTest {
                 thread.interrupt();
             }
         });
-        assertEquals(threadName, t1.getThreadName());
-        assertEquals(threadName, t2.getThreadName());
-        assertEquals(threadName, t3.getThreadName());
-        assertEquals(3, threadCount.get());
+        assertThat(t1.getThreadName()).isEqualTo(threadName);
+        assertThat(t2.getThreadName()).isEqualTo(threadName);
+        assertThat(t3.getThreadName()).isEqualTo(threadName);
+        assertThat(threadCount.get()).isEqualTo(3);
 
         MS_CodingUtils.sleep(11);
-        assertTrue(t1.isInterrupted());
-        assertTrue(t2.isInterrupted());
-        assertTrue(t3.isInterrupted());
+        assertThat(t1.isInterrupted()).isTrue();
+        assertThat(t2.isInterrupted()).isTrue();
+        assertThat(t3.isInterrupted()).isTrue();
     }
 
     @Test
@@ -159,9 +159,9 @@ public class MS_ThreadTest {
         }.start();
 
         thread.waitFor();
-        assertTrue(thread.isInterrupted());
-        assertFalse(thread.isStarted());
-        assertFalse(thread.isWorkCompleted());
+        assertThat(thread.isInterrupted()).isTrue();
+        assertThat(thread.isStarted()).isFalse();
+        assertThat(thread.isWorkCompleted()).isFalse();
     }
 
     @Test
@@ -172,17 +172,17 @@ public class MS_ThreadTest {
                 .start();
 
         thread.waitFor();
-        assertFalse(thread.isStarted());
-        assertTrue(thread.isWorkCompleted());
+        assertThat(thread.isStarted()).isFalse();
+        assertThat(thread.isWorkCompleted()).isTrue();
 
         //second time
         thread.start();
-        assertTrue(thread.isStarted());
-        assertFalse(thread.isWorkCompleted());
+        assertThat(thread.isStarted()).isTrue();
+        assertThat(thread.isWorkCompleted()).isFalse();
 
         thread.waitFor();
-        assertFalse(thread.isStarted());
-        assertTrue(thread.isWorkCompleted());
+        assertThat(thread.isStarted()).isFalse();
+        assertThat(thread.isWorkCompleted()).isTrue();
     }
 
     private static class MS_ThreadForTest extends MS_Thread<MS_ThreadForTest> {

@@ -7,7 +7,7 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author eMeS
@@ -61,47 +61,47 @@ public class MS_ObjectValidatorTest {
     @Test
     public void test01NoValidationError() {
         intValidator.validate(3);
-        assertFalse(intValidator.errorsFound());
-        assertEquals(0, intValidator.getValidationErrors().count());
-        assertFalse(intValidator.containsError(1));
-        assertFalse(intValidator.containsError(5)); //test even non existing error
+        assertThat(intValidator.errorsFound()).isFalse();
+        assertThat(intValidator.getValidationErrors().count()).isEqualTo(0);
+        assertThat(intValidator.containsError(1)).isFalse();
+        assertThat(intValidator.containsError(5)).isFalse(); //test even non existing error
     }
 
     @Test
     public void test02SimpleErrors() {
         intValidator.validate(0);
-        assertTrue(intValidator.errorsFound());
-        assertEquals(1, intValidator.getValidationErrors().count());
-        assertTrue(intValidator.containsError(1));
-        assertFalse(intValidator.containsError(5));
+        assertThat(intValidator.errorsFound()).isTrue();
+        assertThat(intValidator.getValidationErrors().count()).isEqualTo(1);
+        assertThat(intValidator.containsError(1)).isTrue();
+        assertThat(intValidator.containsError(5)).isFalse();
 
         intValidator.validate(10);
-        assertTrue(intValidator.errorsFound());
-        assertEquals(2, intValidator.getValidationErrors().count());
-        assertTrue(intValidator.containsError(1));
-        assertTrue(intValidator.containsError(2));
+        assertThat(intValidator.errorsFound()).isTrue();
+        assertThat(intValidator.getValidationErrors().count()).isEqualTo(2);
+        assertThat(intValidator.containsError(1)).isTrue();
+        assertThat(intValidator.containsError(2)).isTrue();
     }
 
     @Test
     public void test03StringValidationNoError() {
         stringValidator.validate("normal text");
-        assertFalse(stringValidator.errorsFound());
-        assertEquals(0, stringValidator.getValidationErrors().count());
-        assertFalse(stringValidator.containsError(100));
+        assertThat(stringValidator.errorsFound()).isFalse();
+        assertThat(stringValidator.getValidationErrors().count()).isEqualTo(0);
+        assertThat(stringValidator.containsError(100)).isFalse();
     }
 
     @Test
     public void test04StringValidationError() {
         stringValidator.validate(BAD_VALUE);
-        assertTrue(stringValidator.errorsFound());
-        assertEquals(1, stringValidator.getValidationErrors().count());
-        assertTrue(stringValidator.containsError(100));
+        assertThat(stringValidator.errorsFound()).isTrue();
+        assertThat(stringValidator.getValidationErrors().count()).isEqualTo(1);
+        assertThat(stringValidator.containsError(100)).isTrue();
     }
 
     @Test
     public void test05StringValidationErrorMessage() {
         stringValidator.validate(BAD_VALUE);
-        assertTrue(stringValidator.containsError(100));
-        assertEquals(String.format(BAD_VALUE_MSG, "invalid"), stringValidator.getValidationErrors().get(0).getMessage());
+        assertThat(stringValidator.containsError(100)).isTrue();
+        assertThat(stringValidator.getValidationErrors().get(0).getMessage()).isEqualTo(String.format(BAD_VALUE_MSG, "invalid"));
     }
 }

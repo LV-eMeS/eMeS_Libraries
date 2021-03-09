@@ -7,7 +7,7 @@ import org.junit.runners.MethodSorters;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MS_StringListTest {
@@ -15,16 +15,16 @@ public class MS_StringListTest {
     @Test
     public void test01listImportFromStringWithoutSecondDelimiter() {
         MS_StringList sl = new MS_StringList("Test#String#List");
-        assertEquals("Test", sl.get(0));
-        assertEquals("String", sl.get(1));
-        assertEquals("List", sl.get(2));
-        assertSame("", sl.get(3));
+        assertThat(sl.get(0)).isEqualTo("Test");
+        assertThat(sl.get(1)).isEqualTo("String");
+        assertThat(sl.get(2)).isEqualTo("List");
+        assertThat(sl.get(3)).isSameAs("");
 
         final String STRING_WITHOUT_DELIMITER = "No delimiter here";
         MS_StringList sl2 = new MS_StringList(STRING_WITHOUT_DELIMITER);
-        assertEquals(1, sl2.size());
-        assertEquals(STRING_WITHOUT_DELIMITER, sl2.get(0));
-        assertEquals(STRING_WITHOUT_DELIMITER + MS_StringList._DEFAULT_DELIMITER, sl2.toString());
+        assertThat(sl2.size()).isEqualTo(1);
+        assertThat(sl2.get(0)).isEqualTo(STRING_WITHOUT_DELIMITER);
+        assertThat(sl2.toString()).isEqualTo(STRING_WITHOUT_DELIMITER + MS_StringList._DEFAULT_DELIMITER);
     }
 
     @Test
@@ -32,14 +32,14 @@ public class MS_StringListTest {
         MS_StringList sl = new MS_StringList();
         sl.secondDelimiter = '^';
         sl.fromString("1#2#^3#4", '#');
-        assertEquals("1", sl.get(0));
-        assertEquals("2#3", sl.get(1));
-        assertEquals("4", sl.get(2));
+        assertThat(sl.get(0)).isEqualTo("1");
+        assertThat(sl.get(1)).isEqualTo("2#3");
+        assertThat(sl.get(2)).isEqualTo("4");
         sl.secondDelimiter = 'z';
-        assertEquals("1#2#z3#4#", sl.toString());
+        assertThat(sl.toString()).isEqualTo("1#2#z3#4#");
         sl.delimiter = ' ';
         System.out.println(sl);
-        assertEquals("1 2#3 4 ", sl.toString());
+        assertThat(sl.toString()).isEqualTo("1 2#3 4 ");
     }
 
     @Test
@@ -47,24 +47,24 @@ public class MS_StringListTest {
         MS_StringList sl = new MS_StringList();
         sl.secondDelimiter = '^';
         sl.fromString("My$List's$Delimiter$Is $^", '$');
-        assertEquals("My", sl.get(0));
-        assertEquals("List's", sl.get(1));
-        assertEquals("Delimiter", sl.get(2));
-        assertEquals("Is $", sl.get(3));
+        assertThat(sl.get(0)).isEqualTo("My");
+        assertThat(sl.get(1)).isEqualTo("List's");
+        assertThat(sl.get(2)).isEqualTo("Delimiter");
+        assertThat(sl.get(3)).isEqualTo("Is $");
     }
 
     @Test
     public void test04EmptyListTest() {
         MS_StringList sl = new MS_StringList();
-        assertEquals("", sl.toString());
+        assertThat(sl.toString()).isEqualTo("");
 
         sl = new MS_StringList("", '?');
-        assertEquals("", sl.toString());
+        assertThat(sl.toString()).isEqualTo("");
         sl.add("");
-        assertEquals("?", sl.toString());
+        assertThat(sl.toString()).isEqualTo("?");
 
         sl = new MS_StringList("!", '!');
-        assertEquals("!", sl.toString());
+        assertThat(sl.toString()).isEqualTo("!");
     }
 
     //Here starts harder tests
@@ -72,19 +72,19 @@ public class MS_StringListTest {
     public void test10AddAndInsertAndRemove() {
         MS_StringList sl = new MS_StringList("Test#String#List");
         sl.add("Test");
-        assertEquals(4, sl.count());
-        assertEquals(4, sl.size());
-        assertEquals(sl.get(0), sl.get(sl.count() - 1));
+        assertThat(sl.count()).isEqualTo(4);
+        assertThat(sl.size()).isEqualTo(4);
+        assertThat(sl.get(sl.count() - 1)).isEqualTo(sl.get(0));
 
         sl.insert(0, "rrrr");
-        assertEquals(5, sl.count());
-        assertEquals("rrrr", sl.get(0));
+        assertThat(sl.count()).isEqualTo(5);
+        assertThat(sl.get(0)).isEqualTo("rrrr");
 
-        assertEquals(0, sl.getIndex("rrrR".toLowerCase()));
+        assertThat(sl.getIndex("rrrR".toLowerCase())).isEqualTo(0);
         String teststr = "Prove it!";
         sl.add(teststr);
         sl.remove(teststr);
-        assertEquals(-1, sl.getIndex(teststr));
+        assertThat(sl.getIndex(teststr)).isEqualTo(-1);
     }
 
     @Test
@@ -94,9 +94,9 @@ public class MS_StringListTest {
         sl.add("Two");
         sl.add("Three");
         sl.edit(1, "SOMETHING NEW");
-        assertNotEquals("Two", sl.get(1));
-        assertEquals('#', sl.delimiter);
-        assertEquals("One#SOMETHING NEW#Three#", sl.toString());
+        assertThat(sl.get(1)).isNotEqualTo("Two");
+        assertThat(sl.delimiter).isEqualTo('#');
+        assertThat(sl.toString()).isEqualTo("One#SOMETHING NEW#Three#");
     }
 
     @Test
@@ -106,25 +106,25 @@ public class MS_StringListTest {
         stringList.add("New #list");
         stringList.add("Add new");
         sl.fromList(stringList);
-        assertEquals("New #list", sl.get(0));
-        assertEquals("Add new", sl.get(1));
-        assertEquals("New #" + sl.secondDelimiter + "list#Add new#", sl.toString());
+        assertThat(sl.get(0)).isEqualTo("New #list");
+        assertThat(sl.get(1)).isEqualTo("Add new");
+        assertThat(sl.toString()).isEqualTo("New #" + sl.secondDelimiter + "list#Add new#");
     }
 
     @Test
     public void test13FromStringWithDifferentDelimiters() {
         MS_StringList sl = new MS_StringList();
         sl.fromString("Test&Something&New!", '&');
-        assertEquals('&', sl.delimiter);
-        assertEquals("Test", sl.get(0));
-        assertEquals("Something", sl.get(1));
-        assertEquals("New!", sl.get(2));
+        assertThat(sl.delimiter).isEqualTo('&');
+        assertThat(sl.get(0)).isEqualTo("Test");
+        assertThat(sl.get(1)).isEqualTo("Something");
+        assertThat(sl.get(2)).isEqualTo("New!");
 
         sl.secondDelimiter = '!';
         sl.fromString("Test?Something?New?!", '?');
-        assertEquals("Test", sl.get(0));
-        assertEquals("Something", sl.get(1));
-        assertEquals("New?", sl.get(2));
+        assertThat(sl.get(0)).isEqualTo("Test");
+        assertThat(sl.get(1)).isEqualTo("Something");
+        assertThat(sl.get(2)).isEqualTo("New?");
     }
 
     @Test
@@ -132,7 +132,7 @@ public class MS_StringListTest {
         MS_StringList sl = new MS_StringList("One#Two#");
         sl.forEachItem((s, index) -> {
             boolean test = s.equals("One") || s.equals("Two");
-            assertTrue(test);
+            assertThat(test).isTrue();
         });
     }
 
@@ -142,15 +142,15 @@ public class MS_StringListTest {
         String res;
         sl = new MS_StringList("");
         res = sl.toStringWithNoLastDelimiter();
-        assertEquals("", res);
+        assertThat(res).isEqualTo("");
 
         sl = new MS_StringList("One#");
         res = sl.toStringWithNoLastDelimiter();
-        assertEquals("One", res);
+        assertThat(res).isEqualTo("One");
 
         sl = new MS_StringList("One#Two#");
         res = sl.toStringWithNoLastDelimiter();
-        assertEquals("One#Two", res);
+        assertThat(res).isEqualTo("One#Two");
     }
 
     @Test
@@ -158,6 +158,6 @@ public class MS_StringListTest {
         MS_StringList sl = new MS_StringList("1:4:3", ':');
         //add leading zeroes to each element
         sl.forEachItem((str, i) -> sl.edit(i, "0" + str));
-        assertEquals("01:04:03", sl.toStringWithNoLastDelimiter());
+        assertThat(sl.toStringWithNoLastDelimiter()).isEqualTo("01:04:03");
     }
 }

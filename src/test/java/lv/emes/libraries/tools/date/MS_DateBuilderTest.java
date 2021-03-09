@@ -7,8 +7,7 @@ import org.junit.runners.MethodSorters;
 
 import java.time.ZonedDateTime;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author eMeS
@@ -26,58 +25,58 @@ public class MS_DateBuilderTest {
 
         //Create new date for tomorrow
         builtTime = new MS_DateBuilder().withQuantity(1).withTimeUnit("minute").build().dateTime();
-        assertTrue(referenceTimeFuture.isBefore(builtTime));
-        assertTrue(referenceTimeFuture.plusMinutes(1).isAfter(builtTime));
+        assertThat(referenceTimeFuture.isBefore(builtTime)).isTrue();
+        assertThat(referenceTimeFuture.plusMinutes(1).isAfter(builtTime)).isTrue();
 
         builtTime = new MS_DateBuilder().withQuantity(1).withTimeUnit("hour").build().dateTime();
-        assertTrue(referenceTimeFuture.isBefore(builtTime));
-        assertTrue(referenceTimeFuture.plusHours(1).isAfter(builtTime));
+        assertThat(referenceTimeFuture.isBefore(builtTime)).isTrue();
+        assertThat(referenceTimeFuture.plusHours(1).isAfter(builtTime)).isTrue();
 
         builtTime = new MS_DateBuilder().withQuantity(1).withTimeUnit("day").build().dateTime();
-        assertTrue(referenceTimeFuture.isBefore(builtTime));
-        assertTrue(referenceTimeFuture.plusDays(1).isAfter(builtTime));
+        assertThat(referenceTimeFuture.isBefore(builtTime)).isTrue();
+        assertThat(referenceTimeFuture.plusDays(1).isAfter(builtTime)).isTrue();
 
         builtTime = new MS_DateBuilder().withQuantity(1).withTimeUnit("week").build().dateTime();
-        assertTrue(referenceTimeFuture.isBefore(builtTime));
-        assertTrue(referenceTimeFuture.plusWeeks(1).isAfter(builtTime));
+        assertThat(referenceTimeFuture.isBefore(builtTime)).isTrue();
+        assertThat(referenceTimeFuture.plusWeeks(1).isAfter(builtTime)).isTrue();
 
         builtTime = new MS_DateBuilder().withQuantity(1).withTimeUnit("month").build().dateTime();
-        assertTrue(referenceTimeFuture.isBefore(builtTime));
-        assertTrue(referenceTimeFuture.plusMonths(1).isAfter(builtTime));
+        assertThat(referenceTimeFuture.isBefore(builtTime)).isTrue();
+        assertThat(referenceTimeFuture.plusMonths(1).isAfter(builtTime)).isTrue();
 
         builtTime = new MS_DateBuilder().withQuantity(1).withTimeUnit("year").build().dateTime();
-        assertTrue(referenceTimeFuture.isBefore(builtTime));
-        assertTrue(referenceTimeFuture.plusYears(1).isAfter(builtTime));
+        assertThat(referenceTimeFuture.isBefore(builtTime)).isTrue();
+        assertThat(referenceTimeFuture.plusYears(1).isAfter(builtTime)).isTrue();
 
 
         builtTime = new MS_DateBuilder().withQuantity(-1).withTimeUnit("minute").build().dateTime();
-        assertTrue(referenceTimePast.isAfter(builtTime));
-        assertTrue(referenceTimePast.minusMinutes(1).isBefore(builtTime));
+        assertThat(referenceTimePast.isAfter(builtTime)).isTrue();
+        assertThat(referenceTimePast.minusMinutes(1).isBefore(builtTime)).isTrue();
 
         builtTime = new MS_DateBuilder().withQuantity(-1).withTimeUnit("hour").build().dateTime();
-        assertTrue(referenceTimePast.isAfter(builtTime));
-        assertTrue(referenceTimePast.minusHours(1).isBefore(builtTime));
+        assertThat(referenceTimePast.isAfter(builtTime)).isTrue();
+        assertThat(referenceTimePast.minusHours(1).isBefore(builtTime)).isTrue();
 
         builtTime = new MS_DateBuilder().withQuantity(-1).withTimeUnit("day").build().dateTime();
-        assertTrue(referenceTimePast.isAfter(builtTime));
-        assertTrue(referenceTimePast.minusDays(1).isBefore(builtTime));
+        assertThat(referenceTimePast.isAfter(builtTime)).isTrue();
+        assertThat(referenceTimePast.minusDays(1).isBefore(builtTime)).isTrue();
 
         builtTime = new MS_DateBuilder().withQuantity(-1).withTimeUnit("week").build().dateTime();
-        assertTrue(referenceTimePast.isAfter(builtTime));
-        assertTrue(referenceTimePast.minusWeeks(1).isBefore(builtTime));
+        assertThat(referenceTimePast.isAfter(builtTime)).isTrue();
+        assertThat(referenceTimePast.minusWeeks(1).isBefore(builtTime)).isTrue();
 
         builtTime = new MS_DateBuilder().withQuantity(-1).withTimeUnit("month").build().dateTime();
-        assertTrue(referenceTimePast.isAfter(builtTime));
-        assertTrue(referenceTimePast.minusMonths(1).isBefore(builtTime));
+        assertThat(referenceTimePast.isAfter(builtTime)).isTrue();
+        assertThat(referenceTimePast.minusMonths(1).isBefore(builtTime)).isTrue();
 
         builtTime = new MS_DateBuilder().withQuantity(-1).withTimeUnit("year").build().dateTime();
-        assertTrue(referenceTimePast.isAfter(builtTime));
-        assertTrue(referenceTimePast.minusYears(1).isBefore(builtTime));
+        assertThat(referenceTimePast.isAfter(builtTime)).isTrue();
+        assertThat(referenceTimePast.minusYears(1).isBefore(builtTime)).isTrue();
 
 
         builtTime = new MS_DateBuilder().fromText("today").build().dateTime();
-        assertTrue(referenceTimePast.isBefore(builtTime));
-        assertTrue(referenceTimeFuture.isAfter(builtTime));
+        assertThat(referenceTimePast.isBefore(builtTime)).isTrue();
+        assertThat(referenceTimeFuture.isAfter(builtTime)).isTrue();
     }
 
     @Test
@@ -92,29 +91,29 @@ public class MS_DateBuilderTest {
                 .withFormat(MS_DateTimeUtils._DATE_TIME_FORMAT_SECONDS).build();
         expected = "2017-10-08T13:05:00";
         actual = builder.string();
-        assertEquals(expected, actual);
+        assertThat(actual).isEqualTo(expected);
 
         builder = new MS_DateBuilder(REFERENCE_DATE).withPrefix("after").withQuantity(30).withTimeUnit("seconds")
                 .withFormat(MS_DateTimeUtils._DATE_TIME_FORMAT_SECONDS).build();
         expected = "2017-10-08T15:05:30";
         actual = builder.string();
-        assertEquals(expected, actual);
+        assertThat(actual).isEqualTo(expected);
 
         builder = new MS_DateBuilder(REFERENCE_DATE).fromText("yesterday")
                 .withFormat(MS_DateTimeUtils._DATE_TIME_FORMAT_SECONDS).build();
         expected = "2017-10-07T15:05:00";
         actual = builder.string();
-        assertEquals(expected, actual);
+        assertThat(actual).isEqualTo(expected);
 
         builder = new MS_DateBuilder(REFERENCE_DATE).fromText("tomorrow")
                 .withFormat(MS_DateTimeUtils._DATE_TIME_FORMAT_SECONDS).build();
         expected = "2017-10-09T15:05:00";
         actual = builder.string();
-        assertEquals(expected, actual);
+        assertThat(actual).isEqualTo(expected);
 
         MS_DateBuilder anotherBuilder = new MS_DateBuilder(builder);
-        assertEquals(builder.string(), anotherBuilder.string());
-        assertEquals(builder.dateTime(), anotherBuilder.dateTime());
+        assertThat(anotherBuilder.string()).isEqualTo(builder.string());
+        assertThat(anotherBuilder.dateTime()).isEqualTo(builder.dateTime());
     }
 
     @Test(expected = MS_ConversionException.class)

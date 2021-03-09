@@ -13,7 +13,7 @@ import java.sql.*;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * ResultSetExtractor implementation test for barcode key pair.
@@ -39,36 +39,36 @@ public class MS_TestUtilsTest {
         //Mock result set so that it will return 1 record
         rs = MS_TestUtils.mockResultSetForTable(table, 0);
         TableToMock extractedObject = MS_ResultSetExtractingUtils.extractRecord(rs, TableToMock.class);
-        assertNull(extractedObject);
+        assertThat(extractedObject).isNull();
 
         //Mock result set so that it will return 1 record
         rs = MS_TestUtils.mockResultSetForTable(table, 1);
         extractedObject = MS_ResultSetExtractingUtils.extractRecord(rs, TableToMock.class);
 
-        assertNotNull(extractedObject);
-        assertEquals(firstRecord, extractedObject);
+        assertThat(extractedObject).isNotNull();
+        assertThat(extractedObject).isEqualTo(firstRecord);
 
         //Mock result set so that it will return 3 records
         MS_List<TableToMock> extractedObjects;
         rs = MS_TestUtils.mockResultSetForTable(table, 3);
         extractedObjects = MS_ResultSetExtractingUtils.extractList(rs, TableToMock.class);
-        assertEquals(3, extractedObjects.count());
-        assertEquals(firstRecord, extractedObjects.get(0));
-        assertEquals(secondRecord, extractedObjects.get(1));
-        assertEquals(thirdRecord, extractedObjects.get(2));
+        assertThat(extractedObjects.count()).isEqualTo(3);
+        assertThat(extractedObjects.get(0)).isEqualTo(firstRecord);
+        assertThat(extractedObjects.get(1)).isEqualTo(secondRecord);
+        assertThat(extractedObjects.get(2)).isEqualTo(thirdRecord);
 
         //test fourth record that has only one field
         rs = MS_TestUtils.mockResultSetForTable(table, 4);
         extractedObjects = MS_ResultSetExtractingUtils.extractList(rs, TableToMock.class);
-        assertEquals(4, extractedObjects.count());
-        assertEquals(fourthRecord.name, extractedObjects.get(3).name);
+        assertThat(extractedObjects.count()).isEqualTo(4);
+        assertThat(extractedObjects.get(3).name).isEqualTo(fourthRecord.name);
     }
 
     @Test
     public void testMockResultSetForTable() throws SQLException {
         Map<String, Object[]> emptyTable = new HashMap<>();
         ResultSet emptyRs = MS_TestUtils.mockResultSetForTable(emptyTable, 2);
-        assertFalse("Result set for empty table must not have next record", emptyRs.next());
+        assertThat(emptyRs.next()).as("Result set for empty table must not have next record").isFalse();
 
         Map<String, Object[]> table = new HashMap<>();
         table.put("id", new Object[] {1, 2});
@@ -88,16 +88,16 @@ public class MS_TestUtilsTest {
                 new ByteArrayInputStream(new byte[] {0})});
 
         ResultSet rsWithoutAnyRecords = MS_TestUtils.mockResultSetForTable(table, 0);
-        assertFalse(rsWithoutAnyRecords.next());
+        assertThat(rsWithoutAnyRecords.next()).isFalse();
 
         ResultSet rsWith1RecordOnly = MS_TestUtils.mockResultSetForTable(table, 1);
-        assertTrue(rsWith1RecordOnly.next());
-        assertFalse(rsWith1RecordOnly.next());
+        assertThat(rsWith1RecordOnly.next()).isTrue();
+        assertThat(rsWith1RecordOnly.next()).isFalse();
 
         ResultSet rs = MS_TestUtils.mockResultSetForTable(table, 2);
-        assertTrue(rs.next());
-        assertTrue(rs.next());
-        assertFalse(rs.next());
+        assertThat(rs.next()).isTrue();
+        assertThat(rs.next()).isTrue();
+        assertThat(rs.next()).isFalse();
 
         Object obj;
         int id;
@@ -114,43 +114,43 @@ public class MS_TestUtilsTest {
         Blob blobFail;
 
         id = rs.getInt("id");
-        assertEquals(1, id);
+        assertThat(id).isEqualTo(1);
         name = rs.getString("name");
-        assertNull(name);
+        assertThat(name).isNull();
         longNumber = rs.getLong("longNumber");
-        assertEquals(1234567890987654321L, longNumber);
+        assertThat(longNumber).isEqualTo(1234567890987654321L);
         birthDate = rs.getDate("birthDate");
-        assertEquals(new Date(12345), birthDate);
+        assertThat(birthDate).isEqualTo(new Date(12345));
         lastLoggedInAt = rs.getTime("lastLoggedInAt");
-        assertEquals(new Time(987654321), lastLoggedInAt);
+        assertThat(lastLoggedInAt).isEqualTo(new Time(987654321));
         isEmployee = rs.getBoolean("isEmployee");
-        assertEquals(false, isEmployee);
+        assertThat(isEmployee).isEqualTo(false);
         someTimeAgo = rs.getTimestamp("someTimeAgo");
-        assertNotNull(someTimeAgo);
+        assertThat(someTimeAgo).isNotNull();
         avgSalary = rs.getBigDecimal("avgSalary");
-        assertNull(avgSalary);
+        assertThat(avgSalary).isNull();
         zero = rs.getBytes("zero");
-        assertEquals(1, zero.length);
+        assertThat(zero.length).isEqualTo(1);
         someWeirdObject = rs.getObject("someWeirdObject");
-        assertTrue(someWeirdObject instanceof MS_EqualityCheckBuilder);
+        assertThat(someWeirdObject instanceof MS_EqualityCheckBuilder).isTrue();
         b = rs.getByte("b");
-        assertEquals(1, b);
+        assertThat(b).isEqualTo((byte) 1);
         blobFail = rs.getBlob("blobFail");
-        assertNotNull(blobFail);
+        assertThat(blobFail).isNotNull();
 
         id = rs.getInt("id");
-        assertEquals(2, id);
+        assertThat(id).isEqualTo(2);
         name = rs.getString("name");
-        assertEquals("John", name);
+        assertThat(name).isEqualTo("John");
         obj = rs.getLong("longNumber");
-        assertEquals(0L, obj);
+        assertThat(obj).isEqualTo(0L);
         birthDate = rs.getDate("birthDate");
-        assertNull(birthDate);
-        assertNull(rs.getTime("lastLoggedInAt"));
+        assertThat(birthDate).isNull();
+        assertThat(rs.getTime("lastLoggedInAt")).isNull();
         isEmployee = rs.getBoolean("isEmployee");
-        assertEquals(true, isEmployee);
+        assertThat(isEmployee).isEqualTo(true);
         avgSalary = rs.getBigDecimal("avgSalary");
-        assertEquals(new BigDecimal("2540.76"), avgSalary);
+        assertThat(avgSalary).isEqualTo(new BigDecimal("2540.76"));
 
         //check, if throwables are thrown as intended
         boolean exceptionCaught;
@@ -160,7 +160,7 @@ public class MS_TestUtilsTest {
         } catch (SQLFeatureNotSupportedException e) {
             exceptionCaught = true;
         }
-        assertTrue("For this cell rs.getBlob should've thrown a SQLFeatureNotSupportedException", exceptionCaught);
+        assertThat(exceptionCaught).as("For this cell rs.getBlob should've thrown a SQLFeatureNotSupportedException").isTrue();
 
         exceptionCaught = false;
         try {
@@ -168,9 +168,9 @@ public class MS_TestUtilsTest {
         } catch (SQLException e) {
             exceptionCaught = true;
         }
-        assertTrue("For this cell rs.getBinaryStream should've thrown a SQLException ", exceptionCaught);
+        assertThat(exceptionCaught).as("For this cell rs.getBinaryStream should've thrown a SQLException ").isTrue();
         //but on second attempt we can get actual stream object
-        assertNotNull("On second attempt we should've been able to get actual stream object", rs.getBinaryStream("stream"));
+        assertThat(rs.getBinaryStream("stream")).as("On second attempt we should've been able to get actual stream object").isNotNull();
     }
 
     public static class TableToMock implements MS_TableRecord {

@@ -19,7 +19,7 @@ import java.io.IOException;
 
 import static lv.emes.libraries.file_system.MS_FileSystemTools.deleteFile;
 import static lv.emes.libraries.utilities.MS_StringUtils.getTabSpace;
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MS_XMLFileTest {
@@ -35,38 +35,38 @@ public class MS_XMLFileTest {
     @Test
     public void test01ParseSimpleXMLFile() {
         MS_XMLReader file = file1;
-        assertEquals("breakfast_menu", file.getRootElementName());
+        assertThat(file.getRootElementName()).isEqualTo("breakfast_menu");
         //everything starting from first <food> tag and ending with very last </food> tag
         //<breakfast_menu><food>...</food><food>...</food></breakfast_menu>
         MS_XMLElementNodeList allFoods = file.getNodesByTagName("food");
-        assertEquals(5, allFoods.count());
-        assertEquals("food", allFoods.getTag());
+        assertThat(allFoods.count()).isEqualTo(5);
+        assertThat(allFoods.getTag()).isEqualTo("food");
         for (int i = 0; i < allFoods.count(); i++) {
             //everything that begins with <food> and ends with </food> in
             //<food>...</food>
             MS_XMLElementNode aCurrentFood = allFoods.get(i);
-            assertEquals("food", aCurrentFood.getTagName());
-            assertEquals(FOOD_NAME_LIST.get(i), aCurrentFood.getFirstChild("name").getValue());
-            assertEquals("name", aCurrentFood.getFirstChild("name").getTagName());
-            assertEquals(1, aCurrentFood.getChildList("name").count());
-            assertEquals(FOOD_NAME_LIST.get(i), aCurrentFood.getChildList("name").get(0).getValue());
+            assertThat(aCurrentFood.getTagName()).isEqualTo("food");
+            assertThat(aCurrentFood.getFirstChild("name").getValue()).isEqualTo(FOOD_NAME_LIST.get(i));
+            assertThat(aCurrentFood.getFirstChild("name").getTagName()).isEqualTo("name");
+            assertThat(aCurrentFood.getChildList("name").count()).isEqualTo(1);
+            assertThat(aCurrentFood.getChildList("name").get(0).getValue()).isEqualTo(FOOD_NAME_LIST.get(i));
         }
 
         //just testing iterating
         allFoods.forEachItem((node, ind) -> {
-            assertEquals("food", node.getTagName()); //like assertEquals("food", aCurrentFood.getTagName());
-            assertEquals("name", node.getFirstChild("name").getTagName()); //like assertEquals("name", aCurrentFood.getFirstChild("name").getTagName());
-            assertEquals(1, node.getChildList("name").count());
-            assertEquals(FOOD_NAME_LIST.get(ind), node.getFirstChild("name").getValue());
+            assertThat(node.getTagName()).isEqualTo("food"); //like assertEquals("food", aCurrentFood.getTagName());
+            assertThat(node.getFirstChild("name").getTagName()).isEqualTo("name"); //like assertEquals("name", aCurrentFood.getFirstChild("name").getTagName());
+            assertThat(node.getChildList("name").count()).isEqualTo(1);
+            assertThat(node.getFirstChild("name").getValue()).isEqualTo(FOOD_NAME_LIST.get(ind));
         });
 
-        assertEquals("Light Belgian waffles covered with strawberries and whipped cream", allFoods.get(1).getFirstChild("description").getValue());
-        assertEquals("600", allFoods.get(3).getFirstChild("calories").getValue());
-        assertEquals("950", allFoods.get(4).getFirstChild("calories").getValue());
+        assertThat(allFoods.get(1).getFirstChild("description").getValue()).isEqualTo("Light Belgian waffles covered with strawberries and whipped cream");
+        assertThat(allFoods.get(3).getFirstChild("calories").getValue()).isEqualTo("600");
+        assertThat(allFoods.get(4).getFirstChild("calories").getValue()).isEqualTo("950");
         try {
             allFoods.get(5).getFirstChild("calories").getValue();
         } catch (MS_XMLElementNodeList.NodeNotFoundException ex) {
-            assertTrue(true);
+            assertThat(true).isTrue();
         }
     }
 
@@ -78,7 +78,7 @@ public class MS_XMLFileTest {
 //        assertEquals("UTF-8", doc.getInputEncoding());
 //        doc.setXmlVersion("1.1");
 //        assertEquals("1.1", doc.getXmlVersion());
-        assertEquals("file:/" + PATH_TO_XML_FILE, doc.getBaseURI());
+        assertThat(doc.getBaseURI()).isEqualTo("file:/" + PATH_TO_XML_FILE);
     }
 
     @Test
@@ -90,10 +90,10 @@ public class MS_XMLFileTest {
         } catch (MS_XMLReader.NodesNotFoundException e) {
             exceptionCaught = true;
         }
-        assertTrue(exceptionCaught);
+        assertThat(exceptionCaught).isTrue();
 
         MS_XMLElementNodeList prices = file.getNodesByTagName("price");
-        assertNull(prices.get(2).getFirstChild("child"));
+        assertThat(prices.get(2).getFirstChild("child")).isNull();
     }
 
     @Test
@@ -103,13 +103,13 @@ public class MS_XMLFileTest {
         allFoods.forEachItem((item, ind) -> {
             MS_XMLElementNode nameOfFood = item.getFirstChild("name");
             nameOfFood.toElement().setTextContent(FOOD_NAME_LIST.get(allFoods.count() + ind));
-            assertEquals(FOOD_NAME_LIST.get(allFoods.count() + ind), nameOfFood.getValue());
+            assertThat(nameOfFood.getValue()).isEqualTo(FOOD_NAME_LIST.get(allFoods.count() + ind));
         });
 
         //now to check for a new values
         allFoods.forEachItem((node, index) -> {
 //            System.out.println(node);
-            assertEquals(FOOD_NAME_LIST.get(index + 5), node.getFirstChild("name").getValue());
+            assertThat(node.getFirstChild("name").getValue()).isEqualTo(FOOD_NAME_LIST.get(index + 5));
         });
     }
 
@@ -117,47 +117,47 @@ public class MS_XMLFileTest {
     public void test05ParseComplicatedXMLFile() {
         MS_XMLReader file = file2;
 //        System.out.println(file.toString());
-        assertEquals("Students", file.getRootElementName());
+        assertThat(file.getRootElementName()).isEqualTo("Students");
         MS_XMLElementNodeList allTheStudents = file.getNodesByTagName("Student");
         MS_XMLElementNode studentMaris = allTheStudents.get(0);
         MS_XMLElementNode studentJanis = allTheStudents.get(1);
-        assertEquals("Māris", studentMaris.getFirstChild("name").getValue());
-        assertEquals("Jānis", studentJanis.getFirstChild("name").getValue());
+        assertThat(studentMaris.getFirstChild("name").getValue()).isEqualTo("Māris");
+        assertThat(studentJanis.getFirstChild("name").getValue()).isEqualTo("Jānis");
 
         MS_XMLElementNode university = studentMaris.getFirstChild("university");
-        assertEquals("RTU", university.getAttribute("name"));
-        assertEquals("university", university.getTagName());
-        assertEquals("DITF", university.getFirstChild("faculty").getValue());
+        assertThat(university.getAttribute("name")).isEqualTo("RTU");
+        assertThat(university.getTagName()).isEqualTo("university");
+        assertThat(university.getFirstChild("faculty").getValue()).isEqualTo("DITF");
 
         //Janis has no university in records because there is only 1 university registered
-        assertEquals(1, file.getNodesByTagName("university").size());
-        assertNull(studentJanis.getFirstChild("university"));
+        assertThat(file.getNodesByTagName("university").size()).isEqualTo(1);
+        assertThat(studentJanis.getFirstChild("university")).isNull();
     }
 
     @Test
     public void test06ParseXMLFileWithOnly1Tag() {
-        assertEquals("", file3.getNodesByTagName(file3.getRootElementName()).get(0).getValue());
+        assertThat(file3.getNodesByTagName(file3.getRootElementName()).get(0).getValue()).isEqualTo("");
     }
 
     @Test
     public void test07NodeIsNotAnElement() {
         MS_XMLElementNode textNode = file1.getRootNode().getAllChildNodes().get(0);
-        assertEquals(MS_XMLElementNode._TEXT_NODE_NAME, textNode.getTagName());
-        assertEquals(0, textNode.getAllChildNodes().length());
-        assertNull(textNode.getFirstChild(""));
-        assertNull(textNode.getChildList(""));
+        assertThat(textNode.getTagName()).isEqualTo(MS_XMLElementNode._TEXT_NODE_NAME);
+        assertThat(textNode.getAllChildNodes().length()).isEqualTo(0);
+        assertThat(textNode.getFirstChild("")).isNull();
+        assertThat(textNode.getChildList("")).isNull();
     }
 
     @Test
     public void test08ExportToJSON() {
         JSONObject jsonObject = file1.toJSON();
-        assertEquals("breakfast_menu", jsonObject.names().get(0));
+        assertThat(jsonObject.names().get(0)).isEqualTo("breakfast_menu");
         jsonObject = jsonObject.getJSONObject("breakfast_menu");
-        assertEquals("food", jsonObject.names().get(0));
+        assertThat(jsonObject.names().get(0)).isEqualTo("food");
         JSONArray jsonArray = jsonObject.getJSONArray("food");
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject json = jsonArray.getJSONObject(i);
-            assertEquals(FOOD_NAME_LIST.get(i), json.get("name"));
+            assertThat(json.get("name")).isEqualTo(FOOD_NAME_LIST.get(i));
         }
     }
 

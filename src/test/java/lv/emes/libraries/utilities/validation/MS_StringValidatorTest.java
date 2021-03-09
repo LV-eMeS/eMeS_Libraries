@@ -7,7 +7,7 @@ import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
 import static lv.emes.libraries.utilities.validation.MS_ObjectValidator.*;
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author eMeS
@@ -29,25 +29,25 @@ public class MS_StringValidatorTest {
     @Test
     public void test01NoValidationErrors() {
         textToValidate = "Normal text";
-        assertFalse(validator.validate(textToValidate).errorsFound());
+        assertThat(validator.validate(textToValidate).errorsFound()).isFalse();
     }
 
     @Test
     public void test02NullString() {
         textToValidate = null;
-        assertTrue(validator.validate(textToValidate).errorsFound());
+        assertThat(validator.validate(textToValidate).errorsFound()).isTrue();
         errors = validator.getValidationErrors();
-        assertEquals(1, errors.count());
-        assertEquals(VALIDATION_ERROR_NULL_OBJECT, errors.get(0).getNumber().intValue());
+        assertThat(errors.count()).isEqualTo(1);
+        assertThat(errors.get(0).getNumber().intValue()).isEqualTo(VALIDATION_ERROR_NULL_OBJECT);
     }
 
     @Test
     public void test03EmptyString() {
         textToValidate = "";
-        assertTrue(validator.validate(textToValidate).errorsFound());
+        assertThat(validator.validate(textToValidate).errorsFound()).isTrue();
         errors = validator.getValidationErrors();
-        assertEquals(1, errors.count());
-        assertEquals(VALIDATION_ERROR_EMPTY_VALUE, errors.get(0).getNumber().intValue());
+        assertThat(errors.count()).isEqualTo(1);
+        assertThat(errors.get(0).getNumber().intValue()).isEqualTo(VALIDATION_ERROR_EMPTY_VALUE);
     }
 
     @Test
@@ -55,12 +55,12 @@ public class MS_StringValidatorTest {
         validator.setMinLength(5);
         validator.setMaxLength(10);
         textToValidate = "Min";
-        assertTrue(validator.validate(textToValidate).errorsFound());
+        assertThat(validator.validate(textToValidate).errorsFound()).isTrue();
         errors = validator.getValidationErrors();
-        assertEquals(2, errors.count());
-        assertTrue(validator.containsError(VALIDATION_ERROR_MINIMUM_SIZE_VIOLATED));
-        assertTrue(validator.containsError(VALIDATION_ERROR_SIZE_VIOLATED));
-        assertFalse(validator.containsError(VALIDATION_ERROR_MAXIMUM_SIZE_VIOLATED));
+        assertThat(errors.count()).isEqualTo(2);
+        assertThat(validator.containsError(VALIDATION_ERROR_MINIMUM_SIZE_VIOLATED)).isTrue();
+        assertThat(validator.containsError(VALIDATION_ERROR_SIZE_VIOLATED)).isTrue();
+        assertThat(validator.containsError(VALIDATION_ERROR_MAXIMUM_SIZE_VIOLATED)).isFalse();
     }
 
     @Test
@@ -68,12 +68,12 @@ public class MS_StringValidatorTest {
         validator.setMinLength(5);
         validator.setMaxLength(10);
         textToValidate = "Maximum length of string is violated here.";
-        assertTrue(validator.validate(textToValidate).errorsFound());
+        assertThat(validator.validate(textToValidate).errorsFound()).isTrue();
         errors = validator.getValidationErrors();
-        assertEquals(2, errors.count());
-        assertTrue(validator.containsError(VALIDATION_ERROR_MAXIMUM_SIZE_VIOLATED));
-        assertTrue(validator.containsError(VALIDATION_ERROR_SIZE_VIOLATED));
-        assertFalse(validator.containsError(VALIDATION_ERROR_MINIMUM_SIZE_VIOLATED));
+        assertThat(errors.count()).isEqualTo(2);
+        assertThat(validator.containsError(VALIDATION_ERROR_MAXIMUM_SIZE_VIOLATED)).isTrue();
+        assertThat(validator.containsError(VALIDATION_ERROR_SIZE_VIOLATED)).isTrue();
+        assertThat(validator.containsError(VALIDATION_ERROR_MINIMUM_SIZE_VIOLATED)).isFalse();
     }
 
     @Test
@@ -81,12 +81,12 @@ public class MS_StringValidatorTest {
         validator.setMinLength(10); //tricky, but possible
         validator.setMaxLength(5);
         textToValidate = "Six ch";
-        assertTrue(validator.validate(textToValidate).errorsFound());
+        assertThat(validator.validate(textToValidate).errorsFound()).isTrue();
         errors = validator.getValidationErrors();
-        assertEquals(3, errors.count());
-        assertTrue(validator.containsError(VALIDATION_ERROR_MINIMUM_SIZE_VIOLATED));
-        assertTrue(validator.containsError(VALIDATION_ERROR_MAXIMUM_SIZE_VIOLATED));
-        assertTrue(validator.containsError(VALIDATION_ERROR_SIZE_VIOLATED));
+        assertThat(errors.count()).isEqualTo(3);
+        assertThat(validator.containsError(VALIDATION_ERROR_MINIMUM_SIZE_VIOLATED)).isTrue();
+        assertThat(validator.containsError(VALIDATION_ERROR_MAXIMUM_SIZE_VIOLATED)).isTrue();
+        assertThat(validator.containsError(VALIDATION_ERROR_SIZE_VIOLATED)).isTrue();
     }
 
     @Test
@@ -94,11 +94,11 @@ public class MS_StringValidatorTest {
         validator.setMinLength(null);
         validator.setMaxLength(null);
         textToValidate = "Six ch";
-        assertFalse(validator.validate(textToValidate).errorsFound());
+        assertThat(validator.validate(textToValidate).errorsFound()).isFalse();
         errors = validator.getValidationErrors();
-        assertEquals(0, errors.count());
-        assertFalse(validator.containsError(VALIDATION_ERROR_MINIMUM_SIZE_VIOLATED));
-        assertFalse(validator.containsError(VALIDATION_ERROR_MAXIMUM_SIZE_VIOLATED));
-        assertFalse(validator.containsError(VALIDATION_ERROR_SIZE_VIOLATED));
+        assertThat(errors.count()).isEqualTo(0);
+        assertThat(validator.containsError(VALIDATION_ERROR_MINIMUM_SIZE_VIOLATED)).isFalse();
+        assertThat(validator.containsError(VALIDATION_ERROR_MAXIMUM_SIZE_VIOLATED)).isFalse();
+        assertThat(validator.containsError(VALIDATION_ERROR_SIZE_VIOLATED)).isFalse();
     }
 }

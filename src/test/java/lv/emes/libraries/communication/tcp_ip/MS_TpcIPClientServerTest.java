@@ -27,9 +27,8 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static junit.framework.TestCase.assertFalse;
 import static lv.emes.libraries.communication.tcp_ip.MS_ClientServerConstants.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MS_TpcIPClientServerTest {
@@ -123,28 +122,28 @@ public class MS_TpcIPClientServerTest {
     @Test
     public void test01SimpleMessagging() {
         doSleepForXTimes(2);
-        assertEquals(2, getServerConnectionCount());
-        assertTrue(client1.cmdToServer(new MS_TcpIPCommand(CMD1_DISCONNECT_AND_PRINTLN, TEXT1)));
+        assertThat(getServerConnectionCount()).isEqualTo(2);
+        assertThat(client1.cmdToServer(new MS_TcpIPCommand(CMD1_DISCONNECT_AND_PRINTLN, TEXT1))).isTrue();
         doSleepForXTimes(1);
-        assertEquals(serverReceived, TEXT1);
+        assertThat(TEXT1).isEqualTo(serverReceived);
 
-        assertTrue(client1.cmdToServer(new MS_TcpIPCommand(CMD2_SIMPLY_PRINTLN, "")));
+        assertThat(client1.cmdToServer(new MS_TcpIPCommand(CMD2_SIMPLY_PRINTLN, ""))).isTrue();
         doSleepForXTimes(1);
-        assertEquals(serverReceived, TEXT5); //empty text, cause no data added
+        assertThat(TEXT5).isEqualTo(serverReceived); //empty text, cause no data added
 
         //second client
-        assertTrue(client2.cmdToServer(new MS_TcpIPCommand(CMD1_DISCONNECT_AND_PRINTLN, TEXT2)));
+        assertThat(client2.cmdToServer(new MS_TcpIPCommand(CMD1_DISCONNECT_AND_PRINTLN, TEXT2))).isTrue();
         doSleepForXTimes(1);
-        assertEquals(serverReceived, TEXT2); //empty text, cause no data added
+        assertThat(TEXT2).isEqualTo(serverReceived); //empty text, cause no data added
 
         //let's shutdown the server for a sek
-        assertTrue(client1.cmdToServer(new MS_TcpIPCommand(CMD1_DISCONNECT_AND_PRINTLN, TEXT3)));
+        assertThat(client1.cmdToServer(new MS_TcpIPCommand(CMD1_DISCONNECT_AND_PRINTLN, TEXT3))).isTrue();
         doSleepForXTimes(1);
-        assertEquals(serverReceived, TEXT3);
-        assertTrue(!server.isRunning());
-        assertTrue(!client1.isConnected());
-        assertTrue(!serverIsUp);
-        assertTrue(secondReceivedThatServerIsGoingOff);
+        assertThat(TEXT3).isEqualTo(serverReceived);
+        assertThat(!server.isRunning()).isTrue();
+        assertThat(!client1.isConnected()).isTrue();
+        assertThat(!serverIsUp).isTrue();
+        assertThat(secondReceivedThatServerIsGoingOff).isTrue();
     }
 
     /**
@@ -157,34 +156,34 @@ public class MS_TpcIPClientServerTest {
     @Test
     public void test02SimpleMessaggingToClient() throws Exception {
         //do reconnecting
-        assertEquals(0, getServerConnectionCount());
+        assertThat(getServerConnectionCount()).isEqualTo(0);
         server.startServer();
-        assertEquals(0, getServerConnectionCount());
+        assertThat(getServerConnectionCount()).isEqualTo(0);
         serverIsUp = true;
         client1.connect(MS_ClientServerConstants._DEFAULT_HOST, PORT);
         doSleepForXTimes(2);
-        assertEquals(1, getServerConnectionCount());
+        assertThat(getServerConnectionCount()).isEqualTo(1);
         client1.connect(MS_ClientServerConstants._DEFAULT_HOST, PORT); //double connecting shouldn't matter
-        assertEquals(1, getServerConnectionCount());
+        assertThat(getServerConnectionCount()).isEqualTo(1);
         client2.connect(MS_ClientServerConstants._DEFAULT_HOST, PORT);
         doSleepForXTimes(3);
-        assertEquals(2, getServerConnectionCount());
+        assertThat(getServerConnectionCount()).isEqualTo(2);
 
         doSleepForXTimes(1);
-        assertTrue(server.cmdToClientByID(new MS_TcpIPCommand(CMD3_PRINTLN_PLUS_CLIENT_ID, ""), client1.getId()));
+        assertThat(server.cmdToClientByID(new MS_TcpIPCommand(CMD3_PRINTLN_PLUS_CLIENT_ID, ""), client1.getId())).isTrue();
         doSleepForXTimes(1);
-        assertEquals(serverReceived, TEXT5);
+        assertThat(TEXT5).isEqualTo(serverReceived);
 
         //server's message
         server.cmdToAll(new MS_TcpIPCommand(CMD3_PRINTLN_PLUS_CLIENT_ID, TEXT4));
         doSleepForXTimes(5);
-        assertEquals(serverReceived, TEXT4);
+        assertThat(TEXT4).isEqualTo(serverReceived);
 
         //DC those client!
         server.disconnectAllClients();
-        assertEquals(0, getServerConnectionCount());
-        assertTrue(serverIsUp);
-        assertEquals(0, server.getClients().size());
+        assertThat(getServerConnectionCount()).isEqualTo(0);
+        assertThat(serverIsUp).isTrue();
+        assertThat(server.getClients().size()).isEqualTo(0);
         doSleepForXTimes(3);
         assertFalse(client1.isConnected());
     }
@@ -200,26 +199,26 @@ public class MS_TpcIPClientServerTest {
     public void test03BinaryDataExchangeOnServer() throws Exception {
         //do reconnecting
         client1.connect(MS_ClientServerConstants._DEFAULT_HOST, PORT);
-        assertTrue(client1.isConnected());
+        assertThat(client1.isConnected()).isTrue();
         doSleepForXTimes(2);
-        assertEquals(1, getServerConnectionCount());
+        assertThat(getServerConnectionCount()).isEqualTo(1);
 
         //make server listen the command that indicates that client is sending bytes to him
         server.registerCommandWithBinaryData(CMD4_SEND_BINARY_FROM_SERVER, (server, cli, bytesFromClient) -> {
-            assertTrue(cli.isConnected());
+            assertThat(cli.isConnected()).isTrue();
 
             try {
                 MS_BinaryTools.writeFile(MS_BinaryTools.bytesToIntput(bytesFromClient), BINARY_DEST_FILE_SERVER);
             } catch (Exception e) {
                 throw new RuntimeException("Failed to save file locally");
             }
-            assertTrue("Server returned no bytes.", Array.getLength(bytesFromClient) > 0);
+            assertThat(Array.getLength(bytesFromClient) > 0).as("Server returned no bytes.").isTrue();
         });
 
         byte[] by = MS_BinaryTools.inputToBytes(MS_FileSystemTools.getResourceInputStream(BINARY_SOURCE_FILE));
-        assertTrue(server.isRunning());
+        assertThat(server.isRunning()).isTrue();
         client1.cmdToServer(new MS_TcpIPCommand(CMD4_SEND_BINARY_FROM_SERVER, by));
-        assertTrue(server.isRunning());
+        assertThat(server.isRunning()).isTrue();
         doSleepForXTimes(8); //w8 till server does his job
     }
 
@@ -233,26 +232,26 @@ public class MS_TpcIPClientServerTest {
     public void test04BinaryDataExchangeOnClient() throws Exception {
         //do reconnecting
         client1.connect(MS_ClientServerConstants._DEFAULT_HOST, PORT);
-        assertTrue(client1.isConnected());
+        assertThat(client1.isConnected()).isTrue();
         assertFalse(client2.isConnected());
-        assertEquals("There must be 1 active connection!", 1, getServerConnectionCount());
+        assertThat(getServerConnectionCount()).as("There must be 1 active connection!").isEqualTo(1);
 
         //make server listen the command that indicates that client is sending bytes to him
         client1.registerCommandWithBinaryData(CMD4_SEND_BINARY_FROM_SERVER, (client, bytesFromServer) -> {
-            assertTrue(client.isConnected());
+            assertThat(client.isConnected()).isTrue();
 
             try {
                 MS_BinaryTools.writeFile(MS_BinaryTools.bytesToIntput(bytesFromServer), BINARY_DEST_FILE_CLIENT);
             } catch (Exception e) {
                 throw new RuntimeException("Failed to save file locally");
             }
-            assertTrue("Client returned no bytes.", Array.getLength(bytesFromServer) > 0);
+            assertThat(Array.getLength(bytesFromServer) > 0).as("Client returned no bytes.").isTrue();
         });
 
-        assertTrue(server.isRunning());
+        assertThat(server.isRunning()).isTrue();
         byte[] by = MS_BinaryTools.inputToBytes(MS_FileSystemTools.getResourceInputStream(BINARY_SOURCE_FILE));
         server.cmdToClientByID(new MS_TcpIPCommand(CMD4_SEND_BINARY_FROM_SERVER, by), client1.getId());
-        assertTrue(server.isRunning());
+        assertThat(server.isRunning()).isTrue();
         doSleepForXTimes(8); //w8 till server does his job
     }
 
@@ -260,7 +259,7 @@ public class MS_TpcIPClientServerTest {
     public void test11ConnectionTimeout() {
         MS_TcpIPClient impatientClient = new MS_TcpIPClient();
         impatientClient.setConnectTimeout(1);
-        assertEquals(1, impatientClient.getConnectTimeout());
+        assertThat(impatientClient.getConnectTimeout()).isEqualTo(1);
         assertThatThrownBy(() -> impatientClient.connect(TestData.TESTING_SERVER_HOSTAME, PORT))
                 .isInstanceOf(SocketTimeoutException.class);
     }
@@ -274,7 +273,7 @@ public class MS_TpcIPClientServerTest {
     public void test12WriteTimeout() throws IOException {
         MS_TcpIPClient impatientClient = new MS_TcpIPClient();
         impatientClient.setWriteTimeout(DEFAULT_SLEEP_TIME * 5);
-        assertEquals(DEFAULT_SLEEP_TIME * 5, impatientClient.getWriteTimeout());
+        assertThat(impatientClient.getWriteTimeout()).isEqualTo(DEFAULT_SLEEP_TIME * 5);
         impatientClient.connect(MS_ClientServerConstants._DEFAULT_HOST, PORT);
 
         serverFinishedCommand = false; //init value to check afterwards
@@ -282,7 +281,7 @@ public class MS_TpcIPClientServerTest {
 
         impatientClient.cmdToServerAcknowledge(new MS_TcpIPCommand(CMD5_WAIT_FOR_SOME_WHILE, DATA_THAT_SERVER_SHOULD_PROCESS));
 
-        assertEquals("Server didn't even receive command from client", DATA_THAT_SERVER_SHOULD_PROCESS, serverReceived);
+        assertThat(serverReceived).as("Server didn't even receive command from client").isEqualTo(DATA_THAT_SERVER_SHOULD_PROCESS);
         assertFalse("Server should not be able to process this command in time, but it does", serverFinishedCommand);
     }
 
@@ -290,7 +289,7 @@ public class MS_TpcIPClientServerTest {
     public void test13CmdToServerNotifySuccess() throws IOException, MS_ExecutionFailureException {
         MS_TcpIPClient impatientClient = new MS_TcpIPClient();
         impatientClient.setWriteTimeout(DEFAULT_SLEEP_TIME * 5);
-        assertEquals(DEFAULT_SLEEP_TIME * 5, impatientClient.getWriteTimeout());
+        assertThat(impatientClient.getWriteTimeout()).isEqualTo(DEFAULT_SLEEP_TIME * 5);
         impatientClient.connect(MS_ClientServerConstants._DEFAULT_HOST, PORT);
 
         final String DATA_THAT_SERVER_SHOULD_PROCESS = "Some value that needs to be delivered to server";
@@ -307,15 +306,15 @@ public class MS_TpcIPClientServerTest {
         new MS_Polling<Boolean>().withAction(success::get).withCheck((a) -> success.get() || failure.get())
                 .withSleepInterval(DEFAULT_SLEEP_TIME / 2).withMaxPollingAttempts(8).poll();
 
-        assertEquals("Server didn't even receive command from client", DATA_THAT_SERVER_SHOULD_PROCESS, serverReceived);
-        assertTrue("Notification on success was not received, but we had enough time to successfully process command", success.get());
+        assertThat(serverReceived).as("Server didn't even receive command from client").isEqualTo(DATA_THAT_SERVER_SHOULD_PROCESS);
+        assertThat(success.get()).as("Notification on success was not received, but we had enough time to successfully process command").isTrue();
     }
 
     @Test
     public void test14CmdToServerNotifyFailure() throws IOException, MS_ExecutionFailureException {
         MS_TcpIPClient impatientClient = new MS_TcpIPClient();
         impatientClient.setWriteTimeout(1);
-        assertEquals(1, impatientClient.getWriteTimeout());
+        assertThat(impatientClient.getWriteTimeout()).isEqualTo(1);
         impatientClient.connect(MS_ClientServerConstants._DEFAULT_HOST, PORT);
         //make sure that client will be disconnected before sending command to server
         MS_CodingUtils.sleep(DEFAULT_SLEEP_TIME * 2);
@@ -335,7 +334,7 @@ public class MS_TpcIPClientServerTest {
         new MS_Polling<Boolean>().withAction(success::get).withCheck((a) -> success.get() || failure.get())
                 .withSleepInterval(4).withMaxPollingAttempts(100).poll();
 
-        assertTrue("Notification on failure was not received, even though command shouldn't reach server's thread in time", failure.get());
+        assertThat(failure.get()).as("Notification on failure was not received, even though command shouldn't reach server's thread in time").isTrue();
     }
 
     @Test

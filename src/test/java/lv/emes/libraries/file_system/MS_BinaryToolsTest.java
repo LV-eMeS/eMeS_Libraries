@@ -5,7 +5,7 @@ import net.sf.jmimemagic.MagicMatchNotFoundException;
 import org.junit.Test;
 
 import static lv.emes.libraries.testdata.TestData.*;
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tests part of binary tool features.
@@ -21,31 +21,31 @@ public class MS_BinaryToolsTest {
     @Test
     public void isNotBinaryFileTextWithoutExtension() throws MagicMatchNotFoundException {
         testFilePath = TEST_RESOURCES_DIR + TEST_FILE_WITHOUT_EXT_TEXT;
-        assertFalse(MS_BinaryTools.isBinaryFile(testFilePath));
+        assertThat(MS_BinaryTools.isBinaryFile(testFilePath)).isFalse();
     }
 
     @Test
     public void isBinaryFileImageWithoutExtension() throws MagicMatchNotFoundException {
         testFilePath = TEST_RESOURCES_DIR + TEST_FILE_WITHOUT_EXT_IMAGE;
-        assertTrue(MS_BinaryTools.isBinaryFile(testFilePath));
+        assertThat(MS_BinaryTools.isBinaryFile(testFilePath)).isTrue();
     }
 
     @Test
     public void isNotBinaryFileText() throws MagicMatchNotFoundException {
         testFilePath = TEST_RESOURCES_DIR + TEST_FILE_TEXT;
-        assertFalse(MS_BinaryTools.isBinaryFile(testFilePath));
+        assertThat(MS_BinaryTools.isBinaryFile(testFilePath)).isFalse();
     }
 
     @Test
     public void isNotBinaryFileCsv() throws MagicMatchNotFoundException {
         testFilePath = TEST_RESOURCES_DIR + TEST_FILE_CSV;
-        assertFalse(MS_BinaryTools.isBinaryFile(testFilePath));
+        assertThat(MS_BinaryTools.isBinaryFile(testFilePath)).isFalse();
     }
 
     @Test
     public void isBinaryFileTestWithExeExtension() throws MagicMatchNotFoundException {
         testFilePath = TEST_RESOURCES_DIR + TEST_FILE_TEST_WITH_EXE_EXTENSION;
-        assertFalse(MS_BinaryTools.isBinaryFile(testFilePath));
+        assertThat(MS_BinaryTools.isBinaryFile(testFilePath)).isFalse();
     }
 
     /**
@@ -55,25 +55,25 @@ public class MS_BinaryToolsTest {
     @Test
     public void isBinaryFileBat() throws MagicMatchNotFoundException {
         testFilePath = TEST_RESOURCES_DIR + TEST_FILE_BAT;
-        assertTrue(MS_BinaryTools.isBinaryFile(testFilePath));
+        assertThat(MS_BinaryTools.isBinaryFile(testFilePath)).isTrue();
     }
 
     @Test
     public void isBinaryFileExecutable() throws MagicMatchNotFoundException {
         testFilePath = TEST_RESOURCES_DIR + TEST_FILE_EXE;
-        assertTrue(MS_BinaryTools.isBinaryFile(testFilePath));
+        assertThat(MS_BinaryTools.isBinaryFile(testFilePath)).isTrue();
     }
 
     @Test
     public void isBinaryFileImage() throws MagicMatchNotFoundException {
         testFilePath = TEST_RESOURCES_DIR + TEST_FILE_IMAGE;
-        assertTrue(MS_BinaryTools.isBinaryFile(testFilePath));
+        assertThat(MS_BinaryTools.isBinaryFile(testFilePath)).isTrue();
     }
 
     @Test
     public void isBinaryFileJar() throws MagicMatchNotFoundException {
         testFilePath = TEST_RESOURCES_DIR + TEST_FILE_JAR;
-        assertTrue(MS_BinaryTools.isBinaryFile(testFilePath));
+        assertThat(MS_BinaryTools.isBinaryFile(testFilePath)).isTrue();
     }
 
     @Test(expected = MagicMatchNotFoundException.class)
@@ -88,11 +88,11 @@ public class MS_BinaryToolsTest {
         final String CORRESPONDING_BASE64_TEXT = "QSBiIDgg77+9LOiqnsSB0K4="; //hardcoded Base64 representation of TEXT
 
         String base64 = MS_BinaryTools.stringToBase64String(TEXT);
-        assertEquals(CORRESPONDING_BASE64_TEXT, base64);
+        assertThat(base64).isEqualTo(CORRESPONDING_BASE64_TEXT);
         String text = MS_BinaryTools.base64StringToString(base64);
-        assertEquals(TEXT, text);
+        assertThat(text).isEqualTo(TEXT);
 
-        assertNull(MS_BinaryTools.stringToBase64String(null));
-        assertNull(MS_BinaryTools.base64StringToString(null));
+        assertThat(MS_BinaryTools.stringToBase64String(null)).isNull();
+        assertThat(MS_BinaryTools.base64StringToString(null)).isNull();
     }
 }

@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * All tests depends on previous test data.
@@ -69,62 +69,62 @@ public class MS_RepositoryTest {
         repository1 = new MS_RepositoryForTest(PROJECT_NAME1, CATEGORY_NAME1);
         for (int i = 0; i < 3; i++) repository1.put(ITEM_IDS[i], ITEMS[i]);
 
-        assertEquals(3, environment.count()); //all three items have been added
-        assertEquals(3, repository1.count());
+        assertThat(environment.count()).isEqualTo(3); //all three items have been added
+        assertThat(repository1.count()).isEqualTo(3);
 
         new MS_EqualityCheckBuilder(true).append(environment, repository1, REPOSITORY_DATA_COMPARE);
 
         //DATA till here: [ITEM_IDS,ITEMS] = {[0,1,2][0,1,2]}
         for (int i = 0; i < 3; i++) {
             String previousValue = repository1.put(ITEM_IDS[i], ITEMS[3]); //replace all the existing values
-            assertEquals(ITEMS[i], previousValue);
+            assertThat(previousValue).isEqualTo(ITEMS[i]);
         }
         //DATA after changes: [ITEM_IDS,ITEMS] = {[0,1,2][3,3,3]}
 
-        assertEquals(3, repository1.size()); //only values are changed, but records are the same
-        assertEquals(ITEMS[3], repository1.get(ITEM_IDS[0]));
-        assertEquals(ITEMS[3], repository1.find(ITEM_IDS[1]));
-        assertEquals(ITEMS[3], repository1.findAll().get(ITEM_IDS[2]));
+        assertThat(repository1.size()).isEqualTo(3); //only values are changed, but records are the same
+        assertThat(repository1.get(ITEM_IDS[0])).isEqualTo(ITEMS[3]);
+        assertThat(repository1.find(ITEM_IDS[1])).isEqualTo(ITEMS[3]);
+        assertThat(repository1.findAll().get(ITEM_IDS[2])).isEqualTo(ITEMS[3]);
         //check that changes are synchronized with environment
         new MS_EqualityCheckBuilder(true).append(environment, repository1, REPOSITORY_DATA_COMPARE);
 
         //DATA till here: [ITEM_IDS,ITEMS] = {[0,1,2][3,3,3]}
         repository1.remove(ITEM_IDS[1]);
-        assertNull(repository1.get(ITEM_IDS[1])); //item with such ID cannot be found anymore
-        assertEquals(2, repository1.length());
-        assertEquals(2, environment.count());
+        assertThat(repository1.get(ITEM_IDS[1])).isNull(); //item with such ID cannot be found anymore
+        assertThat(repository1.length()).isEqualTo(2);
+        assertThat(environment.count()).isEqualTo(2);
     }
 
     @Test
     public void test12AccessPreviousData() { //DATA till here: [ITEM_IDS,ITEMS] = {[0,2][3,3]}
         repository1 = new MS_RepositoryForTest(PROJECT_NAME1, CATEGORY_NAME1);
-        assertTrue(repository1.isInitialized());
+        assertThat(repository1.isInitialized()).isTrue();
         new MS_EqualityCheckBuilder(true).append(environment, repository1, REPOSITORY_DATA_COMPARE);
 
         repository1.put(ITEM_IDS[1], ITEMS[1]);
 
         //DATA till here: [ITEM_IDS,ITEMS] = {[0,1,2][3,1,3]}
         repository2 = new MS_RepositoryForTest(PROJECT_NAME1, CATEGORY_NAME1); //new repository object with same location
-        assertTrue(repository2.isInitialized());
-        assertEquals(ITEMS[1], repository2.get(ITEM_IDS[1]));
+        assertThat(repository2.isInitialized()).isTrue();
+        assertThat(repository2.get(ITEM_IDS[1])).isEqualTo(ITEMS[1]);
     }
 
     @Test
     public void test21TwoRepositoriesDifferentCategories() { //DATA till here: [ITEM_IDS,ITEMS] = {[0,1,2][3,1,3]}
         repository1 = new MS_RepositoryForTest(PROJECT_NAME1, CATEGORY_NAME1);
-        assertTrue(repository1.isInitialized());
+        assertThat(repository1.isInitialized()).isTrue();
         repository2 = new MS_RepositoryForTest(PROJECT_NAME2, CATEGORY_NAME2);
-        assertFalse(repository2.isInitialized());
+        assertThat(repository2.isInitialized()).isFalse();
 
         repository2.init();
-        assertTrue(repository2.isInitialized());
-        assertEquals(0, repository2.size());
+        assertThat(repository2.isInitialized()).isTrue();
+        assertThat(repository2.size()).isEqualTo(0);
 
         for (int i = 0; i < 3; i++) repository2.put(ITEM_IDS[i], ITEMS[i]);
         //DATA after changes: [ITEM_IDS,ITEMS] = {[0,1,2][3,1,3]} {[0,1,2][0,1,2]}
-        assertEquals(3, repository1.length());
-        assertEquals(3, repository2.length());
-        assertEquals(6, environment.count());
+        assertThat(repository1.length()).isEqualTo(3);
+        assertThat(repository2.length()).isEqualTo(3);
+        assertThat(environment.count()).isEqualTo(6);
         new MS_EqualityCheckBuilder(true).append(environment, repository1, REPOSITORY_DATA_COMPARE);
         new MS_EqualityCheckBuilder(true).append(environment, repository2, REPOSITORY_DATA_COMPARE);
 
@@ -133,9 +133,9 @@ public class MS_RepositoryTest {
         repository1.remove(ITEM_IDS[2]);
         repository2.put(ITEM_IDS[2], ITEMS[3]);
         //DATA after changes: [ITEM_IDS,ITEMS] = {[1][1]} {[0,1,2][0,1,3]}
-        assertEquals(1, repository1.length());
-        assertEquals(3, repository2.length());
-        assertEquals(4, environment.count());
+        assertThat(repository1.length()).isEqualTo(1);
+        assertThat(repository2.length()).isEqualTo(3);
+        assertThat(environment.count()).isEqualTo(4);
         new MS_EqualityCheckBuilder(true).append(environment, repository1, REPOSITORY_DATA_COMPARE);
         new MS_EqualityCheckBuilder(true).append(environment, repository2, REPOSITORY_DATA_COMPARE);
     }
@@ -143,18 +143,18 @@ public class MS_RepositoryTest {
     @Test
     public void test22RemoveAllRepositoryItems() { //DATA till here: {[1][1]} {[0,1,2][0,1,3]}
         repository2 = new MS_RepositoryForTest(PROJECT_NAME2, CATEGORY_NAME2);
-        assertTrue(repository2.isInitialized());
-        assertEquals(3, repository2.length());
+        assertThat(repository2.isInitialized()).isTrue();
+        assertThat(repository2.length()).isEqualTo(3);
         repository2.removeAll();
-        assertEquals(0, repository2.length());
-        assertTrue(repository2.isInitialized()); //it's still initialized
+        assertThat(repository2.length()).isEqualTo(0);
+        assertThat(repository2.isInitialized()).isTrue(); //it's still initialized
     }
 
     //*** Repository implementation ***
 
     private static final class MS_RepositoryForTest extends MS_Repository<String, String> {
 
-        private char repositoryLabel; //repository content will look like: repositoryLabel|identifier|item
+        private final char repositoryLabel; //repository content will look like: repositoryLabel|identifier|item
 
         public MS_RepositoryForTest(String projectName, String categoryName) {
             super(projectName, categoryName);

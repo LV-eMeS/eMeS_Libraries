@@ -7,7 +7,7 @@ import org.junit.Test;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author eMeS
@@ -15,7 +15,7 @@ import static org.junit.Assert.*;
  */
 public class MS_FlowTest {
 
-    private MS_Flow flow = new MS_Flow();
+    private final MS_Flow flow = new MS_Flow();
 
     private static final IFuncEventFlowAction CONVERT_LONG_TO_INT_EVENT = (input, prevEventIndex, nextEventIndex) -> {
         Long l = (Long) input;
@@ -42,7 +42,7 @@ public class MS_FlowTest {
     @Test
     public void test01NothingToExecute() {
         flow.execute(1L);
-        assertEquals(1L, flow.getOutput());
+        assertThat(flow.getOutput()).isEqualTo(1L);
     }
 
     @Test
@@ -53,7 +53,7 @@ public class MS_FlowTest {
             Execution order: 0.
         */
         flow.withEvent(CONVERT_LONG_TO_INT_EVENT).execute(1L);
-        assertEquals(1, flow.getOutput());
+        assertThat(flow.getOutput()).isEqualTo(1);
     }
 
     @Test
@@ -65,7 +65,7 @@ public class MS_FlowTest {
             Execution order: 0, 1.
         */
         flow.withEvent(CONVERT_LONG_TO_INT_EVENT).withEvent(ADD_PLUS_1_EVENT).execute(1L);
-        assertEquals(2, flow.getOutput());
+        assertThat(flow.getOutput()).isEqualTo(2);
     }
 
     @Test
@@ -88,7 +88,7 @@ public class MS_FlowTest {
                 .withEvent(ADD_PLUS_1_EVENT)
                 .withEvent(CONVERT_INT_BACK_TO_LONG_EVENT)
                 .execute(1L);
-        assertEquals(3L, flow.getOutput());
+        assertThat(flow.getOutput()).isEqualTo(3L);
     }
 
     @Test
@@ -111,7 +111,7 @@ public class MS_FlowTest {
             }
             return i;
         }).execute(5);
-        assertEquals(9, flow.getOutput());
+        assertThat(flow.getOutput()).isEqualTo(9);
     }
 
     @Test
@@ -142,7 +142,7 @@ public class MS_FlowTest {
                 })
                 .withEvent(CONVERT_INT_BACK_TO_LONG_EVENT)
                 .execute(1L);
-        assertEquals(6L, flow.getOutput());
+        assertThat(flow.getOutput()).isEqualTo(6L);
     }
 
     @Test(expected = MS_RuntimeExecutionFailureException.class)
@@ -191,24 +191,24 @@ public class MS_FlowTest {
                 })
                 .execute(Pair.of("Maris", "Doe")); //invalid creds
 
-        assertNull(flow.getOutput()); //first attempt failed due to wrong credentials
-        assertTrue(dbCalled.get());
+        assertThat(flow.getOutput()).isNull(); //first attempt failed due to wrong credentials
+        assertThat(dbCalled.get()).isTrue();
 
         //do second attempt
         dbCalled.set(false);
         flow.execute(Pair.of("John", "abc123"));
-        assertNull(flow.getOutput()); //second attempt failed as well
-        assertFalse(dbCalled.get()); //but this time DB not involved, cause creds already cached
+        assertThat(flow.getOutput()).isNull(); //second attempt failed as well
+        assertThat(dbCalled.get()).isFalse(); //but this time DB not involved, cause creds already cached
 
         //do third attempt
         dbCalled.set(false);
         flow.execute(Pair.of("John", "Doe"));
-        assertNotNull(flow.getOutput());
-        assertFalse(dbCalled.get());
+        assertThat(flow.getOutput()).isNotNull();
+        assertThat(dbCalled.get()).isFalse();
 
         //check if returned credentials are correct ones
         credentials = (Pair<String, String>) flow.getOutput();
-        assertEquals("John", credentials.getLeft());
-        assertEquals("Doe", credentials.getRight());
+        assertThat(credentials.getLeft()).isEqualTo("John");
+        assertThat(credentials.getRight()).isEqualTo("Doe");
     }
 }
