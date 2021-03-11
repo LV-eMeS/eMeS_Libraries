@@ -50,6 +50,23 @@ public class MS_HashTest {
 	}
 
 	@Test
+	public void testHashingSameValueReturnsSameHash() {
+		final String TEXT = "https://docs.oracle.com/javase/7/docs/api/java/lang/Byte.html";
+		final String salt = "salt";
+		assertThat(MS_Hash.getHash(TEXT)).isEqualTo(MS_Hash.getHash(TEXT));
+		assertThat(MS_Hash.getHash(TEXT, salt, MS_Hash.KEY_LENGTH_MINIMUM)).isEqualTo(MS_Hash.getHash(TEXT, salt, MS_Hash.KEY_LENGTH_MINIMUM));
+		assertThat(MS_Hash.getHash(TEXT, salt)).isEqualTo(MS_Hash.getHash(TEXT, salt));
+		assertThat(new MS_Hash(salt, MS_Hash.KEY_LENGTH_MINIMUM, null, false).hash((TEXT)))
+				.isEqualTo(new MS_Hash(salt, MS_Hash.KEY_LENGTH_MINIMUM, null, false).hash((TEXT)));
+		assertThat(new MS_Hash(salt, MS_Hash.KEY_LENGTH_MINIMUM, 1, false).hash((TEXT)))
+				.isEqualTo(new MS_Hash(salt, MS_Hash.KEY_LENGTH_MINIMUM, 1, false).hash((TEXT)));
+		assertThat(new MS_Hash(null, null, null, false).hash((TEXT)))
+				.isEqualTo(new MS_Hash(null, null, null, false).hash((TEXT)));
+		assertThat(new MS_Hash(null, null, null, true).hash((TEXT)))
+				.isEqualTo(new MS_Hash(null, null, null, true).hash((TEXT)));
+	}
+
+	@Test
 	public void testHashingPerformance() {
 		final String ASSERTION_MESSAGE = "Hashing time exceeds expected range";
 		LocalTime startTime;

@@ -18,6 +18,7 @@ import java.util.Base64;
 /**
  * Class for symmetric encryption/decryption processes.
  * http://netnix.org/2015/04/19/aes-encryption-with-hmac-integrity-in-java/
+ *
  * @author eMeS
  * @version 1.1.
  */
@@ -31,7 +32,8 @@ public class MS_CryptographyUtils {
     /**
      * Encrypts provided text <b>text</b> using AES algorithm and encryption key <b>secretKey</b>
      * and {@link MS_CryptographyUtils#DEFAULT_HMAC_KEY}.
-     * @param text text to encrypt.
+     *
+     * @param text      text to encrypt.
      * @param secretKey secret key to encrypt <b>text</b>.
      * @return encrypted text.
      * @throws GeneralSecurityException when any problem occurs during encryption.
@@ -43,8 +45,9 @@ public class MS_CryptographyUtils {
     /**
      * Decrypts provided encrypted text <b>encryptedText</b> using AES algorithm and encryption key <b>secretKey</b>
      * and {@link MS_CryptographyUtils#DEFAULT_HMAC_KEY}.
-     * @param encryptedText     encrypted text.
-     * @param secretKey  secret key.
+     *
+     * @param encryptedText encrypted text.
+     * @param secretKey     secret key.
      * @return decrypted text.
      * @throws GeneralSecurityException when HMAC secret key is incorrect.
      */
@@ -55,9 +58,9 @@ public class MS_CryptographyUtils {
     /**
      * Method encrypts provided text with such secret key and HMAC secret key.
      *
-     * @param text    text to be encrypted.
-     * @param secretKey  secret key.
-     * @param hmacKey HMAC secret key.
+     * @param text      text to be encrypted.
+     * @param secretKey secret key.
+     * @param hmacKey   HMAC secret key.
      * @return encrypted text.
      * @throws GeneralSecurityException when any problem occurs during encryption.
      */
@@ -102,9 +105,9 @@ public class MS_CryptographyUtils {
     /**
      * Method decrypts provided encrypted text with such secret key and HMAC secret key.
      *
-     * @param encryptedText     encrypted text.
-     * @param secretKey  secret key.
-     * @param hmacKey HMAC secret key.
+     * @param encryptedText encrypted text.
+     * @param secretKey     secret key.
+     * @param hmacKey       HMAC secret key.
      * @return decrypted text.
      * @throws GeneralSecurityException when HMAC secret key is incorrect.
      */

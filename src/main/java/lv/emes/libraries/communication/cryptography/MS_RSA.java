@@ -46,12 +46,16 @@ import java.util.Base64;
  */
 public class MS_RSA {
 
-    public static final int KEY_LENGTH_MINIMUM = 1024;
-    public static final int KEY_LENGTH_MEDIUM = 2048;
-    public static final int KEY_LENGTH_LONG = KEY_LENGTH_MEDIUM * 2;
+    public static final int KEY_LENGTH_MINIMUM = 1024; // 62 bytes max (max 20 UTF-8 characters)
+    public static final int KEY_LENGTH_MEDIUM = 2048; // 190 bytes max (max 63 UTF-8 characters)
+    public static final int KEY_LENGTH_LONG = KEY_LENGTH_MEDIUM * 2; // 446 bytes max (max 148 UTF-8 characters)
 
     private final Cipher cipher;
     private final int encryptMode;
+
+    static {
+        Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
+    }
 
     private MS_RSA(Key key, int encryptMode) {
         this.encryptMode = encryptMode;
@@ -108,20 +112,6 @@ public class MS_RSA {
         return new MS_RSA(key, Cipher.DECRYPT_MODE);
     }
 
-    public static void main(String[] args) throws NoSuchAlgorithmException, IllegalBlockSizeException {
-        KeyPair keyPair = generateKeyPair(KEY_LENGTH_MINIMUM);
-        String str = "This is a secret message: Mācēt enkōdt ŗīōķņģ";
-        System.out.println("Original clear message: " + str);
-
-        MS_RSA encryption = MS_RSA.forEncryption(keyPair.getPublic());
-        String encrypted = encryption.encrypt(str);
-        System.out.println("Encrypted message: " + encrypted);
-
-        MS_RSA decryption = MS_RSA.forDecryption(keyPair.getPrivate());
-        String decrypted = decryption.decrypt(encrypted);
-        System.out.println("Decrypted message: " + decrypted);
-    }
-
     public static KeyPair generateKeyPair(int keySize) {
         if (keySize < KEY_LENGTH_MINIMUM)
             throw new IllegalArgumentException("Minimum key size is " + KEY_LENGTH_MINIMUM);
@@ -139,6 +129,7 @@ public class MS_RSA {
     }
 
     public static PublicKey convertPublicKey(String base64PublicKey) {
+        if (base64PublicKey == null) return null;
         X509EncodedKeySpec keySpec = new X509EncodedKeySpec(Base64.getDecoder().decode(base64PublicKey.getBytes()));
         try {
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
@@ -149,6 +140,7 @@ public class MS_RSA {
     }
 
     public static PrivateKey convertPrivateKey(String base64PrivateKey) {
+        if (base64PrivateKey == null) return null;
         PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(Base64.getDecoder().decode(base64PrivateKey.getBytes()));
         PrivateKey privateKey;
         try {

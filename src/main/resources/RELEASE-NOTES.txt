@@ -1,5 +1,5 @@
 eMeS libraries
-Version 2.4.1
+Version 2.4.2
 Release Notes
 
 INTRODUCTION:
@@ -16,6 +16,8 @@ Changes in versions:
 eMeS libraries Version 2.5.0
 ========================================================================================================
 * Improved hashing and cryptography utilities for blockchain support.
+* Digital signature and verification support.
+* Handy methods for symmetric, asymmetric and hybrid encryption/decryption.
 ========================================================================================================
 eMeS libraries Version 2.4.0
 ========================================================================================================

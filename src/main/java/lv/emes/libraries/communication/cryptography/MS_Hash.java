@@ -70,7 +70,7 @@ public class MS_Hash {
     public MS_Hash(String salt, Integer keyLength, Integer iterations, boolean encodeInBase64) {
         this.salt = salt == null ? _DEFAULT_SALT : salt.getBytes();
         this.keyLength = keyLength == null ? _DEFAULT_KEY_LEN : keyLength;
-        this.iterations = iterations == null ? this.keyLength * _ITERATION_MULTIPLIER : iterations;
+        this.iterations = iterations == null || iterations <= 0 ? this.keyLength * _ITERATION_MULTIPLIER : iterations;
         this.encodeInBase64 = encodeInBase64;
     }
 
