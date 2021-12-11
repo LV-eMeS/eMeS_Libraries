@@ -92,7 +92,7 @@ public class MS_HttpCallHandler {
                 .withResponse(response)
                 .withResponseCode(response.code());
 
-        //body never will be null and will be closed automatically after this line
+        //body will never be null and will be closed automatically after this line
         res.initJSONBody(Objects.requireNonNull(response.body()).string());
 
 //        response.headers().toMultimap().forEach((headerName, headerValues) -> res.withHeader(headerName, headerValues.get(0))); //Java 8
