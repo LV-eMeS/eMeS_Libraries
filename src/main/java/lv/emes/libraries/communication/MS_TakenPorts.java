@@ -15,6 +15,7 @@ public class MS_TakenPorts {
     public static final Integer _JAVA_PROGRAM_LAUNCHER_PORT = 12347;
     public static final Integer _SPRING_WEB_SERVER_PORT = 12348;
     public static final Integer _REMOTE_LOGGING_SERVER_PORT = 12349;
+    public static final Integer _APIS_PORT = 12350;
 
     public static final Integer _LAST_PORT_NUMBER = 12400; //last port of eMeS app usages.
 }

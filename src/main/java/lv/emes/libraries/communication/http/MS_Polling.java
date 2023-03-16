@@ -24,6 +24,7 @@ public class MS_Polling<T> {
 
     public static final int DEFAULT_MAX_POLLING_ATTEMPTS = 60; // 30 seconds running twice per second
     public static final long DEFAULT_SLEEP_INTERVAL = 500;
+    public static final int MAX_POLLING_ATTEMPTS = 1000;
 
     public static final Consumer<MS_Polling> NO_POLLING_ACTION = (p) -> {
     };
@@ -64,8 +65,8 @@ public class MS_Polling<T> {
         Objects.requireNonNull(check, "Polling result checking action is mandatory for performing poll, therefore it cannot be null");
         if (maxPollingAttempts == 0)
             throw new MS_BadSetupException("Nothing to poll here. Please, set maxPollingAttempts > 0");
-        if (!MS_CodingUtils.inRange(maxPollingAttempts, 1, 100))
-            throw new MS_BadSetupException("Nothing to poll here. Maximum amount of polling attempts must be [1..100]");
+        if (!MS_CodingUtils.inRange(maxPollingAttempts, 1, MAX_POLLING_ATTEMPTS))
+            throw new MS_BadSetupException("Nothing to poll here. Maximum amount of polling attempts must be [1..1000]");
 
         attemptsLeft = maxPollingAttempts;
         currentAttempt = 0;
@@ -116,8 +117,8 @@ public class MS_Polling<T> {
      * @return reference to polling itself.
      */
     public MS_Polling<T> withMaxPollingAttempts(int maxPollingAttempts) {
-        if (!MS_CodingUtils.inRange(maxPollingAttempts, 1, 100))
-            throw new MS_BadSetupException("Maximum amount of polling attempts must be [1..100]. Please, set more realistic value!");
+        if (!MS_CodingUtils.inRange(maxPollingAttempts, 1, 1000))
+            throw new MS_BadSetupException("Maximum amount of polling attempts must be [1..1000]. Please, set more realistic value!");
         this.maxPollingAttempts = maxPollingAttempts;
         this.attemptsLeft = maxPollingAttempts;
         return this;
