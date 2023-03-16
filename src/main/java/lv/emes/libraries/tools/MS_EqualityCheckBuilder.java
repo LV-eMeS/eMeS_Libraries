@@ -1,11 +1,11 @@
 package lv.emes.libraries.tools;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.junit.Assert;
-
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
+
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.junit.Assert;
 
 /**
  * Class to check, whether pair of objects with similar structure (like DTO and respective domain) are equal.
@@ -64,7 +64,9 @@ import java.util.function.Predicate;
  *
  * @author eMeS
  * @see AssertionError
+ * @deprecated since 2.4.4. Use the AssertJ verification methods instead!
  */
+@Deprecated
 public class MS_EqualityCheckBuilder extends EqualsBuilder {
 
     private boolean mustBeEqual = false;

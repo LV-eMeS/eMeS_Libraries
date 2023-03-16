@@ -1,5 +1,4 @@
 /.gradle/
-/gradle/
 /out/
 build/
 src/test/resources/test_pic_back.png
